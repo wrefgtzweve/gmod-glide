@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/speedo/speedo_interior2"
+	"$allowdiffusemodulation" "false"
+}

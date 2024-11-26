@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/wolfsbane/vehicle_gen_bike_leather"
+	"$allowdiffusemodulation" "false"
+}

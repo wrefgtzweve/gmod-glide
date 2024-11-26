@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/tampa_roof"
+	"$bumpmap" "models/gta5/vehicles/tampa_roof_n"
+	"$allowdiffusemodulation" "false"
+}

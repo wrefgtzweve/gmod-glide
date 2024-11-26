@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "glide/weapons/homing_launcher"
+	"$bumpmap" "glide/weapons/homing_launcher_n"
+	"$halflambert" "1"
+
+	"$phong" "1"
+	"$phongexponent" "5"
+	"$phongexponenttexture" "glide/weapons/homing_launcher_s"
+	"$phongboost" "2.0"
+	"$phongfresnelranges" "[0 0.5 1]"
+}

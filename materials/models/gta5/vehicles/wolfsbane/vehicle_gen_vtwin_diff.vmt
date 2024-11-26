@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/wolfsbane/vehicle_gen_vtwin_diff"
+	"$bumpmap" "models/gta5/vehicles/wolfsbane/vehicle_gen_vtwin_normal"
+	"$allowdiffusemodulation" "false"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.03 0.03 0.03]"
+}

@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/vehicle_generic_doorshut"
+	"$bumpmap" "models/gta5/vehicles/vehicle_generic_doorshut_normal"
+	"$nodecal" "1"
+}

@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/vehicle_generic_tyrewallblack"
+	"$allowdiffusemodulation" "false"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.3 0.3 0.3]"
+}

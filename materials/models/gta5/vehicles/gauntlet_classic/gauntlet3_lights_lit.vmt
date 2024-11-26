@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/gauntlet_classic/gauntlet3_lights"
+	"$allowdiffusemodulation" "false"
+
+	$emissiveBlendEnabled "1"
+	$emissiveBlendStrength "0.7"
+	$emissiveBlendTexture "vgui/white"
+	$emissiveBlendBaseTexture "models/gta5/vehicles/gauntlet_classic/gauntlet3_lights"
+	$emissiveBlendFlowTexture "vgui/white"
+	$emissiveBlendTint "[ 2 2 1.5 ]"
+	$emissiveBlendScrollVector "[ 0 0 ]"
+}

@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/2_prop_blades2_prop_blades_a"
+	"$nodecal" "1"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}

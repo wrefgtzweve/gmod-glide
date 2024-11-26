@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/muscle_engine"
+	"$bumpmap" "models/gta5/vehicles/muscle_engine_n"
+	"$allowdiffusemodulation" "false"
+}

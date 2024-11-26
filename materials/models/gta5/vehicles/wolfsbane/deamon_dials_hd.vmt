@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/wolfsbane/deamon_dials_hd"
+	"$allowdiffusemodulation" "false"
+}

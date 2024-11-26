@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+    "$basetexture" "glide/skidmarks/skid_asphalt"
+    "$model" "1"
+    "$translucent" "1"
+    "$vertexalpha" "1"
+    "$vertexcolor" "1"
+}

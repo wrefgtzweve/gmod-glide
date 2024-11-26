@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/gauntlet_classic/gauntlet3_standard"
+	"$allowdiffusemodulation" "false"
+}

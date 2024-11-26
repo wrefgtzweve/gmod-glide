@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/body_paint"
+
+	"$phong" "1"
+	"$phongboost" "0.5"
+	"$phongexponent" "50"
+	"$phongfresnelranges" "[1 1 1]"
+	"$basemapalphaphongmask" "1"
+}

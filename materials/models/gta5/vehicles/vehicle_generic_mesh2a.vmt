@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/vehicle_generic_mesh2a"
+	"$bumpmap" "models/gta5/vehicles/vehicle_generic_mesh2_normal"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}

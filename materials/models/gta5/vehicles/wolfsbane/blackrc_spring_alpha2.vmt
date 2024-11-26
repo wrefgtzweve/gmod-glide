@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/wolfsbane/blackrc_spring_alpha2"
+	"$bumpmap" "models/gta5/vehicles/wolfsbane/rc_spring_normal2"
+	"$nodecal" "1"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}

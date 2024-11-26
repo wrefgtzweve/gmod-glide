@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/dukes/dukes_badges"
+	"$bumpmap" "models/gta5/vehicles/dukes_badges_n"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}

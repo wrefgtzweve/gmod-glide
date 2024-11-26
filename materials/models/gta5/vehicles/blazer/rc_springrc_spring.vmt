@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/blazer/rc_springrc_spring_alpha"
+	"$bumpmap" "models/gta5/vehicles/blazer/rc_spring_normal"
+	"$nodecal" "1"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}

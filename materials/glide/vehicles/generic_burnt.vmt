@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "glide/vehicles/generic_burnt"
+	"$allowdiffusemodulation" "false"
+}

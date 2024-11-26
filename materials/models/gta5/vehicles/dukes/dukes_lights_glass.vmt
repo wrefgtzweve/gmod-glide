@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/dukes/dukes_lights_glass"
+	"$allowdiffusemodulation" "false"
+}

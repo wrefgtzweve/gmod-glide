@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/cuban800_blades2_prop_blades_plane_a"
+	"$nodecal" "1"
+	"$translucent" "1"
+	"$nocull" "1"
+	"$allowdiffusemodulation" "false"
+}

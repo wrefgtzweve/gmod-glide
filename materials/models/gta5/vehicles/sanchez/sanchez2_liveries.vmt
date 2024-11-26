@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/sanchez/sanchez2_liveries"
+	"$allowdiffusemodulation" "false"
+}

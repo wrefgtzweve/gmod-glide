@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/vehicle_generic_detail2"
+	"$bumpmap" "models/gta5/vehicles/vehicle_generic_detail2_normal"
+	"$allowdiffusemodulation" "false"
+
+	$emissiveBlendEnabled "1"
+	$emissiveBlendStrength "1"
+	$emissiveBlendTexture "vgui/white"
+	$emissiveBlendBaseTexture "models/gta5/vehicles/vehicle_generic_detail2"
+	$emissiveBlendFlowTexture "vgui/white"
+	$emissiveBlendTint "[ 3 3 2 ]"
+	$emissiveBlendScrollVector "[ 0 0 ]"
+}
