@@ -29,8 +29,11 @@ local DEFAULT_COLORS = {
 }
 
 local StyledTheme = _G.StyledTheme or {}
+local ClassFunctions = StyledTheme.ClassFunctions or {}
 
 _G.StyledTheme = StyledTheme
+StyledTheme.__index = StyledTheme
+StyledTheme.ClassFunctions = ClassFunctions
 
 function StyledTheme.Create( colors )
     colors = colors or {}
@@ -39,18 +42,17 @@ function StyledTheme.Create( colors )
         colors[id] = colors[id] or color
     end
 
-    return colors
+    return setmetatable( {
+        colors = colors
+    }, StyledTheme )
 end
 
-local ClassFunctions = StyledTheme.ClassFunctions or {}
-
-StyledTheme.ClassFunctions = ClassFunctions
-
-function StyledTheme.Apply( theme, panel, classOverride )
+function StyledTheme:Apply( panel, classOverride )
     local funcs = ClassFunctions[classOverride or panel.ClassName]
     if not funcs then return end
 
-    panel.STheme = theme
+    panel.STheme = self
+    panel.SColors = self.colors
 
     if funcs.Prepare then
         funcs.Prepare( panel )
@@ -80,13 +82,13 @@ local SetDrawColor = surface.SetDrawColor
 
 ClassFunctions["DLabel"] = {
     Prepare = function( self )
-        self:SetColor( self.STheme.labelText )
+        self:SetColor( self.SColors.labelText )
     end
 }
 
 ClassFunctions["DPanel"] = {
     Paint = function( self, w, h )
-        SetDrawColor( self.STheme.panelBackground:Unpack() )
+        SetDrawColor( self.SColors.panelBackground:Unpack() )
         DrawRect( 0, 0, w, h )
     end
 }
@@ -99,7 +101,7 @@ ClassFunctions["DButton"] = {
     Paint = function( self, w, h )
         self._hoverAnim = Lerp( FrameTime() * 10, self._hoverAnim, ( self:IsEnabled() and self.Hovered ) and 1 or 0 )
 
-        local colors = self.STheme
+        local colors = self.SColors
         local bgColor = self._themeHighlight and colors.buttonPress or colors.buttonBackground
 
         DrawRoundedBox( 4, 0, 0, w, h, colors.buttonBorder )
@@ -117,9 +119,9 @@ ClassFunctions["DButton"] = {
 
     UpdateColours = function( self )
         if self:IsEnabled() then
-            self:SetTextStyleColor( self.STheme.buttonText )
+            self:SetTextStyleColor( self.SColors.buttonText )
         else
-            self:SetTextStyleColor( self.STheme.buttonTextDisabled )
+            self:SetTextStyleColor( self.SColors.buttonTextDisabled )
         end
     end
 }
@@ -131,17 +133,17 @@ ClassFunctions["DTextEntry"] = {
         self:SetDrawBorder( false )
         self:SetPaintBackground( false )
 
-        self:SetTextColor( self.STheme.entryText )
-        self:SetCursorColor( self.STheme.entryText )
-        self:SetHighlightColor( self.STheme.entryHighlight )
-        self:SetPlaceholderColor( self.STheme.entryPlaceholder )
+        self:SetTextColor( self.SColors.entryText )
+        self:SetCursorColor( self.SColors.entryText )
+        self:SetHighlightColor( self.SColors.entryHighlight )
+        self:SetPlaceholderColor( self.SColors.entryPlaceholder )
     end,
 
     Paint = function( self, w, h )
-        SetDrawColor( self.STheme.entryBorder:Unpack() )
+        SetDrawColor( self.SColors.entryBorder:Unpack() )
         surface.DrawOutlinedRect( 0, 0, w, h, 1 )
 
-        SetDrawColor( self.STheme.entryBackground:Unpack() )
+        SetDrawColor( self.SColors.entryBackground:Unpack() )
         DrawRect( 1, 1, w - 2, h - 2 )
 
         derma.SkinHook( "Paint", "TextEntry", self, w, h )
@@ -150,38 +152,38 @@ ClassFunctions["DTextEntry"] = {
 
 ClassFunctions["DComboBox"] = {
     Prepare = function( self )
-        self:SetTextColor( self.STheme.entryText )
+        self:SetTextColor( self.SColors.entryText )
     end,
 
     Paint = function( self, w, h )
-        SetDrawColor( self.STheme.entryBorder:Unpack() )
+        SetDrawColor( self.SColors.entryBorder:Unpack() )
         surface.DrawOutlinedRect( 0, 0, w, h, 1 )
 
-        SetDrawColor( self.STheme.entryBackground:Unpack() )
+        SetDrawColor( self.SColors.entryBackground:Unpack() )
         DrawRect( 1, 1, w - 2, h - 2 )
     end
 }
 
 ClassFunctions["DNumSlider"] = {
     Prepare = function( self )
-        StyledTheme.Apply( self.STheme, self.TextArea )
-        StyledTheme.Apply( self.STheme, self.Label )
+        self.STheme:Apply( self.TextArea )
+        self.STheme:Apply( self.Label )
     end
 }
 
 ClassFunctions["DScrollPanel"] = {
     Prepare = function( self )
-        StyledTheme.Apply( self.STheme, self.VBar )
+        self.STheme:Apply( self.VBar )
     end,
 
     Paint = function( self, w, h )
-        SetDrawColor( self.STheme.panelBackground:Unpack() )
+        SetDrawColor( self.SColors.panelBackground:Unpack() )
         DrawRect( 0, 0, w, h )
     end
 }
 
 local function DrawGrip( self, w, h )
-    local colors = self.STheme
+    local colors = self.SColors
 
     SetDrawColor( colors.buttonBorder:Unpack() )
     DrawRect( 0, 0, w, h )
@@ -201,12 +203,12 @@ end
 
 ClassFunctions["DVScrollBar"] = {
     Prepare = function( self )
-        self.btnGrip.STheme = self.STheme
+        self.btnGrip.SColors = self.SColors
         self.btnGrip.Paint = DrawGrip
     end,
 
     Paint = function( self, w, h )
-        SetDrawColor( self.STheme.entryBackground:Unpack() )
+        SetDrawColor( self.SColors.entryBackground:Unpack() )
         DrawRect( 0, 0, w, h )
     end
 }
@@ -228,7 +230,7 @@ ClassFunctions["DFrame"] = {
     Prepare = function( self )
         self._animAlpha = 0
         self._OriginalClose = self.Close
-        self.lblTitle:SetColor( self.STheme.labelText )
+        self.lblTitle:SetColor( self.SColors.labelText )
 
         local anim = self:NewAnimation( 0.4, 0, 0.25 )
         anim.StartOffset = -80
@@ -262,7 +264,7 @@ ClassFunctions["DFrame"] = {
             Derma_DrawBackgroundBlur( self, self.m_fCreateTime )
         end
 
-        local colors = self.STheme
+        local colors = self.SColors
 
         SetDrawColor( colors.frameBorder:Unpack() )
         surface.DrawOutlinedRect( 0, 0, w, h, 1 )
@@ -277,7 +279,7 @@ ClassFunctions["DFrame"] = {
 
 ----- Custom panels -----
 
-function StyledTheme.CreateHeader( theme, parent, text, mleft, mtop, mright, mbottom )
+function StyledTheme:CreateHeader( parent, text, mleft, mtop, mright, mbottom )
     mleft = mleft or 0
     mtop = mtop or 4
     mright = mright or 0
@@ -295,24 +297,24 @@ function StyledTheme.CreateHeader( theme, parent, text, mleft, mtop, mright, mbo
     label:SizeToContents()
     label:Dock( FILL )
 
-    StyledTheme.Apply( theme, label )
+    self:Apply( label )
 
     return panel
 end
 
-function StyledTheme.CreatePropertyLabel( theme, parent, text )
+function StyledTheme:CreatePropertyLabel( parent, text )
     local label = vgui.Create( "DLabel", parent )
     label:Dock( TOP )
     label:DockMargin( 0, 0, 0, 2 )
     label:SetText( text )
     label:SetTall( 26 )
 
-    StyledTheme.Apply( theme, label )
+    self:Apply( label )
 
     return label
 end
 
-function StyledTheme.CreateButton( theme, parent, label, callback )
+function StyledTheme:CreateButton( parent, label, callback )
     local button = vgui.Create( "DButton", parent )
     button:SetTall( 30 )
     button:SetText( label )
@@ -320,12 +322,12 @@ function StyledTheme.CreateButton( theme, parent, label, callback )
     button:DockMargin( 20, 0, 20, 4 )
     button.DoClick = callback
 
-    StyledTheme.Apply( theme, button )
+    self:Apply( button )
 
     return button
 end
 
-function StyledTheme.CreateToggleButton( theme, parent, label, isChecked, callback )
+function StyledTheme:CreateToggleButton( parent, label, isChecked, callback )
     local button = vgui.Create( "DButton", parent )
     button:SetTall( 30 )
     button:SetIcon( isChecked and "icon16/accept.png" or "icon16/cancel.png" )
@@ -334,7 +336,7 @@ function StyledTheme.CreateToggleButton( theme, parent, label, isChecked, callba
     button:DockMargin( 20, 0, 20, 4 )
     button._isChecked = isChecked
 
-    StyledTheme.Apply( theme, button )
+    self:Apply( button )
 
     button.DoClick = function( s )
         s._isChecked = not s._isChecked
@@ -345,7 +347,7 @@ function StyledTheme.CreateToggleButton( theme, parent, label, isChecked, callba
     return button
 end
 
-function StyledTheme.CreateSlider( theme, parent, label, default, min, max, decimals, callback )
+function StyledTheme:CreateSlider( parent, label, default, min, max, decimals, callback )
     local slider = vgui.Create( "DNumSlider", parent )
     slider:SetTall( 36 )
     slider:SetText( label )
@@ -356,7 +358,7 @@ function StyledTheme.CreateSlider( theme, parent, label, default, min, max, deci
     slider:Dock( TOP )
     slider:DockMargin( 20, 0, 20, 6 )
 
-    StyledTheme.Apply( theme, slider )
+    self:Apply( slider )
 
     slider.OnValueChanged = function( _, value )
         callback( decimals == 0 and math.floor( value ) or math.Round( value, decimals ) )
@@ -365,7 +367,7 @@ function StyledTheme.CreateSlider( theme, parent, label, default, min, max, deci
     return slider
 end
 
-function StyledTheme.CreateComboBox( theme, parent, text, options, defaultIndex, callback )
+function StyledTheme:CreateComboBox( parent, text, options, defaultIndex, callback )
     local panel = vgui.Create( "DPanel", parent )
     panel:SetTall( 30 )
     panel:SetPaintBackground( false )
@@ -378,7 +380,7 @@ function StyledTheme.CreateComboBox( theme, parent, text, options, defaultIndex,
     label:SetText( text )
     label:SetWide( 190 )
 
-    StyledTheme.Apply( theme, label )
+    self:Apply( label )
 
     local combo = vgui.Create( "DComboBox", panel )
     combo:Dock( FILL )
@@ -390,14 +392,14 @@ function StyledTheme.CreateComboBox( theme, parent, text, options, defaultIndex,
 
     combo:ChooseOptionID( defaultIndex )
 
-    StyledTheme.Apply( theme, combo )
+    self:Apply( combo )
 
     combo.OnSelect = function( _, index )
         callback( index )
     end
 end
 
-function StyledTheme.CreateBinderButton( theme, parent, text, defaultKey )
+function StyledTheme:CreateBinderButton( parent, text, defaultKey )
     local panel = vgui.Create( "DPanel", parent )
     panel:SetTall( 30 )
     panel:SetPaintBackground( false )
@@ -410,13 +412,13 @@ function StyledTheme.CreateBinderButton( theme, parent, text, defaultKey )
     label:SetText( text )
     label:SetWide( 190 )
 
-    StyledTheme.Apply( theme, label )
+    self:Apply( label )
 
     local binder = vgui.Create( "DBinder", panel )
     binder:SetValue( defaultKey or KEY_NONE )
     binder:Dock( FILL )
 
-    StyledTheme.Apply( theme, binder )
+    self:Apply( binder )
 
     return binder
 end
