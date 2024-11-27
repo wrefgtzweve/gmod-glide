@@ -162,6 +162,9 @@ if CLIENT then
     -- Strips/lines where smoke particles are spawned when the engine is damaged
     ENT.EngineSmokeStrips = {}
 
+    -- How much does the engine smoke gets shot up?
+    ENT.EngineSmokeMaxZVel = 100
+
     -- Offset for break, reverse and headlight sprites
     ENT.LightSprites = {}
 

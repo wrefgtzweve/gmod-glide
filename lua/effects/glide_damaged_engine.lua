@@ -11,6 +11,7 @@ function EFFECT:Init( data )
     local health = data:GetColor() / 255
     local width = data:GetMagnitude() / 2000
     local scale = data:GetScale()
+    local maxZVel = data:GetRadius()
 
     local emitter = ParticleEmitter( origin, false )
     if not IsValid( emitter ) then return end
@@ -18,7 +19,7 @@ function EFFECT:Init( data )
     local color = 255 * Clamp( health * 3, 0, 1 )
     local alpha = 120 * Clamp( 1 - health, 0, 1 )
 
-    velocity[3] = velocity[3] + Clamp( velocity:Length() * 0.15, 0, 100 )
+    velocity[3] = velocity[3] + Clamp( velocity:Length() * 0.3, 0, maxZVel )
 
     local gravity = Vector( velocity[1], velocity[2], 0 )
     local right = angles:Right()

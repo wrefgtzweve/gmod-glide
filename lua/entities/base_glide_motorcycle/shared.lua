@@ -16,6 +16,8 @@ ENT.AllowEditWheelRadius = false
 ENT.AllowEditSuspensionLen = false
 
 if CLIENT then
+    ENT.EngineSmokeMaxZVel = 20
+
     -- Change default sounds
     ENT.StartSound = "Glide.Engine.BikeStart1"
     ENT.HornSound = "glide/horns/car_horn_light_1.wav"

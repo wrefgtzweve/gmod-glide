@@ -21,6 +21,8 @@ if CLIENT then
         { offset = Vector( 100, 0, -2 ), width = 42 }
     }
 
+    ENT.EngineSmokeMaxZVel = 250
+
     ENT.EngineFireOffsets = {
         { offset = Vector( 90, 0, 15 ) }
     }

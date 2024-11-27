@@ -22,6 +22,8 @@ if CLIENT then
         { offset = Vector( 5, 0, -5 ), angle = Angle( 40, 180, 0 ), width = 15 }
     }
 
+    ENT.EngineSmokeMaxZVel = 20
+
     ENT.EngineFireOffsets = {
         { offset = Vector( -3, 5, -5 ), angle = Angle( 90, 90, 0 ), scale = 0.4 },
         { offset = Vector( -3, -5, -5 ), angle = Angle( 90, 270, 0 ), scale = 0.4 }

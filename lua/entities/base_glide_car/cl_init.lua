@@ -440,6 +440,7 @@ function ENT:OnUpdateParticles()
         eff:SetColor( color )
         eff:SetMagnitude( v.width * 1000 )
         eff:SetScale( scale )
+        eff:SetRadius( self.EngineSmokeMaxZVel )
         Effect( "glide_damaged_engine", eff, true, true )
     end
 end
