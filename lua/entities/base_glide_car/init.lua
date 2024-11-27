@@ -496,7 +496,6 @@ local isGrounded, rpm, totalRPM, totalSideSlip, totalForwardSlip
 function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = IsValid( phys ) and phys:IsAsleep()
-
     local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
 
     availableBrake = self.brake
@@ -513,10 +512,6 @@ function ENT:WheelThink( dt )
         totalSideSlip = totalSideSlip + w:GetSideSlip()
         totalForwardSlip = totalForwardSlip + w:GetForwardSlip()
 
-        if w.isOnGround then
-            isGrounded = true
-        end
-
         if w.isPowered then
             rpm = w:GetRPM()
             totalRPM = totalRPM + rpm
@@ -528,6 +523,10 @@ function ENT:WheelThink( dt )
 
             if rpm > maxRPM then
                 w:SetRPM( maxRPM )
+            end
+
+            if w.isOnGround then
+                isGrounded = true
             end
         else
             w.brake = self.burnout * 0.5
