@@ -14,17 +14,24 @@ hook.Add( "InitPostEntity", "Glide.LoadMapOverrides", function()
     local StartsWith = string.StartsWith
 
     for originalMat, overrideMat in pairs( data ) do
-        local k = _G[originalMat]
-        local v = _G[overrideMat]
+        if type( originalMat ) ~= "string" or not StartsWith( originalMat, "MAT_" ) then
+            Glide.Print( "Ignoring invalid original surface ID: %s", originalMat )
 
-        if type( k ) ~= "string" or not StartsWith( k, "MAT_" ) then
-            Glide.Print( "Ignoring invalid original surface ID: %s", k )
-
-        elseif type( v ) ~= "string" or not StartsWith( v, "MAT_" ) then
-            Glide.Print( "Ignoring invalid override surface ID: %s", v )
+        elseif type( overrideMat ) ~= "string" or not StartsWith( overrideMat, "MAT_" ) then
+            Glide.Print( "Ignoring invalid override surface ID: %s", overrideMat )
 
         else
-            overrides[k] = v
+            local k = _G[originalMat]
+            local v = _G[overrideMat]
+
+            if not k then
+                Glide.Print( "Original surface ID does not exist: %s", originalMat )
+
+            elseif not v then
+                Glide.Print( "Override surface ID does not exist: %s", overrideMat )
+            else
+                overrides[k] = v
+            end
         end
     end
 end )
