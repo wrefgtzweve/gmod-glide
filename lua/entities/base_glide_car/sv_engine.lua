@@ -73,6 +73,10 @@ do
     function ENT:TransmissionToEngineRPM( gear )
         return self.avgPoweredRPM * self.gearRatios[gear] * self:GetDifferentialRatio() * 60 / TAU
     end
+
+    function ENT:GetTransmissionMaxRPM( gear )
+        return self:GetFlywheelRPM() / self.gearRatios[gear] / self:GetDifferentialRatio()
+    end
 end
 
 function ENT:EngineAccelerate( torque, dt )
@@ -193,8 +197,6 @@ function ENT:EngineClutch( dt )
 
     -- Are we airborne while going fast?
     if not self.areDriveWheelsGrounded and absForwardSpeed > 30 then
-        self.clutch = 1
-
         if self.noThrottleInAir then
             inputThrottle = 0
         end

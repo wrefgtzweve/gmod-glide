@@ -121,6 +121,10 @@ do
     function ENT:GetRPM()
         return self.angularVelocity * 60 / TAU
     end
+
+    function ENT:SetRPM( rpm )
+        self.angularVelocity = rpm / ( 60 / TAU )
+    end
 end
 
 local Abs = math.abs

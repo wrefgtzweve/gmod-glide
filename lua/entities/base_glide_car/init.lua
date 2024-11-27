@@ -490,12 +490,14 @@ function ENT:CreateWheel( offset, params )
 end
 
 local availableBrake, availableTorque, steerAngle, enableInertia, angVelMult
-local isGrounded, totalRPM, totalSideSlip, totalForwardSlip
+local isGrounded, rpm, totalRPM, totalSideSlip, totalForwardSlip
 
 --- Override the base class `WheelThink` function.
 function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = IsValid( phys ) and phys:IsAsleep()
+
+    local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
 
     availableBrake = self.brake
     availableTorque = self.availableTorque / self.poweredCount
@@ -516,12 +518,17 @@ function ENT:WheelThink( dt )
         end
 
         if w.isPowered then
-            totalRPM = totalRPM + w:GetRPM()
+            rpm = w:GetRPM()
+            totalRPM = totalRPM + rpm
 
             w.brake = availableBrake
             w.torque = availableTorque
             w.enableTorqueInertia = enableInertia
             w.angularVelocity = w.angularVelocity * angVelMult
+
+            if rpm > maxRPM then
+                w:SetRPM( maxRPM )
+            end
         else
             w.brake = self.burnout * 0.5
         end
