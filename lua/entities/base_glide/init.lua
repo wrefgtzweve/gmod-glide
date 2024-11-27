@@ -91,15 +91,14 @@ function ENT:Initialize()
 
     -- Pretty colors
     local colors = {
-        Color( 138, 40, 40 ),
-        Color( 74, 54, 32 ),
-        Color( 46, 54, 77 ),
+        Color( 180, 70, 70 ),
+        Color( 80, 65, 50 ),
+        Color( 162, 188, 243 ),
         Color( 214, 106, 53 ),
         Color( 45, 45, 45 ),
         Color( 20, 20, 20 ),
-        Color( 0, 0, 0 ),
         Color( 100, 100, 100 ),
-        Color( 175, 175, 175 ),
+        Color( 190, 190, 190 ),
         Color( 255, 255, 255 )
     }
 

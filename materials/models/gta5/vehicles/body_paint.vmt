@@ -5,8 +5,8 @@
 	"$envmaptint" "[0.08 0.08 0.08]"
 
 	"$phong" "1"
-	"$phongboost" "5"
-	"$phongexponent" "500"
+	"$phongboost" "2"
+	"$phongexponent" "200"
 	"$phongfresnelranges" "[1 1 1]"
 	"$basemapalphaphongmask" "1"
 }
