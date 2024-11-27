@@ -103,7 +103,9 @@ end
 
 --- Implement the base class `OnDriverExit` function.
 function ENT:OnDriverExit()
-    if not self.hasRagdolledAllPlayers then
+    local keepOn = IsValid( self.lastDriver ) and self.lastDriver:KeyDown( IN_WALK )
+
+    if not self.hasRagdolledAllPlayers and not keepOn then
         self:TurnOff()
     end
 end

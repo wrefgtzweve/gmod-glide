@@ -32,6 +32,7 @@ function ENT:Initialize()
     -- Setup variables used on all vehicle types.
     self.seats = {}     -- Keep track of all seats we've created
     self.exitPos = {}   -- Per-seat exit offsets
+    self.lastDriver = NULL
 
     self.inputBools = {}        -- Per-seat bool inputs
     self.inputFloats = {}       -- Per-seat float inputs
@@ -378,6 +379,7 @@ function ENT:Think()
 
             if IsValid( driver ) then
                 self:OnDriverEnter()
+                self.lastDriver = driver
             else
                 self:OnDriverExit()
             end
