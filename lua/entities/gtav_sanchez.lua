@@ -87,8 +87,8 @@ if SERVER then
     ENT.BurnoutForce = 180
 
     ENT.LightBodygroups = {
-        { type = "brake", bodyGroupId = 7, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 6, subModelId = 1 }
+        { type = "headlight", bodyGroupId = 6, subModelId = 1 }, -- Headlight
+        { type = "headlight", bodyGroupId = 7, subModelId = 1 } -- Tail light
     }
 
     function ENT:CreateFeatures()

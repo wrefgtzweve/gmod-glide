@@ -170,8 +170,8 @@ if SERVER then
     end
 
     ENT.LightBodygroups = {
-        { type = "brake", bodyGroupId = 2, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 3, subModelId = 1 }
+        { type = "headlight", bodyGroupId = 3, subModelId = 1 }, -- Headlight
+        { type = "headlight", bodyGroupId = 2, subModelId = 1 } -- Tail light
     }
 
     function ENT:CreateFeatures()

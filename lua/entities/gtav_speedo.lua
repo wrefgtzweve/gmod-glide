@@ -56,9 +56,9 @@ if SERVER then
     ENT.AirMaxAngularVelocity = Vector( 200, 200, 150 ) -- Roll, pitch, yaw
 
     ENT.LightBodygroups = {
-        { type = "brake", bodyGroupId = 13, subModelId = 1 },
         { type = "reverse", bodyGroupId = 12, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 11, subModelId = 1 }
+        { type = "headlight", bodyGroupId = 11, subModelId = 1 }, -- Headlights
+        { type = "headlight", bodyGroupId = 13, subModelId = 1 }  -- Tail lighs
     }
 
     function ENT:CreateFeatures()

@@ -135,8 +135,8 @@ if SERVER then
     ENT.WheelieForce = 400
 
     ENT.LightBodygroups = {
-        { type = "headlight", bodyGroupId = 7, subModelId = 1 },
-        { type = "brake", bodyGroupId = 8, subModelId = 1 }
+        { type = "headlight", bodyGroupId = 7, subModelId = 1 }, -- Headlight
+        { type = "headlight", bodyGroupId = 8, subModelId = 1 } -- Tail light
     }
 
     function ENT:CreateFeatures()
