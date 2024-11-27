@@ -1,0 +1,111 @@
+AddCSLuaFile()
+
+ENT.Type = "anim"
+ENT.Base = "base_glide_car"
+ENT.PrintName = "Speedo"
+
+ENT.GlideCategory = "Default"
+ENT.ChassisModel = "models/gta5/vehicles/speedo/chassis.mdl"
+
+if CLIENT then
+    ENT.CameraOffset = Vector( -300, 0, 70 )
+    ENT.CameraFirstPersonOffset = Vector( 10, 0, 5 )
+
+    ENT.HornSound = "glide/horns/car_horn_med_1.wav"
+
+    ENT.ExhaustOffsets = {
+        { pos = Vector( -110, 40, -19 ) }
+    }
+
+    ENT.EngineSmokeStrips = {
+        { offset = Vector( 100, 0, -2 ), width = 42 }
+    }
+
+    ENT.EngineFireOffsets = {
+        { offset = Vector( 90, 0, 15 ) }
+    }
+
+    ENT.Headlights = {
+        { offset = Vector( 105, 32, 6.2 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
+        { offset = Vector( 105, -32, 6.2 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
+    }
+
+    ENT.LightSprites = {
+        { type = "brake", offset = Vector( -118, 37, 20 ), dir = Vector( -1, 0, 0 ) },
+        { type = "brake", offset = Vector( -118, -37, 20 ), dir = Vector( -1, 0, 0 ) },
+        { type = "reverse", offset = Vector( -118, 38, 15 ), dir = Vector( -1, 0, 0 ) },
+        { type = "reverse", offset = Vector( -118, -38, 15 ), dir = Vector( -1, 0, 0 ) },
+        { type = "headlight", offset = Vector( 105, 32, 6.2 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
+        { type = "headlight", offset = Vector( 105, -32, 6.2 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+    }
+
+    function ENT:OnCreateEngineStream( stream )
+        stream.offset = Vector( 60, 0, 0 )
+        stream:LoadPreset( "speedo" )
+    end
+end
+
+if SERVER then
+    duplicator.RegisterEntityClass( "gtav_speedo", Glide.VehicleFactory, "Data" )
+
+    ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
+    ENT.ChassisMass = 900
+    ENT.BurnoutForce = 60
+
+    ENT.AirControlForce = Vector( 0.4, 0.2, 0.1 ) -- Roll, pitch, yaw
+    ENT.AirMaxAngularVelocity = Vector( 200, 200, 150 ) -- Roll, pitch, yaw
+
+    ENT.LightBodygroups = {
+        { type = "brake", bodyGroupId = 13, subModelId = 1 },
+        { type = "reverse", bodyGroupId = 12, subModelId = 1 },
+        { type = "headlight", bodyGroupId = 11, subModelId = 1 }
+    }
+
+    function ENT:CreateFeatures()
+        self:SetWheelInertia( 11 )
+        self:SetSpringStrength( 700 )
+
+        self:SetDifferentialRatio( 2.3 )
+        self:SetTransmissionEfficiency( 0.7 )
+        self:SetBrakePower( 3000 )
+
+        self:SetMinRPMTorque( 900 )
+        self:SetMaxRPMTorque( 1100 )
+
+        self:CreateSeat( Vector( 5, 22, 0 ), Angle( 0, 270, -10 ), Vector( 50, 80, 10 ), true )
+        self:CreateSeat( Vector( 25, -22, 0 ), Angle( 0, 270, 5 ), Vector( 50, -80, 10 ), true )
+
+        self:CreateSeat( Vector( -80, -29, 0 ), Angle( 0, 0, 3 ), Vector( -140, -70, 10 ), true )
+        self:CreateSeat( Vector( -80, 29, 0 ), Angle( 0, 180, 4 ), Vector( -140, 70, 10 ), true )
+
+        -- Front left
+        self:CreateWheel( Vector( 74, 38, -10 ), {
+            model = "models/gta5/vehicles/speedo/wheel.mdl",
+            modelAngle = Angle( 0, 90, 0 ),
+            steerMultiplier = 1
+        } )
+
+        -- Front right
+        self:CreateWheel( Vector( 74, -38, -10 ), {
+            model = "models/gta5/vehicles/speedo/wheel.mdl",
+            modelAngle = Angle( 0, -90, 0 ),
+            steerMultiplier = 1
+        } )
+
+        -- Rear left
+        self:CreateWheel( Vector( -74, 39, -10 ), {
+            model = "models/gta5/vehicles/speedo/wheel.mdl",
+            modelAngle = Angle( 0, 90, 0 ),
+            isPowered = true
+        } )
+
+        -- Rear right
+        self:CreateWheel( Vector( -74, -39, -10 ), {
+            model = "models/gta5/vehicles/speedo/wheel.mdl",
+            modelAngle = Angle( 0, -90, 0 ),
+            isPowered = true
+        } )
+
+        self:ChangeWheelRadius( 18 )
+    end
+end
