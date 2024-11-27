@@ -504,7 +504,6 @@ function PANEL:Init()
     self.tabList:SetWide( 48 )
     self.tabList:Dock( LEFT )
     self.tabList:DockPadding( 2, 2, 2, 2 )
-    self.tabList:SetBackgroundColor( self.SColors.panelBackground )
 
     self.tabContainer = vgui.Create( "DPanel", self )
     self.tabContainer:Dock( FILL )
@@ -516,6 +515,8 @@ function PANEL:Init()
 end
 
 function PANEL:ApplyTheme( theme )
+    self.tabList:SetBackgroundColor( theme.colors.panelBackground )
+
     theme:Apply( self.btnClose )
     theme:Apply( self, "DFrame" )
 
