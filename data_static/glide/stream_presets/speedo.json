@@ -122,7 +122,7 @@
                     1.0
                 ]
             ],
-            "redline": false
+            "redline": true
         },
         "speedo_mid": {
             "path": "glide/streams/speedo/speedo_mid.ogg",
