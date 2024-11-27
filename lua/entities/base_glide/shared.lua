@@ -118,6 +118,9 @@ end
 if SERVER then
     ENT.Spawnable = true -- Allow it to be spawned serverside
 
+    -- Children classes can choose which NW variables to save
+    ENT.DuplicatorNetworkVariables = {}
+
     -- Setup the vehicle's chassis properties
     ENT.ChassisMass = 700
     ENT.ChassisModel = "models/props_phx/construct/metal_plate1.mdl"

@@ -9,9 +9,6 @@ include( "sv_wheels.lua" )
 
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
 
--- Children classes can choose which NW variables to save
-ENT.DuplicatorNetworkVariables = {}
-
 function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, self.DuplicatorNetworkVariables )
 end

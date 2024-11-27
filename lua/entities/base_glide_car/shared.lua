@@ -264,6 +264,9 @@ if SERVER then
         MinRPMTorque = true,
         MaxRPMTorque = true,
         DifferentialRatio = true,
-        TransmissionEfficiency = true
+        TransmissionEfficiency = true,
+
+        TurboCharged = true,
+        FastTransmission = true
     }
 end
