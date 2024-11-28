@@ -5,11 +5,6 @@ function ENT:ShouldActivateSounds()
     return self:GetPower() > 0.1
 end
 
---- Implement the base class `OnActivateMisc` function.
-function ENT:OnActivateMisc()
-    self.particleCD = 0
-end
-
 local Effect = util.Effect
 local EffectData = EffectData
 
