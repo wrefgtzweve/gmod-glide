@@ -90,7 +90,7 @@ function ENT:ActivateMisc()
     end
 
     self.wheels = table.Reverse( wheels )
-    self.seats = seats
+    self.seats = table.Reverse( seats )
     self.lastNick = {}
     self.particleCD = 0
 
@@ -324,7 +324,7 @@ do
         local count = #seats
         local driver, nick
 
-        for i = 1, count do
+        for i = count, 1, -1 do
             driver = IsValid( seats[i] ) and seats[i]:GetDriver()
             nick = IsValid( driver ) and driver:Nick() or "#glide.hud.empty"
 
@@ -343,7 +343,7 @@ do
                 RoundedBoxEx( cornerRadius, 1, y + 1, w - 2, h - 2, COLORS.accent, false, true, false, true )
             end
 
-            DrawSimpleText( "#" .. ( count - i + 1 ), "GlideHUD", padding, y + h * 0.5, COLORS.seat, 0, 1 )
+            DrawSimpleText( "#" .. i, "GlideHUD", padding, y + h * 0.5, COLORS.seat, 0, 1 )
 
             if expanded > 0.5 then
                 DrawSimpleText( nick, "GlideHUD", nickOffset * expanded, y + h * 0.5, COLORS.nick, 2, 1 )
