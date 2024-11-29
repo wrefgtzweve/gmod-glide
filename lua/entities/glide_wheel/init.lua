@@ -107,7 +107,8 @@ do
             self:SetForwardSlip( 0 )
             self:SetSideSlip( 0 )
         else
-            self:SetSpin( self.spin )
+            self:SetLastSpin( self.spin )
+            self:SetLastOffset( self:GetLocalPos()[3] - self.basePos[3] )
         end
 
         if isAsleep or not self.isOnGround then

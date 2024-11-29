@@ -86,12 +86,11 @@ if CLIENT then
     local Abs = math.abs
     local Clamp = math.Clamp
 
-    local IsValid = IsValid
     local steerAngle = Angle()
     local tempAngle = Angle()
 
-    local BAR_OFFSET_DOWN = Vector( 2, 0, -6 )
-    local BAR_OFFSET_UP = Vector( -1, 0, 9 )
+    local GEAR_OFFSET_DOWN = Vector( 2, 0, -10.5 )
+    local GEAR_OFFSET_UP = Vector( 0, 0, 4 )
 
     --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
@@ -100,43 +99,34 @@ if CLIENT then
         steerAngle[1] = self:GetSteering() * -28
         self:ManipulateBoneAngles( self.handlebarsBoneId, steerAngle )
 
-        local wheels = self.wheels
-        if not wheels then return end
-
-        local rl, rr = wheels[3], wheels[4]
-        if not IsValid( rl ) or not IsValid( rr ) then return end
-
-        -- Spin the gear bone
+        -- Spin the gear
         tempAngle[2] = 0
-        tempAngle[3] = -rl:GetSpin()
+        tempAngle[3] = -self:GetWheelSpin( 3 )
         self:ManipulateBoneAngles( self.boneGear, tempAngle )
 
         -- Rotate and move the rear transmission bar
-        local offset = Clamp( Abs( rl:GetLocalPos()[3] + rr:GetLocalPos()[3] ) / 30, 0, 1 )
+        local offset = Clamp( Abs( self:GetWheelOffset( 3 ) + self:GetWheelOffset( 4 ) ) / 30, 0, 1 )
         local invOffset = 1 - offset
 
-        tempAngle[3] = -18 + invOffset * 44
+        tempAngle[3] = -30 + invOffset * 40
         self:ManipulateBoneAngles( self.boneTransmission, tempAngle )
-        self:ManipulateBonePosition( self.boneGear, ( BAR_OFFSET_DOWN * offset ) + ( BAR_OFFSET_UP * invOffset ) )
+        self:ManipulateBonePosition( self.boneGear, ( GEAR_OFFSET_DOWN * offset ) + ( GEAR_OFFSET_UP * invOffset ) )
 
         -- Rotate ans scale rear spring
-        tempAngle[3] = 10 - offset * 20
+        tempAngle[3] = 10 - offset * 25
         self:ManipulateBoneAngles( self.boneSpringR, tempAngle )
-        self:ManipulateBoneScale( self.boneSpringR, Vector( 1, 0.5 + offset, 1 ) )
-        self:ManipulateBonePosition( self.boneSpringR, Vector( 0, 0, 1.5 + offset * -3 ) )
+        self:ManipulateBoneScale( self.boneSpringR, Vector( 1, 0.9 + offset * 0.7, 1 ) )
+        self:ManipulateBonePosition( self.boneSpringR, Vector( 0, 0, 1.5 + offset * -5 ) )
 
-        local fl, fr = wheels[1], wheels[2]
-        if not IsValid( fl ) or not IsValid( fr ) then return end
-
-        -- Reposition the front springs
+        -- Reposition the front suspension
         tempAngle[3] = 0
 
-        offset = Clamp( Abs( fl:GetLocalPos()[3] ) / 15, 0, 1 )
-        tempAngle[2] = 30 - offset * 50
+        offset = Clamp( Abs( self:GetWheelOffset( 1 ) ) / 15, 0, 1 )
+        tempAngle[2] = 25 - offset * 75
         self:ManipulateBoneAngles( self.boneSuspensionFL, tempAngle )
 
-        offset = Clamp( Abs( fr:GetLocalPos()[3] ) / 15, 0, 1 )
-        tempAngle[2] = -30 + offset * 50
+        offset = Clamp( Abs( self:GetWheelOffset( 2 ) ) / 15, 0, 1 )
+        tempAngle[2] = -25 + offset * 75
         self:ManipulateBoneAngles( self.boneSuspensionFR, tempAngle )
     end
 end

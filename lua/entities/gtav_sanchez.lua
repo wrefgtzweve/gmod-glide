@@ -49,32 +49,21 @@ if CLIENT then
     end
 
     local Abs = math.abs
-    local IsValid = IsValid
     local spinAng = Angle()
 
     --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
         BaseClass.OnUpdateAnimations( self )
 
-        local wheels = self.wheels
-        if not wheels then return end
-
-        local f = wheels[1]
-        local r = wheels[2]
-        if not IsValid( f ) or not IsValid( r ) then return end
-
-        local offset = ( Abs( f:GetLocalPos()[3] ) - 1 ) / 7
-        self:SetPoseParameter( "suspension_front", 1 - offset )
-
-        offset = ( Abs( r:GetLocalPos()[3] ) - 1 ) / 7
-        self:SetPoseParameter( "suspension_rear", 1 - offset )
+        self:SetPoseParameter( "suspension_front", 1 - ( Abs( self:GetWheelOffset( 1 ) ) / 7 ) )
+        self:SetPoseParameter( "suspension_rear", 1 - ( Abs( self:GetWheelOffset( 2 ) ) / 7 ) )
 
         if not self.frontBoneId then return end
 
-        spinAng[3] = -f:GetSpin()
+        spinAng[3] = -self:GetWheelSpin( 1 )
         self:ManipulateBoneAngles( self.frontBoneId, spinAng, false )
 
-        spinAng[3] = -r:GetSpin()
+        spinAng[3] = -self:GetWheelSpin( 2 )
         self:ManipulateBoneAngles( self.rearBoneId, spinAng, false )
     end
 end

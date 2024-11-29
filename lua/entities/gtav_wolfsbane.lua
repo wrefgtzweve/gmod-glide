@@ -100,26 +100,18 @@ if CLIENT then
         self.rearBoneId = self:LookupBone( "wheel_r" )
     end
 
-    local IsValid = IsValid
     local spinAng = Angle()
 
     --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
         BaseClass.OnUpdateAnimations( self )
 
-        local wheels = self.wheels
-        if not wheels then return end
-
-        local f = wheels[1]
-        local r = wheels[2]
-        if not IsValid( f ) or not IsValid( r ) then return end
-
         if not self.frontBoneId then return end
 
-        spinAng[3] = -f:GetSpin()
+        spinAng[3] = -self:GetWheelSpin( 1 )
         self:ManipulateBoneAngles( self.frontBoneId, spinAng, false )
 
-        spinAng[3] = -r:GetSpin()
+        spinAng[3] = -self:GetWheelSpin( 2 )
         self:ManipulateBoneAngles( self.rearBoneId, spinAng, false )
     end
 end

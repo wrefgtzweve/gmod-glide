@@ -49,6 +49,28 @@ function ENT:OnEngineStateChange( _, _, state )
     end
 end
 
+local IsValid = IsValid
+
+function ENT:GetWheelSpin( index )
+    local wheel = self.wheels and self.wheels[index]
+
+    if IsValid( wheel ) then
+        return wheel:GetLastSpin()
+    end
+
+    return 0
+end
+
+function ENT:GetWheelOffset( index )
+    local wheel = self.wheels and self.wheels[index]
+
+    if IsValid( wheel ) then
+        return wheel:GetLastOffset()
+    end
+
+    return 0
+end
+
 --- Create a new looping sound and store it on the slot `id`.
 function ENT:CreateLoopingSound( id, path, level, parent )
     local snd = self.sounds[id]

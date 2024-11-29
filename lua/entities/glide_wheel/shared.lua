@@ -15,7 +15,9 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Angle", "ModelAngle" )
     self:NetworkVar( "Vector", "ModelScale2" )
 
-    self:NetworkVar( "Float", "Spin" )
+    self:NetworkVar( "Float", "LastSpin" )
+    self:NetworkVar( "Float", "LastOffset" )
+
     self:NetworkVar( "Float", "Radius" )
     self:NetworkVar( "Float", "SideSlip" )
     self:NetworkVar( "Float", "ForwardSlip" )
