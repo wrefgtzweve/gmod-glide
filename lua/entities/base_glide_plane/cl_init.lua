@@ -54,7 +54,7 @@ end
 local RealTime = RealTime
 local DrawLightSprite = Glide.DrawLightSprite
 
---- Override the base class `OnUpdateMisc` function.
+--- Implement the base class `OnUpdateMisc` function.
 function ENT:OnUpdateMisc()
     self:OnUpdateAnimations()
 
