@@ -103,7 +103,7 @@ if CLIENT then
         local wheels = self.wheels
         if not wheels then return end
 
-        local rl, rr = wheels[2], wheels[1]
+        local rl, rr = wheels[3], wheels[4]
         if not IsValid( rl ) or not IsValid( rr ) then return end
 
         -- Spin the gear bone
@@ -125,7 +125,7 @@ if CLIENT then
         self:ManipulateBoneScale( self.boneSpringR, Vector( 1, 0.5 + offset, 1 ) )
         self:ManipulateBonePosition( self.boneSpringR, Vector( 0, 0, 1.5 + offset * -3 ) )
 
-        local fl, fr = wheels[4], wheels[3]
+        local fl, fr = wheels[1], wheels[2]
         if not IsValid( fl ) or not IsValid( fr ) then return end
 
         -- Reposition the front springs

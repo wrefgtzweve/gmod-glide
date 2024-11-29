@@ -110,8 +110,8 @@ if CLIENT then
         local wheels = self.wheels
         if not wheels then return end
 
-        local f = wheels[2]
-        local r = wheels[1]
+        local f = wheels[1]
+        local r = wheels[2]
         if not IsValid( f ) or not IsValid( r ) then return end
 
         if not self.frontBoneId then return end

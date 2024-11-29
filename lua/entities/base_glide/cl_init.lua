@@ -89,7 +89,7 @@ function ENT:ActivateMisc()
         end
     end
 
-    self.wheels = wheels
+    self.wheels = table.Reverse( wheels )
     self.seats = seats
     self.lastNick = {}
     self.particleCD = 0
