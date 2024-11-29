@@ -47,6 +47,17 @@ function ENT:CreateWheel( offset, params )
     return wheel
 end
 
+function ENT:ChangeWheelRadius( radius )
+    if not self.wheels then return end
+
+    for _, w in ipairs( self.wheels ) do
+        if IsValid( w ) then
+            w.defaultRadius = radius
+            w:ChangeRadius( radius )
+        end
+    end
+end
+
 function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = phys:IsValid() and phys:IsAsleep()

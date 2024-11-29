@@ -144,18 +144,13 @@ function ENT:TurnOff()
     self.reducedThrottle = false
 end
 
+--- Override the base class `ChangeWheelRadius` function.
 function ENT:ChangeWheelRadius( radius, dontSetNW )
+    BaseClass.ChangeWheelRadius( self, radius )
+
+    -- Avoid infinite loops when called by `OnWheelRadiusChange`
     if not dontSetNW then
         self:SetWheelRadius( radius )
-    end
-
-    if not self.wheels then return end
-
-    for _, w in ipairs( self.wheels ) do
-        if IsValid( w ) then
-            w.defaultRadius = radius
-            w:ChangeRadius( radius )
-        end
     end
 end
 
