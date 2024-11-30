@@ -160,11 +160,7 @@ end
 
 --- Override the base class `OnTakeDamage` function.
 function ENT:OnTakeDamage( dmginfo )
-    if dmginfo:IsDamageType( 1 ) then
-        -- Reduce collision damage
-        dmginfo:SetDamage( dmginfo:GetDamage() * 0.2 )
-
-    elseif dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
+    if dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
         -- Don't let other explosions cause us to explode immediately.
         -- Instead, set the vehicle on fire.
         local health = self:GetChassisHealth()

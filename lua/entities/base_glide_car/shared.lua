@@ -185,7 +185,7 @@ end
 if SERVER then
     ENT.EngineDamageMultiplier = 0.0016
     ENT.CollisionParticleSize = 0.9
-    ENT.CollisionDamageMultiplier = 1.8
+    ENT.CollisionDamageMultiplier = 0.5
     ENT.AngularDrag = Vector( -0.5, -0.5, -3 ) -- Roll, pitch, yaw
 
     -- The steering angle is multiplied by this value before it is passed to
