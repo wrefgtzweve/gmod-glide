@@ -226,11 +226,38 @@ local function SlideThink( anim, panel, fraction )
     panel:SetAlpha( 255 * panel._animAlpha )
 end
 
+local function FramePerformLayout( self )
+    local titlePush = 16
+
+    if IsValid( self.imgIcon ) then
+        self.imgIcon:SetPos( 4, 5 )
+        self.imgIcon:SetSize( 16, 16 )
+    end
+
+    self.btnClose:SetPos( self:GetWide() - 28 - 2, 2 )
+    self.btnClose:SetSize( 28, 20 )
+
+    self.lblTitle:SetPos( 8 + titlePush, 2 )
+    self.lblTitle:SetSize( self:GetWide() - 25 - titlePush, 20 )
+end
+
 ClassFunctions["DFrame"] = {
     Prepare = function( self )
         self._animAlpha = 0
         self._OriginalClose = self.Close
+        self.PerformLayout = FramePerformLayout
+
+        self.STheme:Apply( self.btnClose )
+        self.btnClose:SetText( "X" )
         self.lblTitle:SetColor( self.SColors.labelText )
+
+        if IsValid( self.btnMaxim ) then
+            self.btnMaxim:Remove()
+        end
+
+        if IsValid( self.btnMinim ) then
+            self.btnMinim:Remove()
+        end
 
         local anim = self:NewAnimation( 0.4, 0, 0.25 )
         anim.StartOffset = -80
@@ -496,10 +523,6 @@ function PANEL:Init()
     self:SetMinHeight( 400 )
     self:DockPadding( 4, 28, 4, 4 )
 
-    self.btnClose:SetText( "X" )
-    self.btnMaxim:Remove()
-    self.btnMinim:Remove()
-
     self.tabList = vgui.Create( "DPanel", self )
     self.tabList:SetWide( 48 )
     self.tabList:Dock( LEFT )
@@ -517,7 +540,6 @@ end
 function PANEL:ApplyTheme( theme )
     self.tabList:SetBackgroundColor( theme.colors.panelBackground )
 
-    theme:Apply( self.btnClose )
     theme:Apply( self, "DFrame" )
 
     for _, t in ipairs( self.tabs ) do
@@ -577,19 +599,6 @@ function PANEL:SetTabNotificationCountByIndex( index, count )
     if self.tabs[index] then
         self.tabs[index].button.notificationCount = count
     end
-end
-
-function PANEL:PerformLayout()
-    local titlePush = 16
-
-    self.imgIcon:SetPos( 4, 5 )
-    self.imgIcon:SetSize( 16, 16 )
-
-    self.btnClose:SetPos( self:GetWide() - 28 - 2, 2 )
-    self.btnClose:SetSize( 28, 20 )
-
-    self.lblTitle:SetPos( 8 + titlePush, 2 )
-    self.lblTitle:SetSize( self:GetWide() - 25 - titlePush, 20 )
 end
 
 vgui.Register( "Styled_TabbedFrame", PANEL, "DFrame" )
