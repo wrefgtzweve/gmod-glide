@@ -116,6 +116,9 @@ function ENT:Think()
         surfaceId = 83
     end
 
+    local isOnConcrete = surfaceId == 67
+    local isTankWheel = parent.VehicleType == 5 -- Glide.VEHICLE_TYPE.TANK
+
     -- Fast roll sound
     local fastAmplitude = speed / 600
 
@@ -123,13 +126,13 @@ function ENT:Think()
         Clamp( fastAmplitude * 0.75, 0, ROLL_VOLUME[surfaceId] or 0.4 ), 70 + 25 * fastAmplitude )
 
     -- Slow roll sound
-    local slowAmplitude = 1.02 - ( speed / 600 )
+    local slowAmplitude = ( isTankWheel and isOnConcrete ) and 0 or 1.02 - ( speed / 600 )
 
     self:ProcessSound( "slowRoll", surfaceId, WHEEL_SOUNDS.ROLL_SLOW, 88,
         slowAmplitude * fastAmplitude * 2, 110 - 30 * slowAmplitude )
 
     -- Side slip sound
-    local sideSlipAmplitude = Abs( self:GetSideSlip() ) - 0.1
+    local sideSlipAmplitude = ( isTankWheel and isOnConcrete ) and 0 or Abs( self:GetSideSlip() ) - 0.1
 
     sideSlipAmplitude = Clamp( sideSlipAmplitude * 1.5, 0, 0.8 )
 
@@ -142,6 +145,13 @@ function ENT:Think()
 
     self:ProcessSound( "forwardSlip", surfaceId, WHEEL_SOUNDS.FORWARD_SLIP, 88,
         forwardSlipAmplitude, 100 - forwardSlipAmplitude * 10 )
+
+    if isTankWheel and isOnConcrete then
+        self.lastSkidId = nil
+        self.lastRollId = nil
+
+        return
+    end
 
     -- Particles
     if t > self.particleCD then
