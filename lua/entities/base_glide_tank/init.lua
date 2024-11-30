@@ -78,6 +78,8 @@ end
 
 --- Implement the base class `OnWeaponFire` function.
 function ENT:OnWeaponFire()
+    if self:WaterLevel() > 2 then return end
+
     local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
 
     -- Make the projectile point towards the direction the
@@ -221,7 +223,7 @@ function ENT:OnPostThink( dt )
 
     -- Update turret angles, if we have a driver
     local driver = self:GetDriver()
-    if not IsValid( driver ) then return end
+    if not IsValid( driver ) or self:WaterLevel() > 2 then return end
 
     local dir = driver:GlideGetAimPos() - self:GetPos()
     dir:Normalize()
