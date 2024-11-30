@@ -96,7 +96,7 @@ function ENT:OnWeaponFire()
     dir:Normalize()
 
     -- TODO: Glide.FireProjectile
-    local missile = Glide.FireMissile( projectilePos, dir:Angle(), self:GetDriver(), self )
+    local missile = self:FireMissile( projectilePos, dir:Angle(), self:GetDriver() )
     missile.lifeTime = CurTime() + 2
     missile.maxSpeed = 8000
     missile.acceleration = 50000
@@ -238,7 +238,7 @@ function ENT:OnPostThink( dt )
     ang[2] = ang[2] + Clamp( AngleDifference( ang[2], targetAng[2] ), -self.MaxYawSpeed, self.MaxYawSpeed )
 
     self:SetTurretAngle( ang )
-    self:OnUpdateBones()
+    self:ManipulateTurretBones()
 end
 
 local ExpDecay = Glide.ExpDecay

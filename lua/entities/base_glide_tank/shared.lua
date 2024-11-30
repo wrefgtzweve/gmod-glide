@@ -40,6 +40,13 @@ function ENT:IsEngineOn()
     return self:GetEngineState() > 1
 end
 
+-- Children classes should override this function
+-- to update the turret/cannon bones.
+-- This exists both on the client and server side,
+-- to allow returning the correct bone position
+-- when creating the projectile serverside.
+function ENT:ManipulateTurretBones() end
+
 if CLIENT then
     -- Set which camera mode to use when entering this vehicle
     ENT.CameraType = Glide.CAMERA_TYPE.TURRET
@@ -106,10 +113,6 @@ if SERVER then
 
     ENT.MaxSpeed = 700
     ENT.MaxSteerAngle = 35
-
-    -- Children classes should override this function
-    -- to update bones (the turret/cannon for example).
-    function ENT:OnUpdateBones() end
 
     -- Children classes should override this function
     -- to set where the cannon projectile is spawned.

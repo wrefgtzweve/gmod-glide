@@ -84,6 +84,7 @@ local traceData = {
     }
 }
 
+local LocalPlayer = LocalPlayer
 local TraceLine = util.TraceLine
 local GetVolume = Glide.Config.GetVolume
 
@@ -107,6 +108,7 @@ function ENT:OnUpdateMisc()
     end
 
     self:OnUpdateAnimations()
+    self:ManipulateTurretBones()
 
     if self:GetDriver() ~= LocalPlayer() then return end
 

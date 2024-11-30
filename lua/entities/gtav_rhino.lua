@@ -80,22 +80,9 @@ if CLIENT then
     local offset = Vector()
 
     function ENT:OnUpdateAnimations()
-        local turretAng = self:GetTurretAngle()
-
-        spinAng[1] = turretAng[2]
-        spinAng[2] = 0
-        spinAng[3] = 0
-
-        self:ManipulateBoneAngles( self.turretBase, spinAng )
-
-        spinAng[1] = 0
-        spinAng[2] = 0
-        spinAng[3] = turretAng[1]
-
-        self:ManipulateBoneAngles( self.cannonBase, spinAng )
-
         local dt = FrameTime()
         local spinL = -self:GetWheelSpin( 2 )
+
         spinAng[1] = 0
         spinAng[2] = 0
         spinAng[3] = spinL
@@ -206,10 +193,20 @@ if SERVER then
         self.cannonMuzzle = self:LookupBone( "cannon_muzzle" )
     end
 
+    function ENT:GetProjectileStartPos()
+        if self.cannonMuzzle then
+            return self:GetBoneMatrix( self.cannonMuzzle ):GetTranslation()
+        end
+
+        return BaseClass.GetProjectileStartPos( self )
+    end
+end
+
+do
     local ang = Angle()
 
-    function ENT:OnUpdateBones()
-        if not self.cannonMuzzle then return end
+    function ENT:ManipulateTurretBones()
+        if not self.turretBase then return end
 
         local turretAng = self:GetTurretAngle()
 
@@ -224,13 +221,5 @@ if SERVER then
         ang[3] = turretAng[1]
 
         self:ManipulateBoneAngles( self.cannonBase, ang, false )
-    end
-
-    function ENT:GetProjectileStartPos()
-        if self.cannonMuzzle then
-            return self:GetBoneMatrix( self.cannonMuzzle ):GetTranslation()
-        end
-
-        return BaseClass.GetProjectileStartPos( self )
     end
 end
