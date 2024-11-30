@@ -18,7 +18,7 @@ function ENT:OnPostInitialize()
 
     self.isGrounded = false
     self.isTurningInPlace = false
-    self.brake = 0
+    self.brake = 0.5
 
     -- Update default wheel params
     local params = self.wheelParams
@@ -46,7 +46,11 @@ end
 
 --- Override the base class `TurnOn` function.
 function ENT:TurnOn()
-    BaseClass.TurnOn( self )
+    local state = self:GetEngineState()
+
+    if state ~= 2 then
+        BaseClass.TurnOn( self )
+    end
 
     self:SetEngineThrottle( 0 )
     self:SetEnginePower( 0 )
@@ -56,8 +60,20 @@ end
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
+    self.startupTimer = nil
+    self.availableTorqueL = 0
+    self.availableTorqueR = 0
+    self.isTurningInPlace = false
     self.brake = 0.5
-    self.availableTorque = 0
+end
+
+--- Override the base class `OnTakeDamage` function.
+function ENT:OnTakeDamage( dmginfo )
+    BaseClass.OnTakeDamage( self, dmginfo )
+
+    if self:GetEngineHealth() <= 0 and self:GetEngineState() == 2 then
+        self:TurnOff()
+    end
 end
 
 --- Implement the base class `OnWeaponFire` function.
@@ -80,7 +96,10 @@ function ENT:OnWeaponFire()
     dir:Normalize()
 
     -- TODO: Glide.FireProjectile
-    Glide.FireMissile( projectilePos, dir:Angle(), self:GetDriver(), self )
+    local missile = Glide.FireMissile( projectilePos, dir:Angle(), self:GetDriver(), self )
+    missile.lifeTime = CurTime() + 2
+    missile.maxSpeed = 8000
+    missile.acceleration = 50000
 end
 
 --- Override the base class `CreateWheel` function.
@@ -108,7 +127,38 @@ local AngleDifference = Glide.AngleDifference
 function ENT:OnPostThink( dt )
     local state = self:GetEngineState()
 
+    -- Damage the engine when underwater
+    if self:WaterLevel() > 2 then
+        if state == 2 then
+            self:TurnOff()
+        end
+
+        self:SetEngineHealth( 0 )
+        self:UpdateHealthOutputs()
+    end
+
+    local health = self:GetEngineHealth()
+
+    -- Attempt to start the engine
     if state == 1 then
+        if self.startupTimer then
+            if CurTime() > self.startupTimer then
+                self.startupTimer = nil
+
+                -- TODO: check fuel before allowing startup
+                if health > 0 then
+                    self:SetEngineState( 2 )
+                else
+                    self:SetEngineState( 0 )
+                end
+            end
+        else
+            local startupTime = health < 0.5 and math.Rand( 1, 2 ) or self.StartupTime
+            self.startupTimer = CurTime() + startupTime
+        end
+    end
+
+    if self:IsEngineOn() then
         self:UpdateEngine( dt )
 
         -- Make sure the physics stay awake when necessary,

@@ -16,6 +16,14 @@ ENT.SeatPassengerAnim = "sit"
 -- Increase default max. chassis health
 ENT.MaxChassisHealth = 3000
 
+--[[
+    For tanks, the values on Get/SetEngineState mean:
+
+    0 - Off
+    1 - Starting
+    2 - Running
+]]
+
 DEFINE_BASECLASS( "base_glide" )
 
 function ENT:SetupDataTables()
@@ -25,6 +33,11 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "EnginePower" )
     self:NetworkVar( "Float", "TrackSpeed" )
     self:NetworkVar( "Angle", "TurretAngle" )
+end
+
+--- Override the base class `IsEngineOn` function.
+function ENT:IsEngineOn()
+    return self:GetEngineState() > 1
 end
 
 if CLIENT then
@@ -47,6 +60,8 @@ if CLIENT then
     ENT.TrackVolume = 0.9
 
     -- Engine sounds
+    ENT.StartSound = "Glide.Engine.TruckStart"
+    ENT.StartTailSound = "Glide.Engine.CarStartTail"
     ENT.StartedSound = "glide/engines/start_tail_truck.wav"
     ENT.StoppedSound = "glide/engines/shut_down_1.wav"
 
@@ -62,10 +77,17 @@ end
 if SERVER then
     ENT.IsHeavyVehicle = true
     ENT.ChassisMass = 20000
-    ENT.EngineDamageMultiplier = 0.0015
+
+    ENT.BulletDamageMultiplier = 0.25
+    ENT.BlastDamageMultiplier = 1
+    ENT.CollisionDamageMultiplier = 0.8
+    ENT.EngineDamageMultiplier = 0.0005
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"
+
+    -- How long does it take for the vehicle to start up?
+    ENT.StartupTime = 0.8
 
     -- Setup default cannon
     ENT.WeaponSlots = {

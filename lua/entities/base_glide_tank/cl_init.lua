@@ -16,9 +16,20 @@ function ENT:SetupRightTrack( materialSlot, texture, bumpmap )
     self:SetSubMaterial( materialSlot, "!glide_tank_track_r" )
 end
 
---- Implement the base class `ShouldActivateSounds` function.
-function ENT:ShouldActivateSounds()
-    return self:IsEngineOn()
+--- Override the base class `OnEngineStateChange` function.
+function ENT:OnEngineStateChange( _, _, state )
+    if state == 1 then
+        if self.engineSounds and self.engineSounds.isActive then
+            local snd = self:CreateLoopingSound( "start", Glide.GetRandomSound( self.StartSound ), 70, self )
+            snd:PlayEx( 1, 100 )
+        end
+
+    elseif state == 2 then
+        self:OnTurnOn()
+
+    elseif state == 0 then
+        self:OnTurnOff()
+    end
 end
 
 --- Implement the base class `OnDeactivateSounds` function.
@@ -112,6 +123,16 @@ local FrameTime = FrameTime
 
 --- Implement the base class `OnUpdateSounds` function.
 function ENT:OnUpdateSounds()
+    local sounds = self.sounds
+
+    if sounds.start and self:GetEngineState() ~= 1 then
+        sounds.start:Stop()
+        sounds.start = nil
+        Glide.PlaySoundSet( self.StartTailSound, self )
+    end
+
+    if not self:IsEngineOn() then return end
+
     local stream = self.stream
 
     if not stream then
