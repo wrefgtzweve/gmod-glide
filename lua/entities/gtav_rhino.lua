@@ -80,7 +80,7 @@ if CLIENT then
     local offset = Vector()
 
     function ENT:OnUpdateAnimations()
-        local turretAng = self:WorldToLocalAngles( self:GetTurretAngle() )
+        local turretAng = self:GetTurretAngle()
 
         spinAng[1] = turretAng[2]
         spinAng[2] = 0
@@ -211,7 +211,7 @@ if SERVER then
     function ENT:OnUpdateBones()
         if not self.cannonMuzzle then return end
 
-        local turretAng = self:WorldToLocalAngles( self:GetTurretAngle() )
+        local turretAng = self:GetTurretAngle()
 
         ang[1] = turretAng[2]
         ang[2] = 0

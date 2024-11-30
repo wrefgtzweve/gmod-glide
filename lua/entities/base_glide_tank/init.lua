@@ -78,7 +78,7 @@ end
 
 --- Implement the base class `OnWeaponFire` function.
 function ENT:OnWeaponFire()
-    local ang = self:GetTurretAngle()
+    local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
 
     -- Make the projectile point towards the direction the
     -- turret is aiming at, no matter where it spawned.
@@ -227,12 +227,9 @@ function ENT:OnPostThink( dt )
     dir:Normalize()
 
     local ang = self:GetTurretAngle()
-    local targetAng = dir:Angle()
+    local targetAng = self:WorldToLocalAngles( dir:Angle() )
 
-    local localTargetAng = self:WorldToLocalAngles( targetAng )
-
-    localTargetAng[1] = Clamp( localTargetAng[1], self.MinPitchAng, self.MaxPitchAng )
-    targetAng[1] = self:LocalToWorldAngles( localTargetAng )[1]
+    targetAng[1] = Clamp( targetAng[1], self.MinPitchAng, self.MaxPitchAng )
 
     targetAng[1] = ExpDecayAngle( ang[1], targetAng[1], 10, dt )
     targetAng[2] = ExpDecayAngle( ang[2], targetAng[2], 30, dt )

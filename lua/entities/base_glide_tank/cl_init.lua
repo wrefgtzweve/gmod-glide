@@ -111,9 +111,10 @@ function ENT:OnUpdateMisc()
     if self:GetDriver() ~= LocalPlayer() then return end
 
     local pos = self:GetPos()
+    local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
 
     traceData.start = pos
-    traceData.endpos = pos + self:GetTurretAngle():Forward() * 50000
+    traceData.endpos = pos + ang:Forward() * 50000
     traceData.filter[1] = self
 
     self.crosshairPos = TraceLine( traceData ).HitPos
