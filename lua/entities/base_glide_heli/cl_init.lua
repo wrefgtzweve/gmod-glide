@@ -92,17 +92,17 @@ function ENT:OnUpdateSounds()
     local delay = self.RotorBeatInterval + Clamp( 0.6 - power, 0, 1 ) * 0.1
 
     -- Calculate the time difference between the time we expected to play
-    -- the beat and the time where it actually played, to compensate next frame.
+    -- the beat and the time when it actually played, to compensate next frame.
     self.beatDiff = Clamp( t - self.nextBeat, -0.05, 0.05 )
     self.nextBeat = t + delay - self.beatDiff
 
     -- Change beat pitch/volume depending on power and angles
     local ang = self:GetAngles()
-    local angMult = Clamp( ( Abs( ang[1] * 0.5 ) + Abs( ang[3] ) ) / 50, 0, 1 )
+    local angMult = Clamp( ( Abs( ang[1] * 0.8 ) + Abs( ang[3] ) ) / 50, 0, 1 )
 
     local beatVolume = ( Clamp( power, 0, 1 ) - 0.1 ) * vol
-    local beatPitch = 70 + ( 30 * power ) - ( angMult * 15 )
-    local midVolume = self.MidSoundVol + self.MidSoundVol * angMult
+    local beatPitch = 70 + ( 30 * power ) - ( angMult * 20 )
+    local midVolume = ( self.MidSoundVol * 0.8 ) + self.MidSoundVol * angMult
     local highVolume = self.HighSoundVol - self.HighSoundVol * angMult * 0.4
 
     PlaySoundSet( self.BassSoundSet, self, beatVolume * self.BassSoundVol, beatPitch )

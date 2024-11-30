@@ -36,14 +36,14 @@ function ENT:OnEngineStateChange( _, lastState, state )
     end
 end
 
---- Override the base class `OnTurnOn` function.
+--- Implement the base class `OnTurnOn` function.
 function ENT:OnTurnOn()
     if self.StartedSound ~= "" then
         self:EmitSound( self.StartedSound, 85, 100, 1.0 )
     end
 end
 
---- Override the base class `OnTurnOff` function.
+--- Implement the base class `OnTurnOff` function.
 function ENT:OnTurnOff()
     if self.StoppedSound ~= "" then
         self:EmitSound( self.StoppedSound, 75, 100, 1.0 )
