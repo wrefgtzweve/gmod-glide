@@ -143,7 +143,32 @@ end )
 
 if not game.SinglePlayer() then return end
 
-local function Restore()
+local function ResetVehicle( vehicle )
+    vehicle:ResetInputs( 1 )
+    vehicle:SetDriver( NULL )
+    vehicle:TurnOff()
+
+    -- Reset bone manipulations
+    local pos = Vector()
+    local ang = Angle()
+    local scale = Vector( 1, 1, 1 )
+
+    for i = 0, vehicle:GetBoneCount() - 1 do
+        vehicle:ManipulateBoneAngles( i, ang )
+        vehicle:ManipulateBonePosition( i, pos )
+        vehicle:ManipulateBoneScale( i, scale )
+    end
+
+    -- Reset weapon timings
+    if vehicle.weaponCount > 0 then
+        for _, weapon in ipairs( vehicle.weapons ) do
+            weapon.nextFire = 0
+            weapon.nextReload = 0
+        end
+    end
+end
+
+local function ResetAll()
     -- Restore NW variables for all Glide seats
     for _, seat in ipairs( ents.FindByClass( "prop_vehicle_prisoner_pod" ) ) do
         local seatIndex = seat.GlideSeatIndex
@@ -154,6 +179,23 @@ local function Restore()
             seat:SetNotSolid( true )
             seat:DrawShadow( false )
             seat:PhysicsDestroy()
+        end
+    end
+
+    -- Reset all Glide vehicles
+    local classes = {
+        ["base_glide"] = true,
+        ["base_glide_car"] = true,
+        ["base_glide_tank"] = true,
+        ["base_glide_aircraft"] = true,
+        ["base_glide_heli"] = true,
+        ["base_glide_plane"] = true,
+        ["base_glide_motorcycle"] = true
+    }
+
+    for _, e in ents.Iterator() do
+        if classes[e:GetClass()] or ( e.BaseClass and classes[e.BaseClass.ClassName] ) then
+            ResetVehicle( e )
         end
     end
 
@@ -171,10 +213,6 @@ local function Restore()
     if not IsValid( parent ) then return end
     if not parent.IsGlideVehicle then return end
 
-    parent:ResetInputs( seatIndex )
-    parent:SetDriver( NULL )
-    parent:TurnOff()
-
     timer.Simple( 0, function()
         ply:ExitVehicle()
 
@@ -187,6 +225,6 @@ end
 -- Restore state if the player was on a Glide vehicle during a Source Engine save or map transition.
 hook.Add( "ClientSignOnStateChanged", "Glide.RestoreVehicle", function( _, _, newState )
     if newState == SIGNONSTATE_FULL then
-        timer.Simple( 1, Restore )
+        timer.Simple( 1, ResetAll )
     end
 end )
