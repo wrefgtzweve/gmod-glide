@@ -243,8 +243,7 @@ function ENT:OnWeaponIndexChange( _, _, index )
         -- Change the crosshair
         local weapon = self.WeaponInfo[index]
         if weapon then
-            self:SetupCrosshair( weapon.crosshairType )
-            self:SetCrosshairAutoUpdate( true )
+            self:SetupCrosshair( weapon.crosshairType, nil, nil, weapon.dontAutoUpdateCrosshair ~= true )
         end
 
         EmitSound( "glide/ui/hud_switch.wav", Vector(), -2, nil, 1.0, nil, nil, 100 )
@@ -259,8 +258,7 @@ function ENT:OnDriverChange( _, _, driver )
     if driver == LocalPlayer() then
         local weapon = self.WeaponInfo[self:GetWeaponIndex()]
         if weapon then
-            self:SetupCrosshair( weapon.crosshairType )
-            self:SetCrosshairAutoUpdate( true )
+            self:SetupCrosshair( weapon.crosshairType, nil, nil, weapon.dontAutoUpdateCrosshair ~= true )
         end
     end
 
@@ -387,16 +385,12 @@ local LOCKON_STATE_COLORS = {
     [2] = Color( 255, 0, 0 ),
 }
 
---- Should this entity update the crosshair position automatically?
-function ENT:SetCrosshairAutoUpdate( enable )
-    self.crosshairAutoUpdate = enable
-end
-
-function ENT:SetupCrosshair( iconType, size, color )
+function ENT:SetupCrosshair( iconType, size, color, autoUpdate )
     self.crosshairPos = Vector()
     self.crosshairIcon = CROSSHAIR_ICONS[iconType or "dot"]
     self.crosshairSize = size or 0.05
     self.crosshairColor = color or LOCKON_STATE_COLORS[0]
+    self.crosshairAutoUpdate = autoUpdate
 end
 
 function ENT:RemoveCrosshair()
