@@ -140,11 +140,27 @@ end
 local Effect = util.Effect
 local EffectData = EffectData
 
+local DEFAULT_EXHAUST_ANG = Angle()
+
 function ENT:OnUpdateParticles()
     local health = self:GetEngineHealth()
     if health > 0.5 then return end
 
-    -- TODO: engine smoke strips
+    local color = Clamp( health * 255, 0, 255 )
+    local velocity = self:GetVelocity()
+    local scale = 2 - health * 2
+
+    for _, v in ipairs( self.EngineSmokeStrips ) do
+        local eff = EffectData()
+        eff:SetOrigin( self:LocalToWorld( v.offset ) )
+        eff:SetAngles( self:LocalToWorldAngles( v.angle or DEFAULT_EXHAUST_ANG ) )
+        eff:SetStart( velocity )
+        eff:SetColor( color )
+        eff:SetMagnitude( v.width * 1000 )
+        eff:SetScale( scale )
+        eff:SetRadius( self.EngineSmokeMaxZVel )
+        Effect( "glide_damaged_engine", eff, true, true )
+    end
 end
 
 local matTrackL = CreateMaterial( "glide_tank_track_l", "VertexLitGeneric", {

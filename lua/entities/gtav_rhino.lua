@@ -12,6 +12,15 @@ DEFINE_BASECLASS( "base_glide_tank" )
 if CLIENT then
     ENT.CameraOffset = Vector( -380, 0, 150 )
 
+    ENT.EngineFireOffsets = {
+        { offset = Vector( -110, 0, 30 ), angle = Angle( 0, 90, 0 ), scale = 1.5 }
+    }
+
+    ENT.EngineSmokeStrips = {
+        { offset = Vector( -130, 40, 18 ), angle = Angle( 0, 180, 0 ), width = 35 },
+        { offset = Vector( -130, -40, 18 ), angle = Angle( 0, 180, 0 ), width = 35 }
+    }
+
     function ENT:OnCreateEngineStream( stream )
         stream:LoadPreset( "airbus" )
         stream.offset = Vector( -30, 0, 0 )

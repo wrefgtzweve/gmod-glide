@@ -36,6 +36,12 @@ if CLIENT then
         { name = "#glide.weapons.cannon", icon = "glide/icons/tank.png", crosshairType = "square", dontAutoUpdateCrosshair = true }
     }
 
+    -- Strips/lines where smoke particles are spawned when the engine is damaged
+    ENT.EngineSmokeStrips = {}
+
+    -- How much does the engine smoke gets shot up?
+    ENT.EngineSmokeMaxZVel = 50
+
     -- Track sound parameters
     ENT.TrackSound = ")glide/tanks/tracks_leopard.wav"
     ENT.TrackVolume = 0.9
