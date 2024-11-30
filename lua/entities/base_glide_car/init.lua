@@ -176,8 +176,6 @@ function ENT:OnTakeDamage( dmginfo )
     if self:GetEngineHealth() <= 0 and self:GetEngineState() == 2 then
         self:TurnOff()
     end
-
-    self:UpdateHealthOutputs()
 end
 
 --- Implement the base class `OnSeatInput` function.
