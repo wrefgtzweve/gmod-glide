@@ -143,8 +143,10 @@ end
 
 --- Sets the "EngineState" network variable to `1` and calls `ENT:OnTurnOn`.
 function ENT:TurnOn()
-    self:SetEngineState( 1 )
-    self:OnTurnOn()
+    if self:GetEngineHealth() > 0 then
+        self:SetEngineState( 1 )
+        self:OnTurnOn()
+    end
 end
 
 --- Sets the "EngineState" network variable to `0` and calls `ENT:OnTurnOff`.
