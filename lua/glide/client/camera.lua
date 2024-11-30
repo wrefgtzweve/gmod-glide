@@ -19,7 +19,7 @@ function Glide.GetCameraAimPos()
     return Camera.aimPos
 end
 
-local Config
+local Config = Glide.Config
 
 function Camera:Activate( vehicle, seatIndex )
     Config = Glide.Config
@@ -359,12 +359,7 @@ function Camera:CalcView()
         self.aimPos = tr.HitPos
     end
 
-    if IsValid( self.seat ) then
-        -- Make the view angles relative to the seat
-        self.viewAngles = self.seat:WorldToLocalAngles( dir:Angle() )
-    else
-        self.viewAngles = dir:Angle()
-    end
+    self.viewAngles = dir:Angle()
 
     return {
         origin = self.origin,

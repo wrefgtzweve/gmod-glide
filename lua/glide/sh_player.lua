@@ -13,16 +13,9 @@ if SERVER then
     local playerAngles = {}
 
     hook.Add( "SetupMove", "Glide.StoreViewAngles", function( ply, _, cmd )
-        if not ply.IsUsingGlideVehicle then return end
-
-        local angles = cmd:GetViewAngles()
-        local seat = ply:GetVehicle()
-
-        if IsValid( seat ) then
-            angles = seat:LocalToWorldAngles( angles )
+        if ply.IsUsingGlideVehicle then
+            playerAngles[ply] = cmd:GetViewAngles()
         end
-
-        playerAngles[ply] = angles
     end )
 
     hook.Add( "PlayerDisconnected", "Glide.CleanupViewAngles", function( ply )
@@ -50,7 +43,7 @@ if SERVER then
 
         local tr = TraceLine( {
             start = startPos,
-            endpos = startPos + fw * 10000,
+            endpos = startPos + fw * 50000,
             filter = { self, vehicle }
         } )
 
