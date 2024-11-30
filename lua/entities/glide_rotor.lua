@@ -42,7 +42,7 @@ function ENT:Initialize()
     self.isSpinningFast = false
 
     -- Prepare damage & trace variables
-    self.rotorHealth = 300
+    self.rotorHealth = 400
     self.traceAngle = Angle()
     self.traceAngleFunc = "Forward"
     self.hitSoundCD = 0
@@ -81,7 +81,7 @@ function ENT:SetSpinAngle( ang )
 end
 
 function ENT:Repair()
-    self.rotorHealth = 300
+    self.rotorHealth = 400
 end
 
 function ENT:Destroy()
