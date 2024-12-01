@@ -12,7 +12,6 @@ ENT.PropOffset = Vector( 114, 0, 3 )
 
 if CLIENT then
     ENT.CameraOffset = Vector( -370, 0, 70 )
-    ENT.CameraFirstPersonOffset = Vector( 10, 0, 5 )
 
     ENT.ExhaustPositions = {
         Vector( 70, 0, -28 )

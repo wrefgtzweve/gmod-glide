@@ -9,7 +9,6 @@ ENT.ChassisModel = "models/gta5/vehicles/airbus/chassis.mdl"
 
 if CLIENT then
     ENT.CameraOffset = Vector( -600, 0, 120 )
-    ENT.CameraFirstPersonOffset = Vector( 10, 0, 5 )
 
     ENT.StartSound = "Glide.Engine.TruckStart"
     ENT.ExhaustPopSound = ""

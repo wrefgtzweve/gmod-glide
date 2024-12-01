@@ -10,7 +10,6 @@ ENT.ChassisModel = "models/gta5/vehicles/dukes/chassis.mdl"
 
 if CLIENT then
     ENT.CameraOffset = Vector( -270, 0, 50 )
-    ENT.CameraFirstPersonOffset = Vector( 10, 0, 5 )
 
     ENT.ExhaustOffsets = {
         { pos = Vector( -128, 22, -7 ) },

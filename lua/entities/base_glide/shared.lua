@@ -74,7 +74,6 @@ if CLIENT then
     -- Setup the camera parameters for this vehicle
     ENT.CameraOffset = Vector( -200, 0, 50 )
     ENT.CameraAngleOffset = Angle( 6, 0, 0 )
-    ENT.CameraFirstPersonOffset = Vector( 0, 0, 5 )
 
     -- Setup how far away players can hear sounds and update misc. features
     ENT.MaxSoundDistance = 6000
@@ -121,6 +120,13 @@ if CLIENT then
 
     function ENT:GetCameraType( _seatIndex )
         return 0 -- Glide.CAMERA_TYPE.CAR
+    end
+
+    function ENT:GetFirstPersonOffset( _seatIndex, localEyePos )
+        localEyePos[1] = localEyePos[1] + 10
+        localEyePos[3] = localEyePos[3] + 5
+
+        return localEyePos
     end
 end
 

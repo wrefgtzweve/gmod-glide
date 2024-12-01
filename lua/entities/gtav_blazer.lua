@@ -12,7 +12,6 @@ DEFINE_BASECLASS( "base_glide_car" )
 
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 43 )
-    ENT.CameraFirstPersonOffset = Vector( 0, 0, 0 )
 
     ENT.ExhaustOffsets = {
         { pos = Vector( -39, 10, 11 ), scale = 0.7 }
@@ -61,14 +60,16 @@ if CLIENT then
         ["ValveBiped.Bip01_R_Calf"] = Angle( 20, 80, 0 )
     }
 
-    --- Override the base class `GetSeatBoneManipulations` function.
     function ENT:GetSeatBoneManipulations()
         return POSE_DATA
     end
 
-    --- Override the base class `AllowFirstPersonMuffledSound` function.
     function ENT:AllowFirstPersonMuffledSound()
         return false
+    end
+
+    function ENT:GetFirstPersonOffset( _, localEyePos )
+        return localEyePos
     end
 
     --- Override the base class `OnActivateMisc` function.

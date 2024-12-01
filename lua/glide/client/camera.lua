@@ -304,7 +304,8 @@ function Camera:CalcView()
 
     if self.isInFirstPerson then
         local localEyePos = vehicle:WorldToLocal( user:EyePos() )
-        self.origin = vehicle:LocalToWorld( localEyePos + vehicle.CameraFirstPersonOffset )
+        local localPos = vehicle:GetFirstPersonOffset( self.seatIndex, localEyePos )
+        self.origin = vehicle:LocalToWorld( localPos )
     else
         local fraction = self.traceFraction
         local offset = self.shakeOffset + vehicle.CameraOffset * Vector( Config.cameraDistance, 1, Config.cameraHeight ) * fraction

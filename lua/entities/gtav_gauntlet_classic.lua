@@ -10,7 +10,6 @@ ENT.ChassisModel = "models/gta5/vehicles/gauntlet_classic/chassis.mdl"
 
 if CLIENT then
     ENT.CameraOffset = Vector( -240, 0, 60 )
-    ENT.CameraFirstPersonOffset = Vector( 10, 0, 5 )
 
     Glide.AddSoundSet( "Glide.GautletClassic.ExhaustPop", 75, 95, 105, {
         "glide/streams/gauntlet_classic/exhaust_pop_1.wav",

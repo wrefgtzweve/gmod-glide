@@ -9,7 +9,6 @@ ENT.ChassisModel = "models/gta5/vehicles/speedo/chassis.mdl"
 
 if CLIENT then
     ENT.CameraOffset = Vector( -300, 0, 70 )
-    ENT.CameraFirstPersonOffset = Vector( 10, 0, 5 )
 
     ENT.HornSound = "glide/horns/car_horn_med_1.wav"
 

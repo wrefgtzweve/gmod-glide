@@ -11,7 +11,6 @@ DEFINE_BASECLASS( "base_glide_motorcycle" )
 
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 50 )
-    ENT.CameraFirstPersonOffset = Vector( 0, 0, 0 )
 
     ENT.ExhaustOffsets = {
         { pos = Vector( -40, -5, 15 ), scale = 0.7 }
