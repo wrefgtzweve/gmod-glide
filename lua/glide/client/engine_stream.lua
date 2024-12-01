@@ -63,6 +63,8 @@ local VALID_KV = {
     wobbleStrength = true
 }
 
+Glide.VALID_STREAM_KV = VALID_KV
+
 function EngineStream:LoadJSON( data )
     data = Glide.FromJSON( data )
 
