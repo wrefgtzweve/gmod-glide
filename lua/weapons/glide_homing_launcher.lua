@@ -278,8 +278,6 @@ if CLIENT then
         [3] = "glide/weapons/homing_launcher/homing_lock_3.wav"
     }
 
-    local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
-
     function SWEP:OnRemove()
         self:StopAllSounds()
     end
@@ -294,6 +292,8 @@ if CLIENT then
     function SWEP:DoDrawCrosshair()
         return true
     end
+
+    local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
 
     function SWEP:DrawHUD()
         if not self:IsWeaponVisible() then return end
@@ -325,7 +325,10 @@ if CLIENT then
         local targetPos = IsValid( target ) and target:LocalToWorld( target:OBBCenter() ) or
             ( user:GetShootPos() + user:GetAimVector() * self.LockOnMaxDistance )
 
-        DrawWeaponCrosshair( targetPos, AIM_ICON, 0.07, LOCKON_STATE_COLORS[state] )
+        local data = targetPos:ToScreen()
+        if data.visible then
+            DrawWeaponCrosshair( data.x, data.y, AIM_ICON, 0.07, LOCKON_STATE_COLORS[state] )
+        end
 
         return true
     end

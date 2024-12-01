@@ -17,10 +17,7 @@ local SetColor = surface.SetDrawColor
 local SetMaterial = surface.SetMaterial
 local DrawTexturedRectRotated = surface.DrawTexturedRectRotated
 
-function Glide.DrawWeaponCrosshair( origin, icon, size, color )
-    local data = origin:ToScreen()
-    if not data.visible then return end
-
+function Glide.DrawWeaponCrosshair( x, y, icon, size, color )
     size = Floor( ScrH() * size )
 
     if not cache[icon] then
@@ -29,7 +26,7 @@ function Glide.DrawWeaponCrosshair( origin, icon, size, color )
 
     SetMaterial( cache[icon] )
     SetColor( color:Unpack() )
-    DrawTexturedRectRotated( data.x, data.y, size, size, 0 )
+    DrawTexturedRectRotated( x, y, size, size, 0 )
 end
 
 local MAT_BACKGROUND = Material( "glide/weapon_name.png", "smooth" )

@@ -53,7 +53,7 @@ if CLIENT then
 
     -- Setup default cannon
     ENT.WeaponInfo = {
-        { name = "#glide.weapons.cannon", icon = "glide/icons/tank.png", crosshairType = "square", dontAutoUpdateCrosshair = true }
+        { name = "#glide.weapons.cannon" }
     }
 
     -- Strips/lines where smoke particles are spawned when the engine is damaged

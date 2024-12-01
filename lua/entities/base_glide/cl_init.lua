@@ -190,11 +190,8 @@ local TraceLine = util.TraceLine
 local ZERO_VEC = Vector()
 local ZERO_ANG = Angle()
 
-local traceData = {
-    filter = {
-        [1] = NULL,
-        [2] = "glide_missile"
-    }
+local crosshairTraceData = {
+    filter = { NULL, "glide_missile", "glide_projectile" }
 }
 
 function ENT:Think()
@@ -210,22 +207,22 @@ function ENT:Think()
     end
 
     -- Update the crosshair position
-    if self.crosshairAutoUpdate then
+    if self.crosshairPos then
         local target = self:GetLockOnTarget()
 
         if IsValid( target ) then
             self.crosshairPos = target:GetPos()
         else
-            -- Use this weapon's position and angle offset, if set
-            local info = self.WeaponInfo[self:GetWeaponIndex()]
-            local pos = self:LocalToWorld( info.crosshairOrigin or ZERO_VEC )
-            local ang = self:LocalToWorldAngles( info.crosshairAngle or ZERO_ANG )
+            -- Use this weapon's crosshair position and angle offset, if set
+            local info = self.CrosshairInfo[self:GetWeaponIndex()]
+            local pos = self:LocalToWorld( info.traceOrigin or ZERO_VEC )
+            local ang = self:LocalToWorldAngles( info.traceAngle or ZERO_ANG )
 
-            traceData.start = pos
-            traceData.endpos = pos + ang:Forward() * 10000
-            traceData.filter[1] = self
+            crosshairTraceData.start = pos
+            crosshairTraceData.endpos = pos + ang:Forward() * 10000
+            crosshairTraceData.filter[1] = self
 
-            self.crosshairPos = TraceLine( traceData ).HitPos
+            self.crosshairPos = TraceLine( crosshairTraceData ).HitPos
         end
     end
 
@@ -241,9 +238,9 @@ function ENT:OnWeaponIndexChange( _, _, index )
         self.weaponNotifyTimer = RealTime() + 1.5
 
         -- Change the crosshair
-        local weapon = self.WeaponInfo[index]
-        if weapon then
-            self:SetupCrosshair( weapon.crosshairType, nil, nil, weapon.dontAutoUpdateCrosshair ~= true )
+        local info = self.CrosshairInfo[index]
+        if info then
+            self:SetupCrosshair( info )
         end
 
         EmitSound( "glide/ui/hud_switch.wav", Vector(), -2, nil, 1.0, nil, nil, 100 )
@@ -256,9 +253,9 @@ function ENT:OnDriverChange( _, _, driver )
     self:RemoveCrosshair()
 
     if driver == LocalPlayer() then
-        local weapon = self.WeaponInfo[self:GetWeaponIndex()]
-        if weapon then
-            self:SetupCrosshair( weapon.crosshairType, nil, nil, weapon.dontAutoUpdateCrosshair ~= true )
+        local info = self.CrosshairInfo[self:GetWeaponIndex()]
+        if info then
+            self:SetupCrosshair( info )
         end
     end
 
@@ -278,7 +275,10 @@ do
         -- TODO: glide.hud.health=Health
 
         if self.crosshairPos then
-            DrawWeaponCrosshair( self.crosshairPos, self.crosshairIcon, self.crosshairSize, self.crosshairColor )
+            local data = self.crosshairPos:ToScreen()
+            if data.visible then
+                DrawWeaponCrosshair( data.x, data.y, self.crosshairIcon, self.crosshairSize, self.crosshairColor )
+            end
         end
 
         if self.weaponNotifyTimer then
@@ -376,6 +376,7 @@ end
 
 local CROSSHAIR_ICONS = {
     ["dot"] = "glide/aim_dot.png",
+    ["tank"] = "glide/aim_tank.png",
     ["square"] = "glide/aim_square.png"
 }
 
@@ -385,23 +386,28 @@ local LOCKON_STATE_COLORS = {
     [2] = Color( 255, 0, 0 ),
 }
 
-function ENT:SetupCrosshair( iconType, size, color, autoUpdate )
+function ENT:SetupCrosshair( params )
+    params = params or {}
+
     self.crosshairPos = Vector()
-    self.crosshairIcon = CROSSHAIR_ICONS[iconType or "dot"]
-    self.crosshairSize = size or 0.05
-    self.crosshairColor = color or LOCKON_STATE_COLORS[0]
-    self.crosshairAutoUpdate = autoUpdate
+    self.crosshairIcon = CROSSHAIR_ICONS[params.iconType or "dot"]
+    self.crosshairSize = params.size or 0.05
+    self.crosshairColor = params.color or LOCKON_STATE_COLORS[0]
 end
 
 function ENT:RemoveCrosshair()
     self.crosshairPos = nil
-    self.crosshairAutoUpdate = false
+    self.crosshairIcon = nil
+    self.crosshairSize = nil
+    self.crosshairColor = nil
 end
 
 function ENT:OnLockOnStateChange( _, _, state )
     if self:GetDriver() ~= LocalPlayer() then return end
 
-    self.crosshairColor = LOCKON_STATE_COLORS[state]
+    if self.crosshairPos then
+        self.crosshairColor = LOCKON_STATE_COLORS[state]
+    end
 
     if self.lockOnSound then
         self.lockOnSound:Stop()

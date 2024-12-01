@@ -84,9 +84,16 @@ if CLIENT then
     -- Set label/icons for each weapon slot.
     -- This should contain a array of tables, where each table looks like these:
     -- 
-    -- { name = "Machine Guns", icon = "glide/icons/bullets.png", crosshairType = "dot" }
-    -- { name = "Missiles", icon = "glide/icons/rocket.png", crosshairType = "square" }
+    -- { name = "Machine Guns", icon = "glide/icons/bullets.png" }
+    -- { name = "Missiles", icon = "glide/icons/rocket.png" }
     ENT.WeaponInfo = {}
+
+    -- Set crosshair parameters per weapon slot.
+    -- This should contain a array of tables, where each table looks like these:
+    -- 
+    -- { iconType = "dot", traceOrigin = Vector() }
+    -- { iconType = "square", traceOrigin = Vector(), traceAngle = Angle(), size = 0.1 }
+    ENT.CrosshairInfo = {}
 
     -- Positions where engine fire comes from.
     -- This should contain a array of tables, where each table contains:

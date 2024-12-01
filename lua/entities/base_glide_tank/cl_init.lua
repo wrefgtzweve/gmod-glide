@@ -91,16 +91,6 @@ end
 
 local Abs = math.abs
 local Clamp = math.Clamp
-
-local traceData = {
-    filter = {
-        [1] = NULL,
-        [2] = "glide_missile"
-    }
-}
-
-local LocalPlayer = LocalPlayer
-local TraceLine = util.TraceLine
 local GetVolume = Glide.Config.GetVolume
 
 --- Implement the base class `OnUpdateMisc` function.
@@ -124,17 +114,6 @@ function ENT:OnUpdateMisc()
 
     self:OnUpdateAnimations()
     self:ManipulateTurretBones()
-
-    if self:GetDriver() ~= LocalPlayer() then return end
-
-    local pos = self:GetPos()
-    local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
-
-    traceData.start = pos
-    traceData.endpos = pos + ang:Forward() * 50000
-    traceData.filter[1] = self
-
-    self.crosshairPos = TraceLine( traceData ).HitPos
 end
 
 local FrameTime = FrameTime
@@ -174,6 +153,16 @@ function ENT:OnUpdateSounds()
     inputs.throttle = self:GetEngineThrottle()
 
     stream:Think( dt )
+end
+
+local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
+local crosshairColor = Color( 255, 255, 255, 255 )
+
+--- Override the base class `DrawVehicleHUD` function.
+function ENT:DrawVehicleHUD()
+    BaseClass.DrawVehicleHUD( self )
+
+    DrawWeaponCrosshair( ScrW() * 0.5, ScrH() * 0.5, "glide/aim_tank.png", 0.14, crosshairColor )
 end
 
 local Effect = util.Effect
