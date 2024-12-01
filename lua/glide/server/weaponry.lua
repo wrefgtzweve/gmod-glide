@@ -33,6 +33,16 @@ function Glide.FireMissile( pos, ang, attacker, inflictor, target )
     return missile
 end
 
+function Glide.FireProjectile( pos, ang, attacker, inflictor )
+    local projectile = ents.Create( "glide_projectile" )
+    projectile:SetPos( pos )
+    projectile:SetAngles( ang )
+    projectile:Spawn()
+    projectile:SetupProjectile( attacker, inflictor )
+
+    return missile
+end
+
 do
     local RandomFloat = math.Rand
     local Effect = util.Effect

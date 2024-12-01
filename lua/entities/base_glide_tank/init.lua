@@ -26,7 +26,7 @@ function ENT:OnPostInitialize()
     params.brakePower = 15000
     params.suspensionLength = 10
     params.springStrength = 6000
-    params.springDamper = 35000
+    params.springDamper = 30000
 
     params.maxSlip = 80
     params.slipForce = 300
@@ -80,24 +80,23 @@ end
 function ENT:OnWeaponFire()
     if self:WaterLevel() > 2 then return end
 
+    local origin = self:LocalToWorld( self.TurretOffset )
     local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
 
-    -- Directly use the driver's aim position when
+    -- Use the driver's aim position directly when
     -- the turret is aiming close enough to it.
     local driver = self:GetDriver()
 
     if IsValid( driver ) and self:GetIsAimingAtTarget() then
-        local dir = driver:GlideGetAimPos() - self:GetPos()
+        local dir = driver:GlideGetAimPos() - origin
         dir:Normalize()
         ang = dir:Angle()
     end
 
     -- Make the projectile point towards the direction the
     -- turret is aiming at, no matter where it spawned.
-    local origin = self:GetPos()
     local target = origin + ang:Forward() * 50000
-    local traceData = self:GetTraceData( origin, target )
-    local tr = util.TraceLine( traceData )
+    local tr = util.TraceLine( self:GetTraceData( origin, target ) )
 
     if tr.Hit then
         target = tr.HitPos
@@ -107,13 +106,14 @@ function ENT:OnWeaponFire()
     local dir = target - projectilePos
     dir:Normalize()
 
-    -- TODO: Glide.FireProjectile
-    local missile = Glide.FireMissile( projectilePos, dir:Angle(), self:GetDriver(), self )
-    missile.lifeTime = CurTime() + 2
-    missile.maxSpeed = 8000
-    missile.acceleration = 50000
-
+    Glide.FireProjectile( projectilePos, dir:Angle(), self:GetDriver(), self )
     self:EmitSound( self.TurretFireSound, 100, math.random( 95, 105 ), self.TurretFireVolume )
+
+    local phys = self:GetPhysicsObject()
+
+    if IsValid( phys ) then
+        phys:ApplyForceOffset( dir * phys:GetMass() * -self.TurretRecoilForce, projectilePos )
+    end
 end
 
 --- Override the base class `CreateWheel` function.
@@ -247,21 +247,31 @@ function ENT:OnPostThink( dt )
     local driver = self:GetDriver()
     if not IsValid( driver ) or self:WaterLevel() > 2 then return end
 
-    local dir = driver:GlideGetAimPos() - self:GetPos()
-    dir:Normalize()
+    local origin = self:LocalToWorld( self.TurretOffset )
+    local targetDir = driver:GlideGetAimPos() - origin
+    targetDir:Normalize()
 
-    local ang = self:GetTurretAngle()
-    local targetAng = self:WorldToLocalAngles( dir:Angle() )
+    local targetAng = self:WorldToLocalAngles( targetDir:Angle() )
+    local currentAng = self:GetTurretAngle()
+    local isAimingAtTarget = true
 
-    targetAng[1] = Clamp( targetAng[1], self.MinPitchAng, self.MaxPitchAng )
-    targetAng[1] = ExpDecayAngle( ang[1], targetAng[1], 10, dt )
-    targetAng[2] = ExpDecayAngle( ang[2], targetAng[2], 30, dt )
+    if targetAng[1] > self.LowPitchAng then
+        targetAng[1] = self.LowPitchAng
+        isAimingAtTarget = false
 
-    ang[1] = targetAng[1]
-    ang[2] = ang[2] + Clamp( AngleDifference( ang[2], targetAng[2] ), -self.MaxYawSpeed, self.MaxYawSpeed )
+    elseif targetAng[1] < self.HighPitchAng then
+        targetAng[1] = self.HighPitchAng
+        isAimingAtTarget = false
+    end
 
-    self:SetTurretAngle( ang )
-    self:SetIsAimingAtTarget( dir:Dot( self:LocalToWorldAngles( ang ):Forward() ) > 0.99 )
+    targetAng[2] = ExpDecayAngle( currentAng[2], targetAng[2], 30, dt )
+    currentAng[1] = ExpDecayAngle( currentAng[1], targetAng[1], 10, dt )
+    currentAng[2] = currentAng[2] + Clamp( AngleDifference( currentAng[2], targetAng[2] ), -self.MaxYawSpeed, self.MaxYawSpeed )
+
+    isAimingAtTarget = isAimingAtTarget and targetDir:Dot( self:LocalToWorldAngles( currentAng ):Forward() ) > 0.99
+
+    self:SetTurretAngle( currentAng )
+    self:SetIsAimingAtTarget( isAimingAtTarget )
     self:ManipulateTurretBones()
 end
 

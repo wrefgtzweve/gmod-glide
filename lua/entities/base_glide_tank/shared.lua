@@ -100,15 +100,17 @@ if SERVER then
     ENT.StartupTime = 0.8
 
     -- Setup default cannon
-    ENT.TurretFireSound = ")glide/tanks/acf_fire4.mp3"
-    ENT.TurretFireVolume = 1.0
-
     ENT.WeaponSlots = {
         { maxAmmo = 0, fireRate = 2.0 },
     }
 
-    ENT.MinPitchAng = -25
-    ENT.MaxPitchAng = 5
+    ENT.TurretFireSound = ")glide/tanks/acf_fire4.mp3"
+    ENT.TurretFireVolume = 1.0
+    ENT.TurretRecoilForce = 50
+
+    ENT.TurretOffset = Vector( 0, 0, 150 )
+    ENT.HighPitchAng = -25
+    ENT.LowPitchAng = 10
     ENT.MaxYawSpeed = 1
 
     -- How much torque to distribute among all wheels?

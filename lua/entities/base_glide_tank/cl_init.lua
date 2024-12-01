@@ -16,6 +16,16 @@ function ENT:SetupRightTrack( materialSlot, texture, bumpmap )
     self:SetSubMaterial( materialSlot, "!glide_tank_track_r" )
 end
 
+--- Implement the base class `AllowFirstPersonMuffledSound` function.
+function ENT:AllowFirstPersonMuffledSound( _ )
+    return false
+end
+
+--- Override the base class `GetFirstPersonOffset` function.
+function ENT:GetFirstPersonOffset()
+    return Vector( 0, 0, 90 )
+end
+
 --- Override the base class `OnEngineStateChange` function.
 function ENT:OnEngineStateChange( _, _, state )
     if state == 1 then
