@@ -49,7 +49,7 @@ function ENT:TurnOn()
     local state = self:GetEngineState()
 
     if state ~= 2 then
-        BaseClass.TurnOn( self )
+        self:SetEngineState( 1 )
     end
 
     self:SetEngineThrottle( 0 )

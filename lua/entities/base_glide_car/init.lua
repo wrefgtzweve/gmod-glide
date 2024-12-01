@@ -123,7 +123,7 @@ function ENT:TurnOn()
     end
 
     if state ~= 2 then
-        BaseClass.TurnOn( self )
+        self:SetEngineState( 1 )
     end
 
     self:SetFlywheelRPM( 0 )
