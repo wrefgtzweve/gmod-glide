@@ -24,6 +24,7 @@ function ENT:Initialize()
 
     self.downSoundCD = 0
     self.upSoundCD = 0
+    self.enableSounds = true
 
     self:SetupWheel()
 end
@@ -136,6 +137,8 @@ do
     local PlaySoundSet = Glide.PlaySoundSet
 
     function ENT:DoSuspensionSounds( change, vehicle )
+        if not self.enableSounds then return end
+
         local t = CurTime()
 
         if change > 0.01 and t > self.upSoundCD then

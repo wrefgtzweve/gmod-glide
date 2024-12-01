@@ -7,6 +7,7 @@ function ENT:Initialize()
 
     self.sounds = {}
     self.soundSurface = {}
+    self.enableSounds = true
 end
 
 function ENT:OnRemove()
@@ -28,6 +29,8 @@ end
 local Clamp = math.Clamp
 
 function ENT:ProcessSound( id, surfaceId, soundSet, altSurface, volume, pitch )
+    if not self.enableSounds then return end
+
     local path = soundSet[surfaceId]
     local snd = self.sounds[id]
 
