@@ -1,3 +1,11 @@
+CreateConVar( "glide_cam_x", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera position to the server." )
+CreateConVar( "glide_cam_y", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera position to the server." )
+CreateConVar( "glide_cam_z", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera position to the server." )
+
+CreateConVar( "glide_cam_pitch", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera rotation to the server." )
+CreateConVar( "glide_cam_yaw", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera rotation to the server." )
+CreateConVar( "glide_cam_roll", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera rotation to the server." )
+
 local Camera = Glide.Camera or {}
 
 Glide.Camera = Camera
@@ -10,19 +18,27 @@ hook.Add( "Glide_OnLocalExitVehicle", "Glide.DeactivateCamera", function()
     Camera:Deactivate()
 end )
 
-Camera.aimPos = Vector()
+Camera.lastAimPos = Vector()
 Camera.viewAngles = Angle()
 Camera.isInFirstPerson = false
 Camera.FIRST_PERSON_DSP = 30
 
 function Glide.GetCameraAimPos()
-    return Camera.aimPos
+    return Camera.lastAimPos
 end
 
 local Config = Glide.Config
 
 function Camera:Activate( vehicle, seatIndex )
     Config = Glide.Config
+
+    self.cvarX = GetConVar( "glide_cam_x" )
+    self.cvarY = GetConVar( "glide_cam_y" )
+    self.cvarZ = GetConVar( "glide_cam_z" )
+
+    self.cvarPitch = GetConVar( "glide_cam_pitch" )
+    self.cvarYaw = GetConVar( "glide_cam_yaw" )
+    self.cvarRoll = GetConVar( "glide_cam_roll" )
 
     self.user = LocalPlayer()
     self.vehicle = vehicle
@@ -339,31 +355,35 @@ function Camera:CalcView()
         self.origin = endPos
     end
 
-    local dir
+    -- Update aim position
+    local origin = self.origin
 
-    if Config.mouseFlyMode == MOUSE_FLY_MODE.AIM and self.mode == CAMERA_TYPE.AIRCRAFT then
-        -- Make the player's view angles point
-        -- in the same direction as the camera.
-        dir = angles:Forward()
-    else
-        -- Make the player's view angles point
-        -- towards where the camera is pointing at.
-        local tr = TraceLine( {
-            start = self.origin,
-            endpos = self.origin + angles:Forward() * 10000,
-            filter = { user, vehicle }
-        } )
+    self.lastAimPos = TraceLine( {
+        start = origin,
+        endpos = origin + angles:Forward() * 50000,
+        filter = { user, vehicle }
+    } ).HitPos
 
-        dir = tr.HitPos - user:EyePos()
-        dir:Normalize()
+    -- Let the server know where the camera is
+    if self.cvarX then
+        self.cvarX:SetFloat( origin[1] )
+        self.cvarY:SetFloat( origin[2] )
+        self.cvarZ:SetFloat( origin[3] )
 
-        self.aimPos = tr.HitPos
+        self.cvarPitch:SetFloat( angles[1] )
+        self.cvarYaw:SetFloat( angles[2] )
+        self.cvarRoll:SetFloat( angles[3] )
     end
 
-    self.viewAngles = dir:Angle()
+    -- Convert the view angles to be relative to the seat
+    local seat = user:GetVehicle()
+
+    if IsValid( seat ) then
+        self.viewAngles = seat:WorldToLocalAngles( angles )
+    end
 
     return {
-        origin = self.origin,
+        origin = origin,
         angles = angles + self.punchAngle,
         fov = self.fov,
         drawviewer = not self.isInFirstPerson

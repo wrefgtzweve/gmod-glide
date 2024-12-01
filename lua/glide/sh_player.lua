@@ -9,44 +9,37 @@ function PlayerMeta:GlideGetSeatIndex()
 end
 
 if SERVER then
-    local IsValid = IsValid
-    local playerAngles = {}
+    --- Get the player's Glide camera position.
+    function PlayerMeta:GlideGetCameraPos()
+        local camPos = self:EyePos() -- Just in case GetInfoNum fails
 
-    hook.Add( "SetupMove", "Glide.StoreViewAngles", function( ply, _, cmd )
-        if ply.IsUsingGlideVehicle then
-            playerAngles[ply] = cmd:GetViewAngles()
-        end
-    end )
+        camPos[1] = self:GetInfoNum( "glide_cam_x", camPos[1] )
+        camPos[2] = self:GetInfoNum( "glide_cam_y", camPos[2] )
+        camPos[3] = self:GetInfoNum( "glide_cam_z", camPos[3] )
 
-    hook.Add( "PlayerDisconnected", "Glide.CleanupViewAngles", function( ply )
-        playerAngles[ply] = nil
-    end )
-
-    local ZERO_ANG = Angle()
-
-    --- Get the player's camera angles from their `CUserCmd`.
-    function PlayerMeta:GlideGetCameraAngles()
-        return playerAngles[self] or ZERO_ANG
+        return camPos
     end
 
-    local ZERO_VEC = Vector()
+    --- Get the player's Glide camera angles.
+    function PlayerMeta:GlideGetCameraAngles()
+        local camAng = self:EyeAngles() -- Just in case GetInfoNum fails
+
+        camAng[1] = self:GetInfoNum( "glide_cam_pitch", camAng[1] )
+        camAng[2] = self:GetInfoNum( "glide_cam_yaw", camAng[2] )
+        camAng[3] = self:GetInfoNum( "glide_cam_roll", camAng[3] )
+
+        return camAng
+    end
+
     local TraceLine = util.TraceLine
 
-    --- Attempt to get where this player is aiming at
-    --- while inside a Glide vehicle.
     function PlayerMeta:GlideGetAimPos()
-        local vehicle = self:GlideGetVehicle()
-        if not IsValid( vehicle ) then return ZERO_VEC end
+        local origin = self:GlideGetCameraPos()
 
-        local fw = self:GlideGetCameraAngles():Forward()
-        local startPos = self:EyePos()
-
-        local tr = TraceLine( {
-            start = startPos,
-            endpos = startPos + fw * 50000,
-            filter = { self, vehicle }
-        } )
-
-        return tr.HitPos
+        return TraceLine( {
+            start = origin,
+            endpos = origin + self:GlideGetCameraAngles():Forward() * 50000,
+            filter = { self, self:GlideGetVehicle() }
+        } ).HitPos
     end
 end
