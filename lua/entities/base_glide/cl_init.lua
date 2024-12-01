@@ -207,7 +207,7 @@ function ENT:Think()
     end
 
     -- Update the crosshair position
-    if self.crosshairPos then
+    if self.crosshairUpdatePos then
         local target = self:GetLockOnTarget()
 
         if IsValid( target ) then
@@ -215,14 +215,17 @@ function ENT:Think()
         else
             -- Use this weapon's crosshair position and angle offset, if set
             local info = self.CrosshairInfo[self:GetWeaponIndex()]
-            local pos = self:LocalToWorld( info.traceOrigin or ZERO_VEC )
-            local ang = self:LocalToWorldAngles( info.traceAngle or ZERO_ANG )
 
-            crosshairTraceData.start = pos
-            crosshairTraceData.endpos = pos + ang:Forward() * 10000
-            crosshairTraceData.filter[1] = self
+            if info then
+                local pos = self:LocalToWorld( info.traceOrigin or ZERO_VEC )
+                local ang = self:LocalToWorldAngles( info.traceAngle or ZERO_ANG )
 
-            self.crosshairPos = TraceLine( crosshairTraceData ).HitPos
+                crosshairTraceData.start = pos
+                crosshairTraceData.endpos = pos + ang:Forward() * 10000
+                crosshairTraceData.filter[1] = self
+
+                self.crosshairPos = TraceLine( crosshairTraceData ).HitPos
+            end
         end
     end
 
@@ -393,6 +396,7 @@ function ENT:SetupCrosshair( params )
     self.crosshairIcon = CROSSHAIR_ICONS[params.iconType or "dot"]
     self.crosshairSize = params.size or 0.05
     self.crosshairColor = params.color or LOCKON_STATE_COLORS[0]
+    self.crosshairUpdatePos = params.dontAutoUpdatePos ~= true
 end
 
 function ENT:RemoveCrosshair()
@@ -400,6 +404,7 @@ function ENT:RemoveCrosshair()
     self.crosshairIcon = nil
     self.crosshairSize = nil
     self.crosshairColor = nil
+    self.crosshairUpdatePos = false
 end
 
 function ENT:OnLockOnStateChange( _, _, state )
