@@ -64,7 +64,7 @@ if CLIENT then
 
     -- Track sound parameters
     ENT.TrackSound = ")glide/tanks/tracks_leopard.wav"
-    ENT.TrackVolume = 0.9
+    ENT.TrackVolume = 0.8
 
     -- Engine sounds
     ENT.StartSound = "Glide.Engine.TruckStart"
@@ -97,7 +97,7 @@ if SERVER then
     ENT.StartupTime = 0.8
 
     -- Setup default cannon
-    ENT.TurretFireSound = ")glide/tanks/acf_fire2.mp3"
+    ENT.TurretFireSound = ")glide/tanks/acf_fire4.mp3"
     ENT.TurretFireVolume = 1.0
 
     ENT.WeaponSlots = {
