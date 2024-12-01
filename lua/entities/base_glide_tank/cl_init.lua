@@ -162,6 +162,7 @@ local crosshairColor = Color( 255, 255, 255, 255 )
 function ENT:DrawVehicleHUD()
     BaseClass.DrawVehicleHUD( self )
 
+    crosshairColor.a = self:GetIsAimingAtTarget() and 255 or 50
     DrawWeaponCrosshair( ScrW() * 0.5, ScrH() * 0.5, "glide/aim_tank.png", 0.14, crosshairColor )
 end
 

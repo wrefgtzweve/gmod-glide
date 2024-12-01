@@ -82,6 +82,16 @@ function ENT:OnWeaponFire()
 
     local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
 
+    -- Directly use the driver's aim position when
+    -- the turret is aiming close enough to it.
+    local driver = self:GetDriver()
+
+    if IsValid( driver ) and self:GetIsAimingAtTarget() then
+        local dir = driver:GlideGetAimPos() - self:GetPos()
+        dir:Normalize()
+        ang = dir:Angle()
+    end
+
     -- Make the projectile point towards the direction the
     -- turret is aiming at, no matter where it spawned.
     local origin = self:GetPos()
@@ -244,7 +254,6 @@ function ENT:OnPostThink( dt )
     local targetAng = self:WorldToLocalAngles( dir:Angle() )
 
     targetAng[1] = Clamp( targetAng[1], self.MinPitchAng, self.MaxPitchAng )
-
     targetAng[1] = ExpDecayAngle( ang[1], targetAng[1], 10, dt )
     targetAng[2] = ExpDecayAngle( ang[2], targetAng[2], 30, dt )
 
@@ -252,6 +261,7 @@ function ENT:OnPostThink( dt )
     ang[2] = ang[2] + Clamp( AngleDifference( ang[2], targetAng[2] ), -self.MaxYawSpeed, self.MaxYawSpeed )
 
     self:SetTurretAngle( ang )
+    self:SetIsAimingAtTarget( dir:Dot( self:LocalToWorldAngles( ang ):Forward() ) > 0.99 )
     self:ManipulateTurretBones()
 end
 

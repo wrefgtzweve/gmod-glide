@@ -32,7 +32,9 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "EngineThrottle" )
     self:NetworkVar( "Float", "EnginePower" )
     self:NetworkVar( "Float", "TrackSpeed" )
+
     self:NetworkVar( "Angle", "TurretAngle" )
+    self:NetworkVar( "Bool", "IsAimingAtTarget" )
 end
 
 --- Override the base class `IsEngineOn` function.
