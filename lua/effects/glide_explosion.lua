@@ -103,7 +103,8 @@ local SMOKE_SPRITES = {
     "particle/smokesprites_0016"
 }
 
-local Vector = Vector
+local GRAVITY = Vector( 0, 0, 400 )
+local GRAVITY2 = Vector( 0, 0, 200 )
 
 function EFFECT:Smoke( emitter, origin, normal, scale )
     local count = math.floor( scale * 20 )
@@ -116,7 +117,7 @@ function EFFECT:Smoke( emitter, origin, normal, scale )
             local size = RandomFloat( 100, 120 ) * scale
             local vel = ( normal * RandomInt( 1300, 1500 ) ) + RandomVec() * 1000
 
-            p:SetGravity( Vector( 0, 0, 400 ) )
+            p:SetGravity( GRAVITY )
             p:SetVelocity( vel * scale )
             p:SetAngleVelocity( RandomAng() * 0.02 )
             p:SetAirResistance( 400 )
@@ -140,7 +141,7 @@ function EFFECT:Smoke( emitter, origin, normal, scale )
         if p then
             local size = RandomFloat( 100, 120 ) * scale
 
-            p:SetGravity( Vector( 0, 0, 200 ) )
+            p:SetGravity( GRAVITY2 )
             p:SetVelocity( RandomVec() * RandomInt( 800, 1500 ) * scale )
             p:SetAngleVelocity( RandomAng() * 0.02 )
             p:SetAirResistance( 350 )

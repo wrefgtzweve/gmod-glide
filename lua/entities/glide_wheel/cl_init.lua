@@ -7,7 +7,9 @@ function ENT:Initialize()
 
     self.sounds = {}
     self.soundSurface = {}
+
     self.enableSounds = true
+    self.skidmarkScale = 0.5
 end
 
 function ENT:OnRemove()
@@ -193,14 +195,14 @@ function ENT:Think()
 
         if sideSlipAmplitude > 0.3 and SKID_MARK_SURFACES[surfaceId] then
             contactPos = contactPos + velocity * 0.04
-            self.lastSkidId = AddSkidMarkPiece( self.lastSkidId, contactPos, velocity, up, self:GetRadius() * 0.5, Clamp( sideSlipAmplitude, 0, 1 ) )
+            self.lastSkidId = AddSkidMarkPiece( self.lastSkidId, contactPos, velocity, up, self:GetRadius() * self.skidmarkScale, Clamp( sideSlipAmplitude, 0, 1 ) )
         else
             self.lastSkidId = nil
         end
 
         if fastAmplitude > 0.05 and TIRE_ROLL_SURFACES[surfaceId] then
             contactPos = contactPos + velocity * 0.04
-            self.lastRollId = AddTireRollPiece( self.lastRollId, contactPos, velocity, up, self:GetRadius() * 0.5, 1 )
+            self.lastRollId = AddTireRollPiece( self.lastRollId, contactPos, velocity, up, self:GetRadius() * self.skidmarkScale, 1 )
         else
             self.lastRollId = nil
         end

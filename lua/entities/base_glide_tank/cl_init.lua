@@ -83,6 +83,8 @@ function ENT:ActivateMisc()
     if not wheels then return end
 
     for i, w in ipairs( wheels ) do
+        w.skidmarkScale = 1
+
         if i == 2 or i == 5 then
             w.enableSounds = false
         end
@@ -166,14 +168,16 @@ function ENT:OnUpdateSounds()
 end
 
 local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
-local crosshairColor = Color( 255, 255, 255, 255 )
+local crosshairColor = {
+    [true] = Color( 255, 255, 255, 255 ),
+    [false] = Color( 150, 150, 150, 100 )
+}
 
 --- Override the base class `DrawVehicleHUD` function.
 function ENT:DrawVehicleHUD()
     BaseClass.DrawVehicleHUD( self )
 
-    crosshairColor.a = self:GetIsAimingAtTarget() and 255 or 50
-    DrawWeaponCrosshair( ScrW() * 0.5, ScrH() * 0.5, "glide/aim_tank.png", 0.14, crosshairColor )
+    DrawWeaponCrosshair( ScrW() * 0.5, ScrH() * 0.5, "glide/aim_tank.png", 0.14, crosshairColor[self:GetIsAimingAtTarget()] )
 end
 
 local Effect = util.Effect

@@ -50,6 +50,8 @@ end
 function ENT:ManipulateTurretBones() end
 
 if CLIENT then
+    ENT.MaxMiscDistance = 5000
+
     function ENT:GetCameraType( _seatIndex )
         return 1 -- Glide.CAMERA_TYPE.TURRET
     end
@@ -67,7 +69,7 @@ if CLIENT then
 
     -- Track sound parameters
     ENT.TrackSound = ")glide/tanks/tracks_leopard.wav"
-    ENT.TrackVolume = 0.8
+    ENT.TrackVolume = 0.7
 
     -- Engine sounds
     ENT.StartSound = "Glide.Engine.TruckStart"
@@ -91,7 +93,7 @@ if SERVER then
     ENT.BulletDamageMultiplier = 0.25
     ENT.BlastDamageMultiplier = 1
     ENT.CollisionDamageMultiplier = 0.8
-    ENT.EngineDamageMultiplier = 0.0005
+    ENT.EngineDamageMultiplier = 0.0004
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"

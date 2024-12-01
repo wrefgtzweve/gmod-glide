@@ -15,7 +15,10 @@ local CurTime = CurTime
 
 if CLIENT then
     function ENT:Initialize()
-        self.smokeSpinSpeed = math.random( 60, 110 )
+        local m = Matrix()
+        m:SetAngles( Angle( 90, 0, 0 ) )
+        m:SetScale( Vector( 0.2, 0.2, 0.8 ) )
+        self:EnableMatrix( "RenderMultiply", m )
     end
 
     local Effect = util.Effect
@@ -23,16 +26,14 @@ if CLIENT then
 
     function ENT:Think()
         if self:WaterLevel() > 0 then
-            self.smokeSpinSpeed = nil
-
-        elseif self.smokeSpinSpeed then
-            local eff = EffectData()
-            eff:SetOrigin( self:GetPos() )
-            eff:SetNormal( -self:GetForward() )
-            eff:SetColor( self.smokeSpinSpeed )
-            eff:SetScale( 0.6 )
-            Effect( "glide_missile", eff )
+            return false
         end
+
+        local eff = EffectData()
+        eff:SetOrigin( self:GetPos() )
+        eff:SetNormal( -self:GetForward() )
+        eff:SetScale( 1 )
+        Effect( "glide_projectile", eff )
 
         self:SetNextClientThink( CurTime() + 0.02 )
 
@@ -43,14 +44,14 @@ end
 if not SERVER then return end
 
 function ENT:Initialize()
-    self:SetModel( "models/glide/weapons/homing_rocket.mdl" )
+    self:SetModel( "models/props_phx/misc/flakshell_big.mdl" )
     self:SetSolid( SOLID_VPHYSICS )
     self:SetMoveType( MOVETYPE_VPHYSICS )
     self:PhysicsInit( SOLID_VPHYSICS )
     self:DrawShadow( false )
 
-    self.damage = 100
-    self.radius = 400
+    self.damage = 250
+    self.radius = 350
     self.lifeTime = CurTime() + 5
 
     -- We're gonna do our own physics for this
@@ -97,7 +98,7 @@ local traceData = {
     mask = MASK_PLAYERSOLID,
 }
 
-local GRAVITY = Vector( 0, 0, -800 )
+local GRAVITY = Vector( 0, 0, -900 )
 
 function ENT:Think()
     local t = CurTime()

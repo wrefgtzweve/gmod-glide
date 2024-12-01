@@ -109,6 +109,12 @@ function ENT:OnWeaponFire()
     Glide.FireProjectile( projectilePos, dir:Angle(), self:GetDriver(), self )
     self:EmitSound( self.TurretFireSound, 100, math.random( 95, 105 ), self.TurretFireVolume )
 
+    local eff = EffectData()
+    eff:SetOrigin( projectilePos )
+    eff:SetNormal( dir )
+    eff:SetScale( 1 )
+    util.Effect( "glide_tank_cannon", eff )
+
     local phys = self:GetPhysicsObject()
 
     if IsValid( phys ) then
