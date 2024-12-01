@@ -46,14 +46,12 @@ function SWEP:Deploy()
     self:SetNextPrimaryFire( CurTime() + 0.5 )
 
     self.repairTarget = NULL
-    self.aimPos = nil
 
     return true
 end
 
 function SWEP:Holster()
     self.repairTarget = NULL
-    self.aimPos = nil
 
     return true
 end
