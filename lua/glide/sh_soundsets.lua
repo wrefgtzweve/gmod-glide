@@ -37,8 +37,8 @@ function Glide.GetRandomSound( id )
     return set.paths[RandomInt( #set.paths )]
 end
 
-local EndsWith = string.EndsWith
 local dummySet = { paths = {}, level = 80, minPitch = 100, maxPitch = 100 }
+local audioExt = { [".wav"] = true, [".mp3"] = true }
 
 --- Play a random sound from a sound set.
 --- If you pass a .wav file path as a set `id`, that will be played instead.
@@ -46,7 +46,7 @@ function Glide.PlaySoundSet( id, source, volume, pitch, level )
     local set = soundSets[id]
 
     if not set then
-        if EndsWith( id, ".wav" ) then
+        if audioExt[id:sub( -4 )] then
             dummySet.paths[1] = id
             set = dummySet
         else
