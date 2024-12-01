@@ -131,8 +131,6 @@ function ENT:IsEngineOn()
 end
 
 if CLIENT then
-    -- Set which camera mode to use when entering this vehicle
-    ENT.CameraType = Glide.CAMERA_TYPE.CAR
     ENT.CameraOffset = Vector( -230, 0, 50 )
     ENT.CameraAngleOffset = Angle( 4, 0, 0 )
 

@@ -23,11 +23,12 @@ function ENT:SetupDataTables()
 end
 
 if CLIENT then
-    -- Set which camera mode to use when entering this vehicle
-    ENT.CameraType = Glide.CAMERA_TYPE.AIRCRAFT
-
     -- Set exhaust positions relative to the chassis
     ENT.ExhaustPositions = {}
+
+    function ENT:GetCameraType( _seatIndex )
+        return 2 -- Glide.CAMERA_TYPE.AIRCRAFT
+    end
 end
 
 if SERVER then

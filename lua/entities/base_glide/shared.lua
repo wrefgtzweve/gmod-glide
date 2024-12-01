@@ -72,7 +72,6 @@ if CLIENT then
     ENT.Spawnable = false -- Hide from the default spawn list clientside
 
     -- Setup the camera parameters for this vehicle
-    ENT.CameraType = Glide.CAMERA_TYPE.CAR
     ENT.CameraOffset = Vector( -200, 0, 50 )
     ENT.CameraAngleOffset = Angle( 6, 0, 0 )
     ENT.CameraFirstPersonOffset = Vector( 0, 0, 5 )
@@ -117,9 +116,12 @@ if CLIENT then
     function ENT:OnLocalPlayerExit() end
 
     function ENT:GetSeatBoneManipulations( _seatIndex ) end
-    function ENT:OverrideCameraType( _seatIndex ) return nil end
     function ENT:AllowFirstPersonMuffledSound( _seatIndex ) return true end
     function ENT:AllowWindSound( _seatIndex ) return false, 0 end
+
+    function ENT:GetCameraType( _seatIndex )
+        return 0 -- Glide.CAMERA_TYPE.CAR
+    end
 end
 
 if SERVER then

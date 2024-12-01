@@ -50,8 +50,9 @@ end
 function ENT:ManipulateTurretBones() end
 
 if CLIENT then
-    -- Set which camera mode to use when entering this vehicle
-    ENT.CameraType = Glide.CAMERA_TYPE.TURRET
+    function ENT:GetCameraType( _seatIndex )
+        return 1 -- Glide.CAMERA_TYPE.TURRET
+    end
 
     -- Setup default cannon
     ENT.WeaponInfo = {

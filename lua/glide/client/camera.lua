@@ -201,7 +201,7 @@ function Camera:Think()
     local vehicleAngles = vehicle:GetAngles()
     local velocity = vehicle:GetVelocity()
     local speed = Abs( velocity:Length() )
-    local mode = vehicle:OverrideCameraType( self.seatIndex ) or vehicle.CameraType or CAMERA_TYPE.CAR
+    local mode = vehicle:GetCameraType( self.seatIndex )
 
     self.mode = mode
 
