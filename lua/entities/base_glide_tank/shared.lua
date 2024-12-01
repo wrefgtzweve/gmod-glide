@@ -97,6 +97,9 @@ if SERVER then
     ENT.StartupTime = 0.8
 
     -- Setup default cannon
+    ENT.TurretFireSound = ")glide/tanks/acf_fire2.mp3"
+    ENT.TurretFireVolume = 1.0
+
     ENT.WeaponSlots = {
         { maxAmmo = 0, fireRate = 2.0 },
     }

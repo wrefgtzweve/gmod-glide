@@ -98,10 +98,12 @@ function ENT:OnWeaponFire()
     dir:Normalize()
 
     -- TODO: Glide.FireProjectile
-    local missile = self:FireMissile( projectilePos, dir:Angle(), self:GetDriver() )
+    local missile = Glide.FireMissile( projectilePos, dir:Angle(), self:GetDriver(), self )
     missile.lifeTime = CurTime() + 2
     missile.maxSpeed = 8000
     missile.acceleration = 50000
+
+    self:EmitSound( self.TurretFireSound, 100, math.random( 95, 105 ), self.TurretFireVolume )
 end
 
 --- Override the base class `CreateWheel` function.
@@ -177,6 +179,8 @@ function ENT:OnPostThink( dt )
 
         if IsValid( phys ) and phys:IsAsleep() then
             self:SetTrackSpeed( 0 )
+            self.availableTorqueL = 0
+            self.availableTorqueR = 0
 
             local driverInput = self:GetInputFloat( 1, "accelerate" ) + self:GetInputFloat( 1, "brake" ) + self:GetInputFloat( 1, "steer" )
 

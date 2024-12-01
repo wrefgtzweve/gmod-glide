@@ -22,10 +22,8 @@ if CLIENT then
     }
 
     function ENT:OnCreateEngineStream( stream )
-        stream:LoadPreset( "airbus" )
+        stream:LoadPreset( "rhino" )
         stream.offset = Vector( -30, 0, 0 )
-        stream.pitch = 0.9
-        stream.maxVolume = 0.8
     end
 
     function ENT:OnActivateMisc()
