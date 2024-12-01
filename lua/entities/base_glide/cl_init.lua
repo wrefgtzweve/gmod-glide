@@ -6,6 +6,10 @@ ENT.AutomaticFrameAdvance = true
 function ENT:Initialize()
     self.sounds = {}
 
+    self.crosshair = {
+        enabled = false
+    }
+
     -- Create a RangedFeature to handle engine sounds
     self.engineSounds = Glide.CreateRangedFeature( self, self.MaxSoundDistance )
     self.engineSounds:SetTestCallback( "ShouldActivateSounds" )
@@ -184,16 +188,6 @@ function ENT:UpdateMisc( distanceFraction )
     self:OnUpdateMisc( distanceFraction )
 end
 
-local IsValid = IsValid
-local TraceLine = util.TraceLine
-
-local ZERO_VEC = Vector()
-local ZERO_ANG = Angle()
-
-local crosshairTraceData = {
-    filter = { NULL, "glide_missile", "glide_projectile" }
-}
-
 function ENT:Think()
     -- Run again next frame
     self:SetNextClientThink( CurTime() )
@@ -206,62 +200,146 @@ function ENT:Think()
         self.miscFeatures:Think()
     end
 
-    -- Update the crosshair position
-    if self.crosshairUpdatePos then
-        local target = self:GetLockOnTarget()
-
-        if IsValid( target ) then
-            self.crosshairPos = target:GetPos()
-        else
-            -- Use this weapon's crosshair position and angle offset, if set
-            local info = self.CrosshairInfo[self:GetWeaponIndex()]
-
-            if info then
-                local pos = self:LocalToWorld( info.traceOrigin or ZERO_VEC )
-                local ang = self:LocalToWorldAngles( info.traceAngle or ZERO_ANG )
-
-                crosshairTraceData.start = pos
-                crosshairTraceData.endpos = pos + ang:Forward() * 10000
-                crosshairTraceData.filter[1] = self
-
-                self.crosshairPos = TraceLine( crosshairTraceData ).HitPos
-            end
-        end
+    if self.crosshair.enabled then
+        self:UpdateCrosshairPosition()
     end
 
     return true
+end
+
+-- Implement the base class `OnLocalPlayerEnter` function.
+function ENT:OnLocalPlayerEnter( seatIndex )
+    self:DisableCrosshair()
+
+    if seatIndex > 1 then return end
+
+    -- Setup the crosshair
+    local info = self.CrosshairInfo[self:GetWeaponIndex()]
+
+    if info then
+        self:EnableCrosshair( info )
+    end
+end
+
+-- Implement the base class `OnLocalPlayerExit` function.
+function ENT:OnLocalPlayerExit()
+    self:DisableCrosshair()
+end
+
+local IsValid = IsValid
+
+do
+    local TraceLine = util.TraceLine
+    local ZERO_VEC = Vector()
+    local ZERO_ANG = Angle()
+
+    local crosshairTraceData = {
+        filter = { NULL, "glide_missile", "glide_projectile" }
+    }
+
+    function ENT:UpdateCrosshairPosition()
+        local target = self:GetLockOnTarget()
+
+        if IsValid( target ) then
+            self.crosshair.origin = target:GetPos()
+            return
+        end
+
+        -- Use this weapon's crosshair position and angle offset, if set
+        local info = self.CrosshairInfo[self:GetWeaponIndex()]
+
+        if info then
+            local pos = self:LocalToWorld( info.traceOrigin or ZERO_VEC )
+            local ang = self:LocalToWorldAngles( info.traceAngle or ZERO_ANG )
+
+            crosshairTraceData.start = pos
+            crosshairTraceData.endpos = pos + ang:Forward() * 10000
+            crosshairTraceData.filter[1] = self
+
+            self.crosshair.origin = TraceLine( crosshairTraceData ).HitPos
+        end
+    end
+end
+
+do
+    local CROSSHAIR_ICONS = {
+        ["dot"] = "glide/aim_dot.png",
+        ["tank"] = "glide/aim_tank.png",
+        ["square"] = "glide/aim_square.png"
+    }
+
+    local LOCKON_STATE_COLORS = {
+        [0] = Color( 255, 255, 255 ),
+        [1] = Color( 100, 255, 100 ),
+        [2] = Color( 255, 0, 0 ),
+    }
+
+    function ENT:EnableCrosshair( params )
+        params = params or {}
+
+        local crosshair = self.crosshair
+
+        crosshair.enabled = true
+        crosshair.origin = Vector()
+        crosshair.icon = CROSSHAIR_ICONS[params.iconType or "dot"]
+
+        crosshair.size = params.size or 0.05
+        crosshair.color = params.color or LOCKON_STATE_COLORS[0]
+    end
+
+    function ENT:DisableCrosshair()
+        local crosshair = self.crosshair
+
+        crosshair.enabled = false
+        crosshair.origin = nil
+        crosshair.icon = nil
+        crosshair.size = nil
+        crosshair.color = nil
+    end
+
+    function ENT:OnLockOnStateChange( _, _, state )
+        if self:GetDriver() ~= LocalPlayer() then return end
+
+        if self.crosshair.enabled then
+            self.crosshair.color = LOCKON_STATE_COLORS[state]
+        end
+
+        if self.lockOnSound then
+            self.lockOnSound:Stop()
+            self.lockOnSound = nil
+        end
+
+        if state > 0 then
+            self.lockOnSound = CreateSound( self, state == 1 and "glide/weapons/lockstart.wav" or "glide/weapons/locktone.wav" )
+            self.lockOnSound:SetSoundLevel( 90 )
+            self.lockOnSound:PlayEx( 1.0, 98 )
+        end
+    end
 end
 
 local RealTime = RealTime
 local LocalPlayer = LocalPlayer
 
 function ENT:OnWeaponIndexChange( _, _, index )
-    if self:GetDriver() == LocalPlayer() then
+    local driver = self:GetDriver()
+
+    if driver == LocalPlayer() then
         -- Show the weapon switch notification
         self.weaponNotifyTimer = RealTime() + 1.5
+        EmitSound( "glide/ui/hud_switch.wav", Vector(), -2, nil, 1.0, nil, nil, 100 )
 
         -- Change the crosshair
         local info = self.CrosshairInfo[index]
-        if info then
-            self:SetupCrosshair( info )
-        end
 
-        EmitSound( "glide/ui/hud_switch.wav", Vector(), -2, nil, 1.0, nil, nil, 100 )
+        if info then
+            self:EnableCrosshair( info )
+        end
     end
 
     self:OnSwitchWeapon( index )
 end
 
-function ENT:OnDriverChange( _, _, driver )
-    self:RemoveCrosshair()
-
-    if driver == LocalPlayer() then
-        local info = self.CrosshairInfo[self:GetWeaponIndex()]
-        if info then
-            self:SetupCrosshair( info )
-        end
-    end
-
+function ENT:OnDriverChange( _, _, _ )
     if self.lockOnSound then
         self.lockOnSound:Stop()
         self.lockOnSound = nil
@@ -277,10 +355,12 @@ do
 
         -- TODO: glide.hud.health=Health
 
-        if self.crosshairPos then
-            local data = self.crosshairPos:ToScreen()
+        local crosshair = self.crosshair
+
+        if crosshair.enabled then
+            local data = crosshair.origin:ToScreen()
             if data.visible then
-                DrawWeaponCrosshair( data.x, data.y, self.crosshairIcon, self.crosshairSize, self.crosshairColor )
+                DrawWeaponCrosshair( data.x, data.y, crosshair.icon, crosshair.size, crosshair.color )
             end
         end
 
@@ -374,54 +454,5 @@ do
 
             y = y - h - spacing
         end
-    end
-end
-
-local CROSSHAIR_ICONS = {
-    ["dot"] = "glide/aim_dot.png",
-    ["tank"] = "glide/aim_tank.png",
-    ["square"] = "glide/aim_square.png"
-}
-
-local LOCKON_STATE_COLORS = {
-    [0] = Color( 255, 255, 255 ),
-    [1] = Color( 100, 255, 100 ),
-    [2] = Color( 255, 0, 0 ),
-}
-
-function ENT:SetupCrosshair( params )
-    params = params or {}
-
-    self.crosshairPos = Vector()
-    self.crosshairIcon = CROSSHAIR_ICONS[params.iconType or "dot"]
-    self.crosshairSize = params.size or 0.05
-    self.crosshairColor = params.color or LOCKON_STATE_COLORS[0]
-    self.crosshairUpdatePos = params.dontAutoUpdatePos ~= true
-end
-
-function ENT:RemoveCrosshair()
-    self.crosshairPos = nil
-    self.crosshairIcon = nil
-    self.crosshairSize = nil
-    self.crosshairColor = nil
-    self.crosshairUpdatePos = false
-end
-
-function ENT:OnLockOnStateChange( _, _, state )
-    if self:GetDriver() ~= LocalPlayer() then return end
-
-    if self.crosshairPos then
-        self.crosshairColor = LOCKON_STATE_COLORS[state]
-    end
-
-    if self.lockOnSound then
-        self.lockOnSound:Stop()
-        self.lockOnSound = nil
-    end
-
-    if state > 0 then
-        self.lockOnSound = CreateSound( self, state == 1 and "glide/weapons/lockstart.wav" or "glide/weapons/locktone.wav" )
-        self.lockOnSound:SetSoundLevel( 90 )
-        self.lockOnSound:PlayEx( 1.0, 98 )
     end
 end
