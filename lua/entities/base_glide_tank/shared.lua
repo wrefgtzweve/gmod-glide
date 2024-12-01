@@ -35,6 +35,11 @@ function ENT:SetupDataTables()
 
     self:NetworkVar( "Angle", "TurretAngle" )
     self:NetworkVar( "Bool", "IsAimingAtTarget" )
+
+    if CLIENT then
+        -- Callback used to play turrent movement sounds clientside
+        self:NetworkVarNotify( "TurretAngle", self.OnTurretAngleChange )
+    end
 end
 
 --- Override the base class `IsEngineOn` function.
@@ -77,6 +82,9 @@ if CLIENT then
     ENT.StartedSound = "glide/engines/start_tail_truck.wav"
     ENT.StoppedSound = "glide/engines/shut_down_1.wav"
 
+    ENT.TurrentMoveSound = "glide/tanks/turret_move.wav"
+    ENT.TurrentMoveVolume = 1.0
+
     -- Children classes should override this
     -- function to add engine sounds to the stream.
     function ENT:OnCreateEngineStream( _stream ) end
@@ -93,7 +101,7 @@ if SERVER then
     ENT.BulletDamageMultiplier = 0.25
     ENT.BlastDamageMultiplier = 1
     ENT.CollisionDamageMultiplier = 0.8
-    ENT.EngineDamageMultiplier = 0.0004
+    ENT.EngineDamageMultiplier = 0.00035
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"

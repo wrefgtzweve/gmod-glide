@@ -42,6 +42,13 @@ function ENT:OnEngineStateChange( _, _, state )
     end
 end
 
+--- Implement the base class `OnActivateSounds` function.
+function ENT:OnActivateSounds()
+    self.lastAngChange = 0
+    self.lastTurretYaw = self:GetTurretAngle()[2]
+    self.moveVolume = 0
+end
+
 --- Implement the base class `OnDeactivateSounds` function.
 function ENT:OnDeactivateSounds()
     if self.stream then
@@ -128,16 +135,43 @@ function ENT:OnUpdateMisc()
     self:ManipulateTurretBones()
 end
 
+function ENT:OnTurretAngleChange( _, _, ang )
+    local t = RealTime()
+    local dt = Clamp( t - self.lastAngChange, 0, 0.1 )
+    local yawSpeed = Abs( self.lastTurretYaw - ang[2] ) / dt
+
+    self.lastAngChange = t
+    self.lastTurretYaw = ang[2]
+    self.moveVolume = Clamp( yawSpeed / 60, 0, 1 )
+end
+
 local FrameTime = FrameTime
 
 --- Implement the base class `OnUpdateSounds` function.
 function ENT:OnUpdateSounds()
+    local dt = FrameTime()
     local sounds = self.sounds
 
     if sounds.start and self:GetEngineState() ~= 1 then
         sounds.start:Stop()
         sounds.start = nil
         Glide.PlaySoundSet( self.StartTailSound, self )
+    end
+
+    if self.moveVolume > 0 then
+        self.moveVolume = self.moveVolume - dt * 0.1
+
+        if sounds.moveTurret then
+            sounds.moveTurret:ChangeVolume( self.moveVolume * self.TurrentMoveVolume )
+        else
+            sounds.moveTurret = CreateSound( self, self.TurrentMoveSound )
+            sounds.moveTurret:SetSoundLevel( 80 )
+            sounds.moveTurret:PlayEx( self.moveVolume * self.TurrentMoveVolume, 100 )
+        end
+
+    elseif sounds.moveTurret then
+        sounds.moveTurret:Stop()
+        sounds.moveTurret = nil
     end
 
     if not self:IsEngineOn() then return end
@@ -152,8 +186,6 @@ function ENT:OnUpdateSounds()
 
         return
     end
-
-    local dt = FrameTime()
 
     if stream.volume < stream.maxVolume then
         stream.volume = math.Approach( stream.volume, stream.maxVolume, dt * 2 )
