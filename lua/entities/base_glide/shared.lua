@@ -100,6 +100,9 @@ if CLIENT then
     -- - Optional "scale" key with a number value, sets the size of the flames.
     ENT.EngineFireOffsets = {}
 
+    -- How wide should the skidmarks be?
+    ENT.WheelSkidmarkScale = 0.5
+
     -- You can safely override these on children classes
     function ENT:ShouldActivateSounds() return true end
     function ENT:OnActivateSounds() end

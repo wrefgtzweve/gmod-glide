@@ -17,6 +17,7 @@ ENT.AllowEditSuspensionLen = false
 
 if CLIENT then
     ENT.EngineSmokeMaxZVel = 20
+    ENT.WheelSkidmarkScale = 0.3
 
     -- Change default sounds
     ENT.StartSound = "Glide.Engine.BikeStart1"

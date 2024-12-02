@@ -85,13 +85,11 @@ end
 function ENT:ActivateMisc()
     BaseClass.ActivateMisc( self )
 
-    -- Reduce the number of wheels playing sounds
     local wheels = self.wheels
     if not wheels then return end
 
+    -- Reduce the number of wheels playing sounds
     for i, w in ipairs( wheels ) do
-        w.skidmarkScale = 1
-
         if i == 2 or i == 5 then
             w.enableSounds = false
         end

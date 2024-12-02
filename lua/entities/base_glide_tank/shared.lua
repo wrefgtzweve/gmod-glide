@@ -56,6 +56,7 @@ function ENT:ManipulateTurretBones() end
 
 if CLIENT then
     ENT.MaxMiscDistance = 5000
+    ENT.WheelSkidmarkScale = 1
 
     function ENT:GetCameraType( _seatIndex )
         return 1 -- Glide.CAMERA_TYPE.TURRET

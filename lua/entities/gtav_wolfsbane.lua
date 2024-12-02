@@ -11,8 +11,8 @@ DEFINE_BASECLASS( "base_glide_motorcycle" )
 
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 40 )
-
     ENT.StartSound = "Glide.Engine.BikeStart2"
+    ENT.WheelSkidmarkScale = 0.45
 
     ENT.ExhaustOffsets = {
         { pos = Vector( -30, -7.5, -13.5 ), scale = 0.7 },
