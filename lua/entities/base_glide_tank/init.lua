@@ -32,6 +32,13 @@ function ENT:OnPostInitialize()
     params.slipForce = 300
     params.extremumValue = 20
     params.asymptoteValue = 15
+
+    self:SetEngineThrottle( 0 )
+    self:SetEnginePower( 0 )
+    self:SetTrackSpeed( 0 )
+
+    self:SetTurretAngle( Angle() )
+    self:SetIsAimingAtTarget( false )
 end
 
 --- Implement the base class `OnDriverEnter` function.
@@ -76,11 +83,12 @@ function ENT:OnTakeDamage( dmginfo )
     end
 end
 
---- Implement the base class `OnWeaponFire` function.
-function ENT:OnWeaponFire()
-    if self:WaterLevel() > 2 then return end
+function ENT:GetTurretOrigin()
+    return self:LocalToWorld( self.TurretOffset )
+end
 
-    local origin = self:LocalToWorld( self.TurretOffset )
+function ENT:GetTurretAimDirection()
+    local origin = self:GetTurretOrigin()
     local ang = self:LocalToWorldAngles( self:GetTurretAngle() )
 
     -- Use the driver's aim position directly when
@@ -93,17 +101,31 @@ function ENT:OnWeaponFire()
         ang = dir:Angle()
     end
 
-    -- Make the projectile point towards the direction the
-    -- turret is aiming at, no matter where it spawned.
-    local target = origin + ang:Forward() * 50000
+    return ang:Forward()
+end
+
+function ENT:GetTurretAimPosition()
+    local origin = self:GetTurretOrigin()
+    local target = origin + self:GetTurretAimDirection() * 50000
     local tr = util.TraceLine( self:GetTraceData( origin, target ) )
 
     if tr.Hit then
         target = tr.HitPos
     end
 
+    return target
+end
+
+--- Implement the base class `OnWeaponFire` function.
+function ENT:OnWeaponFire()
+    if self:WaterLevel() > 2 then return end
+
+    local aimPos = self:GetTurretAimPosition()
     local projectilePos = self:GetProjectileStartPos()
-    local dir = target - projectilePos
+
+    -- Make the projectile point towards the direction the
+    -- turret is aiming at, no matter where it spawned.
+    local dir = aimPos - projectilePos
     dir:Normalize()
 
     Glide.FireProjectile( projectilePos, dir:Angle(), self:GetDriver(), self )
@@ -298,9 +320,9 @@ function ENT:UpdateEngine( dt )
         inputL = inputSteer * self.SpinEngineTorqueMultiplier
         inputR = -inputSteer * self.SpinEngineTorqueMultiplier
         inputBrake = 0
-        power = Abs( inputSteer ) * 0.3
+        power = Abs( inputSteer ) * 0.5
 
-        self:SetEngineThrottle( ExpDecay( self:GetEngineThrottle(), 0.5, 4, dt ) )
+        self:SetEngineThrottle( ExpDecay( self:GetEngineThrottle(), 0.75, 4, dt ) )
     else
         if self.forwardSpeed < 10 and inputBrake > 0.1 then
             inputThrottle, inputBrake = -inputBrake, inputThrottle

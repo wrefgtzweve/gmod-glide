@@ -82,6 +82,7 @@ if CLIENT then
     ENT.StartedSound = "glide/engines/start_tail_truck.wav"
     ENT.StoppedSound = "glide/engines/shut_down_1.wav"
 
+    -- Other sounds
     ENT.TurrentMoveSound = "glide/tanks/turret_move.wav"
     ENT.TurrentMoveVolume = 1.0
 
