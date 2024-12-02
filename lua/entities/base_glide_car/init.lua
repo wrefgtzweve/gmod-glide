@@ -193,6 +193,9 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
             icon = "materials/glide/icons/" .. ( self.reducedThrottle and "play_next" or "fast_forward" ) .. ".png",
             immediate = true
         } )
+
+    elseif action == "accelerate" and self:GetEngineState() == 0 then
+        self:TurnOn()
     end
 
     if not self.inputManualShift then return end
