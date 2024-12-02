@@ -101,18 +101,28 @@ function ENT:LandingGearThink( dt )
 
     if state == 1 then -- Is it moving up?
         self.landingGearExtend = self.landingGearExtend - dt
-        self.wheelParams.suspensionLength = self.landingGearLength * self.landingGearExtend
 
         if self.landingGearExtend < 0 then
             self:SetLandingGearState( 2 ) -- Set fully up
+            return
         end
 
     elseif state == 3 then -- Is it moving down?
         self.landingGearExtend = self.landingGearExtend + dt
-        self.wheelParams.suspensionLength = self.landingGearLength * self.landingGearExtend
 
         if self.landingGearExtend > 1 then
             self:SetLandingGearState( 0 ) -- Set fully down
+            return
+        end
+    end
+
+    if state == 1 or state == 3 then
+        self.wheelParams.suspensionLength = self.landingGearLength * self.landingGearExtend
+
+        local phys = self:GetPhysicsObject()
+
+        if IsValid( phys ) then
+            phys:Wake()
         end
     end
 end
