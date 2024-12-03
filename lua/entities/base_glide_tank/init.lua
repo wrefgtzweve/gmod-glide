@@ -24,7 +24,7 @@ function ENT:OnPostInitialize()
     local params = self.wheelParams
 
     params.brakePower = 15000
-    params.suspensionLength = 10
+    params.suspensionLength = 15
     params.springStrength = 6000
     params.springDamper = 30000
 

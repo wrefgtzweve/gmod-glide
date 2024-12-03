@@ -109,9 +109,9 @@ if CLIENT then
         end
 
         -- Update left side of the tracks, using the 3 wheels we have there.
-        local l1 = self:GetWheelOffset( 1 ) + 8
-        local l3 = self:GetWheelOffset( 2 ) + 8
-        local l5 = self:GetWheelOffset( 3 ) + 8
+        local l1 = self:GetWheelOffset( 1 ) + 14
+        local l3 = self:GetWheelOffset( 2 ) + 14
+        local l5 = self:GetWheelOffset( 3 ) + 14
 
         offset[2] = l1
         self:ManipulateBonePosition( self.suspensionL1, offset )
@@ -129,9 +129,9 @@ if CLIENT then
         self:ManipulateBonePosition( self.suspensionL5, offset )
 
         -- Update right side of the tracks, using the 3 wheels we have there.
-        local r1 = self:GetWheelOffset( 4 ) + 8
-        local r3 = self:GetWheelOffset( 5 ) + 8
-        local r5 = self:GetWheelOffset( 6 ) + 8
+        local r1 = self:GetWheelOffset( 4 ) + 14
+        local r3 = self:GetWheelOffset( 5 ) + 14
+        local r5 = self:GetWheelOffset( 6 ) + 14
 
         offset[2] = r1
         self:ManipulateBonePosition( self.suspensionR1, offset )
@@ -165,28 +165,28 @@ if SERVER then
         self:CreateSeat( Vector( 90, 0, -10 ), Angle( 0, 270, 30 ), Vector( 60, 100, 0 ), false )
 
         -- Front left
-        self:CreateWheel( Vector( 88, 55, -10 ), {
+        self:CreateWheel( Vector( 88, 55, -5 ), {
             steerMultiplier = 1
         } ):SetNoDraw( true )
 
         -- Middle left
-        self:CreateWheel( Vector( 5, 55, -10 ) ):SetNoDraw( true )
+        self:CreateWheel( Vector( 5, 55, -5 ) ):SetNoDraw( true )
 
         -- Rear left
-        self:CreateWheel( Vector( -76, 55, -10 ), {
+        self:CreateWheel( Vector( -76, 55, -5 ), {
             steerMultiplier = -1
         } ):SetNoDraw( true )
 
         -- Front right
-        self:CreateWheel( Vector( 88, -55, -10 ), {
+        self:CreateWheel( Vector( 88, -55, -5 ), {
             steerMultiplier = 1
         } ):SetNoDraw( true )
 
         -- Middle right
-        self:CreateWheel( Vector( 5, -55, -10 ) ):SetNoDraw( true )
+        self:CreateWheel( Vector( 5, -55, -5 ) ):SetNoDraw( true )
 
         -- Rear right
-        self:CreateWheel( Vector( -76, -55, -10 ), {
+        self:CreateWheel( Vector( -76, -55, -5 ), {
             steerMultiplier = -1
         } ):SetNoDraw( true )
 
