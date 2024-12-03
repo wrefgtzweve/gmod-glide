@@ -156,7 +156,7 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
 
     function ENT:CreateFeatures()
-        self:CreateSeat( Vector( 60, 25, 0 ), Angle( 0, 270, 30 ), Vector( 60, 100, 0 ), false )
+        self:CreateSeat( Vector( 90, 0, -10 ), Angle( 0, 270, 30 ), Vector( 60, 100, 0 ), false )
 
         -- Front left
         self:CreateWheel( Vector( 88, 55, -10 ), {
