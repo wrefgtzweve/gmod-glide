@@ -142,6 +142,12 @@ function ENT:OnWeaponFire()
     if IsValid( phys ) then
         phys:ApplyForceOffset( dir * phys:GetMass() * -self.TurretRecoilForce, projectilePos )
     end
+
+    local driver = self:GetDriver()
+
+    if IsValid( driver ) then
+        Glide.SendViewPunch( driver, -0.2 )
+    end
 end
 
 --- Override the base class `CreateWheel` function.
