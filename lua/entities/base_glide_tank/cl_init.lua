@@ -196,6 +196,23 @@ function ENT:OnUpdateSounds()
     inputs.throttle = self:GetEngineThrottle()
 
     stream:Think( dt )
+
+    -- Handle damaged engine sounds
+    local health = self:GetEngineHealth()
+
+    if health < 0.4 then
+        if sounds.runDamaged then
+            sounds.runDamaged:ChangePitch( 100 + inputs.rpmFraction * 20 )
+            sounds.runDamaged:ChangeVolume( Clamp( ( 1 - health ) + inputs.throttle, 0, 1 ) * 0.5 )
+        else
+            local snd = self:CreateLoopingSound( "runDamaged", "glide/engines/run_damaged_1.wav", 75, self )
+            snd:PlayEx( 0.5, 100 )
+        end
+
+    elseif sounds.runDamaged then
+        sounds.runDamaged:Stop()
+        sounds.runDamaged = nil
+    end
 end
 
 local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
