@@ -360,11 +360,16 @@ function ENT:SimulatePlane( phys, dt, params, effective, outLin, outAng )
     outAng[3] = outAng[3] + WORLD_UP:Dot( rt ) * params.yawForce * mass * 0.2
 
     -- Forward speed limit
+    local controllability = 1
     local maxSpeed = Remap( power, 0, 2, params.liftSpeed, params.maxSpeed )
 
-    --[[if speed > maxSpeed then
-        AddForce( outLin, -fw * params.engineForce * 2 )
-    end]]
+    if speed > maxSpeed then
+        controllability = 1 + Clamp( 1 - ( speed / maxSpeed ), -1, 0 ) * 0.75
+
+        if speed > maxSpeed * 1.5 then
+            AddForce( outLin, -fw * params.engineForce * 2 )
+        end
+    end
 
     -- Engine force
     local throttleInput = self:GetInputFloat( 1, "throttle" )
@@ -383,7 +388,7 @@ function ENT:SimulatePlane( phys, dt, params, effective, outLin, outAng )
         AddForce( outLin, fw * params.engineForce * Min( power, 1 ) * throttleInput )
     end
 
-    local controllability = Clamp( Abs( speed * 0.5 ) / params.controlSpeed, 0, 1 )
+    controllability = controllability * Clamp( Abs( speed * 0.5 ) / params.controlSpeed, 0, 1 )
 
     -- Rotate input forces
     outAng[1] = outAng[1] + self.inputRoll * params.rollForce * mass * controllability * effective
