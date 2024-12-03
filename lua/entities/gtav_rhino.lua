@@ -155,6 +155,12 @@ if SERVER then
 
     ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
 
+    ENT.ExplosionGibs = {
+        "models/gta5/vehicles/rhino/gibs/chassis.mdl",
+        "models/gta5/vehicles/rhino/gibs/turret.mdl",
+        "models/gta5/vehicles/rhino/gibs/barrel.mdl"
+    }
+
     function ENT:CreateFeatures()
         self:CreateSeat( Vector( 90, 0, -10 ), Angle( 0, 270, 30 ), Vector( 60, 100, 0 ), false )
 
