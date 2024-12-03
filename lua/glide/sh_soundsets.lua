@@ -246,14 +246,14 @@ Glide.AddSoundSet( "Glide.Collision.VehicleScrape", 70, 80, 120, {
     "glide/collisions/metal_scrape_2.wav"
 } )
 
-Glide.AddSoundSet( "Glide.Collision.VehicleSoft", 70, 80, 120, {
+Glide.AddSoundSet( "Glide.Collision.VehicleSoft", 75, 80, 120, {
     "glide/collisions/car_light_1.wav",
     "glide/collisions/car_light_2.wav",
     "glide/collisions/car_light_3.wav",
     "glide/collisions/car_light_4.wav"
 } )
 
-Glide.AddSoundSet( "Glide.Collision.VehicleHard", 70, 80, 120, {
+Glide.AddSoundSet( "Glide.Collision.VehicleHard", 75, 80, 120, {
     "glide/collisions/car_heavy_1.wav",
     "glide/collisions/car_heavy_2.wav",
     "glide/collisions/car_heavy_3.wav",
@@ -264,7 +264,7 @@ Glide.AddSoundSet( "Glide.Collision.VehicleHard", 70, 80, 120, {
     "glide/collisions/car_heavy_8.wav"
 } )
 
-Glide.AddSoundSet( "Glide.Collision.AgainstPlayer", 80, 80, 120, {
+Glide.AddSoundSet( "Glide.Collision.AgainstPlayer", 75, 80, 120, {
     "glide/collisions/body_1.wav",
     "glide/collisions/body_2.wav",
     "glide/collisions/body_3.wav",
