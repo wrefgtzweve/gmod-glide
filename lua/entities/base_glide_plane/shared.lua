@@ -17,6 +17,7 @@ DEFINE_BASECLASS( "base_glide_aircraft" )
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
 
+    self:NetworkVar( "Float", "ExtraPitch" )
     self:NetworkVar( "Float", "Elevator" )
     self:NetworkVar( "Float", "Rudder" )
     self:NetworkVar( "Float", "Aileron" )
@@ -66,7 +67,7 @@ if CLIENT then
 end
 
 if SERVER then
-    ENT.CollisionDamageMultiplier = 4
+    ENT.CollisionDamageMultiplier = 4.5
     ENT.AngularDrag = Vector( -2, -2, -10 ) -- Roll, pitch, yaw
 
     -- How far can the propeller's blades hit things

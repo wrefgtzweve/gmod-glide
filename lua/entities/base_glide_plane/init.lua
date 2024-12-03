@@ -14,8 +14,10 @@ function ENT:OnPostInitialize()
     -- Setup variables used on all planes
     self.propellers = {}
     self.powerResponse = 0.15
+
     self.isGrounded = false
     self.brake = 0
+    self.divePitch = 0
 
     -- Update default wheel params
     local params = self.wheelParams
@@ -76,6 +78,20 @@ function ENT:CreatePropeller( offset, radius, slowModel, fastModel )
     return prop
 end
 
+--- Override the base class `TurnOn` function.
+function ENT:TurnOn()
+    BaseClass.TurnOn( self )
+    self:SetExtraPitch( 1 )
+    self.divePitch = 0
+end
+
+--- Override the base class `TurnOff` function.
+function ENT:TurnOff()
+    BaseClass.TurnOff( self )
+    self:SetExtraPitch( 1 )
+    self.divePitch = 0
+end
+
 --- Override the base class `OnDriverEnter` function.
 function ENT:OnDriverEnter()
     if self:GetEngineHealth() > 0 then
@@ -96,6 +112,8 @@ local ExpDecay = Glide.ExpDecay
 
 local IsValid = IsValid
 local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
+
+local WORLD_DOWN = Vector( 0, 0, -1 )
 
 --- Override the base class `OnPostThink` function.
 function ENT:OnPostThink( dt )
@@ -126,8 +144,16 @@ function ENT:OnPostThink( dt )
         -- otherwise the driver's input won't do anything.
         local phys = self:GetPhysicsObject()
 
-        if IsValid( phys ) and phys:IsAsleep() then
-            phys:Wake()
+        if IsValid( phys ) then
+            local pitchVel = Clamp( Abs( phys:GetAngleVelocity()[2] / 50 ), -1, 1 ) * 0.1
+            local downDot = WORLD_DOWN:Dot( self:GetForward() )
+
+            self.divePitch = Approach( self.divePitch, downDot > 0.5 and downDot or 0, dt * 0.5 )
+            self:SetExtraPitch( Approach( self:GetExtraPitch(), 1 + pitchVel + ( self.divePitch * 0.3 ), dt * 0.1 ) )
+
+            if phys:IsAsleep() then
+                phys:Wake()
+            end
         end
 
         if self:GetEngineHealth() > 0 then
@@ -160,7 +186,9 @@ function ENT:OnPostThink( dt )
     else
         -- Approach towards 0 power
         power = ( power > 0 ) and ( power - dt * self.powerResponse * 0.6 ) or 0
+
         self:SetPower( power )
+        self:SetExtraPitch( Approach( self:GetExtraPitch(), 1, dt * 0.1 ) )
 
         if throttle > 0 then
             self:TurnOn()

@@ -76,7 +76,6 @@ end
 
 local Clamp = math.Clamp
 local Remap = math.Remap
-
 local GetVolume = Glide.Config.GetVolume
 
 --- Override the base class `OnUpdateSounds` function.
@@ -92,16 +91,17 @@ function ENT:OnUpdateSounds()
 
     local power = self:GetPower()
     local power01 = Clamp( power, 0, 1 )
+    local pitch = self:GetExtraPitch()
 
     if sounds.prop then
         sounds.prop:ChangePitch( Remap( power, 1, 2, self.PropSoundMinPitch, self.PropSoundMaxPitch ) )
         sounds.prop:ChangeVolume( power01 * self.PropSoundVolume * vol )
     end
 
-    sounds.engine:ChangePitch( Remap( power, 1, 2, self.EngineSoundMinPitch, self.EngineSoundMaxPitch ) * power01 )
+    sounds.engine:ChangePitch( Remap( power, 1, 2, self.EngineSoundMinPitch, self.EngineSoundMaxPitch ) * power01 * pitch )
     sounds.engine:ChangeVolume( power01 * self.EngineSoundVolume * vol )
 
-    sounds.exhaust:ChangePitch( Remap( power, 1, 2, self.ExhaustSoundMinPitch, self.ExhaustSoundMaxPitch ) * power01 )
+    sounds.exhaust:ChangePitch( Remap( power, 1, 2, self.ExhaustSoundMinPitch, self.ExhaustSoundMaxPitch ) * power01 * pitch )
     sounds.exhaust:ChangeVolume( power01 * self.ExhaustSoundVolume * vol )
 
     vol = vol * Clamp( self.engineSounds.lastDistance / 1000000, 0, 1 )
