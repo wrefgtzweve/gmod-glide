@@ -42,13 +42,6 @@ function ENT:OnEngineStateChange( _, _, state )
     end
 end
 
---- Implement the base class `OnActivateSounds` function.
-function ENT:OnActivateSounds()
-    self.lastAngChange = 0
-    self.lastTurretYaw = self:GetTurretAngle()[2]
-    self.moveVolume = 0
-end
-
 --- Implement the base class `OnDeactivateSounds` function.
 function ENT:OnDeactivateSounds()
     if self.stream then
@@ -85,6 +78,10 @@ end
 function ENT:ActivateMisc()
     BaseClass.ActivateMisc( self )
 
+    self.lastAngChange = 0
+    self.lastTurretYaw = self:GetTurretAngle()[2]
+    self.turretVolume = 0
+
     local wheels = self.wheels
     if not wheels then return end
 
@@ -104,10 +101,16 @@ function ENT:DeactivateMisc()
         self.trackSound:Stop()
         self.trackSound = nil
     end
+
+    if self.turretSound then
+        self.turretSound:Stop()
+        self.turretSound = nil
+    end
 end
 
 local Abs = math.abs
 local Clamp = math.Clamp
+local FrameTime = FrameTime
 local GetVolume = Glide.Config.GetVolume
 
 --- Implement the base class `OnUpdateMisc` function.
@@ -129,6 +132,22 @@ function ENT:OnUpdateMisc()
         self.trackSound = nil
     end
 
+    if self.turretVolume > 0 then
+        self.turretVolume = self.turretVolume - FrameTime()
+
+        if self.turretSound then
+            self.turretSound:ChangeVolume( self.turretVolume * self.TurrentMoveVolume )
+        else
+            self.turretSound = CreateSound( self, self.TurrentMoveSound )
+            self.turretSound:SetSoundLevel( 80 )
+            self.turretSound:PlayEx( self.turretVolume * self.TurrentMoveVolume, 100 )
+        end
+
+    elseif self.turretSound then
+        self.turretSound:Stop()
+        self.turretSound = nil
+    end
+
     self:OnUpdateAnimations()
     self:ManipulateTurretBones()
 end
@@ -140,10 +159,8 @@ function ENT:OnTurretAngleChange( _, _, ang )
 
     self.lastAngChange = t
     self.lastTurretYaw = ang[2]
-    self.moveVolume = Clamp( yawSpeed / 60, 0, 1 )
+    self.turretVolume = Clamp( yawSpeed / 60, 0, 1 )
 end
-
-local FrameTime = FrameTime
 
 --- Implement the base class `OnUpdateSounds` function.
 function ENT:OnUpdateSounds()
@@ -154,22 +171,6 @@ function ENT:OnUpdateSounds()
         sounds.start:Stop()
         sounds.start = nil
         Glide.PlaySoundSet( self.StartTailSound, self )
-    end
-
-    if self.moveVolume > 0 then
-        self.moveVolume = self.moveVolume - dt * 0.1
-
-        if sounds.moveTurret then
-            sounds.moveTurret:ChangeVolume( self.moveVolume * self.TurrentMoveVolume )
-        else
-            sounds.moveTurret = CreateSound( self, self.TurrentMoveSound )
-            sounds.moveTurret:SetSoundLevel( 80 )
-            sounds.moveTurret:PlayEx( self.moveVolume * self.TurrentMoveVolume, 100 )
-        end
-
-    elseif sounds.moveTurret then
-        sounds.moveTurret:Stop()
-        sounds.moveTurret = nil
     end
 
     if not self:IsEngineOn() then return end
