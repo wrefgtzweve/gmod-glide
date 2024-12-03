@@ -25,7 +25,8 @@ end
 
 local OVERRIDE_MATS = {
     ["models/gta5/vehicles/body_paint"] = true,
-    ["models/gta5/vehicles/body_paint2"] = true
+    ["models/gta5/vehicles/body_paint2"] = true,
+    ["models/gta5/vehicles/rhino/tank_camo"] = true
 }
 
 local function SetPaintMaterial( _ply, ent, data )
