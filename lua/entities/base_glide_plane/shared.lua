@@ -31,7 +31,7 @@ if CLIENT then
 
     -- Play this sound from far away
     ENT.DistantSoundPath = "glide/aircraft/distant_stunt.wav"
-    ENT.DistantSoundLevel = 140
+    ENT.DistantSoundLevel = 120
 
     -- Play this sound at the propeller
     ENT.PropSoundPath = "glide/aircraft/prop_stunt.wav"
