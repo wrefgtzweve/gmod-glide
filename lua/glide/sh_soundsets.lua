@@ -446,3 +446,11 @@ Glide.AddSoundSet( "Glide.HunterRotor.High", 80, 100, 100, {
     "glide/helicopters/rotor_hunter/high_8.wav",
     "glide/helicopters/rotor_hunter/high_9.wav"
 } )
+
+----- Plane sounds
+
+Glide.AddSoundSet( "Glide.Plane.ControlSurface", 80, 95, 105, {
+    "glide/aircraft/rudder_move_1.wav",
+    "glide/aircraft/rudder_move_2.wav",
+    "glide/aircraft/rudder_move_3.wav"
+} )

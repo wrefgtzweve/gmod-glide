@@ -9,7 +9,7 @@ function ENT:OnTurnOn()
     end
 end
 
---- Override the base class `OnActivateSounds` function.
+--- Implement the base class `OnActivateSounds` function.
 function ENT:OnActivateSounds()
     self:CreateLoopingSound( "engine", self.EngineSoundPath, self.EngineSoundLevel )
     self:CreateLoopingSound( "exhaust", self.ExhaustSoundPath, self.ExhaustSoundLevel )
@@ -27,11 +27,33 @@ function ENT:OnActivateSounds()
     self:CreateLoopingSound( "prop", self.PropSoundPath, self.PropSoundLevel, self.entProp )
 end
 
---- Override the base class `OnDeactivateSounds` function.
+--- Implement the base class `OnDeactivateSounds` function.
 function ENT:OnDeactivateSounds()
     if IsValid( self.entProp ) then
         self.entProp:Remove()
         self.entProp = nil
+    end
+end
+
+--- Implement the base class `OnActivateMisc` function.
+function ENT:OnActivateMisc()
+    self.controlSoundCD = 0
+    self.nextControlTime = 0
+    self.lastControlInput = {}
+end
+
+local Abs = math.abs
+
+function ENT:UpdateControlSurfaceSound( nwFunc, t )
+    local controlInput = Abs( self[nwFunc]( self ) ) > 0.5
+
+    if self.lastControlInput[nwFunc] ~= controlInput then
+        self.lastControlInput[nwFunc] = controlInput
+
+        if t > self.controlSoundCD then
+            self.controlSoundCD = t + 0.5
+            Glide.PlaySoundSet( "Glide.Plane.ControlSurface", self, 0.5 )
+        end
     end
 end
 
@@ -58,9 +80,18 @@ local DrawLightSprite = Glide.DrawLightSprite
 function ENT:OnUpdateMisc()
     self:OnUpdateAnimations()
 
+    local t = RealTime()
+
+    if t > self.nextControlTime then
+        self.nextControlTime = t + 0.1
+        self:UpdateControlSurfaceSound( "GetElevator", t )
+        self:UpdateControlSurfaceSound( "GetRudder", t )
+        self:UpdateControlSurfaceSound( "GetAileron", t )
+    end
+
     if self:GetDriver() == NULL and self:GetPower() < 0.1 then return end
 
-    local t = RealTime() % 1
+    t = t % 1
     local on, pos, color
 
     for i, v in ipairs( self.StrobeLights ) do
