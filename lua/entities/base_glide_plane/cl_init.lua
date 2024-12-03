@@ -58,6 +58,8 @@ local DrawLightSprite = Glide.DrawLightSprite
 function ENT:OnUpdateMisc()
     self:OnUpdateAnimations()
 
+    if self:GetDriver() == NULL and self:GetPower() < 0.1 then return end
+
     local t = RealTime() % 1
     local on, pos, color
 
