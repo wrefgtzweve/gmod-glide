@@ -15,10 +15,12 @@ function ENT:OnPostInitialize()
     self.propellers = {}
     self.powerResponse = 0.15
     self.isGrounded = false
+    self.brake = 0
 
     -- Update default wheel params
     local params = self.wheelParams
 
+    params.brakePower = 700
     params.suspensionLength = 10
     params.springStrength = 1000
     params.springDamper = 4000
@@ -84,8 +86,10 @@ end
 --- Override the base class `OnDriverExit` function.
 function ENT:OnDriverExit()
     self:TurnOff()
+    self.brake = 0.1
 end
 
+local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
 local ExpDecay = Glide.ExpDecay
@@ -96,21 +100,6 @@ local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 --- Override the base class `OnPostThink` function.
 function ENT:OnPostThink( dt )
     BaseClass.OnPostThink( self, dt )
-
-    --[[ TODO: if self.inputFlyMode == 2 then -- Glide.MOUSE_FLY_MODE.CAMERA
-        self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 6, dt )
-        self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
-        self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "rudder" ), 6, dt )
-
-    elseif self.inputFlyMode == 1 then -- Glide.MOUSE_FLY_MODE.DIRECT
-        self.inputPitch = self:GetInputFloat( 1, "pitch" )
-        self.inputRoll = self:GetInputFloat( 1, "roll" )
-        self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "rudder" ), 6, dt )
-    else
-        self.inputPitch = self:GetInputFloat( 1, "pitch" )
-        self.inputRoll = self:GetInputFloat( 1, "roll" )
-        self.inputYaw = self:GetInputFloat( 1, "rudder" )
-    end]]
 
     self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 10, dt )
     self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 10, dt )
@@ -142,9 +131,19 @@ function ENT:OnPostThink( dt )
         end
 
         if self:GetEngineHealth() > 0 then
-            -- Approach towards the idle power plus the throttle input
-            power = Approach( power, 1 + throttle, dt * self.powerResponse )
+            if self.isGrounded then
+                power = Approach( power, 1 + Clamp( throttle, -0.2, 1 ), dt * self.powerResponse )
+            else
+                local response = throttle < 0 and self.powerResponse * 0.75 or self.powerResponse
 
+                -- Approach towards the idle power plus the throttle input
+                power = Approach( power, 1 + throttle, dt * response )
+
+                -- Let the pilot turn the engine off
+                if throttle < 0 and power < 0.5 then
+                    self:TurnOff()
+                end
+            end
         else
             -- Turn off
             power = Approach( power, 0, dt * self.powerResponse * 0.4 )
@@ -162,6 +161,10 @@ function ENT:OnPostThink( dt )
         -- Approach towards 0 power
         power = ( power > 0 ) and ( power - dt * self.powerResponse * 0.6 ) or 0
         self:SetPower( power )
+
+        if throttle > 0 then
+            self:TurnOn()
+        end
     end
 
     -- Spin the propellers
@@ -176,11 +179,28 @@ function ENT:OnPostThink( dt )
     end
 
     -- Update wheels
+    local torque = 0
+
+    if throttle < 0 and self.forwardSpeed < 100 then
+        self.brake = 0.1
+
+        if self.forwardSpeed > self.MaxReverseSpeed then
+            torque = -self.ReverseTorque
+        end
+
+    elseif throttle < 0 and self.forwardSpeed > 0 then
+        self.brake = 1
+
+    else
+        self.brake = 0.5
+    end
+
     local isGrounded = false
     local totalSideSlip = 0
 
     for _, w in ipairs( self.wheels ) do
-        w.brake = 0.1
+        w.brake = self.brake
+        w.torque = torque
 
         if w.isOnGround then
             isGrounded = true

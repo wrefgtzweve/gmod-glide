@@ -79,6 +79,8 @@ if SERVER then
     -- Ground steering variables
     ENT.MaxSteerAngle = 40
     ENT.SteerSpeedFactor = 800
+    ENT.ReverseTorque = 1000
+    ENT.MaxReverseSpeed = -300
 
     -- Plane drag & force constants
     ENT.PlaneParams = {
