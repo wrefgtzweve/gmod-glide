@@ -53,6 +53,7 @@ function ENT:Initialize()
     self.damage = 250
     self.radius = 350
     self.lifeTime = CurTime() + 5
+    self.submerged = false
 
     self:SetProjectileSpeed( 10000 )
     self:SetProjectileGravity( -700 )
@@ -112,7 +113,23 @@ function ENT:Think()
 
     if t > self.lifeTime then
         self:Explode()
-        return
+        return false
+    end
+
+    if self.submerged then return false end
+
+    if self:WaterLevel() > 2 then
+        self.submerged = true
+
+        local phys = self:GetPhysicsObject()
+
+        if IsValid( phys ) then
+            phys:Wake()
+            phys:EnableGravity( true )
+            phys:SetVelocityInstantaneous( self.velocity * 0.5 )
+        end
+
+        return false
     end
 
     local dt = FrameTime()
