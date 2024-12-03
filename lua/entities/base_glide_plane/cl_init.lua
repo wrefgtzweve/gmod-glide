@@ -9,6 +9,11 @@ function ENT:OnTurnOn()
     end
 end
 
+--- Override the base class `AllowWindSound` function.
+function ENT:AllowWindSound()
+    return true, 0.8 - self:GetPower()
+end
+
 --- Implement the base class `OnActivateSounds` function.
 function ENT:OnActivateSounds()
     self:CreateLoopingSound( "engine", self.EngineSoundPath, self.EngineSoundLevel )

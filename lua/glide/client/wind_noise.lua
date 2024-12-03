@@ -11,7 +11,7 @@ local function ProcessWindSound()
         local mult = vehicle:GetVelocity():LengthSqr() - 1000
         mult = Clamp( mult / 2500000, 0, 1 )
 
-        windSound:SetVolume( GetVolume( "windVolume" ) * mult * volume )
+        windSound:SetVolume( GetVolume( "windVolume" ) * mult * Clamp( volume, 0, 1 ) )
         windSound:SetPlaybackRate( 0.7 + mult * 0.3 )
     end
 end
