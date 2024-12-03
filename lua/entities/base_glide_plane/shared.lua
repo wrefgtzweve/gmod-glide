@@ -69,6 +69,8 @@ end
 if SERVER then
     ENT.CollisionDamageMultiplier = 4.5
     ENT.AngularDrag = Vector( -2, -2, -10 ) -- Roll, pitch, yaw
+    ENT.DamagedEngineSound = "Glide.Damaged.AircraftEngineBreakdown"
+    ENT.DamagedEngineVolume = 1.0
 
     -- How far can the propeller's blades hit things
     ENT.PropRadius = 50

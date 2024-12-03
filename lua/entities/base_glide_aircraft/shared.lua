@@ -35,6 +35,10 @@ if SERVER then
     ENT.IsHeavyVehicle = true
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
 
+    -- Damaged engine sound
+    ENT.DamagedEngineSound = "Glide.Damaged.GearGrind"
+    ENT.DamagedEngineVolume = 0.4
+
     -- Should this vehicle use the landing gear system?
     ENT.HasLandingGear = false
 

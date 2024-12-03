@@ -167,12 +167,12 @@ do
         local power = self:GetPower()
 
         -- Emit random gear grinding noises at low health
-        if health < 0.3 and power > 0.2 then
+        if health < 0.4 and power > 0.1 then
             self.engineDamageSoundCD = self.engineDamageSoundCD - dt
 
             if self.engineDamageSoundCD < 0 then
                 self.engineDamageSoundCD = RandomInt( 1, 5 )
-                PlaySoundSet( "Glide.Damaged.GearGrind", self, 0.3 - health )
+                PlaySoundSet( self.DamagedEngineSound, self, self.DamagedEngineVolume - health )
             end
         end
 
