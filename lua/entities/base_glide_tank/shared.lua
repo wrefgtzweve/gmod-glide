@@ -104,6 +104,7 @@ if SERVER then
     ENT.BlastDamageMultiplier = 1
     ENT.CollisionDamageMultiplier = 0.8
     ENT.EngineDamageMultiplier = 0.00035
+    ENT.BlastForceMultiplier = 0.005
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"

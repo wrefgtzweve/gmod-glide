@@ -104,7 +104,7 @@ function ENT:OnTakeDamage( dmginfo )
 
         if IsValid( phys ) then
             local damagePos = dmginfo:GetDamagePosition()
-            local damageForce = dmginfo:GetDamageForce() * phys:GetMass() * 0.01
+            local damageForce = dmginfo:GetDamageForce() * phys:GetMass() * self.BlastForceMultiplier
 
             phys:ApplyForceOffset( damageForce, damagePos )
         end

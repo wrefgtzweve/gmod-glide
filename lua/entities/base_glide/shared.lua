@@ -156,6 +156,9 @@ if SERVER then
     -- How much of the chassis damage is also applied to the engine?
     ENT.EngineDamageMultiplier = 0.001
 
+    -- How much of the blast damage force should be applied to the vehicle?
+    ENT.BlastForceMultiplier = 0.01
+
     -- Given a dot product between the vehicle's forward direction
     -- and the direction to a lock-on target, how large must that dot product be
     -- for the target to be considered on the vehicle's "field of view"?
