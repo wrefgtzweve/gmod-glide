@@ -80,6 +80,12 @@ if SERVER then
     ENT.ChassisMass = 800
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
 
+    ENT.ExplosionGibs = {
+        "models/gta5/vehicles/stunt/gibs/chassis.mdl",
+        "models/gta5/vehicles/stunt/gibs/wing_l.mdl",
+        "models/gta5/vehicles/stunt/gibs/wing_r.mdl"
+    }
+
     ENT.PropRadius = 35
 
     function ENT:CreateFeatures()
