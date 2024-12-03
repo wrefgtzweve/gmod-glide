@@ -256,35 +256,37 @@ end
 
 local matTrackL = CreateMaterial( "glide_tank_track_l", "VertexLitGeneric", {
     ["$alphatest"] = "1",
-    ["$allowdiffusemodulation"] = "false"
+    ["$allowdiffusemodulation"] = "false",
+    ["$basetexture"] = "models/gta5/vehicles/rhino/tracks"
 } )
 
 local matTrackR = CreateMaterial( "glide_tank_track_r", "VertexLitGeneric", {
     ["$alphatest"] = "1",
-    ["$allowdiffusemodulation"] = "false"
+    ["$allowdiffusemodulation"] = "false",
+    ["$basetexture"] = "models/gta5/vehicles/rhino/tracks"
 } )
 
 local scrollMatrix = Matrix()
 
 function ENT:Draw()
-    if self.leftTrackTexture then
-        scrollMatrix:SetTranslation( self.leftTrackScroll )
-        matTrackL:SetMatrix( "$basetexturetransform", scrollMatrix )
-        matTrackL:SetTexture( "$basetexture", self.leftTrackTexture )
-    end
-
     if self.leftTrackBumpMap then
         matTrackL:SetTexture( "$bumpmap", self.leftTrackBumpMap )
     end
 
-    if self.rightTrackTexture then
-        scrollMatrix:SetTranslation( self.rightTrackScroll )
-        matTrackR:SetMatrix( "$basetexturetransform", scrollMatrix )
-        matTrackR:SetTexture( "$basetexture", self.rightTrackTexture )
+    if self.leftTrackTexture then
+        scrollMatrix:SetTranslation( self.leftTrackScroll )
+        matTrackL:SetTexture( "$basetexture", self.leftTrackTexture )
+        matTrackL:SetMatrix( "$basetexturetransform", scrollMatrix )
     end
 
     if self.rightTrackBumpMap then
         matTrackR:SetTexture( "$bumpmap", self.rightTrackBumpMap )
+    end
+
+    if self.rightTrackTexture then
+        scrollMatrix:SetTranslation( self.rightTrackScroll )
+        matTrackR:SetTexture( "$basetexture", self.rightTrackTexture )
+        matTrackR:SetMatrix( "$basetexturetransform", scrollMatrix )
     end
 
     self:DrawModel()
