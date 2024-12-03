@@ -24,7 +24,7 @@ function EFFECT:Init( data )
 
             p:SetAirResistance( 100 )
             p:SetVelocity( RandomVec() * RandomFloat( -100, 100 ) * scale )
-            p:SetColor( 120, 120, 120 )
+            p:SetColor( 80, 80, 80 )
         end
     end
 

@@ -54,9 +54,8 @@ function ENT:Initialize()
     self.radius = 350
     self.lifeTime = CurTime() + 5
 
-    -- We're gonna do our own physics for this
-    -- to workaround source's velocity limit.
-    self.velocity = self:GetForward() * 8000
+    self:SetProjectileSpeed( 10000 )
+    self:SetProjectileGravity( -700 )
 
     local phys = self:GetPhysicsObject()
 
@@ -68,6 +67,16 @@ function ENT:Initialize()
         phys:EnableGravity( false )
         phys:Sleep()
     end
+end
+
+function ENT:SetProjectileSpeed( speed )
+    -- We're gonna do our own physics for this
+    -- to workaround source's velocity limit.
+    self.velocity = self:GetForward() * speed
+end
+
+function ENT:SetProjectileGravity( gravity )
+    self.gravity = Vector( 0, 0, gravity )
 end
 
 function ENT:SetupProjectile( attacker, parent )
@@ -98,8 +107,6 @@ local traceData = {
     mask = MASK_PLAYERSOLID,
 }
 
-local GRAVITY = Vector( 0, 0, -900 )
-
 function ENT:Think()
     local t = CurTime()
 
@@ -111,7 +118,7 @@ function ENT:Think()
     local dt = FrameTime()
     local vel = self.velocity
 
-    vel = vel + ( dt * GRAVITY )
+    vel = vel + ( dt * self.gravity )
 
     self.velocity = vel
 
