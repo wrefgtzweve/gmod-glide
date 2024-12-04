@@ -24,11 +24,12 @@ local function HUDShouldDraw( name )
     if hideComponent[name] then return false end
 end
 
+local ScrW, ScrH = ScrW, ScrH
 local activeVehicle, activeSeatIndex = NULL, 0
 
 local function DrawVehicleHUD()
     if IsValid( activeVehicle ) then
-        activeVehicle:DrawVehicleHUD()
+        activeVehicle:DrawVehicleHUD( ScrW(), ScrH() )
     end
 end
 

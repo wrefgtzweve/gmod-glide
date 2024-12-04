@@ -216,14 +216,15 @@ function ENT:OnUpdateSounds()
 end
 
 local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
+
 local crosshairColor = {
     [true] = Color( 255, 255, 255, 255 ),
     [false] = Color( 150, 150, 150, 100 )
 }
 
 --- Override the base class `DrawVehicleHUD` function.
-function ENT:DrawVehicleHUD()
-    BaseClass.DrawVehicleHUD( self )
+function ENT:DrawVehicleHUD( screenW, screenH )
+    BaseClass.DrawVehicleHUD( self, screenW, screenH )
 
     DrawWeaponCrosshair( ScrW() * 0.5, ScrH() * 0.5, "glide/aim_tank.png", 0.14, crosshairColor[self:GetIsAimingAtTarget()] )
 end

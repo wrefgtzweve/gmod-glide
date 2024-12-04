@@ -480,7 +480,6 @@ local function DrawInfo( label, value, progress )
     end
 end
 
-local ScrW, ScrH = ScrW, ScrH
 local Floor = math.floor
 local DrawRect = surface.DrawRect
 
@@ -492,21 +491,19 @@ local GEAR_LABELS = {
 local throttle = 0
 
 --- Override the base class `DrawVehicleHUD` function.
-function ENT:DrawVehicleHUD()
-    BaseClass.DrawVehicleHUD( self )
+function ENT:DrawVehicleHUD( screenW, screenH )
+    BaseClass.DrawVehicleHUD( self, screenW, screenH )
 
-    local scrH = ScrH()
-
-    infoW = Floor( scrH * 0.23 )
-    infoH = Floor( scrH * 0.035 )
-    padding = Floor( scrH * 0.008 )
+    infoW = Floor( screenH * 0.23 )
+    infoH = Floor( screenH * 0.035 )
+    padding = Floor( screenH * 0.008 )
     cornerRadius = Floor( infoH * 0.15 )
 
-    local margin = Floor( scrH * 0.03 )
-    local spacing = Floor( scrH * 0.005 )
+    local margin = Floor( screenH * 0.03 )
+    local spacing = Floor( screenH * 0.005 )
 
-    x = ScrW() - infoW
-    y = scrH - margin - infoH
+    x = screenW - infoW
+    y = screenH - margin - infoH
 
     -- RPM
     local rpm = self:GetEngineRPM()

@@ -350,8 +350,8 @@ do
     local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
     local DrawWeaponSelection = Glide.DrawWeaponSelection
 
-    function ENT:DrawVehicleHUD()
-        self:DrawHUDSeats()
+    function ENT:DrawVehicleHUD( screenW, screenH )
+        self:DrawHUDSeats( screenW, screenH )
 
         -- TODO: glide.hud.health=Health
 
@@ -380,7 +380,6 @@ do
     local FrameTime = FrameTime
     local LocalPlayer = LocalPlayer
 
-    local ScrH = ScrH
     local Floor = math.floor
     local ExpDecay = Glide.ExpDecay
 
@@ -397,7 +396,7 @@ do
     local expanded = 0
     local expandTimer = 0
 
-    function ENT:DrawHUDSeats()
+    function ENT:DrawHUDSeats( _screenW, screenH )
         local seats = self.seats
         if not seats then return end
 
@@ -410,18 +409,17 @@ do
         COLORS.bg.a = 210 + 30 * expanded
         COLORS.accent.a = 180 + 40 * expanded
 
-        local scrH = ScrH()
-        local margin = Floor( scrH * 0.03 )
-        local padding = Floor( scrH * 0.006 )
-        local spacing = Floor( scrH * 0.004 )
+        local margin = Floor( screenH * 0.03 )
+        local padding = Floor( screenH * 0.006 )
+        local spacing = Floor( screenH * 0.004 )
 
-        local w, h = Floor( scrH * 0.3 ), Floor( scrH * 0.035 )
+        local w, h = Floor( screenH * 0.3 ), Floor( screenH * 0.035 )
         local nickOffset = w - padding
         local cornerRadius = Floor( h * 0.15 )
 
         w = ( w * 0.15 ) + ( w * 0.85 * expanded )
 
-        local y = scrH - margin - h
+        local y = screenH - margin - h
 
         local lastNick = self.lastNick
         local count = #seats
