@@ -215,18 +215,45 @@ function ENT:OnUpdateSounds()
     end
 end
 
-local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
+do
+    local Camera = Glide.Camera
+    local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
 
-local crosshairColor = {
-    [true] = Color( 255, 255, 255, 255 ),
-    [false] = Color( 150, 150, 150, 100 )
-}
+    local SetColor = surface.SetDrawColor
+    local SetMaterial = surface.SetMaterial
+    local DrawTexturedRectRotated = surface.DrawTexturedRectRotated
 
---- Override the base class `DrawVehicleHUD` function.
-function ENT:DrawVehicleHUD( screenW, screenH )
-    BaseClass.DrawVehicleHUD( self, screenW, screenH )
+    local crosshairColor = {
+        [true] = Color( 255, 255, 255, 255 ),
+        [false] = Color( 150, 150, 150, 100 )
+    }
 
-    DrawWeaponCrosshair( ScrW() * 0.5, ScrH() * 0.5, "glide/aim_tank.png", 0.14, crosshairColor[self:GetIsAimingAtTarget()] )
+    local matBody = Material( "materials/glide/tank_body.png", "smooth" )
+    local matTurret = Material( "materials/glide/tank_turret.png", "smooth" )
+
+    --- Override the base class `DrawVehicleHUD` function.
+    function ENT:DrawVehicleHUD( screenW, screenH )
+        BaseClass.DrawVehicleHUD( self, screenW, screenH )
+
+        DrawWeaponCrosshair( screenW * 0.5, screenH * 0.5, "glide/aim_tank.png", 0.14, crosshairColor[self:GetIsAimingAtTarget()] )
+
+        if not Camera.isInFirstPerson then return end
+
+        local ang = -self:WorldToLocalAngles( Camera.angles )[2]
+
+        local x, y = screenW * 0.5, screenH * 0.92
+        local size = screenH * 0.15
+
+        SetColor( 255, 255, 255, 255 )
+
+        SetMaterial( matBody )
+        DrawTexturedRectRotated( x, y, size, size, ang )
+
+        ang = ang + self:GetTurretAngle()[2]
+
+        SetMaterial( matTurret )
+        DrawTexturedRectRotated( x, y, size, size, ang )
+    end
 end
 
 local Effect = util.Effect
