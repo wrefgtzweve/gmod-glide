@@ -7,17 +7,22 @@ function Glide.TrackFlare( flare )
 end
 
 local IsValid = IsValid
-local dist, closestDist, closestEnt
+local flarePos, flareDir, dist
+local closestDist, closestEnt
 
-function Glide.GetClosestFlare( pos, radius )
+function Glide.GetClosestFlare( pos, dir, radius )
     closestDist = radius * radius
     closestEnt = nil
 
     for _, ent in ipairs( flares ) do
         if IsValid( ent ) then
-            dist = pos:DistToSqr( ent:GetPos() )
+            flarePos = ent:GetPos()
+            flareDir = flarePos - pos
+            flareDir:Normalize()
 
-            if dist < closestDist then
+            dist = pos:DistToSqr( flarePos )
+
+            if dist < closestDist and dir:Dot( flareDir ) > 0.2 then
                 closestDist = dist
                 closestEnt = ent
             end

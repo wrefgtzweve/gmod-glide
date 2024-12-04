@@ -236,7 +236,7 @@ function ENT:Think()
     local myPos = self:GetPos()
 
     -- Or towards a nearby flare
-    local flare, flareDistSqr = GetClosestFlare( myPos, 1500 )
+    local flare, flareDistSqr = GetClosestFlare( myPos, self:GetForward(), 1500 )
 
     if IsValid( flare ) then
         target = flare
