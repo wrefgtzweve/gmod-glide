@@ -201,7 +201,7 @@ function ENT:Think()
         return
     end
 
-    self:NextThink( CurTime() )
+    self:NextThink( t )
 
     local dt = FrameTime()
     local phys = self:GetPhysicsObject()

@@ -156,7 +156,7 @@ function ENT:Think()
     end
 
     self:SetPos( nextPos )
-    self:NextThink( CurTime() )
+    self:NextThink( t )
 
     return true
 end
