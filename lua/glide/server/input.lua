@@ -23,6 +23,7 @@ local ACTION_FILTER = {
     ["lean_back"] = true,
 
     -- Aircraft actions
+    ["countermeasures"] = true,
     ["free_look"] = true,
     ["landing_gear"] = true,
     ["pitch_up"] = true,

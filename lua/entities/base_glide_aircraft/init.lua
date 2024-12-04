@@ -24,6 +24,9 @@ function ENT:OnPostInitialize()
     -- Landing gear system
     self.landingGearState = 0
     self.landingGearExtend = 1
+
+    -- Countermeasure system
+    self.countermeasureCD = 0
 end
 
 local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
@@ -127,10 +130,55 @@ function ENT:LandingGearThink( dt )
     end
 end
 
+function ENT:FireCountermeasures()
+    local count = self.CountermeasureCount
+
+    if count < 1 then
+        local driver = self:GetDriver()
+        if not IsValid( driver ) then return end
+
+        Glide.SendNotification( driver, {
+            text = "#glide.countermeasures_not_available",
+            icon = "materials/icon16/cancel.png"
+        } )
+
+        return
+    end
+
+    local t = CurTime()
+
+    if t < self.countermeasureCD then
+        self:EmitSound( "glide/weapons/flare_reloading.wav", 85, 100, 1.0, 6, 0, 0 )
+        return
+    end
+
+    self.countermeasureCD = t + self.CountermeasureCooldown
+    Glide.PlaySoundSet( "Glide.FlareLaunch", self, 1.0 )
+
+    local mins = self:OBBMins()
+    local startPos = self:LocalToWorld( Vector( 0, 0, mins[3] * 0.5 ) )
+
+    local cone = 80
+    local step = cone / count
+    local ang = Angle( 0, 180 - ( step * 0.5 ) - ( cone * 0.5 ), 0 )
+
+    for _ = 1, count do
+        ang[2] = ang[2] + step
+
+        local flare = ents.Create( "glide_flare" )
+        flare:SetPos( startPos )
+        flare:SetAngles( self:LocalToWorldAngles( ang ) )
+        flare:SetOwner( self )
+        flare:Spawn()
+    end
+end
+
 --- Implement the base class `OnSeatInput` function.
 function ENT:OnSeatInput( seatIndex, action, pressed )
+    if not pressed then return end
+
     -- Toggle landing gear
-    if pressed and self.HasLandingGear and action == "landing_gear" and seatIndex < 2 then
+    if action == "landing_gear" and self.HasLandingGear and seatIndex < 2 then
         local state = self.landingGearState
 
         if state == 0 then -- Is it down?
@@ -140,6 +188,11 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
             self:SetLandingGearState( 3 ) -- Move down
         end
 
+        return true
+    end
+
+    if action == "countermeasures" then
+        self:FireCountermeasures()
         return true
     end
 end

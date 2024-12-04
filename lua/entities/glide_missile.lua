@@ -233,7 +233,7 @@ function ENT:Think()
     local target = self.target
 
     if IsValid( target ) then
-        self:SetHasTarget( true )
+        self:SetHasTarget( target.IsCountermeasure ~= true )
 
         local myPos = self:GetPos()
         local targetPos = target:LocalToWorld( target:OBBCenter() ) + target:GetVelocity() * dt

@@ -73,7 +73,9 @@ function Config:ResetBinds()
     self:SetActionKey( "lean_back", KEY_DOWN )
 
     -- Aircraft inputs
+    self:SetActionKey( "countermeasures", KEY_F )
     self:SetActionKey( "free_look", KEY_LALT )
+
     self:SetActionKey( "landing_gear", KEY_G )
     self:SetActionKey( "pitch_up", KEY_DOWN )
     self:SetActionKey( "pitch_down", KEY_UP )
@@ -521,6 +523,7 @@ function Config:OpenFrame()
     CreateBinderButton( panelKeyboard, L"input.lean_back", "lean_back", binds.lean_back, OnChangeBind )
 
     theme:CreateHeader( panelKeyboard, L"input.aircraft_controls" )
+    CreateBinderButton( panelKeyboard, L"input.countermeasures", "countermeasures", binds.countermeasures, OnChangeBind )
     CreateBinderButton( panelKeyboard, L"input.free_look", "free_look", binds.free_look, OnChangeBind )
     CreateBinderButton( panelKeyboard, L"input.landing_gear", "landing_gear", binds.landing_gear, OnChangeBind )
     CreateBinderButton( panelKeyboard, L"input.pitch_up", "pitch_up", binds.pitch_up, OnChangeBind )

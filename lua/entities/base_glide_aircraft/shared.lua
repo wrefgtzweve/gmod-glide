@@ -42,6 +42,13 @@ if SERVER then
     -- Should this vehicle use the landing gear system?
     ENT.HasLandingGear = false
 
+    -- Setting this to a number higher than 0
+    -- will enable flare contermeasures.
+    ENT.CountermeasureCount = 3
+
+    -- Delay between deployment of countermeasures
+    ENT.CountermeasureCooldown = 5
+
     -- Animations to play when the landing gear state changes
     ENT.LandingGearAnims = {
         [0] = "gear_down",

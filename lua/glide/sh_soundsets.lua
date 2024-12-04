@@ -82,6 +82,11 @@ Glide.AddSoundSet( "Glide.MissileLaunch", 90, 95, 105, {
     ")glide/weapons/missile_launch_3.wav"
 } )
 
+Glide.AddSoundSet( "Glide.FlareLaunch", 90, 95, 105, {
+    ")glide/weapons/flare_deploy1.wav",
+    ")glide/weapons/flare_deploy2.wav"
+} )
+
 ----- Explosion sounds
 
 Glide.AddSoundSet( "Glide.Explosion.PreImpact", 95, 90, 110, {
