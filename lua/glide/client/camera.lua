@@ -366,9 +366,11 @@ function Camera:CalcView()
 
     -- Let the server know where the camera is
     if self.cvarX then
-        self.cvarX:SetFloat( origin[1] )
-        self.cvarY:SetFloat( origin[2] )
-        self.cvarZ:SetFloat( origin[3] )
+        local localOrigin = vehicle:WorldToLocal( origin )
+
+        self.cvarX:SetFloat( localOrigin[1] )
+        self.cvarY:SetFloat( localOrigin[2] )
+        self.cvarZ:SetFloat( localOrigin[3] )
 
         self.cvarPitch:SetFloat( angles[1] )
         self.cvarYaw:SetFloat( angles[2] )
