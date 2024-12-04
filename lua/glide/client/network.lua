@@ -16,6 +16,11 @@ commands[Glide.CMD_INCOMING_DANGER] = function()
 
     elseif dangerType == Glide.DANGER_TYPE.MISSILE then
         Glide.LockOnHandler:OnIncomingMissile( net.ReadUInt( 32 ) )
+        Glide.ShowKeyTip(
+            "#glide.notify.tip.countermeasures",
+            Glide.Config.binds["countermeasures"],
+            "materials/glide/icons/rocket.png"
+        )
     end
 end
 
