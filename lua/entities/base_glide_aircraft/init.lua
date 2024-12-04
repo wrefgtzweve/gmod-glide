@@ -158,7 +158,7 @@ function ENT:FireCountermeasures()
     local mins = self:OBBMins()
     local startPos = self:LocalToWorld( Vector( 0, 0, mins[3] * 0.5 ) )
 
-    local cone = 80
+    local cone = 60
     local step = cone / count
     local ang = Angle( 0, 180 - ( step * 0.5 ) - ( cone * 0.5 ), 0 )
 

@@ -110,6 +110,7 @@ function ENT:Initialize()
     self.target = NULL
     self.missThreshold = 0.9
     self.applyThrust = true
+    self.flareExplodeRadius = 200 * 200
 
     self:SetEffectiveness( 0 )
 end
@@ -190,6 +191,7 @@ end
 local FrameTime = FrameTime
 local Approach = math.Approach
 
+local GetClosestFlare = Glide.GetClosestFlare
 local ExpDecayAngle = Glide.ExpDecayAngle
 local ZERO_ANGVEL = Vector()
 
@@ -231,11 +233,23 @@ function ENT:Think()
 
     -- Point towards the target
     local target = self.target
+    local myPos = self:GetPos()
+
+    -- Or towards a nearby flare
+    local flare, flareDistSqr = GetClosestFlare( myPos, 1500 )
+
+    if IsValid( flare ) then
+        target = flare
+
+        if flareDistSqr < self.flareExplodeRadius then
+            self:Explode()
+            return
+        end
+    end
 
     if IsValid( target ) then
         self:SetHasTarget( target.IsCountermeasure ~= true )
 
-        local myPos = self:GetPos()
         local targetPos = target:LocalToWorld( target:OBBCenter() ) + target:GetVelocity() * dt
 
         local dir = targetPos - myPos

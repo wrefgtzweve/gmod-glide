@@ -66,62 +66,31 @@ function ENT:Initialize()
     end
 
     self.lifeTime = CurTime() + 10
-    self:SetMissileSearchRadius( 1500 )
-    self:SetMissileExplodeRadius( 200 )
-end
 
-function ENT:SetMissileSearchRadius( radius )
-    self.searchRadius = radius * radius
+    Glide.TrackFlare( self )
 end
-
-function ENT:SetMissileExplodeRadius( radius )
-    self.explodeRadius = radius * radius
-end
-
-local FindByClass = ents.FindByClass
 
 function ENT:Think()
     local t = CurTime()
 
-    if t > self.lifeTime then
-        self:Remove()
-        return
-    end
-
-    self:NextThink( t )
-
-    if self:WaterLevel() > 0 then
+    if t > self.lifeTime or self:WaterLevel() > 0 then
         self:Remove()
         return false
     end
 
-    -- Detour missiles
-    local missiles = FindByClass( "glide_missile" )
-    local pos = self:GetPos()
-    local dist, searchDist, explodeDist = 0, self.searchRadius, self.explodeRadius
-
-    for _, m in ipairs( missiles ) do
-        dist = pos:DistToSqr( m:GetPos() )
-
-        if dist < explodeDist then
-            m:Explode()
-            self:Remove()
-            break
-
-        elseif dist < searchDist then
-            m.target = self
-            m.turnEfficiency = 5
-        end
-    end
+    self:NextThink( t )
 
     -- Custom drag
     local phys = self:GetPhysicsObject()
 
     if IsValid( phys ) then
+        local dt = FrameTime()
         local vel = phys:GetVelocity()
-        vel[1] = vel[1] * 0.98
-        vel[2] = vel[2] * 0.98
-        vel[3] = vel[3] * 0.98
+
+        vel[1] = vel[1] - vel[1] * dt * 2
+        vel[2] = vel[2] - vel[2] * dt * 2
+        vel[3] = vel[3] - vel[3] * dt * 2
+
         phys:SetVelocityInstantaneous( vel )
     end
 
