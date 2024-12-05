@@ -26,6 +26,7 @@ ENT.MaxChassisHealth = 3000
 
 DEFINE_BASECLASS( "base_glide" )
 
+--- Override this base class function.
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
 
@@ -42,7 +43,7 @@ function ENT:SetupDataTables()
     end
 end
 
---- Override the base class `IsEngineOn` function.
+--- Override this base class function.
 function ENT:IsEngineOn()
     return self:GetEngineState() > 1
 end
@@ -58,6 +59,7 @@ if CLIENT then
     ENT.MaxMiscDistance = 5000
     ENT.WheelSkidmarkScale = 1
 
+    --- Override this base class function.
     function ENT:GetCameraType( _seatIndex )
         return 1 -- Glide.CAMERA_TYPE.TURRET
     end

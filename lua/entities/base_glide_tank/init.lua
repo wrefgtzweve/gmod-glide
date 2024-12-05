@@ -7,7 +7,7 @@ duplicator.RegisterEntityClass( "base_glide_tank", Glide.VehicleFactory, "Data" 
 
 DEFINE_BASECLASS( "base_glide" )
 
---- Implement the base class `OnPostInitialize` function.
+--- Implement this base class function.
 function ENT:OnPostInitialize()
     -- Setup variables used on all tanks
     self.wheelCountL = 0
@@ -41,17 +41,17 @@ function ENT:OnPostInitialize()
     self:SetIsAimingAtTarget( false )
 end
 
---- Implement the base class `OnDriverEnter` function.
+--- Implement this base class function.
 function ENT:OnDriverEnter()
     self:TurnOn()
 end
 
---- Implement the base class `OnDriverExit` function.
+--- Implement this base class function.
 function ENT:OnDriverExit()
     self:TurnOff()
 end
 
---- Override the base class `TurnOn` function.
+--- Override this base class function.
 function ENT:TurnOn()
     local state = self:GetEngineState()
 
@@ -63,7 +63,7 @@ function ENT:TurnOn()
     self:SetEnginePower( 0 )
 end
 
---- Override the base class `TurnOff` function.
+--- Override this base class function.
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
@@ -74,7 +74,7 @@ function ENT:TurnOff()
     self.brake = 0.5
 end
 
---- Override the base class `OnTakeDamage` function.
+--- Override this base class function.
 function ENT:OnTakeDamage( dmginfo )
     BaseClass.OnTakeDamage( self, dmginfo )
 
@@ -116,7 +116,7 @@ function ENT:GetTurretAimPosition()
     return target
 end
 
---- Implement the base class `OnWeaponFire` function.
+--- Implement this base class function.
 function ENT:OnWeaponFire()
     if self:WaterLevel() > 2 then return end
 
@@ -150,7 +150,7 @@ function ENT:OnWeaponFire()
     end
 end
 
---- Override the base class `CreateWheel` function.
+--- Override this base class function.
 function ENT:CreateWheel( offset, params )
     local wheel = BaseClass.CreateWheel( self, offset, params )
 
@@ -179,7 +179,7 @@ local Clamp = math.Clamp
 local ExpDecayAngle = Glide.ExpDecayAngle
 local AngleDifference = Glide.AngleDifference
 
---- Implement the base class `OnPostThink` function.
+--- Implement this base class function.
 function ENT:OnPostThink( dt )
     local state = self:GetEngineState()
 

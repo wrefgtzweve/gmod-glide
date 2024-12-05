@@ -33,7 +33,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "ChassisHealth" )
     self:NetworkVar( "Float", "EngineHealth" )
 
-    --- Set default values, to avoid some weird behaviour when prediction kicks in
+    -- Set default values, to avoid some weird behaviour when prediction kicks in
     self:SetDriver( NULL )
     self:SetEngineState( 0 )
     self:SetIsEngineOnFire( false )
@@ -103,19 +103,16 @@ if CLIENT then
     -- How wide should the skidmarks be?
     ENT.WheelSkidmarkScale = 0.5
 
-    -- You can safely override these on children classes
+    -- You can safely override these on children classes.
     function ENT:ShouldActivateSounds() return true end
     function ENT:OnActivateSounds() end
     function ENT:OnDeactivateSounds() end
-    function ENT:OnUpdateSounds( _distanceFraction ) end
+    function ENT:OnUpdateSounds() end
 
     function ENT:OnActivateMisc() end
     function ENT:OnDeactivateMisc() end
-    function ENT:OnUpdateMisc( _distanceFraction ) end
+    function ENT:OnUpdateMisc() end
     function ENT:OnUpdateParticles() end
-
-    function ENT:OnLocalPlayerEnter( _seatIndex ) end
-    function ENT:OnLocalPlayerExit() end
 
     function ENT:GetSeatBoneManipulations( _seatIndex ) end
     function ENT:AllowFirstPersonMuffledSound( _seatIndex ) return true end

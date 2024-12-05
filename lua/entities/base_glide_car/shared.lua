@@ -33,6 +33,7 @@ DEFINE_BASECLASS( "base_glide" )
     3 - Shutting down or Ignition/Fuel cut-off
 ]]
 
+--- Override this base class function.
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
 
@@ -114,6 +115,7 @@ function ENT:SetupDataTables()
     end
 end
 
+--- Implement this base class function.
 function ENT:UpdatePlayerPoseParameters( ply )
     ply:SetPlaybackRate( 1 )
 
@@ -125,7 +127,7 @@ function ENT:UpdatePlayerPoseParameters( ply )
     return true
 end
 
---- Override the base class `IsEngineOn` function.
+--- Override this base class function.
 function ENT:IsEngineOn()
     return self:GetEngineState() > 1
 end

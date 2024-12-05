@@ -6,7 +6,7 @@ duplicator.RegisterEntityClass( "base_glide_motorcycle", Glide.VehicleFactory, "
 
 DEFINE_BASECLASS( "base_glide_car" )
 
---- Override the base class `OnPostInitialize` function.
+--- Override this base class function.
 function ENT:OnPostInitialize()
     BaseClass.OnPostInitialize( self )
 
@@ -32,13 +32,13 @@ function ENT:SetStaySpright( toggle )
     if IsValid( phys ) then phys:Wake() end
 end
 
---- Override the base class `TurnOn` function.
+--- Override this base class function.
 function ENT:TurnOn()
     BaseClass.TurnOn( self )
     self:SetStaySpright( true )
 end
 
---- Override the base class `TurnOff` function.
+--- Override this base class function.
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
@@ -49,7 +49,7 @@ function ENT:TurnOff()
     end
 end
 
---- Override the base class `OnDriverExit` function.
+--- Override this base class function.
 function ENT:OnDriverExit()
     if self.hasRagdolledAllPlayers then
         self:SetStaySpright( false )
@@ -58,7 +58,7 @@ function ENT:OnDriverExit()
     end
 end
 
---- Override the base class `Use` function.
+--- Override this base class function.
 function ENT:Use( activator )
     if not IsValid( activator ) then return end
     if not activator:IsPlayer() then return end
@@ -83,7 +83,7 @@ local Abs = math.abs
 local Clamp = math.Clamp
 local ExpDecay = Glide.ExpDecay
 
---- Override the base class `UpdateSteering` function.
+--- Override this base class function.
 function ENT:UpdateSteering( dt )
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
@@ -136,12 +136,12 @@ function ENT:UpdateSteering( dt )
     end
 end
 
---- Override the base class `UpdateUnflip` function.
+--- Override this base class function.
 function ENT:UpdateUnflip( _phys, _dt ) end
 
 local WORLD_UP = Vector( 0, 0, 1 )
 
---- Override the base class `OnSimulatePhysics` function.
+--- Implement this base class function.
 function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     if not self.stayUpright then return end
 

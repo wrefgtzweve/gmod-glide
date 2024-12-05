@@ -14,14 +14,14 @@ function ENT:OnOutOfControlChange( _, _, value )
     end
 end
 
---- Implement the base class `OnTurnOn` function.
+--- Implement this base class function.
 function ENT:OnTurnOn()
     if self:GetPower() < 0.1 then
         self:EmitSound( self.StartSoundPath, 80, 100, 0.6 )
     end
 end
 
---- Override the base class `OnActivateSounds` function.
+--- Implement this base class function.
 function ENT:OnActivateSounds()
     -- Create a client-side entity to play the tail rotor sound
     if self.TailSoundPath ~= "" then
@@ -44,7 +44,7 @@ function ENT:OnActivateSounds()
     self.beatDiff = 0
 end
 
---- Override the base class `OnDeactivateSounds` function.
+--- Implement this base class function.
 function ENT:OnDeactivateSounds()
     if IsValid( self.entTailRotor ) then
         self.entTailRotor:Remove()
@@ -59,7 +59,7 @@ local RealTime = RealTime
 local GetVolume = Glide.Config.GetVolume
 local PlaySoundSet = Glide.PlaySoundSet
 
---- Override the base class `OnUpdateSounds` function.
+--- Implement this base class function.
 function ENT:OnUpdateSounds()
     local sounds = self.sounds
     local vol = GetVolume( "aircraftVolume" )

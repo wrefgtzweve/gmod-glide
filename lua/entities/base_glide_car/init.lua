@@ -8,7 +8,7 @@ DEFINE_BASECLASS( "base_glide" )
 include( "shared.lua" )
 include( "sv_engine.lua" )
 
---- Implement the base class `OnPostInitialize` function.
+--- Implement this base class function.
 function ENT:OnPostInitialize()
     -- Setup variables used on all cars
     self.headlights = {}
@@ -96,12 +96,12 @@ function ENT:UpdateWheelParameters()
     p.asymptoteValue = self:GetAsymptoteValue()
 end
 
---- Implement the base class `OnDriverEnter` function.
+--- Implement this base class function.
 function ENT:OnDriverEnter()
     self:TurnOn()
 end
 
---- Implement the base class `OnDriverExit` function.
+--- Implement this base class function.
 function ENT:OnDriverExit()
     local keepOn = IsValid( self.lastDriver ) and self.lastDriver:KeyDown( IN_WALK )
 
@@ -110,7 +110,7 @@ function ENT:OnDriverExit()
     end
 end
 
---- Override the base class `TurnOn` function.
+--- Override this base class function.
 function ENT:TurnOn()
     self.reducedThrottle = false
     self:SetGear( 0 )
@@ -129,7 +129,7 @@ function ENT:TurnOn()
     self:SetFlywheelRPM( 0 )
 end
 
---- Override the base class `TurnOff` function.
+--- Override this base class function.
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
@@ -144,7 +144,7 @@ function ENT:TurnOff()
     self.reducedThrottle = false
 end
 
---- Override the base class `ChangeWheelRadius` function.
+--- Override this base class function.
 function ENT:ChangeWheelRadius( radius, dontSetNW )
     BaseClass.ChangeWheelRadius( self, radius )
 
@@ -158,7 +158,7 @@ function ENT:OnWheelRadiusChange( _, _, radius )
     self:ChangeWheelRadius( radius, true )
 end
 
---- Override the base class `OnTakeDamage` function.
+--- Override this base class function.
 function ENT:OnTakeDamage( dmginfo )
     if dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
         -- Don't let other explosions cause us to explode immediately.
@@ -178,7 +178,7 @@ function ENT:OnTakeDamage( dmginfo )
     end
 end
 
---- Implement the base class `OnSeatInput` function.
+--- Implement this base class function.
 function ENT:OnSeatInput( seatIndex, action, pressed )
     if not pressed or seatIndex > 1 then return end
 
@@ -247,7 +247,7 @@ end
 
 local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 
--- Override the base class `SetupWirePorts` function.
+--- Override this base class function.
 function ENT:SetupWirePorts()
     if not TriggerOutput then return end
 
@@ -278,7 +278,7 @@ local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
 
---- Implement the base class `OnPostThink` function.
+--- Implement this base class function.
 function ENT:OnPostThink( dt )
     self:UpdateBodygroups()
 
@@ -466,7 +466,7 @@ function ENT:UpdateAirControls( phys, dt )
     ) )
 end
 
---- Override the base class `CreateWheel` function.
+--- Override this base class function.
 function ENT:CreateWheel( offset, params )
     local wheel = BaseClass.CreateWheel( self, offset, params )
 
@@ -484,7 +484,7 @@ end
 local availableBrake, availableTorque, steerAngle, enableInertia, angVelMult
 local isGrounded, rpm, totalRPM, totalSideSlip, totalForwardSlip
 
---- Override the base class `WheelThink` function.
+--- Implement this base class function.
 function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = IsValid( phys ) and phys:IsAsleep()

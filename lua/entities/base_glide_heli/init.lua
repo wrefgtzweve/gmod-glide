@@ -7,7 +7,7 @@ duplicator.RegisterEntityClass( "base_glide_heli", Glide.VehicleFactory, "Data" 
 
 DEFINE_BASECLASS( "base_glide_aircraft" )
 
---- Override the base class `OnPostInitialize` function.
+--- Override this base class function.
 function ENT:OnPostInitialize()
     BaseClass.OnPostInitialize( self )
 
@@ -15,7 +15,7 @@ function ENT:OnPostInitialize()
     self.rotors = {}
 end
 
---- Override the base class `PhysicsCollide` function.
+--- Override this base class function.
 function ENT:PhysicsCollide( data )
     if self:GetOutOfControl() then
         local ent = data.HitEntity
@@ -30,7 +30,7 @@ function ENT:PhysicsCollide( data )
     BaseClass.PhysicsCollide( self, data )
 end
 
---- Override the base class `Repair` function.
+--- Override this base class function.
 function ENT:Repair()
     BaseClass.Repair( self )
 
@@ -82,20 +82,20 @@ function ENT:CreateRotor( offset, radius, slowModel, fastModel )
     return rotor
 end
 
---- Override the base class `TurnOn` function.
+--- Override this base class function.
 function ENT:TurnOn()
     BaseClass.TurnOn( self )
     self:SetOutOfControl( false )
 end
 
---- Implement the base class `OnDriverEnter` function.
+--- Implement this base class function.
 function ENT:OnDriverEnter()
     if self:GetEngineHealth() > 0 then
         self:TurnOn()
     end
 end
 
---- Implement the base class `OnDriverExit` function.
+--- Implement this base class function.
 function ENT:OnDriverExit()
     if self.altitude > 400 and self:GetPower() > 0.2 then
         self:SetOutOfControl( true )
@@ -109,7 +109,7 @@ local Approach = math.Approach
 local ExpDecay = Glide.ExpDecay
 local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 
---- Override the base class `OnPostThink` function.
+--- Override this base class function.
 function ENT:OnPostThink( dt )
     BaseClass.OnPostThink( self, dt )
 
@@ -211,7 +211,7 @@ end
 
 local Clamp = math.Clamp
 
---- Implement the base class `OnSimulatePhysics` function.
+--- Implement this base class function.
 function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     local params = self.HelicopterParams
     local power = Clamp( params.basePower + self:GetPower(), 0, 1 )

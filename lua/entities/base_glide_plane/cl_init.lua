@@ -9,12 +9,12 @@ function ENT:OnTurnOn()
     end
 end
 
---- Override the base class `AllowWindSound` function.
+--- Implement this base class function.
 function ENT:AllowWindSound()
     return true, 0.8 - self:GetPower()
 end
 
---- Implement the base class `OnActivateSounds` function.
+--- Implement this base class function.
 function ENT:OnActivateSounds()
     self:CreateLoopingSound( "engine", self.EngineSoundPath, self.EngineSoundLevel )
     self:CreateLoopingSound( "exhaust", self.ExhaustSoundPath, self.ExhaustSoundLevel )
@@ -32,7 +32,7 @@ function ENT:OnActivateSounds()
     self:CreateLoopingSound( "prop", self.PropSoundPath, self.PropSoundLevel, self.entProp )
 end
 
---- Implement the base class `OnDeactivateSounds` function.
+--- Implement this base class function.
 function ENT:OnDeactivateSounds()
     if IsValid( self.entProp ) then
         self.entProp:Remove()
@@ -40,7 +40,7 @@ function ENT:OnDeactivateSounds()
     end
 end
 
---- Implement the base class `OnActivateMisc` function.
+--- Implement this base class function.
 function ENT:OnActivateMisc()
     self.controlSoundCD = 0
     self.nextControlTime = 0
@@ -81,7 +81,7 @@ end
 local RealTime = RealTime
 local DrawLightSprite = Glide.DrawLightSprite
 
---- Implement the base class `OnUpdateMisc` function.
+--- Implement this base class function.
 function ENT:OnUpdateMisc()
     self:OnUpdateAnimations()
 
@@ -116,7 +116,7 @@ local Clamp = math.Clamp
 local Remap = math.Remap
 local GetVolume = Glide.Config.GetVolume
 
---- Override the base class `OnUpdateSounds` function.
+--- Implement this base class function.
 function ENT:OnUpdateSounds()
     local sounds = self.sounds
     local vol = GetVolume( "aircraftVolume" )
@@ -142,7 +142,7 @@ function ENT:OnUpdateSounds()
     sounds.exhaust:ChangePitch( Remap( power, 1, 2, self.ExhaustSoundMinPitch, self.ExhaustSoundMaxPitch ) * power01 * pitch )
     sounds.exhaust:ChangeVolume( power01 * self.ExhaustSoundVolume * vol )
 
-    vol = vol * Clamp( self.engineSounds.lastDistance / 1000000, 0, 1 )
+    vol = vol * Clamp( self.rfSounds.lastDistance / 1000000, 0, 1 )
 
     sounds.distant:ChangePitch( Remap( power, 1, 2, 80, 100 ) )
     sounds.distant:ChangeVolume( vol * power01 )

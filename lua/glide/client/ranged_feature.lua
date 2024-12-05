@@ -87,6 +87,6 @@ function RangedFeature:Think()
     end
 
     if self.isActive and self.onUpdate then
-        ent[self.onUpdate]( ent, dist / self.deactivateDist )
+        ent[self.onUpdate]( ent )
     end
 end

@@ -15,6 +15,7 @@ ENT.TailRotorOffset = Vector()
 
 DEFINE_BASECLASS( "base_glide_aircraft" )
 
+--- Override this base class function.
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
 

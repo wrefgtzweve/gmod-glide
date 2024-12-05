@@ -11,17 +11,17 @@ function ENT:Initialize()
     }
 
     -- Create a RangedFeature to handle engine sounds
-    self.engineSounds = Glide.CreateRangedFeature( self, self.MaxSoundDistance )
-    self.engineSounds:SetTestCallback( "ShouldActivateSounds" )
-    self.engineSounds:SetActivateCallback( "OnActivateSounds" )
-    self.engineSounds:SetDeactivateCallback( "DeactivateSounds" )
-    self.engineSounds:SetUpdateCallback( "OnUpdateSounds" )
+    self.rfSounds = Glide.CreateRangedFeature( self, self.MaxSoundDistance )
+    self.rfSounds:SetTestCallback( "ShouldActivateSounds" )
+    self.rfSounds:SetActivateCallback( "OnActivateSounds" )
+    self.rfSounds:SetDeactivateCallback( "DeactivateSounds" )
+    self.rfSounds:SetUpdateCallback( "OnUpdateSounds" )
 
     -- Create a RangedFeature to handle misc. features, such as particles and animations
-    self.miscFeatures = Glide.CreateRangedFeature( self, self.MaxMiscDistance )
-    self.miscFeatures:SetActivateCallback( "ActivateMisc" )
-    self.miscFeatures:SetDeactivateCallback( "DeactivateMisc" )
-    self.miscFeatures:SetUpdateCallback( "UpdateMisc" )
+    self.rfMisc = Glide.CreateRangedFeature( self, self.MaxMiscDistance )
+    self.rfMisc:SetActivateCallback( "ActivateMisc" )
+    self.rfMisc:SetDeactivateCallback( "DeactivateMisc" )
+    self.rfMisc:SetUpdateCallback( "UpdateMisc" )
 
     self:OnPostInitialize()
 end
@@ -34,14 +34,14 @@ function ENT:OnRemove( fullUpdate )
 
     if fullUpdate then return end
 
-    if self.engineSounds then
-        self.engineSounds:Destroy()
-        self.engineSounds = nil
+    if self.rfSounds then
+        self.rfSounds:Destroy()
+        self.rfSounds = nil
     end
 
-    if self.miscFeatures then
-        self.miscFeatures:Destroy()
-        self.miscFeatures = nil
+    if self.rfMisc then
+        self.rfMisc:Destroy()
+        self.rfMisc = nil
     end
 end
 
@@ -76,6 +76,8 @@ function ENT:GetWheelOffset( index )
 end
 
 --- Create a new looping sound and store it on the slot `id`.
+--- This sound will automatically be stopped when the
+--- `rfSounds` RangedFeature is deactivated.
 function ENT:CreateLoopingSound( id, path, level, parent )
     local snd = self.sounds[id]
 
@@ -149,7 +151,7 @@ end
 local Effect = util.Effect
 local DEFAULT_FLAME_ANGLE = Angle()
 
-function ENT:UpdateMisc( distanceFraction )
+function ENT:UpdateMisc()
     local t = RealTime()
 
     -- Keep particles consistent even at high FPS
@@ -185,19 +187,19 @@ function ENT:UpdateMisc( distanceFraction )
     end
 
     -- Let children classes do their own stuff
-    self:OnUpdateMisc( distanceFraction )
+    self:OnUpdateMisc()
 end
 
 function ENT:Think()
     -- Run again next frame
     self:SetNextClientThink( CurTime() )
 
-    if self.engineSounds then
-        self.engineSounds:Think()
+    if self.rfSounds then
+        self.rfSounds:Think()
     end
 
-    if self.miscFeatures then
-        self.miscFeatures:Think()
+    if self.rfMisc then
+        self.rfMisc:Think()
     end
 
     if self.crosshair.enabled then
@@ -207,13 +209,12 @@ function ENT:Think()
     return true
 end
 
--- Implement the base class `OnLocalPlayerEnter` function.
 function ENT:OnLocalPlayerEnter( seatIndex )
     self:DisableCrosshair()
 
     if seatIndex > 1 then return end
 
-    -- Setup the crosshair
+    -- Setup the default crosshair
     local info = self.CrosshairInfo[self:GetWeaponIndex()]
 
     if info then
@@ -221,7 +222,6 @@ function ENT:OnLocalPlayerEnter( seatIndex )
     end
 end
 
--- Implement the base class `OnLocalPlayerExit` function.
 function ENT:OnLocalPlayerExit()
     self:DisableCrosshair()
 end

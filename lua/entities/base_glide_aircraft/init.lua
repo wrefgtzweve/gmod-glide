@@ -7,7 +7,7 @@ duplicator.RegisterEntityClass( "base_glide_aircraft", Glide.VehicleFactory, "Da
 
 DEFINE_BASECLASS( "base_glide" )
 
---- Implement the base class `OnPostInitialize` function.
+--- Implement this base class function.
 function ENT:OnPostInitialize()
     -- Setup variables used on all aircraft
     self.altitude = 0
@@ -31,7 +31,7 @@ end
 
 local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 
---- Override the base class `SetupWirePorts` function.
+--- Override this base class function.
 function ENT:SetupWirePorts()
     if not TriggerOutput then return end
 
@@ -173,7 +173,7 @@ function ENT:FireCountermeasures()
     end
 end
 
---- Implement the base class `OnSeatInput` function.
+--- Implement this base class function.
 function ENT:OnSeatInput( seatIndex, action, pressed )
     if not pressed then return end
 
@@ -197,7 +197,7 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     end
 end
 
---- Implement the base class `OnPostThink` function.
+--- Implement this base class function.
 function ENT:OnPostThink( dt )
     -- Find the altitude
     self:UpdateAltitude()

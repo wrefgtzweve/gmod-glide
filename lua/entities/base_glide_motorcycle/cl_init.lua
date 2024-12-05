@@ -2,12 +2,12 @@ include( "shared.lua" )
 
 DEFINE_BASECLASS( "base_glide_car" )
 
---- Override the base class `AllowFirstPersonMuffledSound` function.
+--- Implement this base class function.
 function ENT:AllowFirstPersonMuffledSound()
     return false
 end
 
---- Override the base class `AllowWindSound` function.
+--- Implement this base class function.
 function ENT:AllowWindSound()
     return true, 1
 end
@@ -32,7 +32,7 @@ local DRIVER_POSE_DATA = {
 local FrameTime = FrameTime
 local ExpDecayAngle = Glide.ExpDecayAngle
 
---- Override the base class `GetSeatBoneManipulations` function.
+--- Implement this base class function.
 function ENT:GetSeatBoneManipulations( seatIndex )
     if seatIndex > 1 then
         return POSE_DATA

@@ -72,7 +72,6 @@ if CLIENT then
         return localEyePos
     end
 
-    --- Override the base class `OnActivateMisc` function.
     function ENT:OnActivateMisc()
         BaseClass.OnActivateMisc( self )
 
@@ -93,7 +92,6 @@ if CLIENT then
     local GEAR_OFFSET_DOWN = Vector( 2, 0, -10.5 )
     local GEAR_OFFSET_UP = Vector( 0, 0, 4 )
 
-    --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
         if not self.handlebarsBoneId then return end
 

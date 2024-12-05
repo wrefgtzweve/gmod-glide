@@ -39,7 +39,6 @@ if CLIENT then
         stream:LoadPreset( "sanchez" )
     end
 
-    --- Override the base class `OnActivateMisc` function.
     function ENT:OnActivateMisc()
         BaseClass.OnActivateMisc( self )
 
@@ -50,7 +49,6 @@ if CLIENT then
     local Abs = math.abs
     local spinAng = Angle()
 
-    --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
         BaseClass.OnUpdateAnimations( self )
 

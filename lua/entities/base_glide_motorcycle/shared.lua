@@ -48,10 +48,12 @@ if SERVER then
     ENT.WheelieDrag = -15
     ENT.WheelieForce = 550
 
+    --- Override this base class function.
     function ENT:GetAirInputs()
         return 0, self:GetInputFloat( 1, "lean_pitch" ), -self:GetInputFloat( 1, "steer" )
     end
 
+    --- Override this base class function.
     function ENT:GetGears()
         return {
             [0] = 0, -- Neutral (this number has no effect)

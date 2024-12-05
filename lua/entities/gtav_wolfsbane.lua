@@ -69,7 +69,6 @@ if CLIENT then
     local FrameTime = FrameTime
     local ExpDecayAngle = Glide.ExpDecayAngle
 
-    --- Override the base class `GetSeatBoneManipulations` function.
     function ENT:GetSeatBoneManipulations( seatIndex )
         if seatIndex > 1 then
             return POSE_DATA
@@ -95,7 +94,6 @@ if CLIENT then
         return DRIVER_POSE_DATA
     end
 
-    --- Override the base class `OnActivateMisc` function.
     function ENT:OnActivateMisc()
         BaseClass.OnActivateMisc( self )
 
@@ -105,7 +103,6 @@ if CLIENT then
 
     local spinAng = Angle()
 
-    --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
         BaseClass.OnUpdateAnimations( self )
 

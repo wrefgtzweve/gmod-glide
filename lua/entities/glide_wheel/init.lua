@@ -7,8 +7,6 @@ function ENT:Initialize()
     self:SetModel( "models/editor/axis_helper.mdl" )
     self:SetSolid( SOLID_NONE )
     self:SetMoveType( MOVETYPE_VPHYSICS )
-    --self:DrawShadow( false )
-    --self:SetNoDraw( true )
 
     self.torque = 0     -- Amount of torque to apply to the wheel
     self.brake = 0      -- Amount of brake torque to apply to the wheel
@@ -45,9 +43,6 @@ function ENT:SetupWheel( params )
         self:SetNoDraw( false )
     end
 
-    -- Rim (blown out) model (TODO: add a better model)
-    --self.rimModel = params.rimModel or "models/mechanics/wheels/wheel_smooth_24f.mdl"
-
     -- Model rotation and scale
     self.modelScale = params.modelScale or Vector( 0.3, 1, 1 )
     self:SetModelAngle( params.modelAngle or Angle( 0, 0, 0 ) )
@@ -69,14 +64,10 @@ function ENT:Repair()
     self:ChangeRadius( self.defaultRadius )
 end
 
---[[function ENT:Blow()
-    if self.rimModel then
-        self:SetModel( self.rimModel )
-    end
-
+function ENT:Blow()
     self:ChangeRadius( self.defaultRadius * 0.8 )
     self:EmitSound( "glide/wheels/blowout.wav", 80, math.random( 95, 105 ), 1 )
-end]]
+end
 
 function ENT:ChangeRadius( radius )
     local size = self.modelScale * radius * 2

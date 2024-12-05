@@ -7,7 +7,7 @@ duplicator.RegisterEntityClass( "base_glide_plane", Glide.VehicleFactory, "Data"
 
 DEFINE_BASECLASS( "base_glide_aircraft" )
 
---- Override the base class `OnPostInitialize` function.
+--- Override this base class function.
 function ENT:OnPostInitialize()
     BaseClass.OnPostInitialize( self )
 
@@ -33,7 +33,7 @@ function ENT:OnPostInitialize()
     params.asymptoteValue = 2
 end
 
---- Override the base class `Repair` function.
+--- Override this base class function.
 function ENT:Repair()
     BaseClass.Repair( self )
 
@@ -78,28 +78,28 @@ function ENT:CreatePropeller( offset, radius, slowModel, fastModel )
     return prop
 end
 
---- Override the base class `TurnOn` function.
+--- Override this base class function.
 function ENT:TurnOn()
     BaseClass.TurnOn( self )
     self:SetExtraPitch( 1 )
     self.divePitch = 0
 end
 
---- Override the base class `TurnOff` function.
+--- Override this base class function.
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
     self:SetExtraPitch( 1 )
     self.divePitch = 0
 end
 
---- Override the base class `OnDriverEnter` function.
+--- Implement this base class function.
 function ENT:OnDriverEnter()
     if self:GetEngineHealth() > 0 then
         self:TurnOn()
     end
 end
 
---- Override the base class `OnDriverExit` function.
+--- Implement this base class function.
 function ENT:OnDriverExit()
     self:TurnOff()
     self.brake = 0.1
@@ -115,7 +115,7 @@ local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 
 local WORLD_DOWN = Vector( 0, 0, -1 )
 
---- Override the base class `OnPostThink` function.
+--- Override this base class function.
 function ENT:OnPostThink( dt )
     BaseClass.OnPostThink( self, dt )
 
@@ -252,7 +252,7 @@ function ENT:OnPostThink( dt )
     self.steerAngle[2] = inputSteer * -self.MaxSteerAngle
 end
 
---- Implement the base class `OnSimulatePhysics` function.
+--- Implement this base class function.
 function ENT:OnSimulatePhysics( phys, dt, outLin, outAng )
     self:SimulatePlane( phys, dt, self.PlaneParams, 1, outLin, outAng )
 end

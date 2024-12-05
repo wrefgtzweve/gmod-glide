@@ -100,12 +100,12 @@ function ENT:Think()
 
     local parent = self:GetParent()
     if not IsValid( parent ) then return true end
-    if not parent.miscFeatures then return true end
+    if not parent.rfMisc then return true end
 
-    -- Stop processing when the "miscFeatures" RangedFeature
+    -- Stop processing when the "rfMisc" RangedFeature
     -- from our parent vehicle is not active.
-    -- (Aka. the player is too far away or out of the PVS).
-    local isActive = parent.miscFeatures.isActive
+    -- (When the player is too far away or out of the PVS).
+    local isActive = parent.rfMisc.isActive
     if not isActive then return true end
 
     local velocity = parent:GetVelocity()

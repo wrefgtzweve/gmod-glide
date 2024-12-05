@@ -1,15 +1,15 @@
 include( "shared.lua" )
 
---- Implement the base class `ShouldActivateSounds` function.
+--- Implement this base class function.
 function ENT:ShouldActivateSounds()
     return self:GetPower() > 0.1
 end
 
+local Clamp = math.Clamp
 local Effect = util.Effect
 local EffectData = EffectData
 
-local Clamp = math.Clamp
-
+--- Implement this base class function.
 function ENT:OnUpdateParticles()
     local health = self:GetEngineHealth()
     if health > 0.5 then return end

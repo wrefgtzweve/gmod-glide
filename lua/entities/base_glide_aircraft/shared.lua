@@ -15,6 +15,7 @@ ENT.MaxChassisHealth = 1200
 
 DEFINE_BASECLASS( "base_glide" )
 
+--- Override this base class function.
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
 
@@ -26,6 +27,7 @@ if CLIENT then
     -- Set exhaust positions relative to the chassis
     ENT.ExhaustPositions = {}
 
+    --- Override this base class function.
     function ENT:GetCameraType( _seatIndex )
         return 2 -- Glide.CAMERA_TYPE.AIRCRAFT
     end

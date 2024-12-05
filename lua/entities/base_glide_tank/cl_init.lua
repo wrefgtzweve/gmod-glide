@@ -16,20 +16,20 @@ function ENT:SetupRightTrack( materialSlot, texture, bumpmap )
     self:SetSubMaterial( materialSlot, "!glide_tank_track_r" )
 end
 
---- Implement the base class `AllowFirstPersonMuffledSound` function.
-function ENT:AllowFirstPersonMuffledSound( _ )
+--- Implement this base class function.
+function ENT:AllowFirstPersonMuffledSound()
     return false
 end
 
---- Override the base class `GetFirstPersonOffset` function.
+--- Override this base class function.
 function ENT:GetFirstPersonOffset()
     return Vector( 0, 0, 90 )
 end
 
---- Override the base class `OnEngineStateChange` function.
+--- Override this base class function.
 function ENT:OnEngineStateChange( _, _, state )
     if state == 1 then
-        if self.engineSounds and self.engineSounds.isActive then
+        if self.rfSounds and self.rfSounds.isActive then
             local snd = self:CreateLoopingSound( "start", Glide.GetRandomSound( self.StartSound ), 70, self )
             snd:PlayEx( 1, 100 )
         end
@@ -42,7 +42,7 @@ function ENT:OnEngineStateChange( _, _, state )
     end
 end
 
---- Implement the base class `OnDeactivateSounds` function.
+--- Implement this base class function.
 function ENT:OnDeactivateSounds()
     if self.stream then
         self.stream:Destroy()
@@ -50,14 +50,14 @@ function ENT:OnDeactivateSounds()
     end
 end
 
---- Implement the base class `OnTurnOn` function.
+--- Implement this base class function.
 function ENT:OnTurnOn()
     if self.StartedSound ~= "" then
         self:EmitSound( self.StartedSound, 85, 100, 1.0 )
     end
 end
 
---- Implement the base class `OnTurnOff` function.
+--- Implement this base class function.
 function ENT:OnTurnOff()
     if self.StoppedSound ~= "" then
         self:EmitSound( self.StoppedSound, 75, 100, 1.0 )
@@ -74,7 +74,7 @@ function ENT:OnTurnOff()
     end
 end
 
---- Override the base class `ActivateMisc` function.
+--- Override this base class function.
 function ENT:ActivateMisc()
     BaseClass.ActivateMisc( self )
 
@@ -93,7 +93,7 @@ function ENT:ActivateMisc()
     end
 end
 
---- Override the base class `DeactivateMisc` function.
+--- Override this base class function.
 function ENT:DeactivateMisc()
     BaseClass.DeactivateMisc( self )
 
@@ -113,7 +113,7 @@ local Clamp = math.Clamp
 local FrameTime = FrameTime
 local GetVolume = Glide.Config.GetVolume
 
---- Implement the base class `OnUpdateMisc` function.
+--- Implement this base class function.
 function ENT:OnUpdateMisc()
     local speed = Abs( self:GetTrackSpeed() )
 
@@ -162,7 +162,7 @@ function ENT:OnTurretAngleChange( _, _, ang )
     self.turretVolume = Clamp( yawSpeed / 60, 0, 1 )
 end
 
---- Implement the base class `OnUpdateSounds` function.
+--- Implement this base class function.
 function ENT:OnUpdateSounds()
     local dt = FrameTime()
     local sounds = self.sounds
@@ -231,7 +231,7 @@ do
     local matBody = Material( "materials/glide/tank_body.png", "smooth" )
     local matTurret = Material( "materials/glide/tank_turret.png", "smooth" )
 
-    --- Override the base class `DrawVehicleHUD` function.
+    --- Override this base class function.
     function ENT:DrawVehicleHUD( screenW, screenH )
         BaseClass.DrawVehicleHUD( self, screenW, screenH )
 
@@ -261,6 +261,7 @@ local EffectData = EffectData
 
 local DEFAULT_EXHAUST_ANG = Angle()
 
+--- Implement this base class function.
 function ENT:OnUpdateParticles()
     local health = self:GetEngineHealth()
     if health > 0.5 then return end

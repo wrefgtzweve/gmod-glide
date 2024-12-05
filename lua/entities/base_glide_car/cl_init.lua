@@ -20,10 +20,10 @@ function ENT:OnGearChange( _, _, gear )
     end
 end
 
---- Override the base class `OnEngineStateChange` function.
+--- Override this base class function.
 function ENT:OnEngineStateChange( _, lastState, state )
     if state == 1 then
-        if self.engineSounds and self.engineSounds.isActive then
+        if self.rfSounds and self.rfSounds.isActive then
             local snd = self:CreateLoopingSound( "start", Glide.GetRandomSound( self.StartSound ), 70, self )
             snd:PlayEx( 1, 100 )
         end
@@ -36,14 +36,14 @@ function ENT:OnEngineStateChange( _, lastState, state )
     end
 end
 
---- Implement the base class `OnTurnOn` function.
+--- Implement this base class function.
 function ENT:OnTurnOn()
     if self.StartedSound ~= "" then
         self:EmitSound( self.StartedSound, 85, 100, 1.0 )
     end
 end
 
---- Implement the base class `OnTurnOff` function.
+--- Implement this base class function.
 function ENT:OnTurnOff()
     if self.StoppedSound ~= "" then
         self:EmitSound( self.StoppedSound, 75, 100, 1.0 )
@@ -65,7 +65,7 @@ function ENT:OnTurnOff()
     end
 end
 
---- Implement the base class `OnActivateMisc` function.
+--- Implement this base class function.
 function ENT:OnActivateMisc()
     self.brakePressure = 0
     self.rpmFraction = 0
@@ -74,12 +74,12 @@ function ENT:OnActivateMisc()
     self.headlights = {}
 end
 
---- Implement the base class `OnDeactivateMisc` function.
+--- Implement this base class function.
 function ENT:OnDeactivateMisc()
     self:RemoveHeadlights()
 end
 
---- Implement the base class `OnDeactivateSounds` function.
+--- Implement this base class function.
 function ENT:OnDeactivateSounds()
     if self.stream then
         self.stream:Destroy()
@@ -120,7 +120,7 @@ function ENT:UpdateTurboSound( sounds )
     end
 end
 
---- Implement the base class `OnUpdateSounds` function.
+--- Implement this base class function.
 function ENT:OnUpdateSounds()
     local sounds = self.sounds
 
@@ -254,7 +254,7 @@ local DrawLightSprite = Glide.DrawLightSprite
 local COLOR_BRAKE = Color( 255, 0, 0, 255 )
 local COLOR_REV = Color( 255, 255, 255, 200 )
 
---- Implement the base class `OnUpdateMisc` function.
+--- Implement this base class function.
 function ENT:OnUpdateMisc()
     self:OnUpdateAnimations()
 
@@ -406,7 +406,7 @@ end
 local Effect = util.Effect
 local EffectData = EffectData
 
---- You can override this function on your children classes.
+--- Implement this base class function.
 function ENT:OnUpdateParticles()
     local rpmFraction = self.rpmFraction
     local velocity = self:GetVelocity()
@@ -490,7 +490,7 @@ local GEAR_LABELS = {
 
 local throttle = 0
 
---- Override the base class `DrawVehicleHUD` function.
+--- Override this base class function.
 function ENT:DrawVehicleHUD( screenW, screenH )
     BaseClass.DrawVehicleHUD( self, screenW, screenH )
 

@@ -30,7 +30,6 @@ if CLIENT then
 
     DEFINE_BASECLASS( "base_glide_plane" )
 
-    --- Override the base class `OnActivateMisc` function.
     function ENT:OnActivateMisc()
         BaseClass.OnActivateMisc( self )
 
@@ -42,7 +41,6 @@ if CLIENT then
 
     local ang = Angle()
 
-    --- Override the base class `OnUpdateAnimations` function.
     function ENT:OnUpdateAnimations()
         if not self.rudderBone then return end
 
