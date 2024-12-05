@@ -28,7 +28,7 @@ local traceData = {
 }
 
 function SkidHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
-    traceData.start = pos
+    traceData.start = pos + normal * 10
     traceData.endpos = pos - normal * 10
 
     local tr = TraceLine( traceData )
