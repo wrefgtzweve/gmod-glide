@@ -205,21 +205,21 @@ function ENT:Think()
     local skidmarkSize = self:GetRadius() * parent.WheelSkidmarkScale
 
     contactPos = contactPos + velocity * 0.04
+    velocity:Normalize()
 
     if ROLL_MARK_SURFACES[surfaceId] then
-        self.lastSkidId = nil
-
-        fastFactor = fastFactor + forwardSlipFactor
-
-        if fastFactor > 0.05 then
+        if Abs( fastFactor ) + forwardSlipFactor + sideSlipFactor > 0.01 then
             self.lastRollId = AddTireRollPiece( self.lastRollId, contactPos, velocity, up, skidmarkSize, 1 )
         else
             self.lastRollId = nil
         end
 
         -- Don't create skidmarks if this surface uses roll marks
+        self.lastSkidId = nil
         return true
     end
+
+    self.lastRollId = nil
 
     local totalSlipFactor = Clamp( forwardSlipFactor + sideSlipFactor, 0, 1 )
 
