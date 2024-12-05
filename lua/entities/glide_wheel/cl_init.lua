@@ -2,8 +2,8 @@ include( "shared.lua" )
 
 function ENT:Initialize()
     self.isActive = false
-    self.particleCD = 0
     self.modelCD = 0
+    self.particleCD = 0
 
     self.sounds = {}
     self.soundSurface = {}
@@ -69,8 +69,7 @@ end
 
 local WHEEL_SOUNDS = Glide.WHEEL_SOUNDS
 local ROLL_VOLUME = Glide.WHEEL_SOUNDS.ROLL_VOLUME
-local SKID_MARK_SURFACES = Glide.SKID_MARK_SURFACES
-local TIRE_ROLL_SURFACES = Glide.TIRE_ROLL_SURFACES
+local ROLL_MARK_SURFACES = Glide.ROLL_MARK_SURFACES
 
 local AddSkidMarkPiece = Glide.AddSkidMarkPiece
 local AddTireRollPiece = Glide.AddTireRollPiece
@@ -84,6 +83,7 @@ local EffectData = EffectData
 local IsUnderWater = Glide.IsUnderWater
 
 local m = Matrix()
+local MAT_SLOSH = MAT_SLOSH
 
 function ENT:Think()
     local t = CurTime()
@@ -115,97 +115,112 @@ function ENT:Think()
     local surfaceId = self:GetContactSurface()
     local contactPos = self:GetPos() - up * self:GetRadius()
 
+    -- Force water surface when contactPos is under water 
     if surfaceId > 0 and IsUnderWater( contactPos ) then
-        surfaceId = 83
+        surfaceId = MAT_SLOSH
     end
 
-    local isOnConcrete = surfaceId == 67
-    local isTankWheel = parent.VehicleType == 5 -- Glide.VEHICLE_TYPE.TANK
+    -- Mute concrete sounds when this wheel is part of a tank
+    local muteRollSound = surfaceId == 67 and parent.VehicleType == 5
 
     -- Fast roll sound
-    local fastAmplitude = speed / 600
+    local fastFactor = speed / 600
 
     self:ProcessSound( "fastRoll", surfaceId, WHEEL_SOUNDS.ROLL, nil,
-        Clamp( fastAmplitude * 0.75, 0, ROLL_VOLUME[surfaceId] or 0.4 ), 70 + 25 * fastAmplitude )
+        Clamp( fastFactor * 0.75, 0, ROLL_VOLUME[surfaceId] or 0.4 ), 70 + 25 * fastFactor )
 
     -- Slow roll sound
-    local slowAmplitude = ( isTankWheel and isOnConcrete ) and 0 or 1.02 - ( speed / 600 )
+    local slowFactor = muteRollSound and 0 or 1.02 - fastFactor
 
     self:ProcessSound( "slowRoll", surfaceId, WHEEL_SOUNDS.ROLL_SLOW, 88,
-        slowAmplitude * fastAmplitude * 2, 110 - 30 * slowAmplitude )
+        slowFactor * fastFactor * 2, 110 - 30 * slowFactor )
 
     -- Side slip sound
-    local sideSlipAmplitude = ( isTankWheel and isOnConcrete ) and 0 or Abs( self:GetSideSlip() ) - 0.1
+    local sideSlipFactor = muteRollSound and 0 or Abs( self:GetSideSlip() ) - 0.1
 
-    sideSlipAmplitude = Clamp( sideSlipAmplitude * 1.5, 0, 0.8 )
+    sideSlipFactor = Clamp( sideSlipFactor * 1.5, 0, 0.8 )
 
     self:ProcessSound( "sideSlip", surfaceId, WHEEL_SOUNDS.SIDE_SLIP, nil,
-        sideSlipAmplitude, 110 - 30 * sideSlipAmplitude )
+        sideSlipFactor, 110 - 30 * sideSlipFactor )
 
     -- Forward slip sound
     local forwardSlip = self:GetForwardSlip() * 0.04
-    local forwardSlipAmplitude = Clamp( Abs( forwardSlip ) - 0.1, 0, 1 )
+    local forwardSlipFactor = Clamp( Abs( forwardSlip ) - 0.1, 0, 1 )
 
     self:ProcessSound( "forwardSlip", surfaceId, WHEEL_SOUNDS.FORWARD_SLIP, 88,
-        forwardSlipAmplitude, 100 - forwardSlipAmplitude * 10 )
+        forwardSlipFactor, 100 - forwardSlipFactor * 10 )
 
-    if isTankWheel and isOnConcrete then
+    if muteRollSound then
         self.lastSkidId = nil
         self.lastRollId = nil
 
-        return
+        return true
     end
 
-    -- Particles
-    if t > self.particleCD then
-        self.particleCD = t + 0.05
+    if t < self.particleCD then
+        return true
+    end
 
-        if TIRE_ROLL_SURFACES[surfaceId] or surfaceId == 83 then
-            sideSlipAmplitude = sideSlipAmplitude + Clamp( fastAmplitude, 0, 1 )
-        end
+    self.particleCD = t + 0.05
 
-        if sideSlipAmplitude > 0.05 then
-            local scale = Clamp( self:GetRadius() * 0.05, 0.1, 1 )
+    -- Emit side slip/tire roll particles
+    local particleSize = Clamp( self:GetRadius(), 5, 10 )
+    local rollFactor = sideSlipFactor - 0.5
 
-            local eff = EffectData()
-            eff:SetEntity( parent )
-            eff:SetOrigin( contactPos )
-            eff:SetStart( velocity )
-            eff:SetScale( scale * sideSlipAmplitude )
-            eff:SetSurfaceProp( surfaceId )
-            Effect( "glide_tire_roll", eff )
-        end
+    if ROLL_MARK_SURFACES[surfaceId] then
+        rollFactor = rollFactor + fastFactor
+    end
 
-        if forwardSlipAmplitude > 0.2 and surfaceId ~= 83 then
-            local fw = parent:GetForward()
-            local scale = self:GetRadius() * ( 0.03 + Clamp( Abs( forwardSlip / 30 ), 0, 0.2 ) )
+    if rollFactor > 0.1 then
+        rollFactor = Clamp( rollFactor, 0, 0.5 )
 
-            local eff = EffectData()
-            eff:SetEntity( parent )
-            eff:SetOrigin( contactPos )
-            eff:SetNormal( fw * ( forwardSlip > 1 and 1 or -1 ) )
-            eff:SetScale( scale * forwardSlipAmplitude )
-            eff:SetSurfaceProp( surfaceId )
-            Effect( "glide_tire_slip", eff )
-        end
+        local eff = EffectData()
+        eff:SetOrigin( contactPos )
+        eff:SetStart( velocity )
+        eff:SetSurfaceProp( surfaceId )
+        eff:SetScale( particleSize * rollFactor )
+        eff:SetEntity( parent )
+        Effect( "glide_tire_roll", eff )
+    end
 
-        sideSlipAmplitude = sideSlipAmplitude + forwardSlipAmplitude
+    if forwardSlipFactor > 0.2 then
+        forwardSlipFactor = Clamp( forwardSlipFactor, 0, 1 )
 
-        local skidmarkSize = self:GetRadius() * parent.WheelSkidmarkScale
+        local eff = EffectData()
+        eff:SetOrigin( contactPos )
+        eff:SetSurfaceProp( surfaceId )
+        eff:SetScale( particleSize * forwardSlipFactor )
+        eff:SetNormal( parent:GetForward() * ( forwardSlip > 1 and 1 or -1 ) )
+        eff:SetEntity( parent )
+        Effect( "glide_tire_slip_forward", eff )
+    end
 
-        if sideSlipAmplitude > 0.3 and SKID_MARK_SURFACES[surfaceId] then
-            contactPos = contactPos + velocity * 0.04
-            self.lastSkidId = AddSkidMarkPiece( self.lastSkidId, contactPos, velocity, up, skidmarkSize, Clamp( sideSlipAmplitude, 0, 1 ) )
-        else
-            self.lastSkidId = nil
-        end
+    -- Create skidmarks
+    local skidmarkSize = self:GetRadius() * parent.WheelSkidmarkScale
 
-        if fastAmplitude > 0.05 and TIRE_ROLL_SURFACES[surfaceId] then
-            contactPos = contactPos + velocity * 0.04
+    contactPos = contactPos + velocity * 0.04
+
+    if ROLL_MARK_SURFACES[surfaceId] then
+        self.lastSkidId = nil
+
+        fastFactor = fastFactor + forwardSlipFactor
+
+        if fastFactor > 0.05 then
             self.lastRollId = AddTireRollPiece( self.lastRollId, contactPos, velocity, up, skidmarkSize, 1 )
         else
             self.lastRollId = nil
         end
+
+        -- Don't create skidmarks if this surface uses roll marks
+        return true
+    end
+
+    local totalSlipFactor = Clamp( forwardSlipFactor + sideSlipFactor, 0, 1 )
+
+    if totalSlipFactor > 0.3 then
+        self.lastSkidId = AddSkidMarkPiece( self.lastSkidId, contactPos, velocity, up, skidmarkSize, totalSlipFactor )
+    else
+        self.lastSkidId = nil
     end
 
     return true

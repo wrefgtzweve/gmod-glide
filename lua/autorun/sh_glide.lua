@@ -81,18 +81,8 @@ if CLIENT then
         AIRCRAFT = 2
     }
 
-    -- Surfaces that can generate skid marks
-    Glide.SKID_MARK_SURFACES = {
-        [MAT_DEFAULT] = true,
-        [MAT_CONCRETE] = true,
-        [MAT_PLASTIC] = true,
-        [MAT_METAL] = true,
-        [MAT_TILE] = true,
-        [MAT_WOOD] = true
-    }
-
     -- Surfaces that can generate tire roll marks
-    Glide.TIRE_ROLL_SURFACES = {
+    Glide.ROLL_MARK_SURFACES = {
         [MAT_DIRT] = true,
         [MAT_SNOW] = true,
         [MAT_SAND] = true,
