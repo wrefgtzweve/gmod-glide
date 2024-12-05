@@ -167,7 +167,7 @@ function ENT:Think()
     local particleSize = Clamp( self:GetRadius(), 5, 10 )
     local rollFactor = sideSlipFactor - 0.5
 
-    if ROLL_MARK_SURFACES[surfaceId] then
+    if ROLL_MARK_SURFACES[surfaceId] or surfaceId == MAT_SLOSH then
         rollFactor = rollFactor + fastFactor
     end
 
@@ -193,6 +193,12 @@ function ENT:Think()
         eff:SetNormal( parent:GetForward() * ( forwardSlip > 1 and 1 or -1 ) )
         eff:SetEntity( parent )
         Effect( "glide_tire_slip_forward", eff )
+    end
+
+    if surfaceId == MAT_SLOSH then
+        self.lastSkidId = nil
+        self.lastRollId = nil
+        return true
     end
 
     -- Create skidmarks
