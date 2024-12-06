@@ -18,6 +18,7 @@ hook.Add( "Glide_OnLocalExitVehicle", "Glide.DeactivateCamera", function()
     Camera:Deactivate()
 end )
 
+Camera.lastAimEntity = NULL
 Camera.lastAimPos = Vector()
 Camera.viewAngles = Angle()
 Camera.isInFirstPerson = false
@@ -355,14 +356,17 @@ function Camera:CalcView()
         self.origin = endPos
     end
 
-    -- Update aim position
+    -- Update aim position and entity
     local origin = self.origin
 
-    self.lastAimPos = TraceLine( {
+    local tr = TraceLine( {
         start = origin,
         endpos = origin + angles:Forward() * 50000,
         filter = { user, vehicle }
-    } ).HitPos
+    } )
+
+    self.lastAimEntity = tr.Entity
+    self.lastAimPos = tr.HitPos
 
     -- Let the server know where the camera is
     if self.cvarX then

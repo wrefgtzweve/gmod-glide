@@ -79,7 +79,6 @@ function Glide.DrawHealthBar( x, y, w, h, health, icon )
     h = h - 4
 
     DrawRoundedBox( radius, x, y, w * health, h, FG_COLOR, false, true, false, true )
-
 end
 
 local VEHICLE_ICONS = {
