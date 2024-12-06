@@ -56,7 +56,7 @@ function ENT:Initialize()
     self.submerged = false
 
     self:SetProjectileSpeed( 10000 )
-    self:SetProjectileGravity( -700 )
+    self:SetProjectileGravity( 700 )
 
     local phys = self:GetPhysicsObject()
 
@@ -77,7 +77,7 @@ function ENT:SetProjectileSpeed( speed )
 end
 
 function ENT:SetProjectileGravity( gravity )
-    self.gravity = Vector( 0, 0, gravity )
+    self.gravity = Vector( 0, 0, -gravity )
 end
 
 function ENT:SetupProjectile( attacker, parent )

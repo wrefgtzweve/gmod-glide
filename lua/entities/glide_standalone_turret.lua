@@ -175,7 +175,7 @@ local cvarMaxDamage = GetConVar( "glide_turret_max_damage" )
 local cvarMinDelay = GetConVar( "glide_turret_min_delay" )
 
 function ENT:SetTurretDamage( damage )
-    self.turretDamage = math.Clamp( damage, 1, cvarMaxDamage and cvarMaxDamage:GetFloat() or 200 )
+    self.turretDamage = math.Clamp( damage, 1, cvarMaxDamage and cvarMaxDamage:GetFloat() or 50 )
 end
 
 function ENT:SetTurretDelay( delay )
