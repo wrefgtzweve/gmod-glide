@@ -120,7 +120,7 @@ if SERVER then
     }
 
     ENT.TurretFireSound = ")glide/tanks/acf_fire4.mp3"
-    ENT.TurretFireVolume = 1.0
+    ENT.TurretFireVolume = 0.8
     ENT.TurretRecoilForce = 50
 
     ENT.TurretOffset = Vector( 0, 0, 150 )
