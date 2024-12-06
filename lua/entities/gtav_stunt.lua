@@ -84,6 +84,8 @@ if SERVER then
         "models/gta5/vehicles/stunt/gibs/wing_r.mdl"
     }
 
+    ENT.PropModel = "models/gta5/vehicles/stunt/stunt_prop_slow.mdl"
+    ENT.PropFastModel = "models/gta5/vehicles/stunt/stunt_prop_fast.mdl"
     ENT.PropRadius = 35
 
     function ENT:CreateFeatures()
