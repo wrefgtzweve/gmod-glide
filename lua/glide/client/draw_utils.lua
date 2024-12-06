@@ -50,46 +50,51 @@ function Glide.DrawWeaponSelection( name, icon )
     DrawTexturedRectRotated( sw * 0.5, y - size * 0.1, size * 0.3, size * 0.3, 0 )
 end
 
-local DrawRect = surface.DrawRect
+local DrawRoundedBox = draw.RoundedBoxEx
+local GetCachedIcon = Glide.GetCachedIcon
 
-function Glide.DrawHealthBar( x, y, w, h, health )
-    SetColor( 20, 20, 20, 200 )
-    DrawRect( x, y, w, h )
+local THEME_COLOR = Glide.THEME_COLOR
+local BG_COLOR = Color( 20, 20, 20, 240 )
+local FG_COLOR = Color( 0, 255, 0, 255 )
 
-    x, y = x + 1, y + 1
-    w, h = w - 2, h - 2
+function Glide.DrawHealthBar( x, y, w, h, health, icon )
+    icon = GetCachedIcon( icon or "materials/glide/icons/cogs.png" )
 
-    SetColor( 255 * ( 1 - health ), 255 * health, 0 )
-    DrawRect( x, y, w * health, h )
+    local radius = h * 0.25
+
+    THEME_COLOR.a = 255
+    DrawRoundedBox( radius, x, y, h, h, THEME_COLOR, true, false, true, false )
+    DrawRoundedBox( radius, x + h, y, w - h, h, BG_COLOR, false, true, false, true )
+
+    SetMaterial( icon )
+    SetColor( 255, 255, 255, 255 )
+    DrawTexturedRectRotated( x + h * 0.5, y + h * 0.5, h, h, 0 )
+
+    FG_COLOR.r = 255 * ( 1 - health )
+    FG_COLOR.g = 255 * health
+
+    x = x + h + 2
+    y = y + 2
+    w = w - h - 4
+    h = h - 4
+
+    DrawRoundedBox( radius, x, y, w * health, h, FG_COLOR, false, true, false, true )
+
 end
 
-local DrawHealthBar = Glide.DrawHealthBar
-local ICON_ENGINE = Glide.GetCachedIcon( "materials/glide/icons/cogs.png" )
-
 local VEHICLE_ICONS = {
-    [Glide.VEHICLE_TYPE.CAR] = Glide.GetCachedIcon( "materials/glide/icons/car.png" ),
-    [Glide.VEHICLE_TYPE.MOTORCYCLE] = Glide.GetCachedIcon( "materials/glide/icons/motorcycle.png" ),
-    [Glide.VEHICLE_TYPE.HELICOPTER] = Glide.GetCachedIcon( "materials/glide/icons/helicopter.png" ),
-    [Glide.VEHICLE_TYPE.PLANE] = Glide.GetCachedIcon( "materials/glide/icons/plane.png" ),
-    [Glide.VEHICLE_TYPE.TANK] = Glide.GetCachedIcon( "materials/glide/icons/tank.png" )
+    [Glide.VEHICLE_TYPE.CAR] = "materials/glide/icons/car.png",
+    [Glide.VEHICLE_TYPE.MOTORCYCLE] = "materials/glide/icons/motorcycle.png",
+    [Glide.VEHICLE_TYPE.HELICOPTER] = "materials/glide/icons/helicopter.png",
+    [Glide.VEHICLE_TYPE.PLANE] = "materials/glide/icons/plane.png",
+    [Glide.VEHICLE_TYPE.TANK] = "materials/glide/icons/tank.png"
 }
 
+local DrawHealthBar = Glide.DrawHealthBar
+
 function Glide.DrawVehicleHealth( x, y, w, h, vehicleType, chassisHealth, engineHealth )
-    local rowH = h * 0.5
+    local colW = w * 0.49
 
-    SetColor( 255, 255, 255, 255 )
-
-    SetMaterial( VEHICLE_ICONS[vehicleType] or VEHICLE_ICONS[1] )
-    DrawTexturedRectRotated( x + rowH * 0.5, y + rowH * 0.45, rowH, rowH, 0 )
-
-    SetMaterial( ICON_ENGINE )
-    DrawTexturedRectRotated( x + rowH * 0.5, y + rowH * 1.55, rowH, rowH, 0 )
-
-    x = x + rowH * 1.2
-    y = y + h * 0.1
-    w = w - rowH * 1.2
-    h = h * 0.5
-
-    DrawHealthBar( x, y, w, h * 0.5, chassisHealth )
-    DrawHealthBar( x, y + h, w, h * 0.5, engineHealth )
+    DrawHealthBar( x, y, colW, h, chassisHealth, VEHICLE_ICONS[vehicleType] or VEHICLE_ICONS[1] )
+    DrawHealthBar( x + w - colW, y, colW, h, engineHealth )
 end

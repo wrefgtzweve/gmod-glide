@@ -154,11 +154,11 @@ function SWEP:DrawHUD()
     surface.SetMaterial( ICON_AIM )
     surface.DrawTexturedRectRotated( x, y, size, size, 0 )
 
-    local w = math.floor( ScrH() * 0.2 )
-    local h = math.floor( ScrH() * 0.05 )
+    local w = math.floor( ScrH() * 0.4 )
+    local h = math.floor( ScrH() * 0.03 )
 
     x = x - w * 0.5
-    y = y + h
+    y = y + h * 2
 
     Glide.DrawVehicleHealth( x, y, w, h, ent.VehicleType, ent:GetChassisHealth() / ent.MaxChassisHealth, ent:GetEngineHealth() )
 
