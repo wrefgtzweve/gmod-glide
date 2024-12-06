@@ -76,9 +76,10 @@ if SERVER then
     -- How far can the propeller's blades hit things
     ENT.PropRadius = 50
 
-    -- Slow and fast models for the propeller
-    ENT.PropModel = "models/gta5/vehicles/stunt/stunt_prop_slow.mdl"
-    ENT.PropFastModel = "models/gta5/vehicles/stunt/stunt_prop_fast.mdl"
+    -- Slow and fast models for the propeller.
+    -- Leave empty to not create the default propeller.
+    ENT.PropModel = ""
+    ENT.PropFastModel = ""
 
     -- Ground steering variables
     ENT.MaxSteerAngle = 40

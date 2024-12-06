@@ -22,7 +22,7 @@ function ENT:OnPostInitialize()
     -- Update default wheel params
     local params = self.wheelParams
 
-    params.brakePower = 700
+    params.brakePower = 800
     params.suspensionLength = 10
     params.springStrength = 1000
     params.springDamper = 4000
@@ -38,7 +38,7 @@ function ENT:Repair()
     BaseClass.Repair( self )
 
     -- Create main propeller, if it doesn't exist
-    if not IsValid( self.mainProp ) then
+    if not IsValid( self.mainProp ) and self.PropModel ~= "" then
         self.mainProp = self:CreatePropeller( self.PropOffset, self.PropRadius, self.PropModel, self.PropFastModel )
         self.mainProp:SetSpinAngle( math.random( 0, 180 ) )
     end
@@ -131,7 +131,7 @@ function ENT:OnPostThink( dt )
     local throttle = self:GetInputFloat( 1, "throttle" )
 
     -- If the main propeller was destroyed, turn off and disable power
-    if not IsValid( self.mainProp ) then
+    if not IsValid( self.mainProp ) and self.PropModel ~= "" then
         if self:IsEngineOn() then
             self:TurnOff()
         end
