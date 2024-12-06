@@ -97,7 +97,7 @@ local cvarMaxRadius = GetConVar( "glide_missile_launcher_max_radius" )
 local cvarMaxDamage = GetConVar( "glide_missile_launcher_max_damage" )
 
 function TOOL.BuildCPanel( panel )
-    panel:AddControl( "header", { Description = "#tool.glide_turret.desc" } )
+    panel:AddControl( "header", { Description = "#tool.glide_missile_launcher.desc" } )
 
     panel:AddControl( "slider", {
         Label = "#tool.glide_missile_launcher.delay",
