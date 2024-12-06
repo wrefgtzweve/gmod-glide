@@ -137,7 +137,10 @@ function ENT:OnPostThink( dt )
         end
 
         power = 0
+        throttle = 0
     end
+
+    self:SetThrottle( throttle )
 
     if self:IsEngineOn() then
         -- Make sure the physics stay awake,

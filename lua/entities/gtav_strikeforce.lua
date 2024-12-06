@@ -56,15 +56,17 @@ if CLIENT then
 
     ENT.EngineSoundPath = "glide/aircraft/engine_luxor.wav"
     ENT.EngineSoundLevel = 90
-    ENT.EngineSoundVolume = 0.6
+    ENT.EngineSoundVolume = 0.5
     ENT.EngineSoundMinPitch = 103
     ENT.EngineSoundMaxPitch = 132
 
     ENT.ExhaustSoundPath = "glide/aircraft/distant_laser.wav"
     ENT.ExhaustSoundLevel = 90
-    ENT.ExhaustSoundVolume = 1.0
+    ENT.ExhaustSoundVolume = 0.5
     ENT.ExhaustSoundMinPitch = 55
     ENT.ExhaustSoundMaxPitch = 60
+
+    ENT.ThrustSound = "glide/aircraft/thrust_b11.wav"
 
     function ENT:OnActivateMisc()
         BaseClass.OnActivateMisc( self )

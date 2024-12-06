@@ -18,7 +18,9 @@ DEFINE_BASECLASS( "base_glide_aircraft" )
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
 
+    self:NetworkVar( "Float", "Throttle" )
     self:NetworkVar( "Float", "ExtraPitch" )
+
     self:NetworkVar( "Float", "Elevator" )
     self:NetworkVar( "Float", "Rudder" )
     self:NetworkVar( "Float", "Aileron" )
@@ -53,6 +55,13 @@ if CLIENT then
     ENT.ExhaustSoundVolume = 0.7
     ENT.ExhaustSoundMinPitch = 100
     ENT.ExhaustSoundMaxPitch = 115
+
+    ENT.ThrustSound = ""
+    ENT.ThrustSoundLevel = 90
+    ENT.ThrustSoundLowVolume = 0.4
+    ENT.ThrustSoundHighVolume = 0.7
+    ENT.ThrustSoundMinPitch = 80
+    ENT.ThrustSoundMaxPitch = 100
 
     ENT.StrobeLights = {}
 

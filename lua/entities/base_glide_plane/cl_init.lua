@@ -20,6 +20,10 @@ function ENT:OnActivateSounds()
     self:CreateLoopingSound( "exhaust", self.ExhaustSoundPath, self.ExhaustSoundLevel )
     self:CreateLoopingSound( "distant", self.DistantSoundPath, self.DistantSoundLevel )
 
+    if self.ThrustSound ~= "" then
+        self:CreateLoopingSound( "thrust", self.ThrustSound, self.ThrustSoundLevel )
+    end
+
     if self.PropSoundPath == "" then return end
 
     -- Create a client-side entity to play the propeller sound
@@ -134,6 +138,13 @@ function ENT:OnUpdateSounds()
     if sounds.prop then
         sounds.prop:ChangePitch( Remap( power, 1, 2, self.PropSoundMinPitch, self.PropSoundMaxPitch ) )
         sounds.prop:ChangeVolume( power01 * self.PropSoundVolume * vol )
+    end
+
+    if sounds.thrust then
+        local thrustVol = Remap( Clamp( self:GetThrottle(), 0, 1 ), 0, 1, self.ThrustSoundLowVolume, self.ThrustSoundHighVolume )
+
+        sounds.thrust:ChangePitch( Remap( power, 0, 2, self.ThrustSoundMinPitch, self.ThrustSoundMaxPitch ) )
+        sounds.thrust:ChangeVolume( power01 * thrustVol * vol )
     end
 
     sounds.engine:ChangePitch( Remap( power, 1, 2, self.EngineSoundMinPitch, self.EngineSoundMaxPitch ) * power01 * pitch )
