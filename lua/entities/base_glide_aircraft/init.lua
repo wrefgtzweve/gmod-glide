@@ -419,8 +419,8 @@ function ENT:SimulatePlane( phys, dt, params, effective, outLin, outAng )
     if speed > maxSpeed then
         controllability = 1 + Clamp( 1 - ( speed / maxSpeed ), -1, 0 ) * 0.75
 
-        if speed > maxSpeed * 1.5 then
-            AddForce( outLin, -fw * params.engineForce * 2 )
+        if speed > maxSpeed * 1.2 then
+            AddForce( outLin, params.engineForce * -2 * fw )
         end
     end
 

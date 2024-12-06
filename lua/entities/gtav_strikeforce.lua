@@ -251,7 +251,8 @@ if SERVER then
                 pos = self:LocalToWorld( self.BulletOffset ),
                 ang = self:GetAngles(),
                 attacker = attacker,
-                isExplosive = true
+                isExplosive = true,
+                length = 8000
             } )
         else
             self.missileIndex = self.missileIndex + 1

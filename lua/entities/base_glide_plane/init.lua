@@ -241,7 +241,7 @@ function ENT:OnPostThink( dt )
 
     self.isGrounded = isGrounded
 
-    local inputSteer = self:GetInputFloat( 1, "steer" )
+    local inputSteer = self.inputYaw --self:GetInputFloat( 1, "steer" )
     local sideSlip = Clamp( totalSideSlip / self.wheelCount, -1, 1 )
 
     -- Limit the input and the rate of change depending on speed.

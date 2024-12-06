@@ -227,8 +227,9 @@ local function HandleMouseInput( ply, active )
         local pitchDrag = Clamp( angVel[2] * -0.1, -3, 3 ) * dt * 40
         local rudderDrag = Clamp( angVel[3] * 0.1, -3, 3 ) * dt * 40
 
-        local pitch = Clamp( ( targetDir:Dot( vehicle:GetUp() ) * -8 ) + pitchDrag, -1, 1 )
-        local rudder = Clamp( ( targetDir:Dot( vehicle:GetRight() ) * 8 ) + rudderDrag, -1, 1 )
+        local mult = vehicle.VehicleType == 4 and 15 or 8
+        local pitch = Clamp( ( targetDir:Dot( vehicle:GetUp() ) * -mult ) + pitchDrag, -1, 1 )
+        local rudder = Clamp( ( targetDir:Dot( vehicle:GetRight() ) * mult ) + rudderDrag, -1, 1 )
 
         if vehicle:GetInputBool( 1, "free_look" ) then
             pitch = 0
