@@ -156,6 +156,7 @@ function ENT:Think()
     end
 
     self:SetPos( nextPos )
+    self:SetAngles( self.velocity:Angle() )
     self:NextThink( t )
 
     return true
