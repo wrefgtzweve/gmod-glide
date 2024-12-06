@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/hydra_canopy"
+	"$translucent" "1"
+}

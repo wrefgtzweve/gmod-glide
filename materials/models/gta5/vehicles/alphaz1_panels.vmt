@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/alphaz1_panels"
+	"$bumpmap" "models/gta5/vehicles/alphaz1_panels_n"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}

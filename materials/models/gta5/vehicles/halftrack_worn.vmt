@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/halftrack_worn"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.05 0.05 0.05]"
+}
