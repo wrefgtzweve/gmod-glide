@@ -138,34 +138,8 @@ end
 
 if not CLIENT then return end
 
-local COLORS = {
-    HEALTH = Glide.THEME_COLOR,
-    LOW_HEALTH = Color( 250, 20, 20, 255 )
-}
-
 local SetColor = surface.SetDrawColor
-local DrawRect = surface.DrawRect
-local DrawOutlinedRect = surface.DrawOutlinedRect
-
-local function DrawHealthBar( x, y, w, h, health, armor )
-    if armor > 0 then
-        SetColor( 255, 255, 255, 255 )
-        DrawOutlinedRect( x - 1, y - 1, ( w + 2 ) * armor, h + 2, 1 )
-    end
-
-    SetColor( 20, 20, 20, 255 )
-    DrawRect( x, y, w, h )
-
-    x, y = x + 1, y + 1
-    w, h = w - 2, h - 2
-
-    local color = health < 0.3 and COLORS.LOW_HEALTH or COLORS.HEALTH
-
-    SetColor( color:Unpack() )
-    DrawRect( x, y, w * health, h )
-end
-
-local AIM_ICON = Material( "glide/aim_area.png", "smooth" )
+local ICON_AIM = Material( "glide/aim_area.png", "smooth" )
 
 function SWEP:DrawHUD()
     if not self:IsWeaponVisible() then return end
@@ -177,16 +151,16 @@ function SWEP:DrawHUD()
     local size = math.floor( ScrH() * 0.07 )
 
     SetColor( 255, 255, 255, 255 )
-    surface.SetMaterial( AIM_ICON )
+    surface.SetMaterial( ICON_AIM )
     surface.DrawTexturedRectRotated( x, y, size, size, 0 )
 
     local w = math.floor( ScrH() * 0.2 )
-    local h = math.floor( ScrH() * 0.01 )
+    local h = math.floor( ScrH() * 0.05 )
 
     x = x - w * 0.5
-    y = y + h * 5
+    y = y + h
 
-    DrawHealthBar( x, y, w, h, ent:GetChassisHealth() / ent.MaxChassisHealth, ent:GetEngineHealth() )
+    Glide.DrawVehicleHealth( x, y, w, h, ent.VehicleType, ent:GetChassisHealth() / ent.MaxChassisHealth, ent:GetEngineHealth() )
 
     return true
 end
