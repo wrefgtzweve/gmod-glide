@@ -159,6 +159,7 @@ if SERVER then
     CreateConVar( "sbox_maxglide_vehicles", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide vehicles that one player can have", 0 )
     CreateConVar( "sbox_maxglide_standalone_turrets", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide Turrets that one player can have", 0 )
     CreateConVar( "sbox_maxglide_missile_launchers", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide Missile Launchers that one player can have", 0 )
+    CreateConVar( "sbox_maxglide_projectile_launchers", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide Projectile Launchers that one player can have", 0 )
 
     -- Damage multiplier convars
     CreateConVar( "glide_damage_multiplier_bullet", "0.75", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier for bullets hitting Glide vehicles.", 0, 10 )
@@ -174,6 +175,12 @@ if SERVER then
     CreateConVar( "glide_missile_launcher_max_lifetime", "10", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum missile flight time allowed for Glide Missile Launchers.", 1 )
     CreateConVar( "glide_missile_launcher_max_radius", "500", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum radius dealt by explosions from Glide Missile Launchers.", 10 )
     CreateConVar( "glide_missile_launcher_max_damage", "200", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum damage dealt by explosions from Glide Missile Launchers.", 1 )
+
+    -- Projectile launcher tool convars
+    CreateConVar( "glide_projectile_launcher_min_delay", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Minimum delay allowed for Glide Projectile Launchers.", 0.1, 5 )
+    CreateConVar( "glide_projectile_launcher_max_lifetime", "10", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum missile flight time allowed for Glide Projectile Launchers.", 1 )
+    CreateConVar( "glide_projectile_launcher_max_radius", "500", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum radius dealt by explosions from Glide Projectile Launchers.", 10 )
+    CreateConVar( "glide_projectile_launcher_max_damage", "200", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum damage dealt by explosions from Glide Projectile Launchers.", 1 )
 end
 
 function Glide.Print( str, ... )

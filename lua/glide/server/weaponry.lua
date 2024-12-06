@@ -40,7 +40,7 @@ function Glide.FireProjectile( pos, ang, attacker, inflictor )
     projectile:Spawn()
     projectile:SetupProjectile( attacker, inflictor )
 
-    return missile
+    return projectile
 end
 
 do
