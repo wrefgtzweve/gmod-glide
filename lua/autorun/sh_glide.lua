@@ -166,7 +166,7 @@ if SERVER then
     CreateConVar( "glide_damage_multiplier_collision", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier taken by Glide vehicles after colliding against other things.", 0, 10 )
 
     -- Turret tool convars
-    CreateConVar( "glide_turret_max_damage", "200", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum damage dealt per bullet for Glide Turrets.", 0 )
+    CreateConVar( "glide_turret_max_damage", "50", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Maximum damage dealt per bullet for Glide Turrets.", 0 )
     CreateConVar( "glide_turret_min_delay", "0.02", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Minimum delay allowed for Glide Turrets.", 0, 1 )
 
     -- Missile launcher tool convars

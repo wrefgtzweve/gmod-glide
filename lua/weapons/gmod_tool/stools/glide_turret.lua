@@ -147,7 +147,7 @@ function TOOL.BuildCPanel( panel )
         Label = "#tool.glide_turret.damage",
         command = "glide_turret_damage",
         min = 1,
-        max = cvarMaxDamage and cvarMaxDamage:GetFloat() or 200
+        max = cvarMaxDamage and cvarMaxDamage:GetFloat() or 50
     } )
 
     panel:AddControl( "slider", {
