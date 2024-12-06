@@ -206,6 +206,9 @@ local function HandleMouseInput( ply, active )
     local settings = playerSettings[ply]
     if not settings then return end
 
+    -- Glide.VEHICLE_TYPE.HELICOPTER, Glide.VEHICLE_TYPE.PLANE
+    if vehicle.VehicleType ~= 3 and vehicle.VehicleType ~= 4 then return end
+
     -- Glide.MOUSE_FLY_MODE.CAMERA
     if settings.mouseFlyMode == 2 then return end
 
