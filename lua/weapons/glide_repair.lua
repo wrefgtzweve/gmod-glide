@@ -100,7 +100,7 @@ function SWEP:PrimaryAttack()
         engineHealth = math.Clamp( engineHealth + 0.03, 0, 1 )
 
         if user.ViewPunch then
-            user:ViewPunch( Angle( -1, 0, 0 ) )
+            user:ViewPunch( Angle( -0.2, 0, 0 ) )
         end
 
         if chassisHealth > 0.3 and ent.SetIsEngineOnFire then
