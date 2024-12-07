@@ -143,14 +143,14 @@ if CLIENT then
         end
     end
 
-    function ENT:OnUpdateMisc()
-        BaseClass.OnUpdateMisc( self )
+    function ENT:OnUpdateSounds()
+        BaseClass.OnUpdateSounds( self )
 
         local sounds = self.sounds
 
         if self:GetFiringGun() then
             if not sounds.gunFire then
-                local gunFire = self:CreateLoopingSound( "gunFire", ")glide/weapons/b11_turret_loop.wav", 90, self )
+                local gunFire = self:CreateLoopingSound( "gunFire", ")glide/weapons/b11_turret_loop.wav", 95, self )
                 gunFire:PlayEx( 1.0, 100 )
             end
 
@@ -158,16 +158,7 @@ if CLIENT then
             sounds.gunFire:Stop()
             sounds.gunFire = nil
 
-            self:EmitSound( ")glide/weapons/b11_turret_loop_end.wav", 90, 100, 1.0 )
-        end
-    end
-
-    function ENT:OnDeactivateMisc()
-        local sounds = self.sounds
-
-        if sounds.gunFire then
-            sounds.gunFire:Stop()
-            sounds.gunFire = nil
+            self:EmitSound( ")glide/weapons/b11_turret_loop_end.wav", 95, 100, 1.0 )
         end
     end
 end
