@@ -206,24 +206,20 @@ if SERVER then
     end
 end
 
-do
-    local ang = Angle()
+local ang = Angle()
 
-    function ENT:ManipulateTurretBones()
-        if not self.turretBase then return end
+function ENT:ManipulateTurretBones( turretAng )
+    if not self.turretBase then return end
 
-        local turretAng = self:GetTurretAngle()
+    ang[1] = turretAng[2]
+    ang[2] = 0
+    ang[3] = 0
 
-        ang[1] = turretAng[2]
-        ang[2] = 0
-        ang[3] = 0
+    self:ManipulateBoneAngles( self.turretBase, ang, false )
 
-        self:ManipulateBoneAngles( self.turretBase, ang, false )
+    ang[1] = 0
+    ang[2] = 0
+    ang[3] = turretAng[1]
 
-        ang[1] = 0
-        ang[2] = 0
-        ang[3] = turretAng[1]
-
-        self:ManipulateBoneAngles( self.cannonBase, ang, false )
-    end
+    self:ManipulateBoneAngles( self.cannonBase, ang, false )
 end

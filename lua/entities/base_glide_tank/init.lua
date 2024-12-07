@@ -176,9 +176,6 @@ end
 local Abs = math.abs
 local Clamp = math.Clamp
 
-local ExpDecayAngle = Glide.ExpDecayAngle
-local AngleDifference = Glide.AngleDifference
-
 --- Implement this base class function.
 function ENT:OnPostThink( dt )
     local state = self:GetEngineState()
@@ -279,34 +276,14 @@ function ENT:OnPostThink( dt )
 
     -- Update turret angles, if we have a driver
     local driver = self:GetDriver()
-    if not IsValid( driver ) or self:WaterLevel() > 2 then return end
 
-    local origin = self:LocalToWorld( self.TurretOffset )
-    local targetDir = driver:GlideGetAimPos() - origin
-    targetDir:Normalize()
+    if IsValid( driver ) and self:WaterLevel() < 2 then
+        local newAng, isAimingAtTarget = self:UpdateTurret( driver, dt, self:GetTurretAngle() )
 
-    local targetAng = self:WorldToLocalAngles( targetDir:Angle() )
-    local currentAng = self:GetTurretAngle()
-    local isAimingAtTarget = true
-
-    if targetAng[1] > self.LowPitchAng then
-        targetAng[1] = self.LowPitchAng
-        isAimingAtTarget = false
-
-    elseif targetAng[1] < self.HighPitchAng then
-        targetAng[1] = self.HighPitchAng
-        isAimingAtTarget = false
+        self:SetTurretAngle( newAng )
+        self:SetIsAimingAtTarget( isAimingAtTarget )
+        self:ManipulateTurretBones( newAng )
     end
-
-    targetAng[2] = ExpDecayAngle( currentAng[2], targetAng[2], 30, dt )
-    currentAng[1] = ExpDecayAngle( currentAng[1], targetAng[1], 10, dt )
-    currentAng[2] = currentAng[2] + Clamp( AngleDifference( currentAng[2], targetAng[2] ), -self.MaxYawSpeed, self.MaxYawSpeed )
-
-    isAimingAtTarget = isAimingAtTarget and targetDir:Dot( self:LocalToWorldAngles( currentAng ):Forward() ) > 0.99
-
-    self:SetTurretAngle( currentAng )
-    self:SetIsAimingAtTarget( isAimingAtTarget )
-    self:ManipulateTurretBones()
 end
 
 local ExpDecay = Glide.ExpDecay

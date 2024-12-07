@@ -28,6 +28,24 @@ function ENT:GetFirstPersonOffset()
     return Vector( 0, 0, 90 )
 end
 
+--- Implement this base class function.
+function ENT:OnPostInitialize()
+    self.currentTurretAng = Angle()
+    self.targetTurretAng = Angle()
+end
+
+--- Override this base class function.
+function ENT:OnLocalPlayerEnter( seatIndex )
+    BaseClass.OnLocalPlayerEnter( self, seatIndex )
+    self.isPredicted = seatIndex == 1
+end
+
+--- Override this base class function.
+function ENT:OnLocalPlayerExit()
+    BaseClass.OnLocalPlayerExit( self )
+    self.isPredicted = false
+end
+
 --- Override this base class function.
 function ENT:OnEngineStateChange( _, _, state )
     if state == 1 then
@@ -80,10 +98,6 @@ end
 function ENT:ActivateMisc()
     BaseClass.ActivateMisc( self )
 
-    self.lastAngChange = 0
-    self.lastTurretYaw = self:GetTurretAngle()[2]
-    self.turretVolume = 0
-
     local wheels = self.wheels
     if not wheels then return end
 
@@ -128,6 +142,7 @@ local Abs = math.abs
 local Clamp = math.Clamp
 local FrameTime = FrameTime
 local GetVolume = Glide.Config.GetVolume
+local ExpDecayAngle = Glide.ExpDecayAngle
 
 --- Implement this base class function.
 function ENT:OnUpdateMisc()
@@ -138,6 +153,22 @@ function ENT:OnUpdateMisc()
     if self.rightTrackSlot then
         self:SetSubMaterial( self.rightTrackSlot, "!glide_tank_track_r" )
     end
+
+    local dt = FrameTime()
+    local driver = self:GetDriver()
+    local lastYaw = self.currentTurretAng[2]
+
+    if self.isPredicted and IsValid( driver ) then
+        self.currentTurretAng = self:UpdateTurret( driver, dt, self.currentTurretAng )
+    else
+        local curAng = self.currentTurretAng
+        local targetAng = self:GetTurretAngle()
+
+        curAng[1] = ExpDecayAngle( curAng[1], targetAng[1], 30, dt )
+        curAng[2] = ExpDecayAngle( curAng[2], targetAng[2], 30, dt )
+    end
+
+    self:ManipulateTurretBones( self.currentTurretAng )
 
     local speed = Abs( self:GetTrackSpeed() )
 
@@ -156,15 +187,18 @@ function ENT:OnUpdateMisc()
         self.trackSound = nil
     end
 
-    if self.turretVolume > 0 then
-        self.turretVolume = self.turretVolume - FrameTime()
+    local yawSpeed = Abs( lastYaw - self.currentTurretAng[2] ) / dt
+    local turretVolume = Clamp( yawSpeed * 0.05, 0, 1 )
+
+    if turretVolume > 0 then
+        turretVolume = turretVolume - dt
 
         if self.turretSound then
-            self.turretSound:ChangeVolume( self.turretVolume * self.TurrentMoveVolume )
+            self.turretSound:ChangeVolume( turretVolume * self.TurrentMoveVolume )
         else
             self.turretSound = CreateSound( self, self.TurrentMoveSound )
             self.turretSound:SetSoundLevel( 80 )
-            self.turretSound:PlayEx( self.turretVolume * self.TurrentMoveVolume, 100 )
+            self.turretSound:PlayEx( turretVolume * self.TurrentMoveVolume, 100 )
         end
 
     elseif self.turretSound then
@@ -173,17 +207,6 @@ function ENT:OnUpdateMisc()
     end
 
     self:OnUpdateAnimations()
-    self:ManipulateTurretBones()
-end
-
-function ENT:OnTurretAngleChange( _, _, ang )
-    local t = RealTime()
-    local dt = Clamp( t - self.lastAngChange, 0, 0.1 )
-    local yawSpeed = Abs( self.lastTurretYaw - ang[2] ) / dt
-
-    self.lastAngChange = t
-    self.lastTurretYaw = ang[2]
-    self.turretVolume = Clamp( yawSpeed / 60, 0, 1 )
 end
 
 --- Implement this base class function.
@@ -273,7 +296,7 @@ do
         SetMaterial( matBody )
         DrawTexturedRectRotated( x, y, size, size, ang )
 
-        ang = ang + self:GetTurretAngle()[2]
+        ang = ang + self.currentTurretAng[2]
 
         SetMaterial( matTurret )
         DrawTexturedRectRotated( x, y, size, size, ang )

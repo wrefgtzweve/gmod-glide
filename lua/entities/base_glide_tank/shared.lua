@@ -16,6 +16,14 @@ ENT.SeatPassengerAnim = "sit"
 -- Increase default max. chassis health
 ENT.MaxChassisHealth = 3000
 
+-- Turrets are predictable, so their properties
+-- should be set both on SERVER and CLIENT.
+ENT.TurretOffset = Vector( 0, 0, 150 )
+ENT.HighPitchAng = -25
+ENT.LowPitchAng = 10
+ENT.MaxYawSpeed = 50
+ENT.YawSpeed = 1500
+
 --[[
     For tanks, the values on Get/SetEngineState mean:
 
@@ -36,11 +44,6 @@ function ENT:SetupDataTables()
 
     self:NetworkVar( "Angle", "TurretAngle" )
     self:NetworkVar( "Bool", "IsAimingAtTarget" )
-
-    if CLIENT then
-        -- Callback used to play turrent movement sounds clientside
-        self:NetworkVarNotify( "TurretAngle", self.OnTurretAngleChange )
-    end
 end
 
 --- Override this base class function.
@@ -53,7 +56,7 @@ end
 -- This exists both on the client and server side,
 -- to allow returning the correct bone position
 -- when creating the projectile serverside.
-function ENT:ManipulateTurretBones() end
+function ENT:ManipulateTurretBones( _turretAngle ) end
 
 if CLIENT then
     ENT.MaxMiscDistance = 5000
@@ -123,11 +126,6 @@ if SERVER then
     ENT.TurretFireVolume = 0.8
     ENT.TurretRecoilForce = 50
 
-    ENT.TurretOffset = Vector( 0, 0, 150 )
-    ENT.HighPitchAng = -25
-    ENT.LowPitchAng = 10
-    ENT.MaxYawSpeed = 1
-
     -- How much torque to distribute among all wheels?
     ENT.EngineTorque = 40000
 
@@ -142,4 +140,34 @@ if SERVER then
     function ENT:GetProjectileStartPos()
         return self:GetPos()
     end
+end
+
+local Clamp = math.Clamp
+local ExpDecayAngle = Glide.ExpDecayAngle
+local AngleDifference = Glide.AngleDifference
+
+function ENT:UpdateTurret( driver, dt, currentAng )
+    local aimPos = SERVER and driver:GlideGetAimPos() or Glide.GetCameraAimPos()
+    local origin = self:LocalToWorld( self.TurretOffset )
+    local targetDir = aimPos - origin
+    targetDir:Normalize()
+
+    local targetAng = self:WorldToLocalAngles( targetDir:Angle() )
+    local isAimingAtTarget = true
+
+    if targetAng[1] > self.LowPitchAng then
+        targetAng[1] = self.LowPitchAng
+        isAimingAtTarget = false
+
+    elseif targetAng[1] < self.HighPitchAng then
+        targetAng[1] = self.HighPitchAng
+        isAimingAtTarget = false
+    end
+
+    currentAng[1] = ExpDecayAngle( currentAng[1], targetAng[1], 10, dt )
+    currentAng[2] = currentAng[2] + Clamp( AngleDifference( currentAng[2], targetAng[2] ) * self.YawSpeed * dt, -self.MaxYawSpeed, self.MaxYawSpeed ) * dt
+
+    isAimingAtTarget = isAimingAtTarget and targetDir:Dot( self:LocalToWorldAngles( currentAng ):Forward() ) > 0.99
+
+    return currentAng, isAimingAtTarget
 end
