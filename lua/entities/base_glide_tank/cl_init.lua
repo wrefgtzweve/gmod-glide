@@ -131,6 +131,14 @@ local GetVolume = Glide.Config.GetVolume
 
 --- Implement this base class function.
 function ENT:OnUpdateMisc()
+    if self.leftTrackSlot then
+        self:SetSubMaterial( self.leftTrackSlot, "!glide_tank_track_l" )
+    end
+
+    if self.rightTrackSlot then
+        self:SetSubMaterial( self.rightTrackSlot, "!glide_tank_track_r" )
+    end
+
     local speed = Abs( self:GetTrackSpeed() )
 
     if speed > 1 then
