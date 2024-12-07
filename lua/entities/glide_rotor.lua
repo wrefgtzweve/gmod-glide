@@ -49,7 +49,7 @@ function ENT:Initialize()
 
     self.traceData = {
         filter = { self, self:GetParent() },
-        mask = MASK_ALL,
+        mask = MASK_SOLID,
         collisiongroup = COLLISION_GROUP_NONE,
         mins = TRACE_MINS,
         maxs = TRACE_MAXS
