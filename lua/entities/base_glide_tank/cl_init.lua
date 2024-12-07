@@ -3,6 +3,7 @@ include( "shared.lua" )
 DEFINE_BASECLASS( "base_glide" )
 
 function ENT:SetupLeftTrack( materialSlot, texture, bumpmap )
+    self.leftTrackSlot = materialSlot
     self.leftTrackScroll = Vector()
     self.leftTrackTexture = texture
     self.leftTrackBumpMap = bumpmap
@@ -10,6 +11,7 @@ function ENT:SetupLeftTrack( materialSlot, texture, bumpmap )
 end
 
 function ENT:SetupRightTrack( materialSlot, texture, bumpmap )
+    self.rightTrackSlot = materialSlot
     self.rightTrackScroll = Vector()
     self.rightTrackTexture = texture
     self.rightTrackBumpMap = bumpmap
@@ -105,6 +107,20 @@ function ENT:DeactivateMisc()
     if self.turretSound then
         self.turretSound:Stop()
         self.turretSound = nil
+    end
+
+    if self.leftTrackSlot then
+        self:SetSubMaterial( self.leftTrackSlot, nil )
+        self.leftTrackSlot = nil
+        self.leftTrackTexture = nil
+        self.leftTrackBumpMap = nil
+    end
+
+    if self.rightTrackSlot then
+        self:SetSubMaterial( self.rightTrackSlot, nil )
+        self.rightTrackSlot = nil
+        self.rightTrackTexture = nil
+        self.rightTrackBumpMap = nil
     end
 end
 
