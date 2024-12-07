@@ -103,7 +103,7 @@ local function MakeSpawner( ply, data )
     return ent
 end
 
-duplicator.RegisterEntityClass( "glide_turret", MakeSpawner, "Data" )
+duplicator.RegisterEntityClass( "glide_standalone_turret", MakeSpawner, "Data" )
 
 function ENT:SpawnFunction( ply, tr )
     if tr.Hit then
