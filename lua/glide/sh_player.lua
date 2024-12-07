@@ -17,12 +17,6 @@ if SERVER then
         camPos[2] = self:GetInfoNum( "glide_cam_y", camPos[2] )
         camPos[3] = self:GetInfoNum( "glide_cam_z", camPos[3] )
 
-        local vehicle = self:GlideGetVehicle()
-
-        if IsValid( vehicle ) then
-            return vehicle:LocalToWorld( camPos )
-        end
-
         return camPos
     end
 
