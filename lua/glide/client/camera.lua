@@ -20,6 +20,8 @@ end )
 
 Camera.lastAimEntity = NULL
 Camera.lastAimPos = Vector()
+Camera.lastAimUpdate = 0
+
 Camera.viewAngles = Angle()
 Camera.isInFirstPerson = false
 Camera.FIRST_PERSON_DSP = 30
@@ -368,8 +370,12 @@ function Camera:CalcView()
     self.lastAimEntity = tr.Entity
     self.lastAimPos = tr.HitPos
 
+    local t = RealTime()
+
     -- Let the server know where the camera is
-    if self.cvarX then
+    if self.cvarX and t > self.lastAimUpdate then
+        self.lastAimUpdate = t + 0.05
+
         self.cvarX:SetFloat( origin[1] )
         self.cvarY:SetFloat( origin[2] )
         self.cvarZ:SetFloat( origin[3] )
