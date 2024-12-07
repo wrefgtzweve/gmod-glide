@@ -5,7 +5,7 @@
 	"$allowdiffusemodulation" "false"
 
 	"$phong" "1"
-	"$phongexponenttexture"	"models/gta5/vehicles/dune3_minigun_spec"
 	"$phongboost" "1.0"
 	"$phongfresnelranges" "[0 0.5 1]"
+	"$phongexponenttexture"	"models/gta5/vehicles/dune3_minigun_spec"
 }

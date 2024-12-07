@@ -1,12 +1,12 @@
 "VertexlitGeneric"
 {
 	"$basetexture" "models/gta5/vehicles/body_paint"
+	"$bumpmap" "models/gta5/vehicles/body_normal"
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[0.08 0.08 0.08]"
+	"$envmaptint" "[0.1 0.1 0.1]"
 
 	"$phong" "1"
-	"$phongboost" "2"
+	"$phongboost" "4.0"
 	"$phongexponent" "200"
-	"$phongfresnelranges" "[1 1 1]"
-	"$basemapalphaphongmask" "1"
+	"$phongfresnelranges" "[1 0.6 1]"
 }
