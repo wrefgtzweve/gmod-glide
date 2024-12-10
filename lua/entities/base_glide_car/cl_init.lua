@@ -3,6 +3,12 @@ include( "shared.lua" )
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 ENT.AutomaticFrameAdvance = true
 
+--- Implement this base class function.
+function ENT:OnPostInitialize()
+    self.brakePressure = 0
+    self.rpmFraction = 0
+end
+
 function ENT:OnGearChange( _, _, gear )
     if self.lastGear then
         self.doWobble = gear > 1 and gear > self.lastGear
