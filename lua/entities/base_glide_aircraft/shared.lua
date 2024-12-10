@@ -35,6 +35,7 @@ end
 
 if SERVER then
     ENT.IsHeavyVehicle = true
+    ENT.ExplosionRadius = 700
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
 
     -- Damaged engine sound

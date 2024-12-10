@@ -173,6 +173,9 @@ if SERVER then
     -- Should passengers fall on collisions?
     ENT.FallOnCollision = false
 
+    -- Damage things nearby when the vehicle explodes
+    ENT.ExplosionRadius = 500
+
     -- Spawn these gibs when the vehicle explodes
     ENT.ExplosionGibs = {}
 
