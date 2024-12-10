@@ -422,26 +422,13 @@ function Config:OpenFrame()
 
     ----- Keyboard settings -----
 
-    local SEAT_SWITCH_KEYS = {
-        [KEY_1] = 1,
-        [KEY_2] = 2,
-        [KEY_3] = 3,
-        [KEY_4] = 4,
-        [KEY_5] = 5,
-        [KEY_6] = 6,
-        [KEY_7] = 7,
-        [KEY_8] = 8,
-        [KEY_9] = 9,
-        [KEY_0] = 10
-    }
-
     local CreateBinderButton = function( parent, text, actionId, defaultKey, callback )
         local binder = theme:CreateBinderButton( parent, text, defaultKey )
 
         function binder:OnChange( value )
             if self._ignoreChange then return end
 
-            if SEAT_SWITCH_KEYS[value] then
+            if Glide.SEAT_SWITCH_BUTTONS[value] then
                 self._ignoreChange = true
                 binder:SetValue( defaultKey )
                 self._ignoreChange = nil

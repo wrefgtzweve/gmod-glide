@@ -53,3 +53,28 @@ InputCategories["aircraft_controls"] = {
     ["throttle_up"] = KEY_W,
     ["throttle_down"] = KEY_S
 }
+
+-- Allow some actions to trigger others
+Glide.ACTION_ALIASES = {
+    ["attack_alt"] = "attack"
+}
+
+-- Replace actions while using the mouse `Point-to-aim` mode.
+Glide.MOUSE_AIM_ACTION_OVERRIDE = {
+    ["yaw_left"] = "roll_left",
+    ["yaw_right"] = "roll_right"
+}
+
+-- Keys reserved for seat switching
+Glide.SEAT_SWITCH_BUTTONS = {
+    [KEY_1] = 1,
+    [KEY_2] = 2,
+    [KEY_3] = 3,
+    [KEY_4] = 4,
+    [KEY_5] = 5,
+    [KEY_6] = 6,
+    [KEY_7] = 7,
+    [KEY_8] = 8,
+    [KEY_9] = 9,
+    [KEY_0] = 10
+}
