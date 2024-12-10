@@ -18,7 +18,7 @@ commands[Glide.CMD_INCOMING_DANGER] = function()
         Glide.LockOnHandler:OnIncomingMissile( net.ReadUInt( 32 ) )
         Glide.ShowKeyTip(
             "#glide.notify.tip.countermeasures",
-            Glide.Config.binds["countermeasures"],
+            Glide.Config.binds["aircraft_controls"]["countermeasures"],
             "materials/glide/icons/rocket.png"
         )
     end

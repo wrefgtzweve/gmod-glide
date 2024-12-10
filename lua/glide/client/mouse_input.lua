@@ -96,7 +96,7 @@ local Abs = math.abs
 local Approach = math.Approach
 
 function MouseInput:Think()
-    self.freeLook = input.IsKeyDown( Config.binds.free_look )
+    self.freeLook = input.IsKeyDown( Config.binds.aircraft_controls.free_look )
 
     if self.freeLook then
         self:Reset()
