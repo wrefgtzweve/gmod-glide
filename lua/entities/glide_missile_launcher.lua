@@ -97,6 +97,7 @@ function ENT:Think()
         missile.radius = self.explosionRadius
         missile.damage = self.explosionDamage
         missile.lifeTime = t + self.missileLifetime
+        missile.acceleration = 20000
     end
 
     self:NextThink( t )
