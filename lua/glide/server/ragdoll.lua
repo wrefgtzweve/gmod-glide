@@ -119,8 +119,35 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     end
 end
 
-local TRACE_MINS = Vector( -16, -16, 0 )
-local TRACE_MAXS = Vector( 16, 16, 50 )
+local traceData = {
+    mins = Vector( -16, -16, 0 ),
+    maxs = Vector( 16, 16, 64 )
+}
+
+local function GetFreeSpace( origin, filter )
+    traceData.filter = filter
+
+    local offset = Vector( 0, 0, 20 )
+    local rad, tr
+
+    for ang = 0, 360, 30 do
+        rad = math.rad( ang )
+
+        offset[1] = math.cos( rad ) * 20
+        offset[2] = math.sin( rad ) * 20
+
+        traceData.start = origin + offset
+        traceData.endpos = origin
+
+        tr = util.TraceHull( traceData )
+
+        if tr.Hit and not tr.StartSolid then
+            return tr.HitPos
+        end
+    end
+
+    return origin
+end
 
 function Glide.UnRagdollPlayer( ply )
     if not IsValid( ply ) then return end
@@ -153,22 +180,10 @@ function Glide.UnRagdollPlayer( ply )
 
     if not ply:Alive() then return end
 
-    -- Try to make sure the player won't spawn inside a wall
-    local tr = util.TraceHull( {
-        mins = TRACE_MINS,
-        maxs = TRACE_MAXS,
-        start = pos + Vector( 0, 0, 100 ),
-        endpos = pos
-    } )
-
-    if tr.Hit and not tr.StartSolid then
-        endPos = tr.HitPos
-    end
-
     ply.GlideBlockLoadout = true
     ply:Spawn()
-    ply:SetPos( pos )
-    ply:SetAngles( Angle( 0, yaw, 0 ) )
+    ply:SetPos( GetFreeSpace( pos, ragdoll ) )
+    ply:SetEyeAngles( Angle( 0, yaw, 0 ) )
     ply:SetVelocity( velocity )
     ply:SetHealth( health )
     ply:SetArmor( armor )
