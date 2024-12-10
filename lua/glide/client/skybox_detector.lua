@@ -82,7 +82,7 @@ local function DetectSkybox( isDrawingDepth, isDrawSkybox, isDraw3DSkybox )
 
     plane = skyboxPlanes[dirIndex]
     plane.origin = tr.HitPos
-    plane.hit = tr.HitNoDraw or tr.HitSky
+    plane.hit = tr.HitSky
     plane.alpha = 255 * ( 1 - tr.Fraction )
 end
 
