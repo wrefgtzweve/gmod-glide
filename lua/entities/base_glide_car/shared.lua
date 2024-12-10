@@ -90,7 +90,7 @@ function ENT:SetupDataTables()
     -- Make wheel parameters available as network variables too
     AddFloatVar( "WheelRadius", 10, 40, Either( self.AllowEditWheelRadius, "#glide.editvar.wheels", nil ) )
     AddFloatVar( "WheelInertia", 1, 100, "#glide.editvar.wheels" )
-    AddFloatVar( "MaxSteerAngle", 10, 50, "#glide.editvar.wheels" )
+    AddFloatVar( "MaxSteerAngle", 10, 80, "#glide.editvar.wheels" )
     AddFloatVar( "BrakePower", 500, 5000, "#glide.editvar.wheels" )
 
     AddFloatVar( "SuspensionLength", 5, 50, Either( self.AllowEditSuspensionLen, "#glide.editvar.suspension", nil ) )
