@@ -145,6 +145,13 @@ hook.Add( "OnDamagedByExplosion", "Glide.DisableRingingSound", function( _, dmgi
     end
 end )
 
+-- Disable keep upright on motorcycles when picking them up with the Physics Gun.
+hook.Add( "OnPhysgunPickup", "Glide.DisableKeepUpright", function( _, ent )
+    if IsValid( ent ) and ent.IsGlideVehicle and ent.VehicleType == 2 then -- Glide.VEHICLE_TYPE.MOTORCYCLE
+        ent.stayUpright = false
+    end
+end )
+
 if not game.SinglePlayer() then return end
 
 local function ResetVehicle( vehicle )
