@@ -116,6 +116,7 @@ function Camera:Deactivate()
         self.user:SetEyeAngles( Angle() )
     end
 
+    self.isActive = false
     self.user = nil
     self.vehicle = nil
     self.seatIndex = nil

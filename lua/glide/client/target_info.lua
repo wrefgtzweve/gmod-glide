@@ -11,8 +11,9 @@ local DrawSimpleText = draw.SimpleText
 local DrawRect = surface.DrawRect
 local SetColor = surface.SetDrawColor
 
-local function DrawPlayerTag( ply, health )
-    local pos = ply:EyePos():ToScreen()
+local function DrawPlayerTag( ply, health, pos )
+    pos = pos:ToScreen()
+
     local nick = ply:Nick()
     local screenH = ScrH()
 
@@ -43,14 +44,15 @@ end
 
 local IsValid = IsValid
 local FrameTime = FrameTime
+local LocalPlayer = LocalPlayer
 local SetAlphaMultiplier = surface.SetAlphaMultiplier
 
 local Camera = Glide.Camera
 local lastTarget = NULL
 local alpha = 0
 
-local function DrawTargetInfo()
-    local target = Camera.lastAimEntity
+hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
+    local target = Camera.isActive and Camera.lastAimEntity or LocalPlayer():GetEyeTrace().Entity
 
     if IsValid( target ) and not target:IsWorld() then
         lastTarget = target
@@ -59,14 +61,14 @@ local function DrawTargetInfo()
 
     if not IsValid( lastTarget ) then
         alpha = 0
-        return false
+        return
     end
 
     alpha = alpha - FrameTime()
 
     if alpha < 0 then
         lastTarget = NULL
-        return false
+        return
     end
 
     SetAlphaMultiplier( alpha )
@@ -76,25 +78,19 @@ local function DrawTargetInfo()
         local driver = lastTarget:GetDriver()
 
         if IsValid( driver ) then
-            DrawPlayerTag( driver, health )
+            local pos = lastTarget:GetPos()
+            local maxs = lastTarget:OBBMaxs()
+
+            pos[3] = pos[3] + maxs[3]
+
+            DrawPlayerTag( driver, health, pos )
         end
 
     elseif lastTarget:IsPlayer() then
-        DrawPlayerTag( lastTarget, Clamp( lastTarget:Health() / 100, 0, 1 ) )
+        DrawPlayerTag( lastTarget, Clamp( lastTarget:Health() / 100, 0, 1 ), lastTarget:EyePos() )
     end
 
     SetAlphaMultiplier( 1 )
 
     return false
-end
-
-hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", DrawTargetInfo )
-
-hook.Add( "Glide_OnLocalEnterVehicle", "Glide.EnableTargetInfo", function()
-    hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", DrawTargetInfo )
-end )
-
-hook.Add( "Glide_OnLocalExitVehicle", "Glide.DisableTargetInfo", function()
-    activeVehicle = nil
-    hook.Remove( "HUDDrawTargetID", "Glide.HUDDrawTargetID" )
 end )
