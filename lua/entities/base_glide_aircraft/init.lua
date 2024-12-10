@@ -161,6 +161,7 @@ function ENT:FireCountermeasures()
     local cone = 60
     local step = cone / count
     local ang = Angle( 0, 180 - ( step * 0.5 ) - ( cone * 0.5 ), 0 )
+    local vel = self:GetVelocity()
 
     for _ = 1, count do
         ang[2] = ang[2] + step
@@ -170,6 +171,12 @@ function ENT:FireCountermeasures()
         flare:SetAngles( self:LocalToWorldAngles( ang ) )
         flare:SetOwner( self )
         flare:Spawn()
+
+        local phys = flare:GetPhysicsObject()
+
+        if IsValid( phys ) then
+            phys:SetVelocityInstantaneous( vel + flare:GetForward() * 1000 )
+        end
     end
 end
 

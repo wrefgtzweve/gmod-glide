@@ -62,7 +62,6 @@ function ENT:Initialize()
         phys:SetDragCoefficient( 0 )
         phys:EnableGravity( true )
         phys:SetMass( 5 )
-        phys:SetVelocityInstantaneous( self:GetForward() * 2000 )
     end
 
     self.lifeTime = CurTime() + 10
