@@ -160,17 +160,6 @@ end
 
 --- Override this base class function.
 function ENT:OnTakeDamage( dmginfo )
-    if dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
-        -- Don't let other explosions cause us to explode immediately.
-        -- Instead, set the vehicle on fire.
-        local health = self:GetChassisHealth()
-
-        if health - dmginfo:GetDamage() < 100 then
-            dmginfo:SetDamage( 1 )
-            self:SetChassisHealth( math.min( health, 100 ) )
-        end
-    end
-
     BaseClass.OnTakeDamage( self, dmginfo )
 
     if self:GetEngineHealth() <= 0 and self:GetEngineState() == 2 then
