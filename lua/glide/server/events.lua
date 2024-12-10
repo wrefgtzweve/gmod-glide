@@ -94,33 +94,31 @@ hook.Add( "CanEditVariable", "Glide.ValidateEditVariables", function( ent, _, _,
 end )
 
 hook.Add( "EntityTakeDamage", "Glide.OverrideDamage", function( target, dmginfo )
-    if dmginfo:IsDamageType( 1 ) then -- DMG_CRUSH
-        local inflictor = dmginfo:GetInflictor()
-        if not IsValid( inflictor ) then return end
+    -- Don't let missiles deal crush damage
+    local inflictor = dmginfo:GetInflictor()
 
+    if IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" then
+        return true
+    end
+
+    if IsValid( inflictor ) and inflictor.IsGlideVehicle and dmginfo:IsDamageType( 1 ) then -- DMG_CRUSH
         -- Set the vehicle's driver/creator as the attacker 
-        if inflictor.IsGlideVehicle then
-            local driver = inflictor:GetDriver()
+        local driver = inflictor:GetDriver()
 
-            if not IsValid( driver ) then
-                driver = inflictor.lastDriver
-            end
+        if not IsValid( driver ) then
+            driver = inflictor.lastDriver
+        end
 
-            if not IsValid( driver ) then
-                driver = inflictor:GetCreator()
-            end
+        if not IsValid( driver ) then
+            driver = inflictor:GetCreator()
+        end
 
-            if IsValid( driver ) then
-                dmginfo:SetAttacker( driver )
-            end
+        if IsValid( driver ) then
+            dmginfo:SetAttacker( driver )
+        end
 
-            if target:IsPlayer() then
-                Glide.PlaySoundSet( "Glide.Collision.AgainstPlayer", target )
-            end
-
-        -- Don't let missiles deal crush damage
-        elseif inflictor:GetClass() == "glide_missile" then
-            dmginfo:SetDamage( 0 )
+        if target:IsPlayer() then
+            Glide.PlaySoundSet( "Glide.Collision.AgainstPlayer", target )
         end
     end
 

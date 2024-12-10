@@ -85,7 +85,9 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     ragdoll.IsGlideRagdoll = true
     ragdoll.GlidePlayer = ply
     ragdoll.GlideHealth = ply:Health()
+    ragdoll.GlideArmor = ply:Armor()
     ragdoll.GlideGodMode = ply:HasGodMode()
+    ragdoll.GlideModel = ply:GetModel()
 
     if ply:InVehicle() then
         ply:ExitVehicle()
@@ -131,14 +133,16 @@ function Glide.UnRagdollPlayer( ply )
     local pos = ply.GlideRagdollStartPos
     local yaw = ply:GetAngles()[2]
     local velocity = Vector()
-    local health = 1
-    local god = false
+    local health, armor = 1, 0
+    local god, model = false, nil
 
     if IsValid( ragdoll ) then
         health = ragdoll.GlideHealth
+        armor = ragdoll.GlideArmor
         velocity = ragdoll:GetVelocity()
         pos = ragdoll:GetPos()
         god = ragdoll.GlideGodMode
+        model = ragdoll.GlideModel
 
         ragdoll:Remove()
     end
@@ -166,6 +170,11 @@ function Glide.UnRagdollPlayer( ply )
     ply:SetAngles( Angle( 0, yaw, 0 ) )
     ply:SetVelocity( velocity )
     ply:SetHealth( health )
+    ply:SetArmor( armor )
+
+    if model then
+        ply:SetModel( model )
+    end
 
     if god then
         ply:GodEnable()
@@ -205,34 +214,24 @@ end )
 hook.Add( "EntityTakeDamage", "Glide.RagdollDamage", function( ent, dmginfo )
     if not ent.IsGlideRagdoll then return end
     if ent.GlideGodMode then return end
+    if ent.GlideHealth < 1 then return end
 
-    local inflictor = dmginfo:GetInflictor()
-
-    -- Don't let missiles deal crush damage
-    if dmginfo:IsDamageType( 1 ) and IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" then
-        return
-    end
-
-    local damage = dmginfo:GetDamage()
+    local ply = ent.GlidePlayer
+    if not IsValid( ply ) then return end
 
     if dmginfo:IsDamageType( 1 ) then
-        damage = damage * 0.1
+        dmginfo:SetDamage( math.ceil( dmginfo:GetDamage() * 0.1 ) )
     end
 
-    damage = math.ceil( damage )
+    local ignore = hook.Run( "EntityTakeDamage", ply, dmginfo )
+    if ignore then return end
 
-    local health = ent.GlideHealth - damage
-    local ply = ent.GlidePlayer
+    local damage = dmginfo:GetDamage()
+    if damage < 1 then return end
 
-    ent.GlideHealth = health
+    ent.GlideHealth = ent.GlideHealth - damage
+    if ent.GlideHealth > 0 then return end
 
-    if health < 1 and IsValid( ply ) then
-        Glide.UnRagdollPlayer( ply )
-
-        timer.Simple( 0.1, function()
-            if IsValid( ply ) then
-                ply:TakeDamage( 1, ply, ply )
-            end
-        end )
-    end
+    Glide.UnRagdollPlayer( ply )
+    ply:TakeDamageInfo( dmginfo )
 end )
