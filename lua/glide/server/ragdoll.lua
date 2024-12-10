@@ -165,12 +165,14 @@ function Glide.UnRagdollPlayer( ply )
         endPos = tr.HitPos
     end
 
+    ply.GlideBlockLoadout = true
     ply:Spawn()
     ply:SetPos( pos )
     ply:SetAngles( Angle( 0, yaw, 0 ) )
     ply:SetVelocity( velocity )
     ply:SetHealth( health )
     ply:SetArmor( armor )
+    ply.GlideBlockLoadout = nil
 
     if model then
         ply:SetModel( model )
@@ -234,4 +236,8 @@ hook.Add( "EntityTakeDamage", "Glide.RagdollDamage", function( ent, dmginfo )
 
     Glide.UnRagdollPlayer( ply )
     ply:TakeDamageInfo( dmginfo )
+end )
+
+hook.Add( "CLoadoutCanGiveWeapons", "Glide.BlockRagdollLoadout", function( ply )
+    if ply.GlideBlockLoadout then return false end
 end )
