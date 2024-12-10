@@ -26,14 +26,14 @@ function ENT:GetInputBool( seatIndex, action )
 end
 
 do
-    -- Translate these boolean actions to float values
+    -- Translate these boolean actions to float values.
     local BOOL_TO_FLOAT = {
         ["accelerate"] = { "", "accelerate" },
         ["brake"] = { "", "brake" },
         ["steer"] = { "steer_left", "steer_right" },
         ["pitch"] = { "pitch_up", "pitch_down" },
         ["roll"] = { "roll_left", "roll_right" },
-        ["rudder"] = { "rudder_left", "rudder_right" },
+        ["yaw"] = { "yaw_left", "yaw_right" },
         ["throttle"] = { "throttle_down", "throttle_up" },
         ["lean_pitch"] = { "lean_back", "lean_forward" }
     }

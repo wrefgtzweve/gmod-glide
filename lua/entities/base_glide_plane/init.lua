@@ -121,7 +121,7 @@ function ENT:OnPostThink( dt )
 
     self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 10, dt )
     self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 10, dt )
-    self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "rudder" ), 10, dt )
+    self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "yaw" ), 10, dt )
 
     self:SetElevator( self.inputPitch )
     self:SetRudder( self.inputYaw )
