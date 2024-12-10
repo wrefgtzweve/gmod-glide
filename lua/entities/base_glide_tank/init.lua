@@ -290,8 +290,14 @@ local ExpDecay = Glide.ExpDecay
 
 function ENT:UpdateEngine( dt )
     local inputThrottle = self:GetInputFloat( 1, "accelerate" )
+    local inputHandbrake = self:GetInputBool( 1, "handbrake" )
     local inputBrake = self:GetInputFloat( 1, "brake" )
     local inputSteer = self:GetInputFloat( 1, "steer" )
+
+    if inputHandbrake then
+        inputThrottle = 0
+        inputBrake = 1
+    end
 
     self.isTurningInPlace = Abs( self.forwardSpeed ) < 100 and Abs( inputSteer ) > 0.1 and Abs( inputThrottle + inputBrake ) < 0.1
 
@@ -307,7 +313,7 @@ function ENT:UpdateEngine( dt )
 
         self:SetEngineThrottle( ExpDecay( self:GetEngineThrottle(), 0.75, 4, dt ) )
     else
-        if self.forwardSpeed < 10 and inputBrake > 0.1 then
+        if self.forwardSpeed < 10 and inputBrake > 0.1 and not inputHandbrake then
             inputThrottle, inputBrake = -inputBrake, inputThrottle
         end
 
