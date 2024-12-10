@@ -146,7 +146,7 @@ hook.Add( "Glide_OnLocalEnterVehicle", "Glide.ShowVehicleTips", function( _, sea
         if not IsValid( veh ) then return end
 
         if Glide.HasBaseClass( veh, "base_glide_car" ) then
-            Glide.ShowKeyTip( "#glide.notify.tip.headlights", Glide.Config.binds["headlights"] )
+            Glide.ShowKeyTip( "#glide.notify.tip.headlights", Glide.Config.binds["land_controls"]["headlights"] )
 
         elseif Glide.HasBaseClass( veh, "base_glide_heli" ) and Glide.Config.mouseFlyMode == Glide.MOUSE_FLY_MODE.AIM then
             Glide.ShowTip( "#glide.notify.tip.heli_controls", "materials/glide/icons/helicopter.png" )

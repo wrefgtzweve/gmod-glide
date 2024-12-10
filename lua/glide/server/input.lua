@@ -1,121 +1,121 @@
--- Only allow these actions when receiving player input settings
-local ACTION_FILTER = {
-    ["switch_weapon"] = true,
-    ["attack"] = true,
-    ["attack_alt"] = true,
-
-    -- Car actions
-    ["steer_left"] = true,
-    ["steer_right"] = true,
-    ["accelerate"] = true,
-    ["brake"] = true,
-    ["handbrake"] = true,
-    ["horn"] = true,
-    ["headlights"] = true,
-    ["reduce_throttle"] = true,
-
-    ["shift_up"] = true,
-    ["shift_down"] = true,
-    ["shift_neutral"] = true,
-
-    -- Airborne car/bike actions
-    ["lean_forward"] = true,
-    ["lean_back"] = true,
-
-    -- Aircraft actions
-    ["countermeasures"] = true,
-    ["free_look"] = true,
-    ["landing_gear"] = true,
-    ["pitch_up"] = true,
-    ["pitch_down"] = true,
-    ["roll_left"] = true,
-    ["roll_right"] = true,
-    ["rudder_left"] = true,
-    ["rudder_right"] = true,
-    ["throttle_up"] = true,
-    ["throttle_down"] = true
-}
-
 -- Store player input settings and binds
 local playerSettings = Glide.playerSettings or {}
+Glide.playerSettings = playerSettings
 
 -- Store players that are currently controlling a Glide vehicle
 local activeData = Glide.activeInputData or {}
-
-Glide.playerSettings = playerSettings
 Glide.activeInputData = activeData
 
---- Make sure the player has sent valid data.
-local function Validate( settings )
-    if type( settings ) ~= "table" then return false end
-    if type( settings.mouseFlyMode ) ~= "number" then return false end
-    if type( settings.binds ) ~= "table" then return false end
+do
+    local SetNumber = Glide.SetNumber
 
-    return true
-end
+    --- Make sure the player has sent valid data.
+    local function Validate( settings )
+        if type( settings ) ~= "table" then return false end
+        if type( settings.mouseFlyMode ) ~= "number" then return false end
+        if type( settings.binds ) ~= "table" then return false end
 
---- Validate and set the action binds for a specific player.
-function Glide.SetupPlayerInput( ply, data )
-    if not Validate( data ) then
-        Glide.Print( "%s <%s> sent invalid input data!", ply:Nick(), ply:SteamID() )
-        return
+        return true
     end
 
-    -- Store which actions are associated to each key, while
-    -- filtering out actions that do not exist on ACTION_FILTER.
-    local actions = {}
+    --- Validate and set the action binds for a specific player.
+    function Glide.SetupPlayerInput( ply, data )
+        if not Validate( data ) then
+            Glide.Print( "%s <%s> sent invalid input data!", ply:Nick(), ply:SteamID() )
+            return
+        end
 
-    for action, _ in pairs( ACTION_FILTER ) do
-        local key = data.binds[action]
+        -- Filter out categories/actions that do not exist, and validate buttons
+        local receivedBinds = type( data.binds ) == "table" and data.binds or {}
+        local binds = {}
 
-        if type( key ) == "number" then
-            key = math.Clamp( key, KEY_FIRST, BUTTON_CODE_LAST )
+        for category, actions in pairs( Glide.InputCategories ) do
+            binds[category] = {}
 
-            local t = actions[key]
+            for action, button in pairs( actions ) do
+                local receivedCategory = receivedBinds[category]
 
+                if type( receivedCategory ) == "table" then
+                    SetNumber( binds[category], action, receivedCategory[action], KEY_NONE, BUTTON_CODE_LAST, button )
+                end
+            end
+        end
+
+        playerSettings[ply] = {
+            binds = binds,
+            manualGearShifting = data.manualGearShifting == true,
+            mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) )
+        }
+
+        -- If this player is already in a Glide vehicle, activate the inputs again.
+        local activeVehicle = ply:GlideGetVehicle()
+
+        if IsValid( activeVehicle ) then
+            Glide.ActivateInput( ply, activeVehicle, ply:GlideGetSeatIndex() )
+        end
+    end
+end
+
+do
+    local VEHICLE_ACTION_CATEGORY = {
+        [Glide.VEHICLE_TYPE.UNDEFINED] = "land_controls",
+        [Glide.VEHICLE_TYPE.CAR] = "land_controls",
+        [Glide.VEHICLE_TYPE.MOTORCYCLE] = "land_controls",
+        [Glide.VEHICLE_TYPE.HELICOPTER] = "aircraft_controls",
+        [Glide.VEHICLE_TYPE.PLANE] = "aircraft_controls",
+        [Glide.VEHICLE_TYPE.TANK] = "land_controls"
+    }
+
+    --- Given a category of input actions, get all actions
+    --- from that category, and then separate them per button.
+    local function AddActions( binds, category, buttons )
+        local t
+
+        for action, button in pairs( binds[category] ) do
+            t = buttons[button]
+
+            -- Theres no actions for this button yet, create a new list.
             if not t then
-                -- No actions for this key yet, create a new list.
-                t = {}
-                actions[key] = t
+                buttons[button] = {}
+                t = buttons[button]
             end
 
+            -- Add this action to this button
             t[#t + 1] = action
         end
     end
 
-    playerSettings[ply] = {
-        actions = actions,
-        manualGearShifting = data.manualGearShifting == true,
-        mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) )
-    }
+    --- Start listening to input events from this player.
+    function Glide.ActivateInput( ply, vehicle, seatIndex )
+        Glide.DeactivateInput( ply )
 
-    -- If this player is already in a Glide vehicle, activate the inputs again.
-    local activeVehicle = ply:GlideGetVehicle()
+        -- Make sure we have received settings from this player
+        local settings = playerSettings[ply]
+        if not settings then return end
 
-    if IsValid( activeVehicle ) then
-        Glide.ActivateInput( ply, activeVehicle, ply:GlideGetSeatIndex() )
+        -- Set driver settings on this vehicle
+        if seatIndex == 1 then
+            vehicle.inputFlyMode = settings.mouseFlyMode
+            vehicle.inputManualShift = settings.manualGearShifting
+        end
+
+        -- Separate actions for each button, and filter only the
+        -- actions relevant to the current vehicle type.
+        local buttons = {}
+
+        -- Add button actions that apply to all vehicles
+        AddActions( settings.binds, "general_controls", buttons )
+
+        -- Add button actions that apply to this vehicle type
+        AddActions( settings.binds, VEHICLE_ACTION_CATEGORY[vehicle.VehicleType], buttons )
+
+        -- Let our input hooks handle this
+        activeData[ply] = {
+            vehicle = vehicle,
+            seatIndex = seatIndex,
+            buttons = buttons
+        }
     end
-end
-
---- Start listening to input events from this player.
-function Glide.ActivateInput( ply, vehicle, seatIndex )
-    Glide.DeactivateInput( ply )
-
-    -- Make sure we have received settings from this player
-    local settings = playerSettings[ply]
-    if not settings then return end
-
-    -- Set driver settings on this vehicle
-    if seatIndex == 1 then
-        vehicle.inputFlyMode = settings.mouseFlyMode
-        vehicle.inputManualShift = settings.manualGearShifting
-    end
-
-    -- Let our input hooks handle this
-    activeData[ply] = {
-        vehicle = vehicle,
-        seatIndex = seatIndex
-    }
 end
 
 --- Stop listening to input events from this player.
@@ -129,35 +129,13 @@ function Glide.DeactivateInput( ply )
     activeData[ply] = nil
 end
 
-local SEAT_SWITCH_KEYS = {
-    [KEY_1] = 1,
-    [KEY_2] = 2,
-    [KEY_3] = 3,
-    [KEY_4] = 4,
-    [KEY_5] = 5,
-    [KEY_6] = 6,
-    [KEY_7] = 7,
-    [KEY_8] = 8,
-    [KEY_9] = 9,
-    [KEY_0] = 10
-}
-
--- Change yaw actions to roll actions
--- while using the mouse `Point-to-aim` mode.
-local MOUSE_AIM_OVERRIDE = {
-    ["rudder_left"] = "roll_left",
-    ["rudder_right"] = "roll_right"
-}
-
--- Alternate actions
-local ALT_ACTIONS = {
-    ["attack_alt"] = "attack"
-}
-
+local ACTION_ALIASES = Glide.ACTION_ALIASES
+local SEAT_SWITCH_BUTTONS = Glide.SEAT_SWITCH_BUTTONS
+local MOUSE_AIM_ACTION_OVERRIDE = Glide.MOUSE_AIM_ACTION_OVERRIDE
 local IsValid = IsValid
 
---- Handle key up/down events.
-local function HandleInput( ply, key, active, pressed )
+--- Handle button up/down events.
+local function HandleInput( ply, button, active, pressed )
     local vehicle = active.vehicle
 
     if not IsValid( vehicle ) then
@@ -165,9 +143,9 @@ local function HandleInput( ply, key, active, pressed )
         return
     end
 
-    -- Is this a "switch seat" key?
-    if pressed and SEAT_SWITCH_KEYS[key] then
-        Glide.SwitchSeat( ply, SEAT_SWITCH_KEYS[key] )
+    -- Is this a "switch seat" button?
+    if pressed and SEAT_SWITCH_BUTTONS[button] then
+        Glide.SwitchSeat( ply, SEAT_SWITCH_BUTTONS[button] )
 
         return
     end
@@ -175,19 +153,19 @@ local function HandleInput( ply, key, active, pressed )
     local settings = playerSettings[ply]
     if not settings then return end
 
-    -- Does this key have actions associated with it?
-    local actions = settings.actions[key]
+    -- Does this button have actions associated with it?
+    local actions = active.buttons[button]
     if not actions then return end
 
     local mode = settings.mouseFlyMode
 
     for _, action in ipairs( actions ) do
-        -- mode == Glide.MOUSE_FLY_MODE.AIM
-        if mode == 0 and MOUSE_AIM_OVERRIDE[action] then
-            action = MOUSE_AIM_OVERRIDE[action]
+        -- If the mode is "Point-to-aim", override a few actions
+        if mode == 0 and MOUSE_AIM_ACTION_OVERRIDE[action] then
+            action = MOUSE_AIM_ACTION_OVERRIDE[action]
         end
 
-        vehicle:SetInputBool( active.seatIndex, ALT_ACTIONS[action] or action, pressed )
+        vehicle:SetInputBool( active.seatIndex, ACTION_ALIASES[action] or action, pressed )
     end
 end
 
@@ -206,10 +184,10 @@ local function HandleMouseInput( ply, active )
     local settings = playerSettings[ply]
     if not settings then return end
 
-    -- Glide.VEHICLE_TYPE.HELICOPTER, Glide.VEHICLE_TYPE.PLANE
+    -- Ignore is this vehicle is not an aircraft
     if vehicle.VehicleType ~= 3 and vehicle.VehicleType ~= 4 then return end
 
-    -- Glide.MOUSE_FLY_MODE.CAMERA
+    -- Ignore if the mouse aim mode is "Free camera"
     if settings.mouseFlyMode == 2 then return end
 
     local dt = FrameTime()
@@ -237,7 +215,7 @@ local function HandleMouseInput( ply, active )
         end
 
         vehicle:SetInputFloat( seatIndex, "pitch", pitch )
-        vehicle:SetInputFloat( seatIndex, "rudder", rudder )
+        vehicle:SetInputFloat( seatIndex, "yaw", rudder )
 
     -- Glide.MOUSE_FLY_MODE.DIRECT
     elseif settings.mouseFlyMode == 1 then
@@ -248,17 +226,17 @@ local function HandleMouseInput( ply, active )
     end
 end
 
-hook.Add( "PlayerButtonDown", "Glide.VehicleInput", function( ply, key )
+hook.Add( "PlayerButtonDown", "Glide.VehicleInput", function( ply, button )
     local active = activeData[ply]
     if active then
-        HandleInput( ply, key, active, true )
+        HandleInput( ply, button, active, true )
     end
 end )
 
-hook.Add( "PlayerButtonUp", "Glide.VehicleInput", function( ply, key )
+hook.Add( "PlayerButtonUp", "Glide.VehicleInput", function( ply, button )
     local active = activeData[ply]
     if active then
-        HandleInput( ply, key, active, false )
+        HandleInput( ply, button, active, false )
     end
 end )
 

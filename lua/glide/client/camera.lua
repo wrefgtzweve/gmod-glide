@@ -232,7 +232,7 @@ function Camera:Think()
         decay = 0
 
     elseif mode == CAMERA_TYPE.AIRCRAFT then
-        self.isUsingDirectMouse = Config.mouseFlyMode == MOUSE_FLY_MODE.DIRECT and self.seatIndex == 1 and not IsKeyDown( Config.binds.free_look )
+        self.isUsingDirectMouse = Config.mouseFlyMode == MOUSE_FLY_MODE.DIRECT and self.seatIndex == 1 and not IsKeyDown( Config.binds.aircraft_controls.free_look )
         self.allowRolling = Config.mouseFlyMode ~= MOUSE_FLY_MODE.AIM
 
         -- Make the camera angles smoothly point towards the vehicle's forward direction.

@@ -468,7 +468,7 @@ function ENT:TriggerInput( name, value )
         self:SetInputFloat( 1, "pitch", Clamp( value, -1, 1 ) )
 
     elseif name == "Yaw" then
-        self:SetInputFloat( 1, "rudder", Clamp( value, -1, 1 ) )
+        self:SetInputFloat( 1, "yaw", Clamp( value, -1, 1 ) )
 
     elseif name == "Roll" then
         self:SetInputFloat( 1, "roll", Clamp( value, -1, 1 ) )
