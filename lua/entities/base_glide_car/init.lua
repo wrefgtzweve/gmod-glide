@@ -32,7 +32,7 @@ function ENT:OnPostInitialize()
     self:SetEngineRPM( 0 )
     self:SetEngineThrottle( 0 )
 
-    self:SetTireSmokeColor( Vector( 0.1, 0.1, 0.1 ) )
+    self:SetTireSmokeColor( Vector( 0.6, 0.6, 0.6 ) )
     self:SetWheelRadius( 15 )
     self:SetMaxSteerAngle( 35 )
 

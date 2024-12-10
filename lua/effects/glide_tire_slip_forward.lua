@@ -75,7 +75,7 @@ function EFFECT:DoSmoke( emitter, origin, scale, normal, vehicle )
 
         if p then
             p:SetDieTime( RandomFloat( 2, 4 ) )
-            p:SetStartAlpha( 60 )
+            p:SetStartAlpha( 50 )
             p:SetEndAlpha( 0 )
             p:SetStartSize( 5 + RandomFloat( 1, 2 ) * scale )
             p:SetEndSize( 40 + RandomFloat( 2, 15 ) * scale )
