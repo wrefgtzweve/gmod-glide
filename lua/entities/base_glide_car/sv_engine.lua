@@ -145,8 +145,7 @@ function ENT:AutoGearSwitch( throttle )
     maxRPM = maxRPM * 0.98
 
     local currentGear = self:GetGear()
-    local gear = currentGear
-    if gear < 1 then gear = 1 end
+    local gear = Clamp( currentGear, 1, self.maxGear )
 
     -- Switch up early when on 1st gear
     if currentGear == 1 or self.reducedThrottle then
@@ -166,7 +165,8 @@ function ENT:AutoGearSwitch( throttle )
     end
 
     -- Only shift down if the RPM is too low
-    if gear < currentGear and self:GetEngineRPM() > maxRPM * 0.45 then return end
+    local threshold = minRPM + ( maxRPM - minRPM ) * ( 0.5 - throttle * 0.2 )
+    if gear < currentGear and self:GetEngineRPM() > threshold then return end
 
     self:SwitchGear( gear )
 end
@@ -245,9 +245,6 @@ function ENT:EngineThink( dt )
         inputThrottle = inputThrottle * 0.65
     end
 
-    -- Handle auto-clutch
-    clutch = self:EngineClutch( dt )
-
     if self.burnout > 0 then
         self:SwitchGear( 1, 0 )
 
@@ -258,6 +255,9 @@ function ENT:EngineThink( dt )
     elseif not self.inputManualShift then
         self:AutoGearSwitch( inputThrottle )
     end
+
+    -- Handle auto-clutch
+    clutch = self:EngineClutch( dt )
 
     -- Do a burnout when holding down the throttle and brake inputs
     if inputThrottle > 0.1 and inputBrake > 0.1 and Abs( self.forwardSpeed ) < 50 then
