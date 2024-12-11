@@ -80,8 +80,8 @@ function ENT:SetupDataTables()
     AddBoolVar( "FastTransmission", "#glide.editvar.engine" )
 
     -- Fake engine parameters
-    AddFloatVar( "MinRPM", 1000, 50000, "#glide.editvar.engine" )
-    AddFloatVar( "MaxRPM", 1000, 50000, "#glide.editvar.engine" )
+    AddFloatVar( "MinRPM", 1000, 5000, "#glide.editvar.engine" )
+    AddFloatVar( "MaxRPM", 6000, 50000, "#glide.editvar.engine" )
     AddFloatVar( "MinRPMTorque", 10, 10000, "#glide.editvar.engine" )
     AddFloatVar( "MaxRPMTorque", 10, 10000, "#glide.editvar.engine" )
     AddFloatVar( "DifferentialRatio", 0.5, 5, "#glide.editvar.engine" )
