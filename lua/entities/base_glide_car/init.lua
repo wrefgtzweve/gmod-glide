@@ -458,6 +458,7 @@ end
 --- Override this base class function.
 function ENT:CreateWheel( offset, params )
     local wheel = BaseClass.CreateWheel( self, offset, params )
+    wheel.enableTorqueInertia = true
 
     -- Changing this will set the behaviour of
     -- the power distribution and burnouts.
@@ -470,7 +471,7 @@ function ENT:CreateWheel( offset, params )
     return wheel
 end
 
-local availableBrake, availableTorque, steerAngle, enableInertia, angVelMult
+local availableBrake, availableTorque, steerAngle, angVelMult
 local isGrounded, rpm, totalRPM, totalSideSlip, totalForwardSlip
 
 --- Implement this base class function.
@@ -482,7 +483,6 @@ function ENT:WheelThink( dt )
     availableBrake = self.brake
     availableTorque = self.availableTorque / self.poweredCount
     steerAngle = self.steerAngle * self.ModelSteerAngleMultiplier
-    enableInertia = self:GetGear() < 2
     angVelMult = self.driveWheelsAngVelMult
 
     isGrounded, totalRPM, totalSideSlip, totalForwardSlip = false, 0, 0, 0
@@ -499,7 +499,6 @@ function ENT:WheelThink( dt )
 
             w.brake = availableBrake
             w.torque = availableTorque
-            w.enableTorqueInertia = enableInertia
             w.angularVelocity = w.angularVelocity * angVelMult
 
             if rpm > maxRPM then
