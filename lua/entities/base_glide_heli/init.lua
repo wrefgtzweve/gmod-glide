@@ -113,19 +113,14 @@ local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 function ENT:OnPostThink( dt )
     BaseClass.OnPostThink( self, dt )
 
-    if self.inputFlyMode == 2 then -- Glide.MOUSE_FLY_MODE.CAMERA
+    if self.inputFlyMode == 0 then -- Glide.MOUSE_FLY_MODE.AIM
+        self.inputPitch = self:GetInputFloat( 1, "pitch" )
+        self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
+        self.inputYaw = self:GetInputFloat( 1, "yaw" )
+    else
         self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 6, dt )
         self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
         self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "yaw" ), 6, dt )
-
-    elseif self.inputFlyMode == 1 then -- Glide.MOUSE_FLY_MODE.DIRECT
-        self.inputPitch = self:GetInputFloat( 1, "pitch" )
-        self.inputRoll = self:GetInputFloat( 1, "roll" )
-        self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "yaw" ), 6, dt )
-    else
-        self.inputPitch = self:GetInputFloat( 1, "pitch" )
-        self.inputRoll = self:GetInputFloat( 1, "roll" )
-        self.inputYaw = self:GetInputFloat( 1, "yaw" )
     end
 
     local power = self:GetPower()
