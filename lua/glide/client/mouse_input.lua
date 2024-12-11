@@ -1,4 +1,5 @@
 CreateConVar( "glide_input_pitch", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmit this pitch input to the server.", -1, 1 )
+CreateConVar( "glide_input_yaw", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmit this yaw input to the server.", -1, 1 )
 CreateConVar( "glide_input_roll", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmit this roll input to the server.", -1, 1 )
 
 local MouseInput = Glide.MouseInput or {}
@@ -31,11 +32,11 @@ function MouseInput:Activate()
     end
 
     self.mouse = { 0, 0 }
-    self.sensitivity = { 0, 0 }
     self.freeLook = false
     self:Reset()
 
     self.cvarPitch = GetConVar( "glide_input_pitch" )
+    self.cvarYaw = GetConVar( "glide_input_yaw" )
     self.cvarRoll = GetConVar( "glide_input_roll" )
 
     hook.Add( "InputMouseApply", "Glide.UpdateMouseInput", function( _, x, y )
@@ -43,7 +44,12 @@ function MouseInput:Activate()
     end )
 
     hook.Add( "Think", "Glide.UpdateMouseInput", function()
-        self:Think()
+        local freeLook = input.IsKeyDown( Config.binds.aircraft_controls.free_look ) or vgui.CursorVisible()
+
+        if self.freeLook ~= freeLook then
+            self.freeLook = freeLook
+            self:Reset()
+        end
     end )
 
     hook.Add( "HUDPaint", "Glide.DrawMouseInput", function()
@@ -58,61 +64,47 @@ function MouseInput:Deactivate()
 end
 
 function MouseInput:Reset()
-    self.pitch = 0
-    self.roll = 0
+    self.mouse[1] = 0
+    self.mouse[2] = 0
 
     if not self.cvarPitch then return end
 
-    self.cvarPitch:SetFloat( self.pitch )
-    self.cvarRoll:SetFloat( self.roll )
+    self.cvarPitch:SetFloat( 0 )
+    self.cvarYaw:SetFloat( 0 )
+    self.cvarRoll:SetFloat( 0 )
 end
 
+local Abs = math.abs
 local Clamp = math.Clamp
+
+local function ConvertInput( axis, mouse, deadzone )
+    if axis == 0 then return 0 end
+
+    local value = mouse[axis]
+    if Abs( value ) < deadzone then return 0 end
+
+    return value
+end
 
 function MouseInput:InputMouseApply( x, y )
     if self.freeLook then return end
 
+    x = Config.mouseInvertX and -x or x
+    y = Config.mouseInvertY and -y or y
+
     local mouse = self.mouse
-
-    mouse[1] = Config.mouseInvertX and -x or x
-    mouse[2] = Config.mouseInvertY and -y or y
-
-    local sensitivity = self.sensitivity
-
-    sensitivity[1] = Config.mouseSensitivityX
-    sensitivity[2] = Config.mouseSensitivityY
-
-    local pitch = mouse[Config.pitchMouseAxis] * sensitivity[Config.pitchMouseAxis] * 0.01
-    local roll = mouse[Config.rollMouseAxis] * sensitivity[Config.rollMouseAxis] * 0.01
-
-    self.pitch = Clamp( self.pitch - pitch, -1, 1 )
-    self.roll = Clamp( self.roll + roll, -1, 1 )
-
-    self.cvarPitch:SetFloat( self.pitch )
-    self.cvarRoll:SetFloat( self.roll )
-end
-
-local Abs = math.abs
-local Approach = math.Approach
-
-function MouseInput:Think()
-    self.freeLook = input.IsKeyDown( Config.binds.aircraft_controls.free_look )
-
-    if self.freeLook then
-        self:Reset()
-        return
-    end
-
-    local dt = FrameTime()
     local deadzone = Config.mouseDeadzone
 
-    if Abs( self.pitch ) < deadzone then
-        self.pitch = Approach( self.pitch, 0, dt )
-    end
+    mouse[1] = Clamp( mouse[1] + x * Config.mouseSensitivityX * 0.01, -1, 1 )
+    mouse[2] = Clamp( mouse[2] - y * Config.mouseSensitivityY * 0.01, -1, 1 )
 
-    if Abs( self.roll ) < deadzone then
-        self.roll = Approach( self.roll, 0, dt )
-    end
+    local pitch = ConvertInput( Config.pitchMouseAxis, mouse, deadzone )
+    local yaw = ConvertInput( Config.yawMouseAxis, mouse, deadzone )
+    local roll = ConvertInput( Config.rollMouseAxis, mouse, deadzone )
+
+    self.cvarPitch:SetFloat( pitch )
+    self.cvarYaw:SetFloat( yaw )
+    self.cvarRoll:SetFloat( roll )
 end
 
 local ScrW, ScrH = ScrW, ScrH
@@ -148,6 +140,8 @@ function MouseInput:DrawHUD()
 
     size = size * 0.25
 
+    local mouse = self.mouse
+
     SetMaterial( MAT_JOYSTICK )
-    DrawTexturedRectRotated( x + self.roll * size * 2, y - self.pitch * size * 2, size, size, 0 )
+    DrawTexturedRectRotated( x + mouse[1] * size * 2, y - mouse[2] * size * 2, size, size, 0 )
 end

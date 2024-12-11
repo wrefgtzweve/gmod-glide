@@ -32,8 +32,9 @@ function Config:Reset()
     self.mouseInvertY = false
 
     self.pitchMouseAxis = 2 -- Y
+    self.yawMouseAxis = 0 -- None
     self.rollMouseAxis = 1 -- X
-    self.mouseDeadzone = 0.2
+    self.mouseDeadzone = 0.15
     self.mouseShow = true
 
     -- Misc. settings
@@ -102,6 +103,7 @@ function Config:Save( immediate )
         mouseInvertY = self.mouseInvertY,
 
         pitchMouseAxis = self.pitchMouseAxis,
+        yawMouseAxis = self.yawMouseAxis,
         rollMouseAxis = self.rollMouseAxis,
         mouseDeadzone = self.mouseDeadzone,
         mouseShow = self.mouseShow,
@@ -159,8 +161,9 @@ function Config:Load()
 
     SetNumber( self, "mouseSensitivityX", data.mouseSensitivityX, 0.01, 5, self.mouseSensitivityX )
     SetNumber( self, "mouseSensitivityY", data.mouseSensitivityY, 0.01, 5, self.mouseSensitivityY )
-    SetNumber( self, "pitchMouseAxis", data.pitchMouseAxis, 1, 2, self.pitchMouseAxis )
-    SetNumber( self, "rollMouseAxis", data.rollMouseAxis, 1, 2, self.rollMouseAxis )
+    SetNumber( self, "pitchMouseAxis", data.pitchMouseAxis, 0, 2, self.pitchMouseAxis )
+    SetNumber( self, "yawMouseAxis", data.yawMouseAxis, 0, 2, self.yawMouseAxis )
+    SetNumber( self, "rollMouseAxis", data.rollMouseAxis, 0, 2, self.rollMouseAxis )
 
     self.mouseDeadzone =  Glide.ValidateNumber( data.mouseDeadzone, 0, 1, self.mouseDeadzone )
     LoadBool( "mouseShow", true )
@@ -202,6 +205,7 @@ function Config:TransmitInputSettings( immediate )
     local data = {
         -- Mouse settings
         mouseFlyMode = self.mouseFlyMode,
+        replaceYawWithRoll = self.mouseFlyMode == Glide.MOUSE_FLY_MODE.DIRECT and self.yawMouseAxis > 0,
 
         -- Keyboard settings
         manualGearShifting = self.manualGearShifting,
@@ -343,6 +347,7 @@ function Config:OpenFrame()
     }
 
     local mouseAxisOptions = {
+        L"mouse.none",
         L"mouse.x",
         L"mouse.y"
     }
@@ -377,13 +382,19 @@ function Config:OpenFrame()
 
         if self.mouseFlyMode ~= Glide.MOUSE_FLY_MODE.DIRECT then return end
 
-        theme:CreateComboBox( directMousePanel, L"mouse.pitch_axis", mouseAxisOptions, self.pitchMouseAxis, function( value )
-            self.pitchMouseAxis = value
+        theme:CreateComboBox( directMousePanel, L"mouse.pitch_axis", mouseAxisOptions, self.pitchMouseAxis + 1, function( value )
+            self.pitchMouseAxis = value - 1
             self:Save()
         end )
 
-        theme:CreateComboBox( directMousePanel, L"mouse.roll_axis", mouseAxisOptions, self.rollMouseAxis, function( value )
-            self.rollMouseAxis = value
+        theme:CreateComboBox( directMousePanel, L"mouse.yaw_axis", mouseAxisOptions, self.yawMouseAxis + 1, function( value )
+            self.yawMouseAxis = value - 1
+            self:Save()
+            self:TransmitInputSettings()
+        end )
+
+        theme:CreateComboBox( directMousePanel, L"mouse.roll_axis", mouseAxisOptions, self.rollMouseAxis + 1, function( value )
+            self.rollMouseAxis = value - 1
             self:Save()
         end )
 
@@ -407,7 +418,7 @@ function Config:OpenFrame()
             self:Save()
         end )
 
-        theme:CreateSlider( directMousePanel, L"mouse.deadzone", self.mouseDeadzone, 0, 1, 2, function( value )
+        theme:CreateSlider( directMousePanel, L"mouse.deadzone", self.mouseDeadzone, 0, 0.5, 2, function( value )
             self.mouseDeadzone = value
             self:Save()
         end )

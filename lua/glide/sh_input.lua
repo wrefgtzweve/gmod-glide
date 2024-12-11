@@ -59,12 +59,6 @@ Glide.ACTION_ALIASES = {
     ["attack_alt"] = "attack"
 }
 
--- Replace actions while using the mouse `Point-to-aim` mode.
-Glide.MOUSE_AIM_ACTION_OVERRIDE = {
-    ["yaw_left"] = "roll_left",
-    ["yaw_right"] = "roll_right"
-}
-
 -- Keys reserved for seat switching
 Glide.SEAT_SWITCH_BUTTONS = {
     [KEY_1] = 1,

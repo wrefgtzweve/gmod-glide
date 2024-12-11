@@ -10,10 +10,10 @@ do
     local SetNumber = Glide.SetNumber
 
     --- Make sure the player has sent valid data.
-    local function Validate( settings )
-        if type( settings ) ~= "table" then return false end
-        if type( settings.mouseFlyMode ) ~= "number" then return false end
-        if type( settings.binds ) ~= "table" then return false end
+    local function Validate( data )
+        if type( data ) ~= "table" then return false end
+        if type( data.mouseFlyMode ) ~= "number" then return false end
+        if type( data.binds ) ~= "table" then return false end
 
         return true
     end
@@ -46,6 +46,15 @@ do
             manualGearShifting = data.manualGearShifting == true,
             mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) )
         }
+
+        -- Replace yaw actions with roll actions when the client asks for it,
+        -- or while using the `Point-to-aim` mouse mode.
+        if data.replaceYawWithRoll == true then
+            playerSettings[ply].replaceYawWithRoll = true
+
+        elseif playerSettings[ply].mouseFlyMode == Glide.MOUSE_FLY_MODE.AIM then
+            playerSettings[ply].replaceYawWithRoll = true
+        end
 
         -- If this player is already in a Glide vehicle, activate the inputs again.
         local activeVehicle = ply:GlideGetVehicle()
@@ -131,8 +140,12 @@ end
 
 local ACTION_ALIASES = Glide.ACTION_ALIASES
 local SEAT_SWITCH_BUTTONS = Glide.SEAT_SWITCH_BUTTONS
-local MOUSE_AIM_ACTION_OVERRIDE = Glide.MOUSE_AIM_ACTION_OVERRIDE
 local IsValid = IsValid
+
+local MOUSE_ACTION_OVERRIDE = {
+    ["yaw_left"] = "roll_left",
+    ["yaw_right"] = "roll_right"
+}
 
 --- Handle button up/down events.
 local function HandleInput( ply, button, active, pressed )
@@ -157,12 +170,9 @@ local function HandleInput( ply, button, active, pressed )
     local actions = active.buttons[button]
     if not actions then return end
 
-    local mode = settings.mouseFlyMode
-
     for _, action in ipairs( actions ) do
-        -- If the mode is "Point-to-aim", override a few actions
-        if mode == 0 and MOUSE_AIM_ACTION_OVERRIDE[action] then
-            action = MOUSE_AIM_ACTION_OVERRIDE[action]
+        if settings.replaceYawWithRoll and MOUSE_ACTION_OVERRIDE[action] then
+            action = MOUSE_ACTION_OVERRIDE[action]
         end
 
         vehicle:SetInputBool( active.seatIndex, ACTION_ALIASES[action] or action, pressed )
@@ -221,6 +231,7 @@ local function HandleMouseInput( ply, active )
     elseif settings.mouseFlyMode == 1 then
 
         vehicle:SetInputFloat( seatIndex, "pitch", ply:GetInfoNum( "glide_input_pitch", 0 ) )
+        vehicle:SetInputFloat( seatIndex, "yaw", ply:GetInfoNum( "glide_input_yaw", 0 ) )
         vehicle:SetInputFloat( seatIndex, "roll", ply:GetInfoNum( "glide_input_roll", 0 ) )
 
     end
