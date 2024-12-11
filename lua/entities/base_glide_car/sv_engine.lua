@@ -137,24 +137,25 @@ function ENT:AutoGearSwitch( throttle )
 
     if self.forwardSpeed < 0 and throttle < 0.1 then return end
     if not self.areDriveWheelsGrounded then return end
+    if Abs( self.avgForwardSlip ) > 1 then return end
 
-    local currentGear = self:GetGear()
-
-    -- Pick the gear that matches better the engine-to-transmittion RPM
     local minRPM, maxRPM = self:GetMinRPM(), self:GetMaxRPM()
-    local gear, gearRPM = 1, 0
 
     -- Avoid hitting the redline
     maxRPM = maxRPM * 0.98
 
-    -- Switch up early when on 1st gear
-    if currentGear == 1 and Abs( self.avgForwardSlip ) < 2 then
-        maxRPM = maxRPM * 0.8
+    local currentGear = self:GetGear()
+    local gear = currentGear
+    if gear < 1 then gear = 1 end
 
-    elseif self.reducedThrottle then
+    -- Switch up early when on 1st gear
+    if currentGear == 1 or self.reducedThrottle then
         maxRPM = maxRPM * 0.8
     end
 
+    local gearRPM
+
+    -- Pick the gear that matches better the engine-to-transmittion RPM
     for i = 1, self.maxGear do
         gearRPM = self:TransmissionToEngineRPM( i )
 
@@ -164,16 +165,8 @@ function ENT:AutoGearSwitch( throttle )
         end
     end
 
-    -- Switch down late when on 2st gear
-    if gear < currentGear and currentGear == 2 then
-        maxRPM = maxRPM * 0.75
-    end
-
     -- Only shift down if the RPM is too low
     if gear < currentGear and self:GetEngineRPM() > maxRPM * 0.45 then return end
-
-    -- Only shift up from the 1st gear when not slipping
-    if currentGear == 1 and gear == 2 and Abs( self.avgForwardSlip ) > 1 then return end
 
     self:SwitchGear( gear )
 end
