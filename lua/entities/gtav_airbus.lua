@@ -76,7 +76,8 @@ if SERVER then
             [2] = 1.8,
             [3] = 1.3,
             [4] = 1.05,
-            [5] = 0.9
+            [5] = 0.9,
+            [6] = 0.85
         }
     end
 
@@ -91,15 +92,18 @@ if SERVER then
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"
 
     function ENT:CreateFeatures()
-        self:SetSpringStrength( 1800 )
-        self:SetSpringDamper( 8000 )
+        self:SetSpringStrength( 1300 )
+        self:SetSpringDamper( 6000 )
 
+        self:SetSuspensionLength( 13 )
         self:SetTransmissionEfficiency( 0.8 )
-        self:SetDifferentialRatio( 2.1 )
+        self:SetDifferentialRatio( 1.6 )
         self:SetBrakePower( 2500 )
-        self:SetWheelInertia( 13 )
+        self:SetWheelInertia( 10 )
+        self:SetMaxSteerAngle( 45 )
 
-        self:SetMaxRPM( 15000 )
+        self:SetMinRPM( 1000 )
+        self:SetMaxRPM( 8000 )
         self:SetMinRPMTorque( 1000 )
         self:SetMaxRPMTorque( 1200 )
 
