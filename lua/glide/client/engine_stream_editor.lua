@@ -155,22 +155,14 @@ function Frame:Init()
     listParams:SetSpaceY( 4 )
     listParams:SetSpaceX( 4 )
 
-    local paramMinMax = {
-        pitch = { 0.5, 2 },
-        maxVolume = { 0.1, 2 },
-        fadeDist = { 500, 4000 },
-        redlineFrequency = { 30, 70 },
-        wobbleFrequency = { 10, 70 },
-        wobbleStrength = { 0.1, 1.0 }
-    }
-
-    local paramDecimals = {
-        pitch = 2,
-        maxVolume = 2,
-        fadeDist = 0,
-        redlineFrequency = 0,
-        wobbleFrequency = 0,
-        wobbleStrength = 2
+    -- Min, max and decimals
+    local paramLimits = {
+        pitch = { 0.5, 2, 2 },
+        volume = { 0.1, 2, 2 },
+        fadeDist = { 500, 4000, 0 },
+        redlineFrequency = { 30, 70, 0 },
+        wobbleFrequency = { 10, 70, 0 },
+        wobbleStrength = { 0.1, 1.0, 2 }
     }
 
     self.paramSliders = {}
@@ -185,20 +177,16 @@ function Frame:Init()
         local slider = vgui.Create( "DNumSlider", panel )
         slider:SetWide( 120 )
         slider:SetText( key )
-        slider:SetMin( paramMinMax[key][1] )
-        slider:SetMax( paramMinMax[key][2] )
-        slider:SetDecimals( paramDecimals[key] )
+        slider:SetMin( paramLimits[key][1] )
+        slider:SetMax( paramLimits[key][2] )
+        slider:SetDecimals( paramLimits[key][3] )
         slider:Dock( RIGHT )
 
         slider.Label:SetVisible( false )
         self.paramSliders[key] = slider
 
         slider.OnValueChanged = function( _, value )
-            self.stream[key] = math.Round( value, paramDecimals[key] )
-
-            if key == "maxVolume" then
-                self.stream.volume = self.stream.maxVolume
-            end
+            self.stream[key] = math.Round( value, paramLimits[key][3] )
         end
 
         local label = vgui.Create( "DLabel", panel )
@@ -207,7 +195,7 @@ function Frame:Init()
         label:Dock( FILL )
     end
 
-    for k, _ in SortedPairs( Glide.VALID_STREAM_KV ) do
+    for k, _ in SortedPairs( Glide.DEFAULT_STREAM_PARAMS ) do
         CreateStreamParam( k )
     end
 
@@ -227,12 +215,11 @@ function Frame:Init()
     self.stream = Glide.CreateEngineStream( LocalPlayer() )
     self.stream.firstPerson = true
 
-    self.stream.errorCallback = function( id, path, errStr )
-        Derma_Message( string.format( L"stream_editor.load_error", path, errStr ), L"error", L"ok" )
-        self:RemoveLayer( id )
+    self.stream.errorCallback = function( path, errorName )
+        Derma_Message( string.format( L"stream_editor.load_error", path, errorName ), L"error", L"ok" )
     end
 
-    self:UpdateStreamParams()
+    self:UpdateStreamParamSliders()
 end
 
 function Frame:OnClose()
@@ -240,14 +227,17 @@ function Frame:OnClose()
 
     if self.stream then
         self.stream:Destroy()
+        self.stream = nil
     end
 
     if IsValid( self.frameBrowser ) then
         self.frameBrowser:Close()
+        self.frameBrowser = nil
     end
 
     if IsValid( self.frameExport ) then
         self.frameExport:Close()
+        self.frameExport = nil
     end
 end
 
@@ -257,7 +247,7 @@ function Frame:UpdateEngineToggleButton()
     self.buttonToggleEngine:SizeToContentsX( 60 )
 end
 
-function Frame:UpdateStreamParams()
+function Frame:UpdateStreamParamSliders()
     if not self.stream then return end
 
     for k, slider in pairs( self.paramSliders ) do
@@ -437,7 +427,6 @@ do
         inputs.throttle = self.throttle
 
         self.stream.isRedlining = isRedlining
-        self.stream:Think( dt )
     end
 end
 
@@ -470,10 +459,10 @@ function Frame:OnClickImportJSON( fromStaticFolder )
             return
         end
 
-        local validKV = Glide.VALID_STREAM_KV
+        local defaultParams = Glide.DEFAULT_STREAM_PARAMS
 
         for k, v in pairs( keyValues ) do
-            if validKV[k] and type( v ) == "number" then
+            if defaultParams[k] and type( v ) == "number" then
                 self.stream[k] = v
             else
                 Glide.Print( "Invalid key/value: %s/$s", k, v )
@@ -502,6 +491,7 @@ function Frame:OnClickImportJSON( fromStaticFolder )
         end
 
         self.lastPath = string.sub( path, string.len( dir ) + 2 ) -- remove "data/" or "data_static/"
+        self:UpdateStreamParamSliders()
     end )
 
     self.frameBrowser:SetIcon( "materials/icon16/folder.png" )
@@ -513,10 +503,12 @@ function Frame:OnClickExportJSON()
         layers = {}
     }
 
-    local validKV = Glide.VALID_STREAM_KV
+    for k, default in pairs( Glide.DEFAULT_STREAM_PARAMS ) do
+        local value = self.stream[k]
 
-    for k, _ in pairs( validKV ) do
-        data.kv[k] = self.stream[k]
+        if value ~= default then
+            data.kv[k] = value
+        end
     end
 
     local layers = self.stream.layers
@@ -585,10 +577,12 @@ function Frame:OnClickExportCode()
         lines[#lines + 1] = str:format( ... )
     end
 
-    local validKV = Glide.VALID_STREAM_KV
+    for k, default in pairs( Glide.DEFAULT_STREAM_PARAMS ) do
+        local value = self.stream[k]
 
-    for k, _ in pairs( validKV ) do
-        Add( [[    stream.%s = %s]], k, self.stream[k] )
+        if value ~= default then
+            Add( [[    stream.%s = %s]], k, value )
+        end
     end
 
     Add( "" )
