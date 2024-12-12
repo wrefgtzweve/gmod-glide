@@ -284,6 +284,19 @@ function ENT:OnPostThink( dt )
         TriggerOutput( self, "Gear", self:GetGear() )
         TriggerOutput( self, "EngineState", state )
         TriggerOutput( self, "EngineRPM", Clamp( self:GetFlywheelRPM(), 0, maxRPM ) )
+
+        if self.wireSetEngineOn ~= nil then
+            if self.wireSetEngineOn then
+                if state < 1 then
+                    self:TurnOn()
+                end
+
+            elseif state > 0 then
+                self:TurnOff()
+            end
+
+            self.wireSetEngineOn = nil
+        end
     end
 
     -- Damage the engine when underwater
@@ -335,6 +348,7 @@ function ENT:OnPostThink( dt )
         end
     else
         self.damageThrottleCooldown = nil
+        self.startupTimer = nil
     end
 
     if self:IsEngineOn() then
@@ -527,18 +541,8 @@ local Floor = math.floor
 
 function ENT:TriggerInput( name, value )
     if name == "Ignition" then
-        local isOn = value > 0
-
         -- Avoid continous triggers
-        if self.wireIsOn ~= isOn then
-            self.wireIsOn = isOn
-
-            if isOn then
-                self:TurnOn()
-            else
-                self:TurnOff()
-            end
-        end
+        self.wireSetEngineOn = value > 0
 
     elseif name == "Throttle" then
         self:SetInputFloat( 1, "accelerate", Clamp( value, 0, 1 ) )
