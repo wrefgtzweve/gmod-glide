@@ -96,7 +96,6 @@ function ENT:Initialize()
         phys:SetDragCoefficient( 0 )
         phys:EnableGravity( false )
         phys:SetMass( 20 )
-
         phys:SetVelocityInstantaneous( self:GetForward() * 200 )
     end
 

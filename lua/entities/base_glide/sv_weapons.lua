@@ -86,7 +86,17 @@ local IsValid = IsValid
 function ENT:FireMissile( pos, ang, attacker, target )
     Glide.PlaySoundSet( "Glide.MissileLaunch", self, 1.0 )
 
-    return Glide.FireMissile( pos, ang, attacker, self, target )
+    local missile = Glide.FireMissile( pos, ang, attacker, self, target )
+
+    if IsValid( missile ) then
+        local phys = missile:GetPhysicsObject()
+
+        if IsValid( phys ) then
+            phys:SetVelocityInstantaneous( self:GetVelocity() )
+        end
+    end
+
+    return missile
 end
 
 local FireBullet = Glide.FireBullet
