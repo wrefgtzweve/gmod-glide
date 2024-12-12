@@ -119,6 +119,13 @@ local WORLD_DOWN = Vector( 0, 0, -1 )
 function ENT:OnPostThink( dt )
     BaseClass.OnPostThink( self, dt )
 
+    -- Damage the engine when underwater
+    if self:WaterLevel() > 2 then
+        self:SetPower( 0 )
+        self:SetEngineHealth( 0 )
+        self:UpdateHealthOutputs()
+    end
+
     self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 10, dt )
     self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 10, dt )
     self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "yaw" ), 10, dt )
@@ -257,5 +264,7 @@ end
 
 --- Implement this base class function.
 function ENT:OnSimulatePhysics( phys, dt, outLin, outAng )
-    self:SimulatePlane( phys, dt, self.PlaneParams, 1, outLin, outAng )
+    if self:WaterLevel() < 2 then
+        self:SimulatePlane( phys, dt, self.PlaneParams, 1, outLin, outAng )
+    end
 end

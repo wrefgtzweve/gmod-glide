@@ -61,7 +61,7 @@ if CLIENT then
     ENT.ThrustSoundLowVolume = 0.4
     ENT.ThrustSoundHighVolume = 0.7
     ENT.ThrustSoundMinPitch = 80
-    ENT.ThrustSoundMaxPitch = 100
+    ENT.ThrustSoundMaxPitch = 90
 
     ENT.StrobeLights = {}
 
