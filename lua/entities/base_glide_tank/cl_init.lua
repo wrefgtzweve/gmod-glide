@@ -211,7 +211,6 @@ end
 
 --- Implement this base class function.
 function ENT:OnUpdateSounds()
-    local dt = FrameTime()
     local sounds = self.sounds
 
     if sounds.start and self:GetEngineState() ~= 1 then
@@ -227,22 +226,15 @@ function ENT:OnUpdateSounds()
     if not stream then
         self.stream = Glide.CreateEngineStream( self )
         self:OnCreateEngineStream( self.stream )
-        self.stream.volume = 0
         self.stream:Play()
 
         return
-    end
-
-    if stream.volume < stream.maxVolume then
-        stream.volume = math.Approach( stream.volume, stream.maxVolume, dt * 2 )
     end
 
     local inputs = stream.inputs
 
     inputs.rpmFraction = self:GetEnginePower()
     inputs.throttle = self:GetEngineThrottle()
-
-    stream:Think( dt )
 
     -- Handle damaged engine sounds
     local health = self:GetEngineHealth()

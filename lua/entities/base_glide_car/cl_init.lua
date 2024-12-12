@@ -182,18 +182,9 @@ function ENT:OnUpdateSounds()
     if not stream then
         self.stream = Glide.CreateEngineStream( self )
         self:OnCreateEngineStream( self.stream )
-
-        timer.Simple( 0, function()
-            if not self.stream then return end
-            self.stream.volume = 0
-            self.stream:Play()
-        end )
+        self.stream:Play()
 
         return
-    end
-
-    if stream.volume < stream.maxVolume then
-        stream.volume = math.Approach( stream.volume, stream.maxVolume, dt * 2 )
     end
 
     local health = self:GetEngineHealth()
@@ -214,10 +205,8 @@ function ENT:OnUpdateSounds()
 
     if self.doWobble and inputs.throttle > 0.9 then
         self.doWobble = false
-        self.stream.wobbleTime = 1
+        stream.wobbleTime = 1
     end
-
-    stream:Think( dt )
 
     -- Handle damaged engine sounds
     if health < 0.4 then
