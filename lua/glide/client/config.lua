@@ -21,6 +21,7 @@ function Config:Reset()
     self.cameraFOVInternal = 75
     self.cameraFOVExternal = 75
 
+    self.relativeToVehicle = false
     self.enableAutoCenter = true
     self.autoCenterDelay = 1.5
 
@@ -92,6 +93,7 @@ function Config:Save( immediate )
         cameraFOVInternal = self.cameraFOVInternal,
         cameraFOVExternal = self.cameraFOVExternal,
 
+        relativeToVehicle = self.relativeToVehicle,
         enableAutoCenter = self.enableAutoCenter,
         autoCenterDelay = self.autoCenterDelay,
 
@@ -151,6 +153,7 @@ function Config:Load()
     SetNumber( self, "cameraFOVInternal", data.cameraFOVInternal, 30, 100, self.cameraFOVInternal )
     SetNumber( self, "cameraFOVExternal", data.cameraFOVExternal, 30, 100, self.cameraFOVExternal )
 
+    LoadBool( "relativeToVehicle", false )
     LoadBool( "enableAutoCenter", true )
     SetNumber( self, "autoCenterDelay", data.autoCenterDelay, 0.1, 5, self.autoCenterDelay )
 
@@ -324,15 +327,31 @@ function Config:OpenFrame()
         end
     end )
 
-    theme:CreateToggleButton( panelCamera, L"camera.autocenter", self.enableAutoCenter, function( value )
-        self.enableAutoCenter = value
+    local autoCenterButton, autoCenterSlider
+
+    local SetupAutoCenterSettings = function()
+        if autoCenterButton then autoCenterButton:Remove() end
+        if autoCenterSlider then autoCenterSlider:Remove() end
+        if self.relativeToVehicle then return end
+
+        autoCenterButton = theme:CreateToggleButton( panelCamera, L"camera.autocenter", self.enableAutoCenter, function( value )
+            self.enableAutoCenter = value
+            self:Save()
+        end )
+
+        autoCenterSlider = theme:CreateSlider( panelCamera, L"camera.autocenter_delay", self.autoCenterDelay, 0.1, 5, 2, function( value )
+            self.autoCenterDelay = value
+            self:Save()
+        end )
+    end
+
+    theme:CreateToggleButton( panelCamera, L"camera.relative", self.relativeToVehicle, function( value )
+        self.relativeToVehicle = value
         self:Save()
+        SetupAutoCenterSettings()
     end )
 
-    theme:CreateSlider( panelCamera, L"camera.autocenter_delay", self.autoCenterDelay, 0.1, 5, 2, function( value )
-        self.autoCenterDelay = value
-        self:Save()
-    end )
+    SetupAutoCenterSettings()
 
     ----- Mouse settings -----
 

@@ -195,6 +195,34 @@ local ExpDecayAngle = Glide.ExpDecayAngle
 local CAMERA_TYPE = Glide.CAMERA_TYPE
 local MOUSE_FLY_MODE = Glide.MOUSE_FLY_MODE
 
+function Camera:DoEffects( t, dt, speed )
+    -- Update view punch
+    local vel, ang = self.punchVelocity, self.punchAngle
+
+    ang[1] = ExpDecay( ang[1], 0, 6, dt ) + vel[1]
+    ang[2] = ExpDecay( ang[2], 0, 6, dt ) + vel[2]
+
+    local decay = self.isInFirstPerson and 8 or 10
+    vel[1] = ExpDecay( vel[1], 0, decay, dt )
+    vel[2] = ExpDecay( vel[2], 0, decay, dt )
+
+    -- Update FOV depending on speed
+    speed = speed - 400
+
+    local fov = ( self.isInFirstPerson and Config.cameraFOVInternal or Config.cameraFOVExternal ) + Clamp( speed * 0.01, 0, 15 )
+    local keyZoom = self.user:KeyDown( IN_ZOOM )
+
+    self.fov = ExpDecay( self.fov, keyZoom and 20 or fov, keyZoom and 5 or 2, dt )
+
+    -- Apply a small shake
+    if self.mode == CAMERA_TYPE.CAR then
+        local mult = Clamp( speed * 0.001, 0, 1 )
+
+        self.shakeOffset[2] = Cos( t * 1.5 ) * 4 * mult
+        self.shakeOffset[3] = ( ( Cos( t * 2 ) * 1.8 ) + ( Cos( t * 30 ) * 0.4 ) ) * mult
+    end
+end
+
 function Camera:Think()
     local vehicle = self.vehicle
 
@@ -217,14 +245,21 @@ function Camera:Think()
     local t = RealTime()
     local dt = FrameTime()
 
+    self.traceFraction = ExpDecay( self.traceFraction, 1, 2, dt )
+
     local angles = self.angles
-    local vehicleAngles = vehicle:GetAngles()
     local velocity = vehicle:GetVelocity()
     local speed = Abs( velocity:Length() )
     local mode = vehicle:GetCameraType( self.seatIndex )
 
     self.mode = mode
+    self:DoEffects( t, dt, speed )
 
+    if Config.relativeToVehicle then
+        return
+    end
+
+    local vehicleAngles = vehicle:GetAngles()
     local decay, rollDecay = 3, 3
 
     if mode == CAMERA_TYPE.TURRET then
@@ -278,39 +313,6 @@ function Camera:Think()
     then
         self.centerStrength = ExpDecay( self.centerStrength, 1, 2, dt )
     end
-
-    -- Update offset from movement
-    velocity = vehicle:WorldToLocal( vehicle:GetPos() + velocity )
-
-    -- Update view punch
-    do
-        local vel, ang = self.punchVelocity, self.punchAngle
-
-        ang[1] = ExpDecay( ang[1], 0, 6, dt ) + vel[1]
-        ang[2] = ExpDecay( ang[2], 0, 6, dt ) + vel[2]
-
-        decay = self.isInFirstPerson and 8 or 10
-        vel[1] = ExpDecay( vel[1], 0, decay, dt )
-        vel[2] = ExpDecay( vel[2], 0, decay, dt )
-    end
-
-    -- Update FOV depending on speed
-    speed = speed - 400
-
-    local fov = ( self.isInFirstPerson and Config.cameraFOVInternal or Config.cameraFOVExternal ) + Clamp( speed * 0.01, 0, 15 )
-    local keyZoom = self.user:KeyDown( IN_ZOOM )
-
-    self.fov = ExpDecay( self.fov, keyZoom and 20 or fov, keyZoom and 5 or 2, dt )
-
-    -- Apply a small shake
-    if mode == CAMERA_TYPE.CAR then
-        local mult = Clamp( speed * 0.001, 0, 1 )
-
-        self.shakeOffset[2] = Cos( t * 1.5 ) * 4 * mult
-        self.shakeOffset[3] = ( ( Cos( t * 2 ) * 1.8 ) + ( Cos( t * 30 ) * 0.4 ) ) * mult
-    end
-
-    self.traceFraction = ExpDecay( self.traceFraction, 1, 2, dt )
 end
 
 local TraceLine = util.TraceLine
@@ -321,6 +323,11 @@ function Camera:CalcView()
 
     local user = self.user
     local angles = self.angles
+
+    if Config.relativeToVehicle then
+        angles[3] = 0
+        angles = vehicle:LocalToWorldAngles( angles )
+    end
 
     if self.isInFirstPerson then
         local localEyePos = vehicle:WorldToLocal( user:EyePos() )
