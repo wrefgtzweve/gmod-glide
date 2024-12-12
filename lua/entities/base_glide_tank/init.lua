@@ -18,6 +18,7 @@ function ENT:OnPostInitialize()
 
     self.isGrounded = false
     self.isTurningInPlace = false
+    self.isCannonInsideWall = false
     self.brake = 0.5
 
     -- Update default wheel params
@@ -104,10 +105,12 @@ function ENT:GetTurretAimDirection()
     return ang:Forward()
 end
 
+local TraceLine = util.TraceLine
+
 function ENT:GetTurretAimPosition()
     local origin = self:GetTurretOrigin()
     local target = origin + self:GetTurretAimDirection() * 50000
-    local tr = util.TraceLine( self:GetTraceData( origin, target ) )
+    local tr = TraceLine( self:GetTraceData( origin, target ) )
 
     if tr.Hit then
         target = tr.HitPos
@@ -117,8 +120,13 @@ function ENT:GetTurretAimPosition()
 end
 
 --- Implement this base class function.
-function ENT:OnWeaponFire()
+function ENT:OnWeaponFire( weapon )
     if self:WaterLevel() > 2 then return end
+
+    if self.isCannonInsideWall then
+        weapon.nextFire = 0
+        return
+    end
 
     local aimPos = self:GetTurretAimPosition()
     local projectilePos = self:GetProjectileStartPos()
@@ -279,6 +287,17 @@ function ENT:OnPostThink( dt )
 
     if IsValid( driver ) and self:WaterLevel() < 2 then
         local newAng, isAimingAtTarget = self:UpdateTurret( driver, dt, self:GetTurretAngle() )
+
+        -- Don't let it shoot while inside walls
+        local origin = self:GetTurretOrigin()
+        local projectilePos = self:GetProjectileStartPos()
+        local tr = TraceLine( self:GetTraceData( origin, projectilePos ) )
+
+        self.isCannonInsideWall = tr.Hit
+
+        if self.isCannonInsideWall then
+            isAimingAtTarget = false
+        end
 
         self:SetTurretAngle( newAng )
         self:SetIsAimingAtTarget( isAimingAtTarget )
