@@ -164,9 +164,9 @@ function ENT:AutoGearSwitch( throttle )
         end
     end
 
-    -- Only shift down if the RPM is too low
-    local threshold = minRPM + ( maxRPM - minRPM ) * ( 0.5 - throttle * 0.2 )
-    if gear < currentGear and self:GetEngineRPM() > threshold then return end
+    -- Only shift one gear down if the RPM is too low
+    local threshold = minRPM + ( maxRPM - minRPM ) * ( 0.5 - throttle * 0.3 )
+    if gear < currentGear and gear > currentGear - 2 and self:GetEngineRPM() > threshold then return end
 
     self:SwitchGear( gear )
 end
@@ -350,7 +350,7 @@ function ENT:EngineThink( dt )
         end
     end
 
-    self:SetFlywheelRPM( Max( 0, rpm ) )
+    self:SetFlywheelRPM( Clamp( rpm, 0, maxRPM ) )
 
     -- Update the amount of available torque to the transmission
     if self:GetTurboCharged() then
