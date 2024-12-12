@@ -241,9 +241,9 @@ function ENT:SetupWirePorts()
     if not TriggerOutput then return end
 
     WireLib.CreateSpecialOutputs( self,
-        { "MaxChassisHealth", "ChassisHealth", "EngineHealth", "MaxGear", "Gear", "EngineState" },
-        { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" },
-        { nil, nil, "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
+        { "MaxChassisHealth", "ChassisHealth", "EngineHealth", "MaxGear", "Gear", "EngineState", "EngineRPM", "MaxRPM" },
+        { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" },
+        { nil, nil, nil, nil, nil, "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
     )
 
     WireLib.CreateSpecialInputs( self,
@@ -261,6 +261,7 @@ function ENT:SetupWirePorts()
 
     TriggerOutput( self, "MaxGear", self.maxGear )
     TriggerOutput( self, "Gear", 0 )
+    TriggerOutput( self, "EngineRPM", 0 )
 end
 
 local Abs = math.abs
@@ -278,8 +279,11 @@ function ENT:OnPostThink( dt )
     local state = self:GetEngineState()
 
     if TriggerOutput then
+        local maxRPM = self:GetMaxRPM()
+        TriggerOutput( self, "MaxRPM", maxRPM )
         TriggerOutput( self, "Gear", self:GetGear() )
         TriggerOutput( self, "EngineState", state )
+        TriggerOutput( self, "EngineRPM", Clamp( self:GetFlywheelRPM(), 0, maxRPM ) )
     end
 
     -- Damage the engine when underwater
