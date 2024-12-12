@@ -256,6 +256,7 @@ end
 
 do
     local Camera = Glide.Camera
+    local Config = Glide.Config
     local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
 
     local SetColor = surface.SetDrawColor
@@ -278,7 +279,13 @@ do
 
         if not Camera.isInFirstPerson then return end
 
-        local ang = -self:WorldToLocalAngles( Camera.angles )[2]
+        local ang = 0
+
+        if Config.relativeToVehicle then
+            ang = -Camera.angles[2]
+        else
+            ang = -self:WorldToLocalAngles( Camera.angles )[2]
+        end
 
         local x, y = screenW * 0.5, screenH * 0.92
         local size = screenH * 0.15
