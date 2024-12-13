@@ -46,7 +46,7 @@ if CLIENT then
 
         ang[1] = 0
         ang[2] = 0
-        ang[3] = self:GetElevator() * 25
+        ang[3] = self:GetElevator() * -25
 
         self:ManipulateBoneAngles( self.elevatorBone, ang )
 
