@@ -406,12 +406,13 @@ local ExpDecay = Glide.ExpDecay
 
 function ENT:UpdateSteering( dt )
     local inputSteer = self:GetInputFloat( 1, "steer" )
+    local absInputSteer = Abs( inputSteer )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
 
     -- Limit the input and the rate of change depending on speed,
     -- but allow a faster rate of change when slipping sideways.
     local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self.SteerSpeedFactor, 0, 1 )
-    local decay = 10 - ( Abs( inputSteer ) * 8 ) * ( 1 - Abs( sideSlip ) )
+    local decay = 10 - ( absInputSteer * 8 ) * ( 1 - Abs( sideSlip ) )
 
     decay = decay + invSpeedOverFactor * 5
     inputSteer = inputSteer * Clamp( invSpeedOverFactor, 0.5 + Abs( sideSlip ) * 0.5, 1 )
@@ -421,7 +422,7 @@ function ENT:UpdateSteering( dt )
     self:SetSteering( inputSteer )
 
     -- Counter-steer when slipping and going fast
-    local counterSteer = sideSlip * ( 1 - invSpeedOverFactor )
+    local counterSteer = sideSlip * ( 1 - invSpeedOverFactor ) * ( 1 - absInputSteer )
 
     counterSteer = Clamp( counterSteer, -0.5, 0.5 )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
