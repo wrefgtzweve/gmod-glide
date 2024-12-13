@@ -18,7 +18,7 @@ ENT.MaxChassisHealth = 3000
 
 -- Turrets are predictable, so their properties
 -- should be set both on SERVER and CLIENT.
-ENT.TurretOffset = Vector( 0, 0, 150 )
+ENT.TurretOffset = Vector( 0, 0, 50 )
 ENT.HighPitchAng = -25
 ENT.LowPitchAng = 10
 ENT.MaxYawSpeed = 50

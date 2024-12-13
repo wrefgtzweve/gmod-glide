@@ -1,5 +1,6 @@
 if SERVER then
     util.AddNetworkString( "glide.command" )
+    util.AddNetworkString( "glide.camdata" )
 end
 
 -- Size limit for JSON data

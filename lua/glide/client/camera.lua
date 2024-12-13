@@ -1,11 +1,3 @@
-CreateConVar( "glide_cam_x", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera position to the server." )
-CreateConVar( "glide_cam_y", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera position to the server." )
-CreateConVar( "glide_cam_z", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera position to the server." )
-
-CreateConVar( "glide_cam_pitch", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera rotation to the server." )
-CreateConVar( "glide_cam_yaw", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera rotation to the server." )
-CreateConVar( "glide_cam_roll", "0", FCVAR_USERINFO + FCVAR_UNREGISTERED, "Transmits the camera rotation to the server." )
-
 local Camera = Glide.Camera or {}
 
 Glide.Camera = Camera
@@ -34,14 +26,6 @@ local Config = Glide.Config
 
 function Camera:Activate( vehicle, seatIndex )
     Config = Glide.Config
-
-    self.cvarX = GetConVar( "glide_cam_x" )
-    self.cvarY = GetConVar( "glide_cam_y" )
-    self.cvarZ = GetConVar( "glide_cam_z" )
-
-    self.cvarPitch = GetConVar( "glide_cam_pitch" )
-    self.cvarYaw = GetConVar( "glide_cam_yaw" )
-    self.cvarRoll = GetConVar( "glide_cam_roll" )
 
     self.user = LocalPlayer()
     self.vehicle = vehicle
@@ -315,6 +299,9 @@ function Camera:Think()
     end
 end
 
+local Start = net.Start
+local WriteFloat = net.WriteFloat
+local SendToServer = net.SendToServer
 local TraceLine = util.TraceLine
 
 function Camera:CalcView()
@@ -381,16 +368,17 @@ function Camera:CalcView()
     local t = RealTime()
 
     -- Let the server know where the camera is
-    if self.cvarX and t > self.lastAimUpdate then
-        self.lastAimUpdate = t + 0.05
+    if t > self.lastAimUpdate then
+        self.lastAimUpdate = t + 0.03
 
-        self.cvarX:SetFloat( origin[1] )
-        self.cvarY:SetFloat( origin[2] )
-        self.cvarZ:SetFloat( origin[3] )
-
-        self.cvarPitch:SetFloat( angles[1] )
-        self.cvarYaw:SetFloat( angles[2] )
-        self.cvarRoll:SetFloat( angles[3] )
+        Start( "glide.camdata", true )
+        WriteFloat( origin[1] )
+        WriteFloat( origin[2] )
+        WriteFloat( origin[3] )
+        WriteFloat( angles[1] )
+        WriteFloat( angles[2] )
+        WriteFloat( angles[3] )
+        SendToServer()
     end
 
     -- Convert the view angles to be relative to the seat

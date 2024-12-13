@@ -11,24 +11,12 @@ end
 if SERVER then
     --- Get the player's Glide camera position.
     function PlayerMeta:GlideGetCameraPos()
-        local camPos = self:EyePos() -- Just in case GetInfoNum fails
-
-        camPos[1] = self:GetInfoNum( "glide_cam_x", camPos[1] )
-        camPos[2] = self:GetInfoNum( "glide_cam_y", camPos[2] )
-        camPos[3] = self:GetInfoNum( "glide_cam_z", camPos[3] )
-
-        return camPos
+        return self.GlideCam and self.GlideCam.origin or self:EyePos()
     end
 
     --- Get the player's Glide camera angles.
     function PlayerMeta:GlideGetCameraAngles()
-        local camAng = self:EyeAngles() -- Just in case GetInfoNum fails
-
-        camAng[1] = self:GetInfoNum( "glide_cam_pitch", camAng[1] )
-        camAng[2] = self:GetInfoNum( "glide_cam_yaw", camAng[2] )
-        camAng[3] = self:GetInfoNum( "glide_cam_roll", camAng[3] )
-
-        return camAng
+        return self.GlideCam and self.GlideCam.angle or self:EyePos()
     end
 
     local TraceLine = util.TraceLine
