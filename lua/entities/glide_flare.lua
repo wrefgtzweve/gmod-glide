@@ -86,8 +86,8 @@ function ENT:Think()
         local dt = FrameTime()
         local vel = phys:GetVelocity()
 
-        vel[1] = vel[1] - vel[1] * dt * 2
-        vel[2] = vel[2] - vel[2] * dt * 2
+        vel[1] = vel[1] - vel[1] * dt * 0.5
+        vel[2] = vel[2] - vel[2] * dt * 0.5
         vel[3] = vel[3] - vel[3] * dt * 2
 
         phys:SetVelocityInstantaneous( vel )
