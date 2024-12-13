@@ -20,6 +20,7 @@ function SkidHandler:Destroy()
     setmetatable( self, nil )
 end
 
+local Color = Color
 local Vector = Vector
 local TraceLine = util.TraceLine
 
@@ -140,7 +141,7 @@ hook.Add( "PostCleanupMap", "Glide.RecreateSkidMarkMeshes", Glide.SetupSkidMarkM
 local SetBlend = render.SetBlend
 local SetColorModulation = render.SetColorModulation
 
-hook.Add( "PostDrawTranslucentRenderables", "Glide.RenderSkidMarks", function( _, isDrawSkybox, isDraw3DSkybox )
+hook.Add( "PreDrawTranslucentRenderables", "Glide.RenderSkidMarks", function( _, isDrawSkybox, isDraw3DSkybox )
     if isDrawSkybox or isDraw3DSkybox then return end
 
     SetBlend( 1 )
