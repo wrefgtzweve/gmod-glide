@@ -4,6 +4,8 @@ Glide.Config = Config
 
 --- Reset settings to their default values.
 function Config:Reset()
+    self.version = 1
+
     -- Audio settings
     self.carVolume = 1.0
     self.aircraftVolume = 1.0
@@ -76,6 +78,8 @@ function Config:Save( immediate )
     end
 
     local data = Glide.ToJSON( {
+        version = self.version,
+
         -- Audio settings
         carVolume = self.carVolume,
         aircraftVolume = self.aircraftVolume,
@@ -124,6 +128,20 @@ function Config:Save( immediate )
     Glide.SaveDataFile( "glide.json", data )
 end
 
+--- Check if the config. data requires migration to a new version.
+function Config:CheckVersion( data )
+    if type( data.version ) ~= "number" then
+        Glide.Print( "glide.json: Pre-release version or no version found." )
+        Glide.Print( "glide.json: Resetting all settings to default." )
+        return {}
+    end
+
+    -- This data is fine
+    Glide.Print( "glide.json: version %i", data.version )
+
+    return data
+end
+
 --- Load settings from disk.
 function Config:Load()
     self:Reset()
@@ -135,6 +153,8 @@ function Config:Load()
     local LoadBool = function( k, default )
         self[k] = Either( data[k] == nil, default, data[k] == true )
     end
+
+    data = self:CheckVersion( data )
 
     -- Audio settings
     SetNumber( self, "carVolume", data.carVolume, 0, 1, self.carVolume )
