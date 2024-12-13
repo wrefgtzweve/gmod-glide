@@ -15,7 +15,6 @@ function ENT:EngineInit()
     self.brake = 0.3
 
     self.switchCD = 0
-    self.noThrottleInAir = false
     self.reducedThrottle = false
 
     -- Wheel control variables
@@ -190,14 +189,8 @@ function ENT:EngineClutch( dt )
 
     -- Are we airborne while going fast?
     if not self.areDriveWheelsGrounded and absForwardSpeed > 30 then
-        if self.noThrottleInAir then
-            inputThrottle = 0
-        end
-
         return 1
     end
-
-    self.noThrottleInAir = false
 
     -- Are we trying to break from a backwards velocity?
     if self.forwardSpeed < -50 and inputBrake > 0 and self:GetGear() < 0 then
@@ -341,9 +334,6 @@ function ENT:EngineThink( dt )
         end
 
         rpm = maxRPM
-
-        -- Don't let the throttle stay high next time we're airborne
-        self.noThrottleInAir = true
 
         if gear ~= self.maxGear or not self.areDriveWheelsGrounded then
             isRedlining = true
