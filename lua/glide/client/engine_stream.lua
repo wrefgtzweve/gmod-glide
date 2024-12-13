@@ -280,8 +280,8 @@ function EngineStream:Think( dt, eyePos, eyeRight )
     -- Gear switch "wobble"
     if self.wobbleTime > 0 then
         self.wobbleTime = self.wobbleTime - dt
-        pitch = pitch + Cos( self.wobbleTime * self.wobbleFrequency ) *
-            self.wobbleTime * ( 1 - self.wobbleTime ) * self.wobbleStrength
+
+        pitch = pitch + Cos( self.wobbleTime * self.wobbleFrequency ) * self.wobbleTime * ( 1 - self.wobbleTime ) * self.wobbleStrength
     end
 
     pitch = pitch * self.pitch
@@ -401,8 +401,11 @@ local EyeAngles = EyeAngles
 local FrameTime = FrameTime
 local pairs = pairs
 
--- PostDrawOpaqueRenderables seems like a good place to get values from EyePos/EyeAngles reliably.
-hook.Add( "PostDrawOpaqueRenderables", "Glide.ProcessEngineStreams",
+-- `PreDrawEffects` seems like a good place to get values from EyePos/EyeAngles reliably.
+-- `PreDrawOpaqueRenderables`/`PostDrawOpaqueRenderables` were being called
+-- twice when there was water, and `PreRender`/`PostRender`
+-- were returning incorrect angles on `EyeAngles`.
+hook.Add( "PreDrawEffects", "Glide.ProcessEngineStreams",
     function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
     if bDrawingDepth or bDrawingSkybox or isDraw3DSkybox then return end
 
