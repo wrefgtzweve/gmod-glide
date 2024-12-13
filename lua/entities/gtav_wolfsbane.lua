@@ -122,7 +122,6 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
     ENT.StartupTime = 0.5
 
-    ENT.SteerSpeedFactor = 1500
     ENT.BurnoutForce = 150
     ENT.WheelieForce = 400
 

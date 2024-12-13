@@ -34,7 +34,6 @@ function ENT:OnPostInitialize()
 
     self:SetTireSmokeColor( Vector( 0.6, 0.6, 0.6 ) )
     self:SetWheelRadius( 15 )
-    self:SetMaxSteerAngle( 35 )
 
     -- Setup default NW wheel params
     local params = self.wheelParams
@@ -71,6 +70,12 @@ function ENT:OnPostInitialize()
     self:SetMaxRPMTorque( 1300 )
     self:SetDifferentialRatio( 1.9 )
     self:SetTransmissionEfficiency( 0.8 )
+
+    -- Steering parameters
+    self:SetMaxSteerAngle( 35 )
+    self:SetSteerConeChangeRate( 8 )
+    self:SetSteerConeMaxSpeed( 1500 )
+    self:SetSteerConeMaxAngle( 0.25 )
 
     -- Update wheel parameters based on our network variables
     self.shouldUpdateWheelParams = true
@@ -407,22 +412,19 @@ local ExpDecay = Glide.ExpDecay
 function ENT:UpdateSteering( dt )
     local inputSteer = self:GetInputFloat( 1, "steer" )
     local absInputSteer = Abs( inputSteer )
+
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
+    local steerConeFactor = Clamp( self.forwardSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
 
-    -- Limit the input and the rate of change depending on speed,
-    -- but allow a faster rate of change when slipping sideways.
-    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self.SteerSpeedFactor, 0, 1 )
-    local decay = 10 - ( absInputSteer * 8 ) * ( 1 - Abs( sideSlip ) )
-
-    decay = decay + invSpeedOverFactor * 5
-    inputSteer = inputSteer * Clamp( invSpeedOverFactor, 0.5 + Abs( sideSlip ) * 0.5, 1 )
-    inputSteer = ExpDecay( self.inputSteer, inputSteer, decay, dt )
+    -- Limit the input depending on speed
+    local steerCone = 1 - steerConeFactor * ( 1 - self:GetSteerConeMaxAngle() )
+    inputSteer = ExpDecay( self.inputSteer, inputSteer * steerCone, self:GetSteerConeChangeRate(), dt )
 
     self.inputSteer = inputSteer
     self:SetSteering( inputSteer )
 
-    -- Counter-steer when slipping and going fast
-    local counterSteer = sideSlip * ( 1 - invSpeedOverFactor ) * ( 1 - absInputSteer )
+    -- Counter-steer when slipping, going fast and not using steer input
+    local counterSteer = sideSlip * steerConeFactor * ( 1 - absInputSteer )
 
     counterSteer = Clamp( counterSteer, -0.5, 0.5 )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
@@ -501,7 +503,7 @@ function ENT:WheelThink( dt )
 
     availableBrake = self.brake
     availableTorque = self.availableTorque / self.poweredCount
-    steerAngle = self.steerAngle * self.ModelSteerAngleMultiplier
+    steerAngle = self.steerAngle
     angVelMult = self.driveWheelsAngVelMult
 
     isGrounded, totalRPM, totalSideSlip, totalForwardSlip = false, 0, 0, 0

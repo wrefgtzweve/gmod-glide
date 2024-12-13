@@ -252,7 +252,7 @@ function ENT:OnPostThink( dt )
     local sideSlip = Clamp( totalSideSlip / self.wheelCount, -1, 1 )
 
     -- Limit the input and the rate of change depending on speed.
-    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self.SteerSpeedFactor, 0, 0.9 )
+    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self.SteerConeMaxSpeed, 0, 0.9 )
     inputSteer = inputSteer * invSpeedOverFactor
 
     -- Counter-steer when slipping and going fast

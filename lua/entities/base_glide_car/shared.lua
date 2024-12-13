@@ -76,10 +76,16 @@ function ENT:SetupDataTables()
         } )
     end
 
+    -- Steering parameters
+    AddFloatVar( "MaxSteerAngle", 10, 80, "#glide.editvar.steering" )
+    AddFloatVar( "SteerConeChangeRate", 2, 20, "#glide.editvar.steering" )
+    AddFloatVar( "SteerConeMaxSpeed", 100, 5000, "#glide.editvar.steering" )
+    AddFloatVar( "SteerConeMaxAngle", 0.05, 0.9, "#glide.editvar.steering" )
+
+    -- Fake engine parameters
     AddBoolVar( "TurboCharged", "#glide.editvar.engine" )
     AddBoolVar( "FastTransmission", "#glide.editvar.engine" )
 
-    -- Fake engine parameters
     AddFloatVar( "MinRPM", 1000, 5000, "#glide.editvar.engine" )
     AddFloatVar( "MaxRPM", 6000, 50000, "#glide.editvar.engine" )
     AddFloatVar( "MinRPMTorque", 10, 10000, "#glide.editvar.engine" )
@@ -90,7 +96,6 @@ function ENT:SetupDataTables()
     -- Make wheel parameters available as network variables too
     AddFloatVar( "WheelRadius", 10, 40, Either( self.AllowEditWheelRadius, "#glide.editvar.wheels", nil ) )
     AddFloatVar( "WheelInertia", 1, 100, "#glide.editvar.wheels" )
-    AddFloatVar( "MaxSteerAngle", 10, 80, "#glide.editvar.wheels" )
     AddFloatVar( "BrakePower", 500, 5000, "#glide.editvar.wheels" )
 
     AddFloatVar( "SuspensionLength", 5, 50, Either( self.AllowEditSuspensionLen, "#glide.editvar.suspension", nil ) )
@@ -187,15 +192,6 @@ if SERVER then
     ENT.CollisionParticleSize = 0.9
     ENT.CollisionDamageMultiplier = 0.5
     ENT.AngularDrag = Vector( -0.5, -0.5, -3 ) -- Roll, pitch, yaw
-
-    -- The steering angle is multiplied by this value before it is passed to
-    -- the wheel models. This is purely visual, in other words, what you see
-    -- in game is not what is actually happening to the steering angles.
-    ENT.ModelSteerAngleMultiplier = 0.7
-
-    -- The car's forward speed is divided by this value,
-    -- and the resulting value is used to reduce the steering angles.
-    ENT.SteerSpeedFactor = 1500
 
     -- How long does it take for the vehicle to start up?
     ENT.StartupTime = 0.6

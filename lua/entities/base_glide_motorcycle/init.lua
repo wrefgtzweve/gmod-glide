@@ -15,6 +15,11 @@ function ENT:OnPostInitialize()
     self.stayUpright = false
     self.reverseInput = 0
 
+    -- Change steering parameters to better suit bikes
+    self:SetSteerConeChangeRate( 10 )
+    self:SetSteerConeMaxSpeed( 1000 )
+    self:SetSteerConeMaxAngle( 0.1 )
+
     -- Change slip parameters to better suit bikes
     self:SetExtremumValue( 7 )
     self:SetAsymptoteSlip( 0.8 )
@@ -22,7 +27,6 @@ function ENT:OnPostInitialize()
 
     self:SetMaxSlip( 25 )
     self:SetSlipForce( 50 )
-    self:SetMaxSteerAngle( 35 )
 end
 
 function ENT:SetStaySpright( toggle )
@@ -85,10 +89,11 @@ local ExpDecay = Glide.ExpDecay
 
 --- Override this base class function.
 function ENT:UpdateSteering( dt )
+    BaseClass.UpdateSteering( self, dt )
+
+    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
-    local speedOverFactor = Clamp( self.totalSpeed / self.SteerSpeedFactor, 0, 1 )
-    local invSpeedOverFactor = 1 - speedOverFactor
 
     local tilt = Clamp( sideSlip * -2, -0.5, 0.5 )
 
@@ -102,21 +107,6 @@ function ENT:UpdateSteering( dt )
 
     self.steerTilt = ExpDecay( self.steerTilt, tilt, 6 + invSpeedOverFactor * 4, dt )
 
-    local decay = 10 - ( Abs( inputSteer ) * 8 ) * ( 1 - Abs( sideSlip ) )
-
-    decay = decay + invSpeedOverFactor * 5
-    inputSteer = inputSteer * Clamp( invSpeedOverFactor, 0.2, 1 )
-    inputSteer = ExpDecay( self.inputSteer, inputSteer, decay * 2, dt )
-
-    local counterSteer = self.forwardSpeed > 0 and sideSlip * ( 1 - invSpeedOverFactor ) or 0
-
-    counterSteer = Clamp( counterSteer * 0.1, -0.05, 0.05 )
-    inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
-
-    self:SetSteering( inputSteer )
-    self.inputSteer = inputSteer
-    self.steerAngle[2] = -inputSteer * self:GetMaxSteerAngle()
-
     if
         self:GetInputFloat( 1, "brake" ) > 0 and
         self:GetInputFloat( 1, "accelerate" ) < 0.1 and
@@ -124,10 +114,7 @@ function ENT:UpdateSteering( dt )
         self.forwardSpeed > -100 and
         self.areDriveWheelsGrounded
     then
-        if self.forwardSpeed > -50 then
-            self.reverseInput = 1
-        end
-
+        self.reverseInput = 1 - Clamp( self.forwardSpeed / -100, 0, 1 )
         self.brake = 0
         self.clutch = 1
         self:SetIsBraking( false )
@@ -194,7 +181,7 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     outAng[1] = outAng[1] + angVel[1] * mass * self.KeepUprightDrag
     outAng[1] = outAng[1] + dot * mass * uprightForce
 
-    local revForce = self:GetForward() * phys:GetMass() * self.reverseInput * -400
+    local revForce = self:GetForward() * phys:GetMass() * self.reverseInput * -500
 
     outLin[1] = outLin[1] + revForce[1]
     outLin[2] = outLin[2] + revForce[2]

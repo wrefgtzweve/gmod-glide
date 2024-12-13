@@ -138,7 +138,6 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
-    ENT.SteerSpeedFactor = 1200
     ENT.StartupTime = 0.4
 
     ENT.BurnoutForce = 130
@@ -164,6 +163,9 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
+        self:SetSteerConeChangeRate( 10 )
+        self:SetSteerConeMaxSpeed( 1000 )
+
         self:SetTransmissionEfficiency( 0.7 )
         self:SetDifferentialRatio( 1.2 )
         self:SetBrakePower( 1300 )

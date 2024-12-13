@@ -178,7 +178,7 @@ if SERVER then
 
     ENT.HasLandingGear = true
     ENT.ReverseTorque = 2000
-    ENT.SteerSpeedFactor = 900
+    ENT.SteerConeMaxSpeed = 900
 
     ENT.PlaneParams = {
         liftAngularDrag = Vector( -30, -60, -100 ), -- (Roll, pitch, yaw)
