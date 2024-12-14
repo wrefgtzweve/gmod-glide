@@ -97,7 +97,7 @@ hook.Add( "EntityTakeDamage", "Glide.OverrideDamage", function( target, dmginfo 
     -- Don't let missiles deal crush damage
     local inflictor = dmginfo:GetInflictor()
 
-    if IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" then
+    if IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" and dmginfo:IsDamageType( 1 ) then
         return true
     end
 
