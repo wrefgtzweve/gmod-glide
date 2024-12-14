@@ -221,6 +221,28 @@ if CLIENT then
     function Glide.GetLanguageText( id )
         return language.GetPhrase( "glide." .. id )
     end
+
+    local lastViewPos = Vector()
+    local lastViewAng = Angle()
+
+    --- Get the cached position/angle of the local player's render view.
+    function Glide.GetLocalViewLocation()
+        return lastViewPos, lastViewAng
+    end
+
+    local EyePos = EyePos
+    local EyeAngles = EyeAngles
+
+    -- `PreDrawEffects` seems like a good place to get values from EyePos/EyeAngles reliably.
+    -- `PreDrawOpaqueRenderables`/`PostDrawOpaqueRenderables` were being called
+    -- twice when there was water, and `PreRender`/`PostRender`
+    -- were causing `EyeAngles` to return incorrect angles.
+    hook.Add( "PreDrawEffects", "Glide.CachePlayerView", function( bDepth, bSkybox, b3DSkybox )
+        if bDepth or bSkybox or b3DSkybox then return end
+
+        lastViewPos = EyePos()
+        lastViewAng = EyeAngles()
+    end )
 end
 
 do

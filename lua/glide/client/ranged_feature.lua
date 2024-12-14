@@ -6,9 +6,10 @@
     - The `Entity:IsDormant` state
     - The result from the "test" function (if set)
 ]]
-local RangedFeature = {}
+local RangedFeature = Glide.RangedFeature or {}
 
 RangedFeature.__index = RangedFeature
+Glide.RangedFeature = RangedFeature
 
 function Glide.CreateRangedFeature( ent, distance, bias )
     bias = bias or 100
@@ -63,11 +64,11 @@ function RangedFeature:Destroy()
     setmetatable( self, nil )
 end
 
-local EyePos = EyePos
+local GetLocalViewLocation = Glide.GetLocalViewLocation
 
 function RangedFeature:Think()
     local ent = self.ent
-    local dist = EyePos():DistToSqr( ent:GetPos() )
+    local dist = ent:GetPos():DistToSqr( GetLocalViewLocation() )
     local isDormant = ent:IsDormant()
     local passedTest = true
 

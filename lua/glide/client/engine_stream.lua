@@ -5,7 +5,7 @@
     layers using a combination of "controllers".
 
     Handles the math to make 2D sounds behave like 3D on demand,
-    and uses the correct hooks to not "lag behind" fast-moving entities.
+    to prevent sounds "lagging behind" fast-moving entities.
 ]]
 
 local IsValid = IsValid
@@ -396,22 +396,14 @@ local function LoadCallback( channel, _, errorName )
     channel:SetPan( 0 )
 end
 
-local EyePos = EyePos
-local EyeAngles = EyeAngles
-local FrameTime = FrameTime
 local pairs = pairs
+local FrameTime = FrameTime
+local GetLocalViewLocation = Glide.GetLocalViewLocation
 
--- `PreDrawEffects` seems like a good place to get values from EyePos/EyeAngles reliably.
--- `PreDrawOpaqueRenderables`/`PostDrawOpaqueRenderables` were being called
--- twice when there was water, and `PreRender`/`PostRender`
--- were returning incorrect angles on `EyeAngles`.
-hook.Add( "PreDrawEffects", "Glide.ProcessEngineStreams",
-    function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
-    if bDrawingDepth or bDrawingSkybox or isDraw3DSkybox then return end
-
+hook.Add( "Think", "Glide.ProcessEngineStreams", function()
     local dt = FrameTime()
-    local eyePos = EyePos()
-    local eyeRight = EyeAngles():Right()
+    local eyePos, eyeAng = GetLocalViewLocation()
+    local eyeRight = eyeAng:Right()
 
     for streamId, stream in pairs( streamInstances ) do
         -- Let the stream do it's thing
