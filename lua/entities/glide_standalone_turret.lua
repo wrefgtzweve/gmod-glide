@@ -82,6 +82,14 @@ function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, DUPE_NW_VARS, ENT_VARS )
 end
 
+function ENT:PreEntityCopy()
+    Glide.PreEntityCopy( self )
+end
+
+function ENT:PostEntityPaste( ply, ent, createdEntities )
+    Glide.PostEntityPaste( ply, ent, createdEntities )
+end
+
 local function MakeSpawner( ply, data )
     if IsValid( ply ) and not ply:CheckLimit( "glide_standalone_turrets" ) then return end
 

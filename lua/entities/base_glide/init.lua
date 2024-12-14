@@ -13,6 +13,14 @@ function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, self.DuplicatorNetworkVariables )
 end
 
+function ENT:PreEntityCopy()
+    Glide.PreEntityCopy( self )
+end
+
+function ENT:PostEntityPaste( ply, ent, createdEntities )
+    Glide.PostEntityPaste( ply, ent, createdEntities )
+end
+
 --- Handle spawning this vehicle from the spawn menu or `gm_spawn` command.
 function ENT:SpawnFunction( ply, tr )
     local pos = self.SpawnPositionOffset or Vector( 0, 0, 10 )

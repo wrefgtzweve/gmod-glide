@@ -54,6 +54,46 @@ do
             end
         end
     end
+
+    -- Save Wiremod dupe data, when available
+    function Glide.PreEntityCopy( ent )
+        duplicator.ClearEntityModifier( ent, "WireDupeInfo" )
+
+        if not WireLib then return end
+
+        local info = WireLib.BuildDupeInfo( ent )
+
+        if info then
+            duplicator.StoreEntityModifier( ent, "WireDupeInfo", info )
+        end
+    end
+
+    local function EntityLookup( createdEntities )
+        return function( id, default )
+            if id == nil then return default end
+            if id == 0 then return game.GetWorld() end
+
+            local ent = createdEntities[id]
+            if IsValid( ent ) then
+                return ent
+            else
+                return default
+            end
+        end
+    end
+
+    -- Restore Wiremod dupe data, when available
+    function Glide.PostEntityPaste( ply, ent, createdEntities )
+        if not WireLib then return end
+
+        local mods = ent.EntityMods
+        if not mods then return end
+
+        local info = mods.WireDupeInfo
+        if type( info ) ~= "table" then return end
+
+        WireLib.ApplyDupeInfo( ply, ent, info, EntityLookup( createdEntities ) )
+    end
 end
 
 do

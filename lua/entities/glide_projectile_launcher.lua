@@ -25,6 +25,14 @@ function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, nil, ENT_VARS )
 end
 
+function ENT:PreEntityCopy()
+    Glide.PreEntityCopy( self )
+end
+
+function ENT:PostEntityPaste( ply, ent, createdEntities )
+    Glide.PostEntityPaste( ply, ent, createdEntities )
+end
+
 local function MakeSpawner( ply, data )
     if IsValid( ply ) and not ply:CheckLimit( "glide_projectile_launchers" ) then return end
 
