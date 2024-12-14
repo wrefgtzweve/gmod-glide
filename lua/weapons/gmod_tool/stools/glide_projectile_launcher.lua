@@ -13,9 +13,9 @@ TOOL.ClientConVar = {
     delay = 2,
     radius = 350,
     damage = 100,
-    r = 80,
-    g = 80,
-    b = 80
+    r = 60,
+    g = 60,
+    b = 60
 }
 
 local function IsGlideProjectileLauncher( ent )
@@ -31,9 +31,9 @@ if SERVER then
         local radius = self:GetClientNumber( "radius" )
         local damage = self:GetClientNumber( "damage" )
 
-        local r = self:GetClientNumber( "r", 80 )
-        local g = self:GetClientNumber( "g", 80 )
-        local b = self:GetClientNumber( "b", 80 )
+        local r = self:GetClientNumber( "r", 60 )
+        local g = self:GetClientNumber( "g", 60 )
+        local b = self:GetClientNumber( "b", 60 )
 
         ent:SetProjectileSpeed( speed )
         ent:SetProjectileGravity( gravity )

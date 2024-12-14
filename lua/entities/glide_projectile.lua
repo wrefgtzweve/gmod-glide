@@ -49,7 +49,7 @@ end
 if not SERVER then return end
 
 function ENT:Initialize()
-    self:SetSmokeColor( Vector( 80, 80, 80 ) )
+    self:SetSmokeColor( Vector( 60, 60, 60 ) )
 
     self:SetModel( "models/props_phx/misc/flakshell_big.mdl" )
     self:SetSolid( SOLID_VPHYSICS )
