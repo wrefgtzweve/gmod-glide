@@ -13,6 +13,10 @@ ENT.DisableDuplicator = true
 
 local CurTime = CurTime
 
+function ENT:SetupDataTables()
+    self:NetworkVar( "Vector", "SmokeColor" )
+end
+
 if CLIENT then
     function ENT:Initialize()
         local m = Matrix()
@@ -32,6 +36,7 @@ if CLIENT then
         local eff = EffectData()
         eff:SetOrigin( self:GetPos() )
         eff:SetNormal( -self:GetForward() )
+        eff:SetStart( self:GetSmokeColor() )
         eff:SetScale( 1 )
         Effect( "glide_projectile", eff )
 
@@ -44,6 +49,8 @@ end
 if not SERVER then return end
 
 function ENT:Initialize()
+    self:SetSmokeColor( Vector( 80, 80, 80 ) )
+
     self:SetModel( "models/props_phx/misc/flakshell_big.mdl" )
     self:SetSolid( SOLID_VPHYSICS )
     self:SetMoveType( MOVETYPE_VPHYSICS )

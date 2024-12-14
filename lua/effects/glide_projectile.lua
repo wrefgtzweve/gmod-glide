@@ -1,15 +1,20 @@
 local RandomVec = VectorRand
 local RandomInt = math.random
 local RandomFloat = math.Rand
+
 local SMOKE_MATERIAL = "particle/smokesprites_000"
+local r, g, b = 0, 0, 0
 
 function EFFECT:Init( data )
     local origin = data:GetOrigin()
     local normal = data:GetNormal()
     local scale = data:GetScale()
+    local color = data:GetStart()
 
     local emitter = ParticleEmitter( origin, false )
     if not IsValid( emitter ) then return end
+
+    r, g, b = color[1], color[2], color[3]
 
     for i = 1, 10 do
         local p = emitter:Add( SMOKE_MATERIAL .. RandomInt( 9 ), origin + normal * i * 5 )
@@ -24,7 +29,7 @@ function EFFECT:Init( data )
 
             p:SetAirResistance( 100 )
             p:SetVelocity( RandomVec() * RandomFloat( -100, 100 ) * scale )
-            p:SetColor( 80, 80, 80 )
+            p:SetColor( r, g, b )
         end
     end
 

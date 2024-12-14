@@ -12,7 +12,10 @@ TOOL.ClientConVar = {
     lifetime = 5,
     delay = 2,
     radius = 350,
-    damage = 100
+    damage = 100,
+    r = 80,
+    g = 80,
+    b = 80
 }
 
 local function IsGlideProjectileLauncher( ent )
@@ -28,12 +31,17 @@ if SERVER then
         local radius = self:GetClientNumber( "radius" )
         local damage = self:GetClientNumber( "damage" )
 
+        local r = self:GetClientNumber( "r", 80 )
+        local g = self:GetClientNumber( "g", 80 )
+        local b = self:GetClientNumber( "b", 80 )
+
         ent:SetProjectileSpeed( speed )
         ent:SetProjectileGravity( gravity )
         ent:SetProjectileLifetime( lifetime )
         ent:SetReloadDelay( delay )
         ent:SetExplosionRadius( radius )
         ent:SetExplosionDamage( damage )
+        ent:SetSmokeColor( r, g, b )
     end
 end
 
@@ -96,6 +104,14 @@ function TOOL:RightClick( trace )
         ply:ConCommand( "glide_projectile_launcher_delay " .. delay )
         ply:ConCommand( "glide_projectile_launcher_radius " .. radius )
         ply:ConCommand( "glide_projectile_launcher_damage " .. damage )
+
+        local r = ent.smokeColor[1]
+        local g = ent.smokeColor[2]
+        local b = ent.smokeColor[3]
+
+        ply:ConCommand( "glide_projectile_launcher_r " .. r )
+        ply:ConCommand( "glide_projectile_launcher_g " .. g )
+        ply:ConCommand( "glide_projectile_launcher_b " .. b )
     end
 
     return true
@@ -154,4 +170,12 @@ function TOOL.BuildCPanel( panel )
         min = 1,
         max = cvarMaxDamage and cvarMaxDamage:GetFloat() or 200
     } )
+
+    panel:AddControl( "color", {
+        Label = "#tool.glide_projectile_launcher.smoke_color",
+        red = "glide_projectile_launcher_r",
+        green = "glide_projectile_launcher_g",
+        blue = "glide_projectile_launcher_b",
+        alpha = nil
+    } ).Mixer:SetAlphaBar( false )
 end

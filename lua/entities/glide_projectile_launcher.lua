@@ -17,7 +17,8 @@ local ENT_VARS = {
     ["projectileLifetime"] = true,
     ["reloadDelay"] = true,
     ["explosionRadius"] = true,
-    ["explosionDamage"] = true
+    ["explosionDamage"] = true,
+    ["smokeColor"] = true
 }
 
 function ENT:OnEntityCopyTableFinish( data )
@@ -72,6 +73,7 @@ function ENT:Initialize()
     self.reloadDelay = 1
     self.explosionRadius = 350
     self.explosionDamage = 100
+    self.smokeColor = Vector( 80, 80, 80 )
 
     self.isFiring = false
     self.nextShoot = 0
@@ -103,6 +105,7 @@ function ENT:Think()
         projectile.lifeTime = t + self.projectileLifetime
         projectile:SetProjectileSpeed( self.projectileSpeed )
         projectile:SetProjectileGravity( self.projectileGravity )
+        projectile:SetSmokeColor( self.smokeColor )
     end
 
     self:NextThink( t )
@@ -137,6 +140,13 @@ end
 
 function ENT:SetExplosionDamage( damage )
     self.explosionDamage = math.Clamp( damage, 1, cvarMaxDamage and cvarMaxDamage:GetFloat() or 200 )
+end
+
+function ENT:SetSmokeColor( r, g, b )
+    local color = self.smokeColor
+    color[1] = math.Clamp( r, 0, 255 )
+    color[2] = math.Clamp( g, 0, 255 )
+    color[3] = math.Clamp( b, 0, 255 )
 end
 
 function ENT:TriggerInput( name, value )
