@@ -16,7 +16,7 @@ if SERVER then
 
     --- Get the player's Glide camera angles.
     function PlayerMeta:GlideGetCameraAngles()
-        return self.GlideCam and self.GlideCam.angle or self:EyePos()
+        return self.GlideCam and self.GlideCam.angle or self:EyeAngles()
     end
 
     local TraceLine = util.TraceLine
