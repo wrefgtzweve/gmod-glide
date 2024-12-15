@@ -31,7 +31,6 @@ function ENT:OnPostInitialize()
     self:SetSteering( 0 )
     self:SetEngineRPM( 0 )
     self:SetEngineThrottle( 0 )
-    self:SetPowerDistribution( -0.8 )
 
     self:SetTireSmokeColor( Vector( 0.6, 0.6, 0.6 ) )
     self:SetWheelRadius( 15 )
@@ -67,15 +66,16 @@ function ENT:OnPostInitialize()
     self:SetMinRPM( 2000 )
     self:SetMaxRPM( 20000 )
 
-    self:SetMinRPMTorque( 1100 )
-    self:SetMaxRPMTorque( 1300 )
+    self:SetMinRPMTorque( 1200 )
+    self:SetMaxRPMTorque( 1500 )
     self:SetDifferentialRatio( 1.9 )
     self:SetTransmissionEfficiency( 0.8 )
+    self:SetPowerDistribution( -0.9 )
 
     -- Steering parameters
     self:SetMaxSteerAngle( 35 )
     self:SetSteerConeChangeRate( 8 )
-    self:SetSteerConeMaxSpeed( 1500 )
+    self:SetSteerConeMaxSpeed( 1800 )
     self:SetSteerConeMaxAngle( 0.25 )
 
     -- Update wheel parameters next tick

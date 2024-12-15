@@ -98,13 +98,17 @@ if SERVER then
         self:SetSuspensionLength( 13 )
         self:SetTransmissionEfficiency( 0.8 )
         self:SetDifferentialRatio( 1.6 )
+        self:SetPowerDistribution( -0.7 )
+
         self:SetBrakePower( 2500 )
-        self:SetWheelInertia( 10 )
+        self:SetWheelInertia( 8 )
         self:SetMaxSteerAngle( 45 )
+        self:SetSteerConeChangeRate( 6 )
+        self:SetSteerConeMaxSpeed( 700 )
 
         self:SetMinRPM( 1000 )
         self:SetMaxRPM( 8000 )
-        self:SetMinRPMTorque( 1000 )
+        self:SetMinRPMTorque( 1100 )
         self:SetMaxRPMTorque( 1200 )
 
         self:SetSlipForce( 110 )

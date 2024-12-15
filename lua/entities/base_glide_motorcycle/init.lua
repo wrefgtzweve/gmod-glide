@@ -97,7 +97,7 @@ function ENT:UpdateSteering( dt )
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
 
-    local tilt = Clamp( sideSlip * -2, -0.5, 0.5 )
+    local tilt = Clamp( sideSlip * -2, -0.75, 0.75 )
 
     if isAnyWheelGrounded then
         tilt = tilt + inputSteer * Clamp( self.forwardSpeed / 300, 0, 1 )
@@ -107,7 +107,7 @@ function ENT:UpdateSteering( dt )
         end
     end
 
-    self.steerTilt = ExpDecay( self.steerTilt, tilt, 6 + invSpeedOverFactor * 3, dt )
+    self.steerTilt = ExpDecay( self.steerTilt, tilt, 8 + invSpeedOverFactor * 2, dt )
 
     if
         isAnyWheelGrounded and

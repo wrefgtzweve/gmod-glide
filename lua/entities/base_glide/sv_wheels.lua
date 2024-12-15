@@ -14,12 +14,12 @@ function ENT:WheelInit()
 
         -- Static friction
         maxSlip = 20,
-        slipForce = 70,
+        slipForce = 80,
 
         -- Dynamic friction
-        extremumValue = 5.0,
+        extremumValue = 4.0,
         asymptoteSlip = 0.5,
-        asymptoteValue = 2.0
+        asymptoteValue = 1.2
     }
 end
 
