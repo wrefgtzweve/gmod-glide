@@ -392,7 +392,7 @@ function ENT:OnPostThink( dt )
 
     local phys = self:GetPhysicsObject()
 
-    if not self.areDriveWheelsGrounded and IsValid( phys ) then
+    if self.groundedCount < 1 and IsValid( phys ) then
         if self.totalSpeed > 200 then
             self:UpdateAirControls( phys, dt )
         else
@@ -493,7 +493,7 @@ function ENT:CreateWheel( offset, params )
 end
 
 local availableBrake, availableTorque, steerAngle, angVelMult
-local isGrounded, rpm, totalRPM, totalSideSlip, totalForwardSlip
+local groundedCount, rpm, totalRPM, totalSideSlip, totalForwardSlip
 
 --- Implement this base class function.
 function ENT:WheelThink( dt )
@@ -506,7 +506,7 @@ function ENT:WheelThink( dt )
     steerAngle = self.steerAngle
     angVelMult = self.driveWheelsAngVelMult
 
-    isGrounded, totalRPM, totalSideSlip, totalForwardSlip = false, 0, 0, 0
+    groundedCount, totalRPM, totalSideSlip, totalForwardSlip = 0, 0, 0, 0
 
     for _, w in ipairs( self.wheels ) do
         w:Update( self, steerAngle, isAsleep, dt )
@@ -525,17 +525,17 @@ function ENT:WheelThink( dt )
             if rpm > maxRPM then
                 w:SetRPM( maxRPM )
             end
-
-            if w.isOnGround then
-                isGrounded = true
-            end
         else
             w.brake = self.burnout * 0.5
+        end
+
+        if w.isOnGround then
+            groundedCount = groundedCount + 1
         end
     end
 
     self.avgPoweredRPM = totalRPM / self.poweredCount
-    self.areDriveWheelsGrounded = isGrounded
+    self.groundedCount = groundedCount
     self.avgSideSlip = totalSideSlip / self.wheelCount
     self.avgForwardSlip = totalForwardSlip / self.wheelCount
 end

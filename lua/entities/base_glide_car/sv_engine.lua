@@ -18,8 +18,9 @@ function ENT:EngineInit()
     self.reducedThrottle = false
 
     -- Wheel control variables
+    self.groundedCount = 0
+
     self.poweredCount = 0
-    self.areDriveWheelsGrounded = false
     self.driveWheelsAngVelMult = 1
     self.burnout = 0
 
@@ -135,7 +136,7 @@ function ENT:AutoGearSwitch( throttle )
     end
 
     if self.forwardSpeed < 0 and throttle < 0.1 then return end
-    if not self.areDriveWheelsGrounded then return end
+    if self.groundedCount < self.wheelCount then return end
     if Abs( self.avgForwardSlip ) > 1 then return end
 
     local minRPM, maxRPM = self:GetMinRPM(), self:GetMaxRPM()
@@ -188,7 +189,7 @@ function ENT:EngineClutch( dt )
     local absForwardSpeed = Abs( self.forwardSpeed )
 
     -- Are we airborne while going fast?
-    if not self.areDriveWheelsGrounded and absForwardSpeed > 30 then
+    if self.groundedCount < 1 and absForwardSpeed > 30 then
         return 1
     end
 
@@ -335,7 +336,7 @@ function ENT:EngineThink( dt )
 
         rpm = maxRPM
 
-        if gear ~= self.maxGear or not self.areDriveWheelsGrounded then
+        if gear ~= self.maxGear or self.groundedCount < self.wheelCount then
             isRedlining = true
         end
     end
