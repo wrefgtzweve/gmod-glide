@@ -92,6 +92,7 @@ function ENT:SetupDataTables()
     AddFloatVar( "MaxRPMTorque", 10, 10000, "#glide.editvar.engine" )
     AddFloatVar( "DifferentialRatio", 0.5, 5, "#glide.editvar.engine" )
     AddFloatVar( "TransmissionEfficiency", 0.3, 1, "#glide.editvar.engine" )
+    AddFloatVar( "PowerDistribution", -1, 1, "#glide.editvar.engine" )
 
     -- Make wheel parameters available as network variables too
     AddFloatVar( "WheelRadius", 10, 40, Either( self.AllowEditWheelRadius, "#glide.editvar.wheels", nil ) )
@@ -112,6 +113,9 @@ function ENT:SetupDataTables()
     if SERVER then
         -- Callback used to change the wheel radius
         self:NetworkVarNotify( "WheelRadius", self.OnWheelRadiusChange )
+
+        -- Callback used to update the power distribution among wheels
+        self:NetworkVarNotify( "PowerDistribution", self.OnPowerDistributionChange )
     end
 
     if CLIENT then

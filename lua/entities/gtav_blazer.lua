@@ -204,7 +204,6 @@ if SERVER then
             model = "models/gta5/vehicles/blazer/wheel.mdl",
             modelScale = Vector( 0.5, 1, 1 ),
             modelAngle = Angle( 0, 90, 0 ),
-            isPowered = true,
             enableAxleForces = true
         } )
 
@@ -213,7 +212,6 @@ if SERVER then
             model = "models/gta5/vehicles/blazer/wheel.mdl",
             modelAngle = Angle( 0, -90, 0 ),
             modelScale = Vector( 0.5, 1, 1 ),
-            isPowered = true,
             enableAxleForces = true
         } )
 

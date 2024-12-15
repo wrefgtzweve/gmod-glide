@@ -159,8 +159,7 @@ if SERVER then
         self:CreateWheel( Vector( -32, 0, -1 ), {
             model = "models/gta5/vehicles/blazer/wheel.mdl",
             modelScale = Vector( 0.4, 1, 1 ),
-            modelAngle = Angle( 0, 90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, 90, 0 )
         } ):SetNoDraw( true )
 
         self:ChangeWheelRadius( 14 )

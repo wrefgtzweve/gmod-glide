@@ -110,15 +110,13 @@ if SERVER then
         -- Rear left
         self:CreateWheel( Vector( -58, 36, 5 ), {
             model = "models/gta5/vehicles/gauntlet_classic/wheel.mdl",
-            modelAngle = Angle( 0, 90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, 90, 0 )
         } )
 
         -- Rear right
         self:CreateWheel( Vector( -58, -36, 5 ), {
             model = "models/gta5/vehicles/gauntlet_classic/wheel.mdl",
-            modelAngle = Angle( 0, -90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, -90, 0 )
         } )
 
         self:ChangeWheelRadius( 15 )

@@ -116,7 +116,8 @@ function ENT:UpdateSteering( dt )
         self.forwardSpeed > -100
     then
         self.reverseInput = 1 - Clamp( self.forwardSpeed / -100, 0, 1 )
-        self.brake = 0
+        self.frontBrake = 0
+        self.rearBrake = 0
         self.clutch = 1
         self:SetIsBraking( false )
     else
@@ -154,7 +155,7 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
         local strength = 1 - Clamp( Abs( angles[1] ) / self.WheelieMaxAng, 0, 1 )
 
         strength = strength * Clamp( self.totalSpeed / 200, 0, 1 )
-        strength = strength * ( 1 - self.brake )
+        strength = strength * Clamp( 1 - self.frontBrake - self.rearBrake, 0, 1 )
 
         -- Drag
         outAng[2] = outAng[2] + angVel[2] * mass * self.WheelieDrag * strength

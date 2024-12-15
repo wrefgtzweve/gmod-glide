@@ -96,15 +96,13 @@ if SERVER then
         -- Rear left
         self:CreateWheel( Vector( -74, 39, -10 ), {
             model = "models/gta5/vehicles/speedo/wheel.mdl",
-            modelAngle = Angle( 0, 90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, 90, 0 )
         } )
 
         -- Rear right
         self:CreateWheel( Vector( -74, -39, -10 ), {
             model = "models/gta5/vehicles/speedo/wheel.mdl",
-            modelAngle = Angle( 0, -90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, -90, 0 )
         } )
 
         self:ChangeWheelRadius( 18 )

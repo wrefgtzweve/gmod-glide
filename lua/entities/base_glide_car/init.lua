@@ -31,6 +31,7 @@ function ENT:OnPostInitialize()
     self:SetSteering( 0 )
     self:SetEngineRPM( 0 )
     self:SetEngineThrottle( 0 )
+    self:SetPowerDistribution( -0.8 )
 
     self:SetTireSmokeColor( Vector( 0.6, 0.6, 0.6 ) )
     self:SetWheelRadius( 15 )
@@ -77,8 +78,11 @@ function ENT:OnPostInitialize()
     self:SetSteerConeMaxSpeed( 1500 )
     self:SetSteerConeMaxAngle( 0.25 )
 
-    -- Update wheel parameters based on our network variables
+    -- Update wheel parameters next tick
     self.shouldUpdateWheelParams = true
+
+    -- Update power distribution next tick
+    self.shouldUpdatePowerDistribution = true
 end
 
 --- Update the `wheelParams` table using values from our network variables.
@@ -144,8 +148,8 @@ function ENT:TurnOff()
     self.startupTimer = nil
 
     self.clutch = 1
-    self.brake = 0.3
-    self.availableTorque = 0
+    self.frontBrake = 0.2
+    self.rearBrake = 0.2
     self.reducedThrottle = false
 end
 
@@ -161,6 +165,10 @@ end
 
 function ENT:OnWheelRadiusChange( _, _, radius )
     self:ChangeWheelRadius( radius, true )
+end
+
+function ENT:OnPowerDistributionChange()
+    self.shouldUpdatePowerDistribution = true
 end
 
 --- Override this base class function.
@@ -281,6 +289,10 @@ function ENT:OnPostThink( dt )
         self:UpdateWheelParameters()
     end
 
+    if self.shouldUpdatePowerDistribution then
+        self:UpdatePowerDistribution()
+    end
+
     local state = self:GetEngineState()
 
     if TriggerOutput then
@@ -385,6 +397,9 @@ function ENT:OnPostThink( dt )
         else
             self:EngineThink( dt )
         end
+    else
+        self.availableFrontTorque = 0
+        self.availableRearTorque = 0
     end
 
     -- Update driver inputs
@@ -481,19 +496,22 @@ function ENT:CreateWheel( offset, params )
     local wheel = BaseClass.CreateWheel( self, offset, params )
     wheel.enableTorqueInertia = true
 
-    -- Changing this will set the behaviour of
-    -- the power distribution and burnouts.
-    wheel.isPowered = params.isPowered == true
-
-    if wheel.isPowered then
-        self.poweredCount = self.poweredCount + 1
+    -- If the `isFrontWheel` param is not forced, figure it out now
+    if params.isFrontWheel == nil then
+        wheel.isFrontWheel = offset[1] > 0
+    else
+        wheel.isFrontWheel = params.isFrontWheel == true
     end
+
+    -- Update power distribution next tick
+    wheel.powerDistribution = 0
+    self.shouldUpdatePowerDistribution = true
 
     return wheel
 end
 
-local availableBrake, availableTorque, steerAngle, angVelMult
-local groundedCount, rpm, totalRPM, totalSideSlip, totalForwardSlip
+local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake, frontVelMult, rearVelMult
+local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip
 
 --- Implement this base class function.
 function ENT:WheelThink( dt )
@@ -501,12 +519,13 @@ function ENT:WheelThink( dt )
     local isAsleep = IsValid( phys ) and phys:IsAsleep()
     local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
 
-    availableBrake = self.brake
-    availableTorque = self.availableTorque / self.poweredCount
+    frontTorque = self.availableFrontTorque
+    rearTorque = self.availableRearTorque
     steerAngle = self.steerAngle
-    angVelMult = self.driveWheelsAngVelMult
 
-    groundedCount, totalRPM, totalSideSlip, totalForwardSlip = 0, 0, 0, 0
+    frontBrake, rearBrake = self.frontBrake, self.rearBrake
+    frontVelMult, rearVelMult = self.frontWheelsAngVelMult, self.rearWheelsAngVelMult
+    groundedCount, avgRPM, totalSideSlip, totalForwardSlip = 0, 0, 0, 0
 
     for _, w in ipairs( self.wheels ) do
         w:Update( self, steerAngle, isAsleep, dt )
@@ -514,19 +533,15 @@ function ENT:WheelThink( dt )
         totalSideSlip = totalSideSlip + w:GetSideSlip()
         totalForwardSlip = totalForwardSlip + w:GetForwardSlip()
 
-        if w.isPowered then
-            rpm = w:GetRPM()
-            totalRPM = totalRPM + rpm
+        rpm = w:GetRPM()
+        avgRPM = avgRPM + rpm * w.powerDistribution
 
-            w.brake = availableBrake
-            w.torque = availableTorque
-            w.angularVelocity = w.angularVelocity * angVelMult
+        w.torque = w.powerDistribution * ( w.isFrontWheel and frontTorque or rearTorque )
+        w.brake = w.isFrontWheel and frontBrake or rearBrake
+        w.angularVelocity = w.angularVelocity * ( w.isFrontWheel and frontVelMult or rearVelMult )
 
-            if rpm > maxRPM then
-                w:SetRPM( maxRPM )
-            end
-        else
-            w.brake = self.burnout * 0.5
+        if rpm > maxRPM then
+            w:SetRPM( maxRPM )
         end
 
         if w.isOnGround then
@@ -534,7 +549,7 @@ function ENT:WheelThink( dt )
         end
     end
 
-    self.avgPoweredRPM = totalRPM / self.poweredCount
+    self.avgPoweredRPM = avgRPM
     self.groundedCount = groundedCount
     self.avgSideSlip = totalSideSlip / self.wheelCount
     self.avgForwardSlip = totalForwardSlip / self.wheelCount

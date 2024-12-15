@@ -143,16 +143,14 @@ if SERVER then
         self:CreateWheel( Vector( -165.5, 49, -15 ), {
             model = "models/gta5/vehicles/airbus/wheel_rear.mdl",
             modelAngle = Angle( 0, 0, 0 ),
-            modelScale = Vector( 1, 0.6, 1 ),
-            isPowered = true
+            modelScale = Vector( 1, 0.6, 1 )
         } )
 
         -- Rear right
         self:CreateWheel( Vector( -165.5, -49, -15 ), {
             model = "models/gta5/vehicles/airbus/wheel_rear.mdl",
             modelAngle = Angle( 0, 180, 0 ),
-            modelScale = Vector( 1, 0.6, 1 ),
-            isPowered = true
+            modelScale = Vector( 1, 0.6, 1 )
         } )
 
         self:ChangeWheelRadius( 20 )
