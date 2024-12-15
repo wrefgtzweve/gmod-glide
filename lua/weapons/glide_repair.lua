@@ -46,12 +46,14 @@ function SWEP:Deploy()
     self:SetNextPrimaryFire( CurTime() + 0.5 )
 
     self.repairTarget = NULL
+    self.repairTrace = nil
 
     return true
 end
 
 function SWEP:Holster()
     self.repairTarget = NULL
+    self.repairTrace = nil
 
     return true
 end
@@ -64,7 +66,7 @@ function SWEP:GetVehicleFromTrace( trace, user )
     local ent = trace.Entity
 
     if IsValid( ent ) and ent.IsGlideVehicle and self:WaterLevel() < 3 then
-        return ent
+        return ent, trace
     end
 end
 
@@ -72,7 +74,7 @@ function SWEP:Think()
     local user = self:GetOwner()
 
     if IsValid( user ) then
-        self.repairTarget = self:GetVehicleFromTrace( user:GetEyeTraceNoCursor(), user )
+        self.repairTarget, self.repairTrace = self:GetVehicleFromTrace( user:GetEyeTraceNoCursor(), user )
     end
 end
 
@@ -83,7 +85,7 @@ function SWEP:PrimaryAttack()
     local user = self:GetOwner()
     if not IsValid( user ) then return end
 
-    self:SetNextPrimaryFire( CurTime() + 0.15 )
+    self:SetNextPrimaryFire( CurTime() + 0.1 )
 
     if not SERVER then return end
 
@@ -130,6 +132,18 @@ function SWEP:PrimaryAttack()
 
     if ent.UpdateHealthOutputs then
         ent:UpdateHealthOutputs()
+    end
+
+    local trace = self.repairTrace
+
+    if trace then
+        local data = EffectData()
+        data:SetOrigin( trace.HitPos + trace.HitNormal * 5 )
+        data:SetNormal( trace.HitNormal )
+        data:SetScale( 1 )
+        data:SetMagnitude( 1 )
+        data:SetRadius( 3 )
+        util.Effect( "cball_bounce", data, false, true )
     end
 end
 
