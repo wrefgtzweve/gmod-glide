@@ -249,7 +249,7 @@ function ENT:EngineThink( dt )
     inputHandbrake = self:GetInputBool( 1, "handbrake" )
 
     -- Reverse the throttle/brake inputs while in reverse gear
-    if gear < 0 then
+    if gear < 0 and not self.inputManualShift then
         inputThrottle, inputBrake = inputBrake, inputThrottle
     end
 
