@@ -81,7 +81,7 @@ function ENT:UpdatePowerDistribution()
     rearDistribution = rearDistribution / rearCount
 
     for _, w in ipairs( self.wheels ) do
-        w.powerDistribution = w.isFrontWheel and frontDistribution or rearDistribution
+        w.distributionFactor = w.isFrontWheel and frontDistribution or rearDistribution
     end
 end
 
@@ -297,6 +297,9 @@ function ENT:EngineThink( dt )
 
         local frontBurnout = self:GetPowerDistribution() > 0
         local dir = frontBurnout and self:GetRight() or -self:GetRight()
+
+        self.frontBrake = frontBurnout and 1 or 0
+        self.rearBrake = frontBurnout and 0 or 1
 
         for _, w in ipairs( self.wheels ) do
             if w.isFrontWheel == frontBurnout then

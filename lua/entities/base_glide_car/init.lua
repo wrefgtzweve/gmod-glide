@@ -504,7 +504,7 @@ function ENT:CreateWheel( offset, params )
     end
 
     -- Update power distribution next tick
-    wheel.powerDistribution = 0
+    wheel.distributionFactor = 0
     self.shouldUpdatePowerDistribution = true
 
     return wheel
@@ -534,9 +534,9 @@ function ENT:WheelThink( dt )
         totalForwardSlip = totalForwardSlip + w:GetForwardSlip()
 
         rpm = w:GetRPM()
-        avgRPM = avgRPM + rpm * w.powerDistribution
+        avgRPM = avgRPM + rpm * w.distributionFactor
 
-        w.torque = w.powerDistribution * ( w.isFrontWheel and frontTorque or rearTorque )
+        w.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
         w.brake = w.isFrontWheel and frontBrake or rearBrake
         w.angularVelocity = w.angularVelocity * ( w.isFrontWheel and frontVelMult or rearVelMult )
 
