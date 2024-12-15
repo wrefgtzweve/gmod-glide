@@ -166,14 +166,14 @@ if SERVER then
         self:SetSteerConeChangeRate( 10 )
         self:SetSteerConeMaxSpeed( 1000 )
 
-        self:SetTransmissionEfficiency( 0.7 )
+        self:SetPowerDistribution( -0.7 )
         self:SetDifferentialRatio( 1.2 )
         self:SetBrakePower( 1300 )
-        self:SetWheelInertia( 6 )
+        self:SetWheelInertia( 5 )
 
         self:SetMaxRPM( 15000 )
-        self:SetMinRPMTorque( 980 )
-        self:SetMaxRPMTorque( 1000 )
+        self:SetMinRPMTorque( 1000 )
+        self:SetMaxRPMTorque( 1200 )
 
         self:SetSuspensionLength( 10 )
         self:SetSpringStrength( 450 )
@@ -204,7 +204,6 @@ if SERVER then
             model = "models/gta5/vehicles/blazer/wheel.mdl",
             modelScale = Vector( 0.5, 1, 1 ),
             modelAngle = Angle( 0, 90, 0 ),
-            isPowered = true,
             enableAxleForces = true
         } )
 
@@ -213,7 +212,6 @@ if SERVER then
             model = "models/gta5/vehicles/blazer/wheel.mdl",
             modelAngle = Angle( 0, -90, 0 ),
             modelScale = Vector( 0.5, 1, 1 ),
-            isPowered = true,
             enableAxleForces = true
         } )
 

@@ -61,7 +61,7 @@ if SERVER then
     duplicator.RegisterEntityClass( "gtav_gauntlet_classic", Glide.VehicleFactory, "Data" )
 
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
-    ENT.BurnoutForce = 70
+    ENT.BurnoutForce = 65
 
     function ENT:GetGears()
         return {
@@ -87,8 +87,8 @@ if SERVER then
         self:SetDifferentialRatio( 1.9 )
 
         self:SetMaxRPM( 25000 )
-        self:SetMinRPMTorque( 1000 )
-        self:SetMaxRPMTorque( 1200 )
+        self:SetMinRPMTorque( 1200 )
+        self:SetMaxRPMTorque( 1400 )
 
         self:CreateSeat( Vector( -22, 18, -3 ), Angle( 0, 270, -10 ), Vector( 40, 80, 0 ), true )
         self:CreateSeat( Vector( -8, -18, -3 ), Angle( 0, 270, 5 ), Vector( -40, -80, 0 ), true )
@@ -110,15 +110,13 @@ if SERVER then
         -- Rear left
         self:CreateWheel( Vector( -58, 36, 5 ), {
             model = "models/gta5/vehicles/gauntlet_classic/wheel.mdl",
-            modelAngle = Angle( 0, 90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, 90, 0 )
         } )
 
         -- Rear right
         self:CreateWheel( Vector( -58, -36, 5 ), {
             model = "models/gta5/vehicles/gauntlet_classic/wheel.mdl",
-            modelAngle = Angle( 0, -90, 0 ),
-            isPowered = true
+            modelAngle = Angle( 0, -90, 0 )
         } )
 
         self:ChangeWheelRadius( 15 )

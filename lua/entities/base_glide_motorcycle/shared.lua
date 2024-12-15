@@ -12,8 +12,11 @@ ENT.VehicleType = Glide.VEHICLE_TYPE.MOTORCYCLE
 ENT.SeatDriverAnim = "drive_airboat"
 ENT.SeatPassengerAnim = "sit"
 
-ENT.AllowEditWheelRadius = false
-ENT.AllowEditSuspensionLen = false
+ENT.UneditableNWVars = {
+    WheelRadius = true,
+    SuspensionLength = true,
+    PowerDistribution = true
+}
 
 if CLIENT then
     ENT.EngineSmokeMaxZVel = 20

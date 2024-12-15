@@ -16,11 +16,8 @@ ENT.SeatPassengerAnim = "sit"
 -- Decrease default max. chassis health
 ENT.MaxChassisHealth = 900
 
--- Should we allow editing the wheel radius?
-ENT.AllowEditWheelRadius = true
-
--- Should we allow editing the suspension length?
-ENT.AllowEditSuspensionLen = true
+-- Should we prevent players from editing these NW variables?
+ENT.UneditableNWVars = {}
 
 DEFINE_BASECLASS( "base_glide" )
 
@@ -54,12 +51,13 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Vector", "TireSmokeColor", { KeyName = "TireSmokeColor", Edit = { type = "VectorColor", order = 0, category = "#glide.editvar.wheels" } } )
 
     local order = 0
+    local uneditable = self.UneditableNWVars
 
     -- We add a bunch of floats here so, this utility function helps.
     local function AddFloatVar( key, min, max, category )
         order = order + 1
 
-        local editData = Either( category == nil, nil, {
+        local editData = Either( uneditable[key] == true or category == nil, nil, {
             KeyName = key,
             Edit = { type = "Float", order = order, min = min, max = max, category = category }
         } )
@@ -92,13 +90,14 @@ function ENT:SetupDataTables()
     AddFloatVar( "MaxRPMTorque", 10, 10000, "#glide.editvar.engine" )
     AddFloatVar( "DifferentialRatio", 0.5, 5, "#glide.editvar.engine" )
     AddFloatVar( "TransmissionEfficiency", 0.3, 1, "#glide.editvar.engine" )
+    AddFloatVar( "PowerDistribution", -1, 1, "#glide.editvar.engine" )
 
     -- Make wheel parameters available as network variables too
-    AddFloatVar( "WheelRadius", 10, 40, Either( self.AllowEditWheelRadius, "#glide.editvar.wheels", nil ) )
+    AddFloatVar( "WheelRadius", 10, 40, "#glide.editvar.wheels" )
     AddFloatVar( "WheelInertia", 1, 100, "#glide.editvar.wheels" )
     AddFloatVar( "BrakePower", 500, 5000, "#glide.editvar.wheels" )
 
-    AddFloatVar( "SuspensionLength", 5, 50, Either( self.AllowEditSuspensionLen, "#glide.editvar.suspension", nil ) )
+    AddFloatVar( "SuspensionLength", 5, 50, "#glide.editvar.suspension" )
     AddFloatVar( "SpringStrength", 100, 5000, "#glide.editvar.suspension" )
     AddFloatVar( "SpringDamper", 100, 10000, "#glide.editvar.suspension" )
 
@@ -112,6 +111,9 @@ function ENT:SetupDataTables()
     if SERVER then
         -- Callback used to change the wheel radius
         self:NetworkVarNotify( "WheelRadius", self.OnWheelRadiusChange )
+
+        -- Callback used to update the power distribution among wheels
+        self:NetworkVarNotify( "PowerDistribution", self.OnPowerDistributionChange )
     end
 
     if CLIENT then
@@ -203,7 +205,7 @@ if SERVER then
     ENT.LightBodygroups = {}
 
     -- How much force to apply when trying to turn while doing a burnout?
-    ENT.BurnoutForce = 60
+    ENT.BurnoutForce = 45
 
     -- How much force to apply when the driver tries to unflip the vehicle?
     ENT.UnflipForce = 3
@@ -228,11 +230,11 @@ if SERVER then
             [-1] = 2.9, -- Reverse
             [0] = 0, -- Neutral (this number has no effect)
             [1] = 2.8,
-            [2] = 1.78,
-            [3] = 1.3,
-            [4] = 1,
-            [5] = 0.8,
-            [6] = 0.7
+            [2] = 1.7,
+            [3] = 1.2,
+            [4] = 0.9,
+            [5] = 0.75,
+            [6] = 0.68
         }
     end
 

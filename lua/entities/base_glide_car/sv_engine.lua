@@ -9,19 +9,21 @@ function ENT:EngineInit()
     self.flywheelTorque = 20000
 
     -- Fake engine variables
-    self.flywheelVelocity = 0
-    self.availableTorque = 0
-    self.clutch = 1
-    self.brake = 0.3
-
-    self.switchCD = 0
     self.reducedThrottle = false
+    self.flywheelVelocity = 0
+    self.clutch = 1
+    self.switchCD = 0
 
     -- Wheel control variables
-    self.poweredCount = 0
-    self.areDriveWheelsGrounded = false
-    self.driveWheelsAngVelMult = 1
+    self.groundedCount = 0
     self.burnout = 0
+
+    self.frontBrake = 0.2
+    self.rearBrake = 0.2
+    self.availableFrontTorque = 0
+    self.availableRearTorque = 0
+    self.frontWheelsAngVelMult = 1
+    self.rearWheelsAngVelMult = 1
 
     self.avgSideSlip = 0
     self.avgPoweredRPM = 0
@@ -55,6 +57,32 @@ end
 
 function ENT:OnReloaded()
     self:UpdateGearList()
+end
+
+function ENT:UpdatePowerDistribution()
+    self.shouldUpdatePowerDistribution = false
+
+    local frontCount, rearCount = 0, 0
+
+    -- First, count how many wheels are in the front/rear
+    for _, w in ipairs( self.wheels ) do
+        if w.isFrontWheel then
+            frontCount = frontCount + 1
+        else
+            rearCount = rearCount + 1
+        end
+    end
+
+    -- Then, use that count to split the front/rear torque between wheels later
+    local frontDistribution = 0.5 + self:GetPowerDistribution() * 0.5
+    local rearDistribution = 1 - frontDistribution
+
+    frontDistribution = frontDistribution / frontCount
+    rearDistribution = rearDistribution / rearCount
+
+    for _, w in ipairs( self.wheels ) do
+        w.distributionFactor = w.isFrontWheel and frontDistribution or rearDistribution
+    end
 end
 
 do
@@ -135,7 +163,7 @@ function ENT:AutoGearSwitch( throttle )
     end
 
     if self.forwardSpeed < 0 and throttle < 0.1 then return end
-    if not self.areDriveWheelsGrounded then return end
+    if self.groundedCount < self.wheelCount then return end
     if Abs( self.avgForwardSlip ) > 1 then return end
 
     local minRPM, maxRPM = self:GetMinRPM(), self:GetMaxRPM()
@@ -188,7 +216,7 @@ function ENT:EngineClutch( dt )
     local absForwardSpeed = Abs( self.forwardSpeed )
 
     -- Are we airborne while going fast?
-    if not self.areDriveWheelsGrounded and absForwardSpeed > 30 then
+    if self.groundedCount < 1 and absForwardSpeed > 30 then
         return 1
     end
 
@@ -255,8 +283,8 @@ function ENT:EngineThink( dt )
     -- Do a burnout when holding down the throttle and brake inputs
     if inputThrottle > 0.1 and inputBrake > 0.1 and Abs( self.forwardSpeed ) < 50 then
         self.burnout = Approach( self.burnout, 1, dt )
-        self.brake = 1
-        self.driveWheelsAngVelMult = 1
+        self.frontWheelsAngVelMult = 1
+        self.rearWheelsAngVelMult = 1
 
         clutch = 0
 
@@ -267,21 +295,30 @@ function ENT:EngineThink( dt )
 
         burnoutForce = burnoutForce * self.inputSteer * Clamp( Abs( self.avgForwardSlip ) * 0.05, 0, 1 )
 
+        local frontBurnout = self:GetPowerDistribution() > 0
+        local dir = frontBurnout and self:GetRight() or -self:GetRight()
+
+        self.frontBrake = frontBurnout and 1 or 0
+        self.rearBrake = frontBurnout and 0 or 1
+
         for _, w in ipairs( self.wheels ) do
-            if w.isPowered then
+            if w.isFrontWheel == frontBurnout then
                 local pos = w:GetLocalPos()
 
                 pos[1] = pos[1] > 0 and maxs[1] * 2 or mins[1] * 2
                 pos = self:LocalToWorld( pos )
 
-                phys:ApplyForceOffset( -self:GetRight() * burnoutForce, pos )
+                phys:ApplyForceOffset( dir * burnoutForce, pos )
             end
         end
 
     elseif inputHandbrake then
-        -- Lock the wheels while using the handbrake
-        self.driveWheelsAngVelMult = Approach( self.driveWheelsAngVelMult, 0, dt * 2 )
-        self.brake = 1
+        -- Lock only the rear wheels while using the handbrake
+        self.frontWheelsAngVelMult = 1
+        self.rearWheelsAngVelMult = Approach( self.rearWheelsAngVelMult, 0, dt * 2 )
+
+        self.frontBrake = 0
+        self.rearBrake = 1
         self.clutch = 1
         clutch = 1
 
@@ -291,8 +328,11 @@ function ENT:EngineThink( dt )
             inputBrake = 0.2 * self.clutch
         end
 
-        self.brake = inputBrake
-        self.driveWheelsAngVelMult = Approach( self.driveWheelsAngVelMult, 1, dt * 2 )
+        self.frontBrake = 0
+        self.rearBrake = inputBrake
+
+        self.frontWheelsAngVelMult = 1
+        self.rearWheelsAngVelMult = Approach( self.rearWheelsAngVelMult, 1, dt * 2 )
     end
 
     rpm = self:GetFlywheelRPM()
@@ -335,7 +375,7 @@ function ENT:EngineThink( dt )
 
         rpm = maxRPM
 
-        if gear ~= self.maxGear or not self.areDriveWheelsGrounded then
+        if gear ~= self.maxGear or self.groundedCount < self.wheelCount then
             isRedlining = true
         end
     end
@@ -351,7 +391,12 @@ function ENT:EngineThink( dt )
         availableTorque = availableTorque + availableTorque * self.burnout * 0.1
     end
 
-    self.availableTorque = availableTorque
+    -- Split torque between front and rear wheels
+    local front = 0.5 + self:GetPowerDistribution() * 0.5
+    local rear = 1 - front
+
+    self.availableFrontTorque = availableTorque * front
+    self.availableRearTorque = availableTorque * rear
 
     -- Accelerate the engine flywheel and update network variables
     throttle = Approach( throttle, inputThrottle, dt * 4 )
