@@ -82,6 +82,9 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     ragdoll:SetModel( ply:GetModel() )
     ragdoll:Spawn()
     ragdoll:Activate()
+    ragdoll.PhysgunDisabled = true
+    ragdoll.DoNotDuplicate = true
+    ragdoll.DisableDuplicator = true
     ragdoll.IsGlideRagdoll = true
     ragdoll.GlidePlayer = ply
     ragdoll.GlideHealth = ply:Health()
