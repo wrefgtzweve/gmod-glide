@@ -91,13 +91,14 @@ local ExpDecay = Glide.ExpDecay
 function ENT:UpdateSteering( dt )
     BaseClass.UpdateSteering( self, dt )
 
+    local isAnyWheelGrounded = self.groundedCount > 0
     local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
 
     local tilt = Clamp( sideSlip * -2, -0.5, 0.5 )
 
-    if self.areDriveWheelsGrounded then
+    if isAnyWheelGrounded then
         tilt = tilt + inputSteer * Clamp( self.forwardSpeed / 300, 0, 1 )
 
         if self.totalSpeed < 20 then
@@ -105,14 +106,14 @@ function ENT:UpdateSteering( dt )
         end
     end
 
-    self.steerTilt = ExpDecay( self.steerTilt, tilt, 6 + invSpeedOverFactor * 4, dt )
+    self.steerTilt = ExpDecay( self.steerTilt, tilt, 6 + invSpeedOverFactor * 3, dt )
 
     if
+        isAnyWheelGrounded and
         self:GetInputFloat( 1, "brake" ) > 0 and
         self:GetInputFloat( 1, "accelerate" ) < 0.1 and
         self.forwardSpeed < 10 and
-        self.forwardSpeed > -100 and
-        self.areDriveWheelsGrounded
+        self.forwardSpeed > -100
     then
         self.reverseInput = 1 - Clamp( self.forwardSpeed / -100, 0, 1 )
         self.brake = 0
@@ -132,11 +133,12 @@ local WORLD_UP = Vector( 0, 0, 1 )
 function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     if not self.stayUpright then return end
 
+    local isAnyWheelGrounded = self.groundedCount > 0
     local angVel = phys:GetAngleVelocity()
     local mass = phys:GetMass()
 
     -- Apply an extra yaw angular drag
-    if self.areDriveWheelsGrounded then
+    if isAnyWheelGrounded then
         outAng[3] = outAng[3] + angVel[3] * mass * self.YawDrag
     else
         self.steerTilt = 0
@@ -148,7 +150,7 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     -- Wheelie
     local leanBack = self:GetInputBool( 1, "lean_back" )
 
-    if leanBack and self.areDriveWheelsGrounded then
+    if leanBack and isAnyWheelGrounded then
         local strength = 1 - Clamp( Abs( angles[1] ) / self.WheelieMaxAng, 0, 1 )
 
         strength = strength * Clamp( self.totalSpeed / 200, 0, 1 )
@@ -173,9 +175,8 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     local dot = WORLD_UP:Dot( rt )
     dot = angles[3] > -90 and angles[3] < 90 and dot or -dot
 
-    local isGrounded = self.areDriveWheelsGrounded
-    local tiltForce = isGrounded and self.TiltForce or self.TiltForce * 0.2
-    local uprightForce = isGrounded and self.KeepUprightForce or self.KeepUprightForce * 0.5
+    local tiltForce = isAnyWheelGrounded and self.TiltForce or self.TiltForce * 0.2
+    local uprightForce = isAnyWheelGrounded and self.KeepUprightForce or self.KeepUprightForce * 0.5
 
     outAng[1] = outAng[1] + self.steerTilt * mass * tiltForce
     outAng[1] = outAng[1] + angVel[1] * mass * self.KeepUprightDrag
