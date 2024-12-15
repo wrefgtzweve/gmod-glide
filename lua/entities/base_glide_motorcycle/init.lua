@@ -19,6 +19,7 @@ function ENT:OnPostInitialize()
     self:SetSteerConeChangeRate( 10 )
     self:SetSteerConeMaxSpeed( 1000 )
     self:SetSteerConeMaxAngle( 0.1 )
+    self:SetPowerDistribution( -1 )
 
     -- Change slip parameters to better suit bikes
     self:SetExtremumValue( 7 )

@@ -16,11 +16,8 @@ ENT.SeatPassengerAnim = "sit"
 -- Decrease default max. chassis health
 ENT.MaxChassisHealth = 900
 
--- Should we allow editing the wheel radius?
-ENT.AllowEditWheelRadius = true
-
--- Should we allow editing the suspension length?
-ENT.AllowEditSuspensionLen = true
+-- Should we prevent players from editing these NW variables?
+ENT.UneditableNWVars = {}
 
 DEFINE_BASECLASS( "base_glide" )
 
@@ -54,12 +51,13 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Vector", "TireSmokeColor", { KeyName = "TireSmokeColor", Edit = { type = "VectorColor", order = 0, category = "#glide.editvar.wheels" } } )
 
     local order = 0
+    local uneditable = self.UneditableNWVars
 
     -- We add a bunch of floats here so, this utility function helps.
     local function AddFloatVar( key, min, max, category )
         order = order + 1
 
-        local editData = Either( category == nil, nil, {
+        local editData = Either( uneditable[key] == true or category == nil, nil, {
             KeyName = key,
             Edit = { type = "Float", order = order, min = min, max = max, category = category }
         } )
@@ -95,11 +93,11 @@ function ENT:SetupDataTables()
     AddFloatVar( "PowerDistribution", -1, 1, "#glide.editvar.engine" )
 
     -- Make wheel parameters available as network variables too
-    AddFloatVar( "WheelRadius", 10, 40, Either( self.AllowEditWheelRadius, "#glide.editvar.wheels", nil ) )
+    AddFloatVar( "WheelRadius", 10, 40, "#glide.editvar.wheels" )
     AddFloatVar( "WheelInertia", 1, 100, "#glide.editvar.wheels" )
     AddFloatVar( "BrakePower", 500, 5000, "#glide.editvar.wheels" )
 
-    AddFloatVar( "SuspensionLength", 5, 50, Either( self.AllowEditSuspensionLen, "#glide.editvar.suspension", nil ) )
+    AddFloatVar( "SuspensionLength", 5, 50, "#glide.editvar.suspension" )
     AddFloatVar( "SpringStrength", 100, 5000, "#glide.editvar.suspension" )
     AddFloatVar( "SpringDamper", 100, 10000, "#glide.editvar.suspension" )
 
