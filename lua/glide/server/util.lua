@@ -15,9 +15,9 @@ do
     --- Ensures that the force is within the range
     --- of a float, to prevent physics engine crashes.
     function Glide.ClampForce( v )
-        v[1] = v[1] == v[1] and Clamp( v[1], minForce, maxForce ) or 0
-        v[2] = v[2] == v[2] and Clamp( v[2], minForce, maxForce ) or 0
-        v[3] = v[3] == v[3] and Clamp( v[3], minForce, maxForce ) or 0
+        v[1] = Clamp( v[1], minForce, maxForce )
+        v[2] = Clamp( v[2], minForce, maxForce )
+        v[3] = Clamp( v[3], minForce, maxForce )
     end
 end
 
