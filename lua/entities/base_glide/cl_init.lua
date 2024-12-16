@@ -347,11 +347,14 @@ function ENT:OnDriverChange( _, _, _ )
 end
 
 do
+    local Config = Glide.Config
     local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
     local DrawWeaponSelection = Glide.DrawWeaponSelection
 
     function ENT:DrawVehicleHUD( screenW, screenH )
-        self:DrawHUDSeats( screenW, screenH )
+        if Config.showPassengerList then
+            self:DrawHUDSeats( screenW, screenH )
+        end
 
         -- TODO: glide.hud.health=Health
 

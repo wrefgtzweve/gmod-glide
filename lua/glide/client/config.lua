@@ -42,6 +42,7 @@ function Config:Reset()
 
     -- Misc. settings
     self.manualGearShifting = false
+    self.showPassengerList = true
     self.autoHeadlightOn = true
     self.autoHeadlightOff = true
     self.headlightShadows = true
@@ -116,6 +117,7 @@ function Config:Save( immediate )
 
         -- Misc. settings
         manualGearShifting = self.manualGearShifting,
+        showPassengerList = self.showPassengerList,
         autoHeadlightOn = self.autoHeadlightOn,
         autoHeadlightOff = self.autoHeadlightOff,
         headlightShadows = self.headlightShadows,
@@ -193,6 +195,7 @@ function Config:Load()
 
     -- Misc. settings
     LoadBool( "manualGearShifting", false )
+    LoadBool( "showPassengerList", true )
     LoadBool( "autoHeadlightOn", true )
     LoadBool( "autoHeadlightOff", false )
     LoadBool( "headlightShadows", true )
@@ -600,6 +603,11 @@ function Config:OpenFrame()
     local panelMisc = frame:AddTab( "icon16/cog.png", L"settings.misc" )
 
     theme:CreateHeader( panelMisc, L"settings.misc" )
+
+    theme:CreateToggleButton( panelMisc, L"misc.show_passenger_list", self.showPassengerList, function( value )
+        self.showPassengerList = value
+        self:Save()
+    end )
 
     theme:CreateToggleButton( panelMisc, L"misc.auto_headlights_on", self.autoHeadlightOn, function( value )
         self.autoHeadlightOn = value
