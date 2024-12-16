@@ -257,18 +257,18 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
 
     self:SetForwardSlip( forwardSlip )
 
-    -- Static friction
-    gripMult = SURFACE_GRIP[surfaceId] or 1
-    gripMult = gripMult * dot
-
-    force:Add( Clamp( velR, -params.maxSlip, params.maxSlip ) * params.slipForce * -gripMult * ( 1 - Clamp( Abs( forwardSlip ) / 30, 0, 1 ) ) * rt )
-    force:Add( ( velR > 0 and -1 or 1 ) * params.slipForce * rt )
-
     -- Dynamic friction
+    gripMult = dot * ( SURFACE_GRIP[surfaceId] or 1 )
     slip = ( Atan2( velR, Abs( velF ) ) / PI ) * 2
     force:Add( SlipCurve( Abs( slip ) ) * -velR * gripMult * rt )
 
     self:SetSideSlip( slip * Clamp( vehicle.totalSpeed * 0.002, 0, 1 ) * 2 )
+
+    -- Static friction
+    gripMult = gripMult * ( 1 - Clamp( Abs( forwardSlip ) / 30, 0, 1 ) )
+
+    force:Add( Clamp( -velR, -params.maxSlip, params.maxSlip ) * params.slipForce * gripMult * rt )
+    --force:Add( ( velR > 0 and -1 or 1 ) * params.slipForce * rt )
 
     -- Apply the forces at the axle/ground contact position
     linearImp, angularImp = phys:CalculateForceOffset( force, pos )

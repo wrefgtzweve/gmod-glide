@@ -18,7 +18,7 @@ function ENT:OnPostInitialize()
     -- Change steering parameters to better suit bikes
     self:SetSteerConeChangeRate( 10 )
     self:SetSteerConeMaxSpeed( 1000 )
-    self:SetSteerConeMaxAngle( 0.1 )
+    self:SetSteerConeMaxAngle( 0.15 )
     self:SetPowerDistribution( -1 )
 
     -- Change slip parameters to better suit bikes
@@ -26,7 +26,7 @@ function ENT:OnPostInitialize()
     self:SetAsymptoteSlip( 0.8 )
     self:SetAsymptoteValue( 3 )
 
-    self:SetMaxSlip( 25 )
+    self:SetMaxSlip( 35 )
     self:SetSlipForce( 50 )
 end
 
@@ -96,8 +96,7 @@ function ENT:UpdateSteering( dt )
     local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
-
-    local tilt = Clamp( sideSlip * -2, -0.75, 0.75 )
+    local tilt = Clamp( sideSlip * -2, -0.5, 0.5 )
 
     if isAnyWheelGrounded then
         tilt = tilt + inputSteer * Clamp( self.forwardSpeed / 300, 0, 1 )
@@ -178,11 +177,10 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     dot = angles[3] > -90 and angles[3] < 90 and dot or -dot
 
     local tiltForce = isAnyWheelGrounded and self.TiltForce or self.TiltForce * 0.2
-    local uprightForce = isAnyWheelGrounded and self.KeepUprightForce or self.KeepUprightForce * 0.5
 
     outAng[1] = outAng[1] + self.steerTilt * mass * tiltForce
     outAng[1] = outAng[1] + angVel[1] * mass * self.KeepUprightDrag
-    outAng[1] = outAng[1] + dot * mass * uprightForce
+    outAng[1] = outAng[1] + dot * mass * self.KeepUprightForce
 
     local revForce = self:GetForward() * phys:GetMass() * self.reverseInput * -500
 
