@@ -33,6 +33,7 @@ function ENT:SetupWheel( params )
 
     -- Wheel offset relative to the parent
     self.basePos = params.basePos or self:GetLocalPos()
+    self.isOnRight = self.basePos[2] < 0
 
     -- How much the parent's steering angle affects this wheel
     self.steerMultiplier = params.steerMultiplier or 0
@@ -46,6 +47,7 @@ function ENT:SetupWheel( params )
     -- Model rotation and scale
     self.modelScale = params.modelScale or Vector( 0.3, 1, 1 )
     self:SetModelAngle( params.modelAngle or Angle( 0, 0, 0 ) )
+    self:SetModelOffset( params.modelOffset or Vector( 0, 0, 0 ) )
 
     -- Default (not blown) radius of the wheel
     self.defaultRadius = params.radius or 15
@@ -57,11 +59,14 @@ function ENT:SetupWheel( params )
 end
 
 function ENT:Repair()
-    if self.model then
+    if self.modelOverride then
+        self:SetModel( self.modelOverride )
+
+    elseif self.model then
         self:SetModel( self.model )
     end
 
-    self:ChangeRadius( self.defaultRadius )
+    self:ChangeRadius()
 end
 
 function ENT:Blow()
@@ -70,6 +75,8 @@ function ENT:Blow()
 end
 
 function ENT:ChangeRadius( radius )
+    radius = radius or self.defaultRadius
+
     local size = self.modelScale * radius * 2
     local bounds = self:OBBMaxs() - self:OBBMins()
     local scale = Vector( size[1] / bounds[1], size[2] / bounds[2], size[3] / bounds[3] )

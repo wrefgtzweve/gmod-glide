@@ -92,6 +92,7 @@ function ENT:Think()
 
     -- Periodically rotate and resize the wheel model
     if t > self.modelCD then
+        m:SetTranslation( self:GetModelOffset() )
         m:SetAngles( self:GetModelAngle() )
         m:SetScale( self:GetModelScale2() )
         self:EnableMatrix( "RenderMultiply", m )

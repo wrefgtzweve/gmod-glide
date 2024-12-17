@@ -14,6 +14,7 @@ ENT.DisableDuplicator = true
 function ENT:SetupDataTables()
     self:NetworkVar( "Angle", "ModelAngle" )
     self:NetworkVar( "Vector", "ModelScale2" )
+    self:NetworkVar( "Vector", "ModelOffset" )
 
     self:NetworkVar( "Float", "LastSpin" )
     self:NetworkVar( "Float", "LastOffset" )
