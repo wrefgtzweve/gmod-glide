@@ -24,6 +24,37 @@ local function HUDShouldDraw( name )
     if hideComponent[name] then return false end
 end
 
+-- Block binds that uses the same button as these actions
+local ACTION_FILTER = {
+    ["countermeasures"] = true,
+    ["landing_gear"] = true,
+    ["shift_up"] = true,
+    ["shift_down"] = true,
+    ["shift_neutral"] = true,
+    ["headlights"] = true,
+    ["switch_weapon"] = true
+}
+
+local usedButtons = {}
+
+hook.Add( "Glide_OnConfigChange", "Glide.BlockBindConflicts", function()
+    table.Empty( usedButtons )
+
+    for _, actions in pairs( Glide.Config.binds ) do
+        for action, button in pairs( actions ) do
+            if ACTION_FILTER[action] then
+                usedButtons[button] = true
+            end
+        end
+    end
+end )
+
+local function BlockBinds( _, _, _, code )
+    if usedButtons[code] then
+        return true
+    end
+end
+
 local ScrW, ScrH = ScrW, ScrH
 local activeVehicle, activeSeatIndex = NULL, 0
 
@@ -42,6 +73,7 @@ local function OnEnter( vehicle, seatIndex )
     Glide.currentVehicle = vehicle
     Glide.currentSeatIndex = seatIndex
 
+    hook.Add( "PlayerBindPress", "Glide.BlockBinds", BlockBinds )
     hook.Add( "HUDShouldDraw", "Glide.HideDefaultHealth", HUDShouldDraw )
     hook.Add( "HUDPaint", "Glide.DrawVehicleHUD", DrawVehicleHUD )
     hook.Run( "Glide_OnLocalEnterVehicle", vehicle, seatIndex )
@@ -64,6 +96,7 @@ local function OnLeave( ply )
     Glide.currentSeatIndex = nil
     Glide.ResetBoneManipulations( ply )
 
+    hook.Remove( "PlayerBindPress", "Glide.BlockBinds" )
     hook.Remove( "HUDShouldDraw", "Glide.HideDefaultHealth" )
     hook.Remove( "HUDPaint", "Glide.DrawVehicleHUD" )
     hook.Run( "Glide_OnLocalExitVehicle" )

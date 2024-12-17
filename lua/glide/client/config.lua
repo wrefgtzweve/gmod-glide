@@ -128,6 +128,8 @@ function Config:Save( immediate )
     }, true )
 
     Glide.SaveDataFile( "glide.json", data )
+
+    hook.Run( "Glide_OnConfigChange" )
 end
 
 --- Check if the config. data requires migration to a new version.
@@ -213,6 +215,8 @@ function Config:Load()
             end
         end
     end
+
+    hook.Run( "Glide_OnConfigChange" )
 end
 
 --- Send the current input settings to the server.
@@ -249,6 +253,7 @@ Config:Load()
 
 hook.Add( "InitPostEntity", "Glide.TransmitInputSettings", function()
     Config:TransmitInputSettings()
+    hook.Run( "Glide_OnConfigChange" )
 end )
 
 ----------
