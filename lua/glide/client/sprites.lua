@@ -7,11 +7,13 @@ function Glide.DrawLightSprite( pos, dir, size, color )
 end
 
 local Max = math.max
-local EyeVector = EyeVector
+local Clamp = math.Clamp
 
 local SetMaterial = render.SetMaterial
 local DrawSprite = render.DrawSprite
+local DepthRange = render.DepthRange
 
+local GetLocalViewLocation = Glide.GetLocalViewLocation
 local matLight = Material( "glide/effects/light_glow" )
 
 hook.Add( "PreDrawEffects", "Glide.DrawSprites", function()
@@ -19,14 +21,20 @@ hook.Add( "PreDrawEffects", "Glide.DrawSprites", function()
 
     SetMaterial( matLight )
 
-    local dir = -EyeVector()
+    local pos, ang = GetLocalViewLocation()
+    local dir = -ang:Forward()
     local s, dot
 
     for i = 1, spriteCount do
         s = sprites[i]
+
+        -- Make so the sprite draws over things that are right on top of it,
+        -- but does not draw on top of walls when viewed from far away.
+        DepthRange( 0.0, Clamp( pos:DistToSqr( s[1] ) / 200000, 0.999, 1 ) )
+
+        -- Make the sprite smaller as the viewer points away from it
         dot = s[4] and dir:Dot( s[4] ) or 1
         dot = ( dot - 0.5 ) * 2
-
         s[2] = s[2] * Max( 0, dot )
 
         DrawSprite( s[1], s[2], s[2], s[3] )
@@ -35,4 +43,5 @@ hook.Add( "PreDrawEffects", "Glide.DrawSprites", function()
     end
 
     spriteCount = 0
+    DepthRange( 0.0, 1.0 )
 end )
