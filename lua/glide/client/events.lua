@@ -82,6 +82,14 @@ local function OnEnter( vehicle, seatIndex )
         Glide.Print( "Linux system detected, setting snd_fixed_rate to 1" )
         RunConsoleCommand( "snd_fixed_rate", "1" )
     end
+
+    -- Simple ThirdPerson compatibility
+    local func = hook.GetTable()["CalcView"]["SimpleTP.CameraView"]
+
+    if func then
+        Glide.simpleThirdPersonHook = func
+        hook.Remove( "CalcView", "SimpleTP.CameraView" )
+    end
 end
 
 local function OnLeave( ply )
@@ -104,6 +112,11 @@ local function OnLeave( ply )
     if system.IsLinux() then
         Glide.Print( "Linux system detected, setting snd_fixed_rate to 0" )
         RunConsoleCommand( "snd_fixed_rate", "0" )
+    end
+
+    -- Simple ThirdPerson compatibility
+    if Glide.simpleThirdPersonHook then
+        hook.Add( "CalcView", "SimpleTP.CameraView", Glide.simpleThirdPersonHook )
     end
 end
 
