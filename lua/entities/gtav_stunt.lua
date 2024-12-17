@@ -95,22 +95,25 @@ if SERVER then
         self:CreateWheel( Vector( 56, 40.7, -40 ), {
             model = "models/gta5/vehicles/stunt/stunt_wheel.mdl",
             modelScale = Vector( 1, 0.4, 1 ),
-            enableAxleForces = true
-        } ):ChangeRadius( 8 )
+            enableAxleForces = true,
+            radius = 8
+        } )
 
         -- Front right
         self:CreateWheel( Vector( 56, -40.7, -40 ), {
             model = "models/gta5/vehicles/stunt/stunt_wheel.mdl",
             modelScale = Vector( 1, 0.4, 1 ),
-            enableAxleForces = true
-        } ):ChangeRadius( 8 )
+            enableAxleForces = true,
+            radius = 8
+        } )
 
         -- Rear
         self:CreateWheel( Vector( -145, 0, -8 ), {
             model = "models/gta5/vehicles/stunt/stunt_wheel.mdl",
             modelScale = Vector( 1, 0.4, 1 ),
             steerMultiplier = -1,
-            enableAxleForces = true
-        } ):ChangeRadius( 6 )
+            enableAxleForces = true,
+            radius = 6
+        } )
     end
 end
