@@ -1,4 +1,5 @@
 local CurTime = CurTime
+local DEFAULT_TRACER_COLOR = Color( 255, 160, 35 )
 
 function EFFECT:Init( data )
     local origin = data:GetOrigin()
@@ -21,9 +22,18 @@ function EFFECT:Init( data )
     self.traceStart = origin - dir * len * 0.08
     self.traceEnd = endpos + dir * len * 0.08
     self.traceWidth = scale * 15
+    self.traceColor = DEFAULT_TRACER_COLOR
 
     if data:GetFlags() == 1 then
         self.hitSize = scale * 50
+    end
+
+    if data:GetColor() > 0 then
+        self.traceColor = Color(
+            data:GetRadius(),
+            data:GetHitBox(),
+            data:GetMaterialIndex()
+        )
     end
 
     self:SetRenderBoundsWS( origin, endpos )
@@ -41,12 +51,10 @@ function EFFECT:Think()
 end
 
 local TRACE_MATERIAL = Material( "effects/laser_tracer" )
+local SMOKE_COLOR = Color( 40, 40, 40 )
 
 local SetMaterial = render.SetMaterial
 local DrawBeam = render.DrawBeam
-
-local colorTracer = Color( 255, 160, 35 )
-local colorSmoke = Color( 40, 40, 40 )
 
 function EFFECT:Render()
     local anim = ( self.lifeTime - CurTime() ) / 0.3
@@ -54,12 +62,12 @@ function EFFECT:Render()
     SetMaterial( TRACE_MATERIAL )
 
     if anim > 0.9 then
-        DrawBeam( self.traceStart, self.traceEnd, self.traceWidth, 1, 0, colorTracer )
+        DrawBeam( self.traceStart, self.traceEnd, self.traceWidth, 1, 0, self.traceColor )
     end
 
-    colorSmoke[4] = 255 * anim
+    SMOKE_COLOR[4] = 255 * anim
 
-    DrawBeam( self.traceStart, self.traceEnd, self.traceWidth * 6, 1, 0, colorSmoke )
+    DrawBeam( self.traceStart, self.traceEnd, self.traceWidth * 6, 1, 0, SMOKE_COLOR )
 end
 
 local FLAME_MATERIAL = "glide/effects/flamelet"

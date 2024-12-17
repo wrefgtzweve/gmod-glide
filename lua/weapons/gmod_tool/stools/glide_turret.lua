@@ -11,7 +11,11 @@ TOOL.ClientConVar = {
     damage = 5,
     spread = 0.5,
     sound_preset = "minigun",
-    is_explosive = 0
+    is_explosive = 0,
+
+    tracer_r = 255,
+    tracer_g = 160,
+    tracer_b = 35
 }
 
 local SOUND_PRESETS = {
@@ -33,9 +37,14 @@ if SERVER then
         local spread = self:GetClientNumber( "spread" )
         local isExplosive = self:GetClientNumber( "is_explosive" ) > 0
 
+        local r = self:GetClientNumber( "tracer_r", 255 )
+        local g = self:GetClientNumber( "tracer_g", 160 )
+        local b = self:GetClientNumber( "tracer_b", 35 )
+
         ent:SetTurretDelay( delay )
         ent:SetTurretDamage( damage )
         ent:SetTurretSpread( spread )
+        ent:SetTracerColor( r, g, b )
         ent.isExplosive = isExplosive
 
         local preset = SOUND_PRESETS[presetId]
@@ -113,6 +122,14 @@ function TOOL:RightClick( trace )
         ply:ConCommand( "glide_turret_damage " .. damage )
         ply:ConCommand( "glide_turret_spread " .. spread )
         ply:ConCommand( "glide_turret_is_explosive " .. ( isExplosive and "1" or "0" ) )
+
+        local r = ent.tracerColor[1]
+        local g = ent.tracerColor[2]
+        local b = ent.tracerColor[3]
+
+        ply:ConCommand( "glide_turret_tracer_r " .. r )
+        ply:ConCommand( "glide_turret_tracer_g " .. g )
+        ply:ConCommand( "glide_turret_tracer_b " .. b )
     end
 
     return true
@@ -162,4 +179,12 @@ function TOOL.BuildCPanel( panel )
         Label = "#tool.glide_turret.explosive",
         command = "glide_turret_is_explosive"
     } )
+
+    panel:AddControl( "color", {
+        Label = "#tool.glide_turret.tracer_color",
+        red = "glide_turret_tracer_r",
+        green = "glide_turret_tracer_g",
+        blue = "glide_turret_tracer_b",
+        alpha = nil
+    } ).Mixer:SetAlphaBar( false )
 end

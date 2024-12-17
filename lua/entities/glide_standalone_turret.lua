@@ -75,7 +75,8 @@ local ENT_VARS = {
     ["turretDamage"] = true,
     ["turretDelay"] = true,
     ["turretSpread"] = true,
-    ["isExplosive"] = true
+    ["isExplosive"] = true,
+    ["tracerColor"] = true
 }
 
 function ENT:OnEntityCopyTableFinish( data )
@@ -135,6 +136,7 @@ function ENT:Initialize()
     self.turretDelay = 0.05
     self.turretSpread = 0.5
     self.isExplosive = false
+    self.tracerColor = Color( 255, 160, 35 )
 
     self.nextShoot = 0
     self.traceData = { filter = self }
@@ -175,6 +177,7 @@ function ENT:UpdateTurret( t )
         damage = self.turretDamage,
         spread = self.turretSpread,
         isExplosive = self.isExplosive,
+        tracerColor = self.tracerColor,
         scale = 0.5
     }, self.traceData )
 end
@@ -192,6 +195,13 @@ end
 
 function ENT:SetTurretSpread( spread )
     self.turretSpread = math.Clamp( spread, 0, 5 )
+end
+
+function ENT:SetTracerColor( r, g, b )
+    local color = self.tracerColor
+    color.r = math.Clamp( r, 0, 255 )
+    color.g = math.Clamp( g, 0, 255 )
+    color.b = math.Clamp( b, 0, 255 )
 end
 
 function ENT:TriggerInput( name, value )

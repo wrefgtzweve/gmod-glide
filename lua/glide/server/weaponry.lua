@@ -112,6 +112,19 @@ do
         eff:SetScale( params.scale or 1 )
         eff:SetFlags( tr.Hit and 1 or 0 )
         eff:SetEntity( inflictor )
+
+        local color = params.tracerColor
+
+        if color then
+            -- Use some unused EffectData fields for the RGB components
+            eff:SetColor( 1 )
+            eff:SetRadius( color.r )
+            eff:SetHitBox( color.g )
+            eff:SetMaterialIndex( color.b )
+        else
+            eff:SetColor( 0 )
+        end
+
         Effect( "glide_tracer", eff )
 
         local shellDir = params.shellDirection
