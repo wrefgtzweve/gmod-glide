@@ -63,10 +63,10 @@ if SERVER then
     -- Surface rolling resistance multipliers for wheels
     Glide.SURFACE_RESISTANCE = {
         [MAT_DIRT] = 0.2,
-        [MAT_SNOW] = 0.15,
-        [MAT_SAND] = 0.3,
-        [MAT_FOLIAGE] = 0.2,
-        [MAT_GRASS] = 0.2
+        [MAT_SAND] = 0.2,
+        [MAT_SNOW] = 0.2,
+        [MAT_GRASS] = 0.15,
+        [MAT_FOLIAGE] = 0.15
     }
 end
 
