@@ -36,7 +36,7 @@ function TOOL:LeftClick( trace )
             return false
         end
 
-        veh.traceData.mask = MASK_SOLID + MASK_WATER
+        veh.traceData.mask = MASK_SOLID + CONTENTS_WATER
     end
 
     return true
