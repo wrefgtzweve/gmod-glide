@@ -55,20 +55,7 @@ function ENT:OnTurnOff()
         self:EmitSound( self.StoppedSound, 75, 100, 1.0 )
     end
 
-    if self.stream then
-        self.stream:Destroy()
-        self.stream = nil
-    end
-
-    if self.sounds.runDamaged then
-        self.sounds.runDamaged:Stop()
-        self.sounds.runDamaged = nil
-    end
-
-    if self.sounds.turbo then
-        self.sounds.turbo:Stop()
-        self.sounds.turbo = nil
-    end
+    self:DeactivateSounds()
 end
 
 --- Implement this base class function.
@@ -212,7 +199,7 @@ function ENT:OnUpdateSounds()
     if health < 0.4 then
         if sounds.runDamaged then
             sounds.runDamaged:ChangePitch( 100 + self.rpmFraction * 20 )
-            sounds.runDamaged:ChangeVolume( Clamp( ( 1 - health ) + inputs.throttle, 0, 1 ) * 0.5 )
+            sounds.runDamaged:ChangeVolume( Clamp( ( 0.6 - health ) + inputs.throttle, 0, 1 ) * 0.8 )
         else
             local snd = self:CreateLoopingSound( "runDamaged", "glide/engines/run_damaged_1.wav", 75, self )
             snd:PlayEx( 0.5, 100 )
@@ -221,6 +208,19 @@ function ENT:OnUpdateSounds()
     elseif sounds.runDamaged then
         sounds.runDamaged:Stop()
         sounds.runDamaged = nil
+    end
+
+    if health < 0.5 then
+        if sounds.rattle then
+            sounds.rattle:ChangeVolume( Clamp( self.rpmFraction - inputs.throttle, 0, 1 ) * ( 1 - health ) * 0.8 )
+        else
+            local snd = self:CreateLoopingSound( "rattle", "glide/engines/exhaust_rattle.wav", 75, self )
+            snd:PlayEx( 0.5, 100 )
+        end
+
+    elseif sounds.rattle then
+        sounds.rattle:Stop()
+        sounds.rattle = nil
     end
 end
 

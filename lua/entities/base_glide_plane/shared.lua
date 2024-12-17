@@ -63,6 +63,9 @@ if CLIENT then
     ENT.ThrustSoundMinPitch = 80
     ENT.ThrustSoundMaxPitch = 90
 
+    -- Play this sound as the engine health gets depleted
+    ENT.EngineRattleSound = "glide/aircraft/rattle.wav"
+
     ENT.StrobeLights = {}
 
     ENT.StrobeLightColors = {

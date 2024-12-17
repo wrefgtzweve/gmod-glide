@@ -157,4 +157,20 @@ function ENT:OnUpdateSounds()
 
     sounds.distant:ChangePitch( Remap( power, 1, 2, 80, 100 ) )
     sounds.distant:ChangeVolume( vol * power01 )
+
+    -- Handle damaged engine sound
+    local health = self:GetEngineHealth()
+
+    if health < 0.5 then
+        if sounds.rattle then
+            sounds.rattle:ChangeVolume( Clamp( power01 * ( 1 - health ), 0, 1 ) * 0.8 )
+        else
+            local snd = self:CreateLoopingSound( "rattle", self.EngineRattleSound, 85, self )
+            snd:PlayEx( 0.1, 100 )
+        end
+
+    elseif sounds.rattle then
+        sounds.rattle:Stop()
+        sounds.rattle = nil
+    end
 end

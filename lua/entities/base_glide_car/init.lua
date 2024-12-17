@@ -358,7 +358,7 @@ function ENT:OnPostThink( dt )
                 self.damageThrottleCooldown = self.damageThrottleCooldown - dt
             else
                 self.damageThrottleCooldown = math.Rand( 3, 0.2 )
-                Glide.PlaySoundSet( "Glide.Damaged.GearGrind", self, 0.45 - health )
+                Glide.PlaySoundSet( "Glide.Damaged.GearGrind", self, 0.6 - health )
             end
         else
             self.damageThrottleCooldown = nil
