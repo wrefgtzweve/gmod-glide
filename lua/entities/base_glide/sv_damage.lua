@@ -145,8 +145,12 @@ function ENT:PhysicsCollide( data )
     local velocity = data.OurNewVelocity - data.OurOldVelocity
     local hitHormal = data.HitNormal
     local speedNormal = -data.HitSpeed:GetNormalized()
-
     local speed = velocity:Length()
+
+    if self.FallOnCollision then
+        self:PhysicsCollideFall( speed, speedNormal, data )
+    end
+
     if speed < 30 then return end
 
     local ent = data.HitEntity
@@ -195,8 +199,10 @@ function ENT:PhysicsCollide( data )
         dmg:SetDamagePosition( data.HitPos )
         self:TakeDamageInfo( dmg )
     end
+end
 
-    if not self.FallOnCollision then return end
+function ENT:PhysicsCollideFall( speed, speedNormal, data )
+    local ent = data.HitEntity
 
     if IsValid( ent ) then
         if ent:IsPlayer() or ent:IsNPC() then return end
@@ -207,7 +213,7 @@ function ENT:PhysicsCollide( data )
     local relativeHitPos = self:WorldToLocal( data.HitPos )
 
     -- Did the hit come from above the vehicle?
-    if upDot > 0.5 and relativeHitPos[3] > 0 then
+    if upDot > 0.3 and relativeHitPos[3] > 0 then
         speed = speed * 5
 
     -- Did the hit come from below the vehicle?
