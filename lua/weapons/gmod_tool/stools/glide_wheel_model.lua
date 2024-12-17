@@ -185,6 +185,14 @@ function TOOL.BuildCPanel( panel )
     panel:PropSelect( "#tool.glide_wheel_model.rear_model", "glide_wheel_model_rear", models, 3 )
 end
 
+list.Set( "GlideWheelModels", "models/gta5/vehicles/airbus/wheel_front.mdl", { angle = angle_zero, scale = Vector( 1, 0.35, 1 ) } )
+list.Set( "GlideWheelModels", "models/gta5/vehicles/airbus/wheel_rear.mdl", { angle = angle_zero, scale = Vector( 1, 0.35, 1 ) } )
+list.Set( "GlideWheelModels", "models/gta5/vehicles/blazer/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.5, 1, 1 ) } )
+list.Set( "GlideWheelModels", "models/gta5/vehicles/dukes/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
+list.Set( "GlideWheelModels", "models/gta5/vehicles/gauntlet_classic/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
+list.Set( "GlideWheelModels", "models/gta5/vehicles/speedo/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
+list.Set( "GlideWheelModels", "models/gta5/vehicles/stunt/stunt_wheel.mdl", { angle = Angle( 0, 180, 0 ), scale = Vector( 1, 0.6, 1 ) } )
+
 list.Set( "GlideWheelModels", "models/mechanics/wheels/bmw.mdl", {} )
 list.Set( "GlideWheelModels", "models/mechanics/wheels/rim_1.mdl", {} )
 list.Set( "GlideWheelModels", "models/mechanics/wheels/tractors.mdl", {} )
