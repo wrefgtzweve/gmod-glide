@@ -26,8 +26,6 @@ function ENT:OnPostInitialize()
     params.suspensionLength = 10
     params.springStrength = 1000
     params.springDamper = 4000
-
-    -- TODO: traction parameters
 end
 
 --- Override this base class function.

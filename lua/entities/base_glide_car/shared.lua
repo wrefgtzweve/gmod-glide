@@ -203,11 +203,8 @@ if SERVER then
     -- Bodygroup toggles for break, reverse and headlights
     ENT.LightBodygroups = {}
 
-    -- Extra force applied when slipping sideways
-    ENT.ExtraCorneringForce = 20
-
     -- How much force to apply when trying to turn while doing a burnout?
-    ENT.BurnoutForce = 45
+    ENT.BurnoutForce = 35
 
     -- How much force to apply when the driver tries to unflip the vehicle?
     ENT.UnflipForce = 3

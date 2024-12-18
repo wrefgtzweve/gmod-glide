@@ -163,8 +163,13 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetSteerConeChangeRate( 10 )
-        self:SetSteerConeMaxSpeed( 1000 )
+        self:SetSteerConeMaxAngle( 0.2 )
+        self:SetSteerConeMaxSpeed( 800 )
+
+        self:SetTractionBias( -0.1 )
+        self:SetTractionCurveMinAng( 50 )
+        self:SetTractionCurveMin( 2000 )
+        self:SetTractionCurveMax( 1000 )
 
         self:SetPowerDistribution( -0.7 )
         self:SetDifferentialRatio( 1.2 )

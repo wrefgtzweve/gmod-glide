@@ -111,9 +111,10 @@ if SERVER then
         self:SetMinRPMTorque( 1100 )
         self:SetMaxRPMTorque( 1200 )
 
-        self:SetSlipForce( 110 )
-        self:SetExtremumValue( 6 )
-        self:SetAsymptoteValue( 2.5 )
+        self:SetTractionBias( -0.25 )
+        self:SetTractionMultiplier( 60 )
+        self:SetTractionCurveMin( 3000 )
+        self:SetTractionCurveMax( 2500 )
 
         self:CreateSeat( Vector( 230, 35.5, -4 ), Angle( 0, 270, -5 ), Vector( 250, -100, 5 ), true )
 

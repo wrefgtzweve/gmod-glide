@@ -18,10 +18,11 @@ function ENT:WheelInit()
         brakePower = 3000,
 
         -- Side traction
-        tractionMultiplier = 30,
-        tractionCurveMinAng = 60,
-        tractionCurveMin = 2800.0,
-        tractionCurveMax = 1600.0
+        tractionMultiplier = 25,
+        tractionCurveMinAng = 25,
+        tractionCurveMin = 3000,
+        tractionCurveMax = 900,
+        tractionExtra = 2
     }
 end
 

@@ -40,7 +40,7 @@ if SERVER then
     ENT.AirMaxAngularVelocity = Vector( 600, 600, 500 ) -- Roll, pitch, yaw
 
     -- Bike-specific variables
-    ENT.TiltForce = 600
+    ENT.TiltForce = 550
     ENT.YawDrag = -5
 
     ENT.KeepUprightForce = 1500

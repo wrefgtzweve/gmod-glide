@@ -51,7 +51,7 @@ if SERVER then
 
     ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
     ENT.ChassisMass = 900
-    ENT.BurnoutForce = 50
+    ENT.BurnoutForce = 30
 
     ENT.AirControlForce = Vector( 0.4, 0.2, 0.1 ) -- Roll, pitch, yaw
     ENT.AirMaxAngularVelocity = Vector( 200, 200, 150 ) -- Roll, pitch, yaw
@@ -66,11 +66,11 @@ if SERVER then
         self:SetWheelInertia( 10 )
         self:SetSpringStrength( 700 )
         self:SetSteerConeMaxSpeed( 1000 )
-        self:SetAsymptoteValue( 1.5 )
+        self:SetTractionBias( -0.15 )
 
         self:SetDifferentialRatio( 2.3 )
         self:SetTransmissionEfficiency( 0.75 )
-        self:SetPowerDistribution( -0.75 )
+        self:SetPowerDistribution( 0.8 )
         self:SetBrakePower( 3000 )
 
         self:SetMinRPMTorque( 1000 )

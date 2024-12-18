@@ -280,6 +280,7 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     maxTraction = TractionCurve( slipAngle )
     sideTraction = -rt:Dot( vel * params.tractionMultiplier )
     sideTraction = Clamp( sideTraction, -maxTraction, maxTraction )
+    sideTraction = sideTraction - velR * params.tractionExtra
 
     force:Add( sideTraction * tractionMult * rt )
 

@@ -54,7 +54,7 @@ function ENT:OnPostInitialize()
     self:SetBrakePower( params.brakePower )
 
     -- Side traction parameters
-    self:SetTractionBias( -0.15 )
+    self:SetTractionBias( 0.0 )
     self:SetTractionMultiplier( params.tractionMultiplier )
     self:SetTractionCurveMinAng( params.tractionCurveMinAng )
     self:SetTractionCurveMin( params.tractionCurveMin )
@@ -507,19 +507,6 @@ function ENT:CreateWheel( offset, params )
     self.shouldUpdatePowerDistribution = true
 
     return wheel
-end
-
---- Implement this base class function.
-function ENT:OnSimulatePhysics( phys, dt, outLin, _ )
-    if self.groundedCount < 1 then return end
-
-    local rt = self:GetRight()
-    local cornerForce = rt:Dot( phys:GetVelocity() ) * phys:GetMass() * self.ExtraCorneringForce
-    local force = ( self:GetForward() * Abs( cornerForce ) ) - ( cornerForce * rt )
-
-    outLin[1] = outLin[1] + force[1] * dt
-    outLin[2] = outLin[2] + force[2] * dt
-    outLin[3] = outLin[3] + force[3] * dt
 end
 
 local traction, tractionFront, tractionRear

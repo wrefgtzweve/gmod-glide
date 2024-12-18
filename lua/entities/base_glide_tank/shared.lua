@@ -130,7 +130,7 @@ if SERVER then
     ENT.EngineTorque = 40000
 
     -- How much extra torque to apply when trying to spin in place?
-    ENT.SpinEngineTorqueMultiplier = 2
+    ENT.SpinEngineTorqueMultiplier = 3
 
     ENT.MaxSpeed = 700
     ENT.MaxSteerAngle = 35

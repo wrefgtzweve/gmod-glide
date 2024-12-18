@@ -122,7 +122,7 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
     ENT.StartupTime = 0.5
 
-    ENT.BurnoutForce = 150
+    ENT.BurnoutForce = 160
     ENT.WheelieForce = 400
 
     ENT.LightBodygroups = {
@@ -135,6 +135,7 @@ if SERVER then
         self:SetDifferentialRatio( 1.8 )
         self:SetBrakePower( 2000 )
         self:SetWheelInertia( 9 )
+        self:SetTractionBias( -0.35 )
 
         self:SetMaxRPM( 15000 )
         self:SetMinRPMTorque( 500 )

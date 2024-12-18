@@ -17,17 +17,16 @@ function ENT:OnPostInitialize()
 
     -- Change steering parameters to better suit bikes
     self:SetSteerConeChangeRate( 10 )
-    self:SetSteerConeMaxSpeed( 1000 )
+    self:SetSteerConeMaxSpeed( 1200 )
     self:SetSteerConeMaxAngle( 0.15 )
     self:SetPowerDistribution( -1 )
 
-    -- Change slip parameters to better suit bikes
-    self:SetExtremumValue( 7 )
-    self:SetAsymptoteSlip( 0.8 )
-    self:SetAsymptoteValue( 3 )
-
-    self:SetMaxSlip( 35 )
-    self:SetSlipForce( 50 )
+    -- Change traction parameters to better suit bikes
+    self:SetTractionBias( -0.3 )
+    self:SetTractionMultiplier( 50 )
+    self:SetTractionCurveMinAng( 70 )
+    self:SetTractionCurveMin( 4500 )
+    self:SetTractionCurveMax( 3500 )
 end
 
 function ENT:SetStaySpright( toggle )

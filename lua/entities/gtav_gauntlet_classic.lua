@@ -61,7 +61,7 @@ if SERVER then
     duplicator.RegisterEntityClass( "gtav_gauntlet_classic", Glide.VehicleFactory, "Data" )
 
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
-    ENT.BurnoutForce = 65
+    ENT.BurnoutForce = 40
 
     function ENT:GetGears()
         return {
@@ -83,8 +83,9 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetWheelInertia( 9 )
+        self:SetWheelInertia( 10 )
         self:SetDifferentialRatio( 1.9 )
+        self:SetTractionMultiplier( 30 )
 
         self:SetMaxRPM( 25000 )
         self:SetMinRPMTorque( 1200 )
