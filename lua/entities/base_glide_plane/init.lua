@@ -27,10 +27,7 @@ function ENT:OnPostInitialize()
     params.springStrength = 1000
     params.springDamper = 4000
 
-    params.maxSlip = 20
-    params.slipForce = 50
-    params.extremumValue = 4
-    params.asymptoteValue = 2
+    -- TODO: traction parameters
 end
 
 --- Override this base class function.

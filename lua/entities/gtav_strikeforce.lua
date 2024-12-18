@@ -212,7 +212,6 @@ if SERVER then
         self.wheelParams.suspensionLength = 38
         self.wheelParams.springStrength = 1500
         self.wheelParams.springDamper = 6000
-        self.wheelParams.maxSlip = 40
         self.wheelParams.brakePower = 2000
 
         -- Front

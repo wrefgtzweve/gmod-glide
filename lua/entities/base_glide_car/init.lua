@@ -53,14 +53,12 @@ function ENT:OnPostInitialize()
     -- Brake coefficient
     self:SetBrakePower( params.brakePower )
 
-    -- Static friction parameters
-    self:SetMaxSlip( params.maxSlip )
-    self:SetSlipForce( params.slipForce )
-
-    -- Dynamic friction/slip curve parameters
-    self:SetExtremumValue( params.extremumValue )
-    self:SetAsymptoteSlip( params.asymptoteSlip )
-    self:SetAsymptoteValue( params.asymptoteValue )
+    -- Side traction parameters
+    self:SetTractionBias( -0.15 )
+    self:SetTractionMultiplier( params.tractionMultiplier )
+    self:SetTractionCurveMinAng( params.tractionCurveMinAng )
+    self:SetTractionCurveMin( params.tractionCurveMin )
+    self:SetTractionCurveMax( params.tractionCurveMax )
 
     -- Fake engine parameters
     self:SetMinRPM( 2000 )
@@ -97,12 +95,10 @@ function ENT:UpdateWheelParameters()
     p.brakePower = self:GetBrakePower()
     p.inertia = self:GetWheelInertia()
 
-    p.maxSlip = self:GetMaxSlip()
-    p.slipForce = self:GetSlipForce()
-
-    p.extremumValue = self:GetExtremumValue()
-    p.asymptoteSlip = self:GetAsymptoteSlip()
-    p.asymptoteValue = self:GetAsymptoteValue()
+    p.tractionMultiplier = self:GetTractionMultiplier()
+    p.tractionCurveMinAng = self:GetTractionCurveMinAng()
+    p.tractionCurveMin = self:GetTractionCurveMin()
+    p.tractionCurveMax = self:GetTractionCurveMax()
 end
 
 --- Implement this base class function.
@@ -429,10 +425,13 @@ function ENT:UpdateSteering( dt )
     local absInputSteer = Abs( inputSteer )
 
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
-    local steerConeFactor = Clamp( self.forwardSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
+    local steerConeFactor = Clamp( self.totalSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
 
-    -- Limit the input depending on speed
+    -- Limit the input depending on speed...
     local steerCone = 1 - steerConeFactor * ( 1 - self:GetSteerConeMaxAngle() )
+
+    -- But only while not slipping.
+    steerCone = Clamp( steerCone, Abs( sideSlip ), 1 )
     inputSteer = ExpDecay( self.inputSteer, inputSteer * steerCone, self:GetSteerConeChangeRate(), dt )
 
     self.inputSteer = inputSteer
@@ -510,6 +509,20 @@ function ENT:CreateWheel( offset, params )
     return wheel
 end
 
+--- Implement this base class function.
+function ENT:OnSimulatePhysics( phys, dt, outLin, _ )
+    if self.groundedCount < 1 then return end
+
+    local rt = self:GetRight()
+    local cornerForce = rt:Dot( phys:GetVelocity() ) * phys:GetMass() * self.ExtraCorneringForce
+    local force = ( self:GetForward() * Abs( cornerForce ) ) - ( cornerForce * rt )
+
+    outLin[1] = outLin[1] + force[1] * dt
+    outLin[2] = outLin[2] + force[2] * dt
+    outLin[3] = outLin[3] + force[3] * dt
+end
+
+local traction, tractionFront, tractionRear
 local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake, frontVelMult, rearVelMult
 local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip
 
@@ -518,6 +531,10 @@ function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = IsValid( phys ) and phys:IsAsleep()
     local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
+
+    traction = self:GetTractionBias()
+    tractionFront = 1 + Clamp( traction, -1, 0 )
+    tractionRear = 1 - Clamp( traction, 0, 1 )
 
     frontTorque = self.availableFrontTorque
     rearTorque = self.availableRearTorque
@@ -539,6 +556,7 @@ function ENT:WheelThink( dt )
         w.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
         w.brake = w.isFrontWheel and frontBrake or rearBrake
         w.angularVelocity = w.angularVelocity * ( w.isFrontWheel and frontVelMult or rearVelMult )
+        w.tractionMult = w.isFrontWheel and tractionFront or tractionRear
 
         if rpm > maxRPM then
             w:SetRPM( maxRPM )

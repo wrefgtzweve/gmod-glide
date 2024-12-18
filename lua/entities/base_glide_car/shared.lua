@@ -101,12 +101,11 @@ function ENT:SetupDataTables()
     AddFloatVar( "SpringStrength", 100, 5000, "#glide.editvar.suspension" )
     AddFloatVar( "SpringDamper", 100, 10000, "#glide.editvar.suspension" )
 
-    AddFloatVar( "MaxSlip", 5, 50, "#glide.editvar.static_friction" )
-    AddFloatVar( "SlipForce", 10, 500, "#glide.editvar.static_friction" )
-
-    AddFloatVar( "ExtremumValue", 0.5, 10, "#glide.editvar.dynamic_friction" )
-    AddFloatVar( "AsymptoteSlip", 0, 1, "#glide.editvar.dynamic_friction" )
-    AddFloatVar( "AsymptoteValue", 0.5, 5, "#glide.editvar.dynamic_friction" )
+    AddFloatVar( "TractionBias", -1, 1, "#glide.editvar.traction" )
+    AddFloatVar( "TractionMultiplier", 5, 100, "#glide.editvar.traction" )
+    AddFloatVar( "TractionCurveMinAng", 5, 90, "#glide.editvar.traction" )
+    AddFloatVar( "TractionCurveMin", 100, 5000, "#glide.editvar.traction" )
+    AddFloatVar( "TractionCurveMax", 100, 5000, "#glide.editvar.traction" )
 
     if SERVER then
         -- Callback used to change the wheel radius
@@ -204,6 +203,9 @@ if SERVER then
     -- Bodygroup toggles for break, reverse and headlights
     ENT.LightBodygroups = {}
 
+    -- Extra force applied when slipping sideways
+    ENT.ExtraCorneringForce = 20
+
     -- How much force to apply when trying to turn while doing a burnout?
     ENT.BurnoutForce = 45
 
@@ -250,12 +252,11 @@ if SERVER then
         SpringStrength = true,
         SpringDamper = true,
 
-        MaxSlip = true,
-        SlipForce = true,
-
-        ExtremumValue = true,
-        AsymptoteSlip = true,
-        AsymptoteValue = true,
+        TractionBias = true,
+        TractionMultiplier = true,
+        TractionCurveMinAng = true,
+        TractionCurveMin = true,
+        TractionCurveMax = true,
 
         MinRPM = true,
         MaxRPM = true,

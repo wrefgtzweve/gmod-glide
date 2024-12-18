@@ -97,15 +97,15 @@ do
 end
 
 do
-    -- Slip curve logic
+    -- Traction curve logic
     local Pow = math.pow
     local ay, bx, by = 1.0, 0.5, 0.25
 
-    function Glide.SetupSlipParams( t )
-        ay, bx, by = t.extremumValue, t.asymptoteSlip, t.asymptoteValue
+    function Glide.SetupTraction( t )
+        ay, bx, by = t.tractionCurveMin, t.tractionCurveMinAng / 90, t.tractionCurveMax
     end
 
-    function Glide.SlipCurve( x )
+    function Glide.TractionCurve( x )
         return x > bx and by or ( 3 * Pow( x / bx, 2 ) - 2 * Pow( x / bx, 3 ) ) * ( by - ay ) + ay
     end
 end

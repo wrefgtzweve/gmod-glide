@@ -130,7 +130,7 @@ function ENT:UpdateUnflip( _phys, _dt ) end
 
 local WORLD_UP = Vector( 0, 0, 1 )
 
---- Implement this base class function.
+--- Override this base class function.
 function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     if not self.stayUpright then return end
 
@@ -182,7 +182,7 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     outAng[1] = outAng[1] + angVel[1] * mass * self.KeepUprightDrag
     outAng[1] = outAng[1] + dot * mass * self.KeepUprightForce
 
-    local revForce = self:GetForward() * phys:GetMass() * self.reverseInput * -500
+    local revForce = self:GetForward() * mass * self.reverseInput * -500
 
     outLin[1] = outLin[1] + revForce[1]
     outLin[2] = outLin[2] + revForce[2]

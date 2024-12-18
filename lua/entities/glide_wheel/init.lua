@@ -15,6 +15,9 @@ function ENT:Initialize()
     -- Should torque change the angular velocity of the wheel? (Can it do a burnout?)
     self.enableTorqueInertia = false
 
+    -- Traction multiplier, used for traction bias on cars
+    self.tractionMult = 1
+
     self.isOnGround = false
     self.lastFraction = 1
     self.lastSpringOffset = 0
@@ -163,13 +166,14 @@ local TAU = math.pi * 2
 local Atan2 = math.atan2
 local Approach = math.Approach
 local TraceHull = util.TraceHull
-local SlipCurve = Glide.SlipCurve
+local TractionCurve = Glide.TractionCurve
 
 -- Temporary variables
 local pos, ang, fw, rt, up, radius
 local maxLen, ray, fraction, contactPos, surfaceId
-local vel, velF, velR, dot, offset, springForce, damperForce
-local brake, slip, groundAngularVelocity, forwardSlip, gripMult
+local vel, velF, velR, upDotNormal, offset, springForce, damperForce
+local brake, groundAngularVelocity, forwardSlip
+local tractionMult, slipAngle, maxTraction, sideTraction
 local force, linearImp, angularImp
 
 function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
@@ -233,6 +237,11 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     velF = fw:Dot( vel )
     velR = rt:Dot( vel )
 
+    -- Calculate side slip angle
+    slipAngle = ( Atan2( velR, Abs( velF ) ) / PI ) * 2
+    self:SetSideSlip( slipAngle * Clamp( vehicle.totalSpeed * 0.005, 0, 1 ) * 2 )
+    slipAngle = Abs( slipAngle )
+
     -- Suspension spring force & damping
     offset = maxLen - ( fraction * maxLen )
     springForce = ( offset * params.springStrength )
@@ -240,20 +249,20 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
 
     self.lastSpringOffset = offset
 
-    dot = up:Dot( ray.HitNormal )
-    force = ( springForce - damperForce ) * dot * ray.HitNormal
+    upDotNormal = up:Dot( ray.HitNormal )
+    force = ( springForce - damperForce ) * upDotNormal * ray.HitNormal
 
     -- Torque & brake forces
     fw = -rt:Cross( ray.HitNormal )
     brake = self.brake
 
-    force:Add( ( 1 - brake ) * self.torque * fw )
-    force:Add( ( velF > 0 and -brake or brake ) * params.brakePower * fw )
+    force:Add( ( 1 - brake ) * self.torque * ( 1 - slipAngle * 0.5 ) * fw )
+    force:Add( ( velF > 0 and -brake or brake ) * params.brakePower * ( 1 - slipAngle ) * fw )
 
     -- Rolling resistance
     force:Add( ( SURFACE_RESISTANCE[surfaceId] or 0.05 ) * fw * -velF )
 
-    -- Get how fast the wheel would be spinning if it weren't slipping
+    -- Get how fast the wheel would be spinning if it was not slipping
     groundAngularVelocity = TAU * ( velF / ( radius * TAU ) )
 
     -- Smoothly match our angular velocity to the ground angular velocity
@@ -264,18 +273,15 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
 
     self:SetForwardSlip( forwardSlip )
 
-    -- Dynamic friction
-    gripMult = dot * ( SURFACE_GRIP[surfaceId] or 1 )
-    slip = ( Atan2( velR, Abs( velF ) ) / PI ) * 2
-    force:Add( SlipCurve( Abs( slip ) ) * -velR * gripMult * rt )
+    -- Traction
+    tractionMult = self.tractionMult * upDotNormal * ( SURFACE_GRIP[surfaceId] or 1 )
+    tractionMult = tractionMult * ( 1 - Clamp( Abs( forwardSlip ) / 20, 0, 1 ) * 0.8 )
 
-    self:SetSideSlip( slip * Clamp( vehicle.totalSpeed * 0.002, 0, 1 ) * 2 )
+    maxTraction = TractionCurve( slipAngle )
+    sideTraction = -rt:Dot( vel * params.tractionMultiplier )
+    sideTraction = Clamp( sideTraction, -maxTraction, maxTraction )
 
-    -- Static friction
-    gripMult = gripMult * ( 1 - Clamp( Abs( forwardSlip ) / 30, 0, 1 ) )
-
-    force:Add( Clamp( -velR, -params.maxSlip, params.maxSlip ) * params.slipForce * gripMult * rt )
-    --force:Add( ( velR > 0 and -1 or 1 ) * params.slipForce * rt )
+    force:Add( sideTraction * tractionMult * rt )
 
     -- Apply the forces at the axle/ground contact position
     linearImp, angularImp = phys:CalculateForceOffset( force, pos )

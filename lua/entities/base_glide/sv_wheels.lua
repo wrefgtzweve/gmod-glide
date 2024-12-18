@@ -6,20 +6,22 @@ function ENT:WheelInit()
 
     -- Store these values on a table that wheels can access.
     self.wheelParams = self.wheelParams or {
+        -- Suspension
         suspensionLength = 10,
         springStrength = 800,
         springDamper = 3000,
-        brakePower = 2000,
+
+        -- Wheel mass
         inertia = 10,
 
-        -- Static friction
-        maxSlip = 20,
-        slipForce = 80,
+        -- Brake force
+        brakePower = 3000,
 
-        -- Dynamic friction
-        extremumValue = 4.0,
-        asymptoteSlip = 0.5,
-        asymptoteValue = 1.2
+        -- Side traction
+        tractionMultiplier = 30,
+        tractionCurveMinAng = 60,
+        tractionCurveMin = 2800.0,
+        tractionCurveMax = 1600.0
     }
 end
 
@@ -69,7 +71,7 @@ end
 
 local Clamp = math.Clamp
 local ClampForce = Glide.ClampForce
-local SetupSlipParams = Glide.SetupSlipParams
+local SetupTraction = Glide.SetupTraction
 
 local linForce, angForce = Vector(), Vector()
 
@@ -92,7 +94,7 @@ function ENT:PhysicsSimulate( phys, dt )
         local traceData = self.traceData
         local params = self.wheelParams
 
-        SetupSlipParams( params )
+        SetupTraction( params )
 
         for _, w in ipairs( self.wheels ) do
             w:DoPhysics( self, phys, params, traceData, linForce, angForce, dt )
