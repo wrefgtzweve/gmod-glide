@@ -49,8 +49,8 @@ hook.Add( "Glide_OnConfigChange", "Glide.BlockBindConflicts", function()
     end
 end )
 
-local function BlockBinds( _, _, _, code )
-    if usedButtons[code] then
+local function BlockBinds( _, bind, _, code )
+    if usedButtons[code] and bind ~= "+reload" then
         return true
     end
 end
