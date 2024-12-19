@@ -451,7 +451,10 @@ function ENT:SimulatePlane( phys, dt, params, effective, outLin, outAng )
     outAng[3] = outAng[3] - self.inputYaw * params.yawForce * mass * controllability * effective
 end
 
+--- Override this base class function.
 function ENT:TriggerInput( name, value )
+    BaseClass.TriggerInput( self, name, value )
+
     if name == "Ignition" then
         local isOn = value > 0
 

@@ -558,7 +558,10 @@ end
 
 local Floor = math.floor
 
+--- Override this base class function.
 function ENT:TriggerInput( name, value )
+    BaseClass.TriggerInput( self, name, value )
+
     if name == "Ignition" then
         -- Avoid continous triggers
         self.wireSetEngineOn = value > 0

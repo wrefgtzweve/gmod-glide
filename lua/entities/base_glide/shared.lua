@@ -196,8 +196,11 @@ if SERVER then
     -- Children classes can override this function, but they should
     -- call `BaseClass.SetupWiremodPorts( self, inputs, outputs )` before
     -- adding their own entries to these inputs/outputs tables.
-    function ENT:SetupWiremodPorts( _inputs, outputs )
-        -- Output name, output type, output description (optional)
+    function ENT:SetupWiremodPorts( inputs, outputs )
+        -- Input name, input type, input description
+        inputs[#inputs + 1] = { "EjectDriver", "NORMAL", "When set to 1, kicks the driver out of the vehicle" }
+
+        -- Output name, output type, output description
         outputs[#outputs + 1] = { "MaxChassisHealth", "NORMAL", "Max. chassis health" }
         outputs[#outputs + 1] = { "ChassisHealth", "NORMAL", "Current chassis health (between 0.0 and MaxChassisHealth)" }
         outputs[#outputs + 1] = { "EngineHealth", "NORMAL", "Current engine health (between 0.0 and 1.0)" }

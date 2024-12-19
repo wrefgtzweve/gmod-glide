@@ -468,3 +468,17 @@ function ENT:UpdateHealthOutputs()
     TriggerOutput( self, "ChassisHealth", self:GetChassisHealth() )
     TriggerOutput( self, "EngineHealth", self:GetEngineHealth() )
 end
+
+function ENT:TriggerInput( name, value )
+    if name == "EjectDriver" and value > 0 then
+        local seat = self.seats[1]
+
+        if IsValid( seat ) then
+            local driver = seat:GetDriver()
+
+            if IsValid( driver ) then
+                driver:ExitVehicle()
+            end
+        end
+    end
+end
