@@ -163,7 +163,7 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetSteerConeMaxAngle( 0.2 )
+        self:SetSteerConeMaxAngle( 0.3 )
         self:SetSteerConeMaxSpeed( 800 )
 
         self:SetTractionBias( -0.1 )

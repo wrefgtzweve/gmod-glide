@@ -273,10 +273,16 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
 
     self:SetForwardSlip( forwardSlip )
 
-    -- Traction
-    tractionMult = self.tractionMult * upDotNormal * ( SURFACE_GRIP[surfaceId] or 1 )
+    -- Reduce traction as the suspension spring applies less force
+    tractionMult = self.tractionMult * Clamp( ( springForce * 0.5 ) / params.springStrength, 0, 1 )
+
+    -- Reduce traction depending on the surface grip constant and normal dot product
+    tractionMult = tractionMult * upDotNormal * ( SURFACE_GRIP[surfaceId] or 1 )
+
+    -- Reduce traction as the wheel slips forwards due to torque/brake
     tractionMult = tractionMult * ( 1 - Clamp( Abs( forwardSlip ) / 20, 0, 1 ) * 0.8 )
 
+    -- Sideways traction curve
     maxTraction = TractionCurve( slipAngle )
     sideTraction = -rt:Dot( vel * params.tractionMultiplier )
     sideTraction = Clamp( sideTraction, -maxTraction, maxTraction )
