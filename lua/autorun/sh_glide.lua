@@ -150,7 +150,7 @@ if CLIENT then
         [MAT_SLOSH] = "glide/wheels/side_skid_road_wet.wav",
         [MAT_GRASS] = "physics/body/body_medium_scrape_smooth_loop1.wav",
         [MAT_VENT] = "physics/metal/metal_box_scrape_smooth_loop1.wav",
-        -- [MAT_WOOD] = "physics/wood/wood_solid_scrape_rough_loop1.wav", -- TODO: Find better sound
+        [MAT_WOOD] = "glide/wheels/side_skid_wood.wav",
         [MAT_GLASS] = "physics/metal/metal_grenade_scrape_rough_loop1.wav"
     }
 end
