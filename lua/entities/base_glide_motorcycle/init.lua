@@ -16,9 +16,11 @@ function ENT:OnPostInitialize()
     self.reverseInput = 0
 
     -- Change steering parameters to better suit bikes
+    self:SetMaxSteerAngle( 30 )
     self:SetSteerConeChangeRate( 10 )
     self:SetSteerConeMaxSpeed( 1200 )
     self:SetSteerConeMaxAngle( 0.15 )
+    self:SetCounterSteer( 0.5 )
     self:SetPowerDistribution( -1 )
 
     -- Change traction parameters to better suit bikes

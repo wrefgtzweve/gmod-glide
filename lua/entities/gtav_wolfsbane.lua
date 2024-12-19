@@ -135,6 +135,7 @@ if SERVER then
         self:SetDifferentialRatio( 1.8 )
         self:SetBrakePower( 2000 )
         self:SetWheelInertia( 9 )
+        self:SetMaxSteerAngle( 25 )
         self:SetTractionBias( -0.35 )
 
         self:SetMaxRPM( 15000 )

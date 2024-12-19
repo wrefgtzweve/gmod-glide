@@ -79,6 +79,7 @@ function ENT:SetupDataTables()
     AddFloatVar( "SteerConeChangeRate", 2, 20, "#glide.editvar.steering" )
     AddFloatVar( "SteerConeMaxSpeed", 100, 5000, "#glide.editvar.steering" )
     AddFloatVar( "SteerConeMaxAngle", 0.05, 0.9, "#glide.editvar.steering" )
+    AddFloatVar( "CounterSteer", 0, 1, "#glide.editvar.steering" )
 
     -- Fake engine parameters
     AddBoolVar( "TurboCharged", "#glide.editvar.engine" )

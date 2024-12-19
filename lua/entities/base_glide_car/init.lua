@@ -75,6 +75,7 @@ function ENT:OnPostInitialize()
     self:SetSteerConeChangeRate( 8 )
     self:SetSteerConeMaxSpeed( 1800 )
     self:SetSteerConeMaxAngle( 0.25 )
+    self:SetCounterSteer( 0.1 )
 
     -- Update wheel parameters next tick
     self.shouldUpdateWheelParams = true
@@ -436,7 +437,7 @@ function ENT:UpdateSteering( dt )
     -- Counter-steer when slipping, going fast and not using steer input
     local counterSteer = sideSlip * steerConeFactor * ( 1 - absInputSteer )
 
-    counterSteer = Clamp( counterSteer, -0.5, 0.5 )
+    counterSteer = Clamp( counterSteer, -1, 1 ) * self:GetCounterSteer()
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
     self.steerAngle[2] = -inputSteer * self:GetMaxSteerAngle()
