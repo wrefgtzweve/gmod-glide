@@ -122,8 +122,11 @@ local cvarMinDelay = GetConVar( "glide_projectile_launcher_min_delay" )
 local cvarMaxRadius = GetConVar( "glide_projectile_launcher_max_radius" )
 local cvarMaxDamage = GetConVar( "glide_projectile_launcher_max_damage" )
 
+local conVarsDefault = TOOL:BuildConVarList()
+
 function TOOL.BuildCPanel( panel )
-    panel:AddControl( "header", { Description = "#tool.glide_projectile_launcher.desc" } )
+    panel:Help( "#tool.glide_projectile_launcher.desc" )
+    panel:ToolPresets( "glide_projectile_launcher", conVarsDefault )
 
     panel:AddControl( "slider", {
         Label = "#tool.glide_projectile_launcher.speed",

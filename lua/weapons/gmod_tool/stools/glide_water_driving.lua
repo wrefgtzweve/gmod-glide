@@ -54,5 +54,5 @@ function TOOL:RightClick( trace )
 end
 
 function TOOL.BuildCPanel( panel )
-    panel:AddControl( "Header", { Description = "#tool.glide_water_driving.desc" } )
+    panel:Help( "#tool.glide_water_driving.desc" )
 end

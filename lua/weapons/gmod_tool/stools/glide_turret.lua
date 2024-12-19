@@ -138,8 +138,11 @@ end
 local cvarMaxDamage = GetConVar( "glide_turret_max_damage" )
 local cvarMinDelay = GetConVar( "glide_turret_min_delay" )
 
+local conVarsDefault = TOOL:BuildConVarList()
+
 function TOOL.BuildCPanel( panel )
-    panel:AddControl( "header", { Description = "#tool.glide_turret.desc" } )
+    panel:Help( "#tool.glide_turret.desc" )
+    panel:ToolPresets( "glide_turret", conVarsDefault )
 
     local options = {}
 

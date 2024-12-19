@@ -96,8 +96,11 @@ local cvarMaxLifetime = GetConVar( "glide_missile_launcher_max_lifetime" )
 local cvarMaxRadius = GetConVar( "glide_missile_launcher_max_radius" )
 local cvarMaxDamage = GetConVar( "glide_missile_launcher_max_damage" )
 
+local conVarsDefault = TOOL:BuildConVarList()
+
 function TOOL.BuildCPanel( panel )
-    panel:AddControl( "header", { Description = "#tool.glide_missile_launcher.desc" } )
+    panel:Help( "#tool.glide_missile_launcher.desc" )
+    panel:ToolPresets( "glide_missile_launcher", conVarsDefault )
 
     panel:AddControl( "slider", {
         Label = "#tool.glide_missile_launcher.delay",
