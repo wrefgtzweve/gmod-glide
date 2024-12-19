@@ -85,6 +85,7 @@ if SERVER then
     function ENT:CreateFeatures()
         self:SetWheelInertia( 10 )
         self:SetDifferentialRatio( 1.9 )
+        self:SetTractionBias( 0.05 )
         self:SetTractionMultiplier( 30 )
 
         self:SetMaxRPM( 25000 )

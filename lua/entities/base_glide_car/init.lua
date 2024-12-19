@@ -54,7 +54,7 @@ function ENT:OnPostInitialize()
     self:SetBrakePower( params.brakePower )
 
     -- Side traction parameters
-    self:SetTractionBias( 0.0 )
+    self:SetTractionBias( -0.05 )
     self:SetTractionMultiplier( params.tractionMultiplier )
     self:SetTractionCurveMinAng( params.tractionCurveMinAng )
     self:SetTractionCurveMin( params.tractionCurveMin )
