@@ -102,9 +102,10 @@ if SERVER then
 
         self:SetBrakePower( 2500 )
         self:SetWheelInertia( 8 )
-        self:SetMaxSteerAngle( 45 )
+        self:SetMaxSteerAngle( 60 )
         self:SetSteerConeChangeRate( 6 )
-        self:SetSteerConeMaxSpeed( 700 )
+        self:SetSteerConeMaxSpeed( 500 )
+        self:SetSteerConeMaxAngle( 0.2 )
 
         self:SetMinRPM( 1000 )
         self:SetMaxRPM( 8000 )

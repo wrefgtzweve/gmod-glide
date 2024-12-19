@@ -19,7 +19,7 @@ function ENT:WheelInit()
 
         -- Side traction
         tractionMultiplier = 25,
-        tractionCurveMinAng = 30,
+        tractionCurveMinAng = 20,
         tractionCurveMin = 3500,
         tractionCurveMax = 900,
         tractionExtra = 2

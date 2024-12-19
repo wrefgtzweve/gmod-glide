@@ -240,7 +240,7 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     -- Calculate side slip angle
     slipAngle = ( Atan2( velR, Abs( velF ) ) / PI ) * 2
     self:SetSideSlip( slipAngle * Clamp( vehicle.totalSpeed * 0.005, 0, 1 ) * 2 )
-    slipAngle = Abs( slipAngle )
+    slipAngle = Abs( slipAngle * slipAngle )
 
     -- Suspension spring force & damping
     offset = maxLen - ( fraction * maxLen )
