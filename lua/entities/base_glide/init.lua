@@ -212,6 +212,20 @@ function ENT:RagdollAllPlayers( time, vel )
     self.hasRagdolledAllPlayers = true
 end
 
+--- Makes so only the vehicle creator and prop
+--- protection buddies can enter this vehicle.
+function ENT:SetLocked( isLocked, doNotNotify )
+    self:SetIsLocked( isLocked )
+
+    if doNotNotify then return end
+
+    Glide.SendNotification( self:GetAllPlayers(), {
+        text = "#glide.notify." .. ( isLocked and "vehicle_locked" or "vehicle_unlocked" ),
+        icon = "materials/glide/icons/" .. ( isLocked and "locked" or "unlocked" ) .. ".png",
+        immediate = true
+    } )
+end
+
 local IsValid = IsValid
 
 do
@@ -480,5 +494,8 @@ function ENT:TriggerInput( name, value )
                 driver:ExitVehicle()
             end
         end
+
+    elseif name == "LockVehicle" then
+        self:SetLocked( value > 0, true )
     end
 end

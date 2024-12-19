@@ -25,6 +25,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Entity", "Driver" )
     self:NetworkVar( "Int", "EngineState" )
     self:NetworkVar( "Bool", "IsEngineOnFire" )
+    self:NetworkVar( "Bool", "IsLocked" )
 
     self:NetworkVar( "Int", "WeaponIndex" )
     self:NetworkVar( "Int", "LockOnState" )
@@ -199,6 +200,7 @@ if SERVER then
     function ENT:SetupWiremodPorts( inputs, outputs )
         -- Input name, input type, input description
         inputs[#inputs + 1] = { "EjectDriver", "NORMAL", "When set to 1, kicks the driver out of the vehicle" }
+        inputs[#inputs + 1] = { "LockVehicle", "NORMAL", "When set to 1, only the vehicle creator and friends can enter the vehicle" }
 
         -- Output name, output type, output description
         outputs[#outputs + 1] = { "MaxChassisHealth", "NORMAL", "Max. chassis health" }

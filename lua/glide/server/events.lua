@@ -1,5 +1,27 @@
 local IsValid = IsValid
 
+hook.Add( "CanPlayerEnterVehicle", "Glide.CheckVehicleLock", function( ply, seat )
+    if not IsValid( seat ) then return end
+
+    -- Make sure this seat was created by Glide
+    local seatIndex = seat.GlideSeatIndex
+    if not seatIndex then return end
+
+    -- Is this seat's parent a Glide vehicle?
+    local parent = seat:GetParent()
+    if not IsValid( parent ) then return end
+    if not parent.IsGlideVehicle then return end
+
+    -- Check if this vehicle is locked
+    if not parent:GetIsLocked() then return end
+
+    if not Glide.CanEnterLockedVehicle( ply, parent ) then
+        ply:EmitSound( "player/suit_denydevice.wav", 50, 100, 1.0, 6, 0, 0 )
+
+        return false
+    end
+end )
+
 -- Once a player enters a Glide vehicle, setup network variables
 -- and trigger the `Glide_OnEnterVehicle` hook.
 hook.Add( "PlayerEnteredVehicle", "Glide.OnEnterSeat", function( ply, seat )

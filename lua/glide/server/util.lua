@@ -139,6 +139,33 @@ function Glide.VehicleFactory( ply, data )
     return ent
 end
 
+--- Check if a player can lock the vehicle by either
+--- being it's creator or being a CPPI friend of the creator.
+function Glide.CanLockVehicle( ply, vehicle )
+    local creator = vehicle:GetCreator()
+
+    if creator == ply then
+        return true
+    end
+
+    if CPPI then
+        if vehicle:CPPIGetOwner() == ply then
+            return true
+        end
+
+        if vehicle:CPPICanPhysgun( ply ) then
+            return true
+        end
+    end
+
+    return false
+end
+
+--- Check if a player can enter a locked vehicle.
+function Glide.CanEnterLockedVehicle( ply, vehicle )
+    return Glide.CanLockVehicle( ply, vehicle )
+end
+
 --- Make a player switch to another seat
 --- while inside a Glide vehicle.
 function Glide.SwitchSeat( ply, seatIndex )
