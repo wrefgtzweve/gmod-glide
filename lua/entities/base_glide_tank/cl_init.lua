@@ -23,11 +23,6 @@ function ENT:AllowFirstPersonMuffledSound()
     return false
 end
 
---- Override this base class function.
-function ENT:GetFirstPersonOffset()
-    return Vector( 0, 0, 90 )
-end
-
 --- Implement this base class function.
 function ENT:OnPostInitialize()
     self.currentTurretAng = Angle()

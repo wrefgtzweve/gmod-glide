@@ -69,6 +69,13 @@ function ENT:OnTurnOff() end
 function ENT:OnSwitchWeapon( _weaponIndex ) end
 function ENT:UpdatePlayerPoseParameters( _ply ) return false end
 
+function ENT:GetFirstPersonOffset( _seatIndex, localEyePos )
+    localEyePos[1] = localEyePos[1] + 10
+    localEyePos[3] = localEyePos[3] + 5
+
+    return localEyePos
+end
+
 if CLIENT then
     ENT.Spawnable = false -- Hide from the default spawn list clientside
 
@@ -121,13 +128,6 @@ if CLIENT then
 
     function ENT:GetCameraType( _seatIndex )
         return 0 -- Glide.CAMERA_TYPE.CAR
-    end
-
-    function ENT:GetFirstPersonOffset( _seatIndex, localEyePos )
-        localEyePos[1] = localEyePos[1] + 10
-        localEyePos[3] = localEyePos[3] + 5
-
-        return localEyePos
     end
 end
 

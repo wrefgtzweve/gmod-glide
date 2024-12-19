@@ -51,6 +51,11 @@ function ENT:IsEngineOn()
     return self:GetEngineState() > 1
 end
 
+--- Override this base class function.
+function ENT:GetFirstPersonOffset()
+    return Vector( 0, 0, 90 )
+end
+
 -- Children classes should override this function
 -- to update the turret/cannon bones.
 -- This exists both on the client and server side,

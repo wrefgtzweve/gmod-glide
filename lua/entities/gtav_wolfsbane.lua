@@ -9,6 +9,10 @@ ENT.ChassisModel = "models/gta5/vehicles/wolfsbane/chassis.mdl"
 
 DEFINE_BASECLASS( "base_glide_motorcycle" )
 
+function ENT:GetFirstPersonOffset( _, localEyePos )
+    return localEyePos
+end
+
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 40 )
     ENT.StartSound = "Glide.Engine.BikeStart2"
@@ -40,10 +44,6 @@ if CLIENT then
     function ENT:OnCreateEngineStream( stream )
         stream.offset = Vector( 5, 0, 0 )
         stream:LoadPreset( "wolfsbane" )
-    end
-
-    function ENT:GetFirstPersonOffset( _, localEyePos )
-        return localEyePos
     end
 
     local POSE_DATA = {

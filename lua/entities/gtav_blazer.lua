@@ -10,6 +10,10 @@ ENT.SeatDriverAnim = "drive_airboat" -- sit, sit_rollercoaster
 
 DEFINE_BASECLASS( "base_glide_car" )
 
+function ENT:GetFirstPersonOffset( _, localEyePos )
+    return localEyePos
+end
+
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 43 )
 
@@ -66,10 +70,6 @@ if CLIENT then
 
     function ENT:AllowFirstPersonMuffledSound()
         return false
-    end
-
-    function ENT:GetFirstPersonOffset( _, localEyePos )
-        return localEyePos
     end
 
     function ENT:OnActivateMisc()
