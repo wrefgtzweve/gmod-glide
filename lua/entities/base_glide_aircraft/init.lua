@@ -27,36 +27,30 @@ function ENT:OnPostInitialize()
 
     -- Countermeasure system
     self.countermeasureCD = 0
+
+    -- Trigger wire outputs
+    if WireLib then
+        WireLib.TriggerOutput( self, "Power", 0 )
+        WireLib.TriggerOutput( self, "Altitude", 0 )
+        WireLib.TriggerOutput( self, "WeaponCount", self.weaponCount )
+    end
 end
 
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
-
 --- Override this base class function.
-function ENT:SetupWirePorts()
-    if not TriggerOutput then return end
+function ENT:SetupWiremodPorts( inputs, outputs )
+    BaseClass.SetupWiremodPorts( self, inputs, outputs )
 
-    WireLib.CreateSpecialOutputs( self,
-        { "MaxChassisHealth", "ChassisHealth", "EngineHealth", "Power", "Altitude", "WeaponCount" },
-        { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" }
-    )
+    inputs[#inputs + 1] = { "Ignition", "NORMAL", "1: Turn the engine on\n0: Turn the engine off" }
+    inputs[#inputs + 1] = { "Pitch", "NORMAL", "A value between -1.0 and 1.0", }
+    inputs[#inputs + 1] = { "Yaw", "NORMAL", "A value between -1.0 and 1.0", }
+    inputs[#inputs + 1] = { "Roll", "NORMAL", "A value between -1.0 and 1.0", }
+    inputs[#inputs + 1] = { "Throttle", "NORMAL", "A value between 0.0 and 1.0" }
+    inputs[#inputs + 1] = { "Fire", "NORMAL", "When greater than 0, fires the current weapon,\nif this helicopter has one" }
+    inputs[#inputs + 1] = { "WeaponIndex", "NORMAL", "If this vehicle has weapons, this will set which one to use.\nStarts at index 1. Check the 'WeaponCount' output to see the max. value." }
 
-    WireLib.CreateSpecialInputs( self,
-        { "Ignition", "Pitch", "Yaw", "Roll", "Throttle", "Fire", "WeaponIndex" },
-        { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" },
-        {
-            "1: Turn the engine on\n0: Turn the engine off",
-            "A value between -1.0 and 1.0",
-            "A value between -1.0 and 1.0",
-            "A value between -1.0 and 1.0",
-            "A value between 0.0 and 1.0",
-            "When greater than 0, fires the current weapon,\nif this helicopter has one",
-            "If this vehicle has weapons, this will set which one to use.\nStarts at index 1. Check the 'WeaponCount' output to see the max. value."
-        }
-    )
-
-    TriggerOutput( self, "Power", 0 )
-    TriggerOutput( self, "Altitude", 0 )
-    TriggerOutput( self, "WeaponCount", self.weaponCount )
+    outputs[#outputs + 1] = { "Power", "NORMAL", "Current engine power (between 0.0 and 2.0)" }
+    outputs[#outputs + 1] = { "Altitude", "NORMAL", "Current vehicle altitude" }
+    outputs[#outputs + 1] = { "WeaponCount", "NORMAL", "Number of weapon slots this vehicle has" }
 end
 
 function ENT:SetLandingGearState( state )
@@ -264,6 +258,7 @@ end
 
 local WORLD_UP = Vector( 0, 0, 1 )
 local TraceLine = util.TraceLine
+local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 
 function ENT:UpdateAltitude()
     local mins = self:OBBMins()

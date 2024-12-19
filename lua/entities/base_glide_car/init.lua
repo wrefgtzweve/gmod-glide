@@ -81,6 +81,13 @@ function ENT:OnPostInitialize()
 
     -- Update power distribution next tick
     self.shouldUpdatePowerDistribution = true
+
+    -- Trigger wire outputs
+    if WireLib then
+        WireLib.TriggerOutput( self, "MaxGear", self.maxGear )
+        WireLib.TriggerOutput( self, "Gear", 0 )
+        WireLib.TriggerOutput( self, "EngineRPM", 0 )
+    end
 end
 
 --- Update the `wheelParams` table using values from our network variables.
@@ -243,39 +250,28 @@ function ENT:UpdateBodygroups()
     end
 end
 
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
-
 --- Override this base class function.
-function ENT:SetupWirePorts()
-    if not TriggerOutput then return end
+function ENT:SetupWiremodPorts( inputs, outputs )
+    BaseClass.SetupWiremodPorts( self, inputs, outputs )
 
-    WireLib.CreateSpecialOutputs( self,
-        { "MaxChassisHealth", "ChassisHealth", "EngineHealth", "MaxGear", "Gear", "EngineState", "EngineRPM", "MaxRPM" },
-        { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" },
-        { nil, nil, nil, nil, nil, "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
-    )
+    inputs[#inputs + 1] = { "Ignition", "NORMAL", "1: Turn the engine on\n0: Turn the engine off" }
+    inputs[#inputs + 1] = { "Steer", "NORMAL", "A value between -1.0 and 1.0" }
+    inputs[#inputs + 1] = { "Throttle", "NORMAL", "A value between 0.0 and 1.0\nAlso acts brake input when reversing." }
+    inputs[#inputs + 1] = { "Brake", "NORMAL", "A value between 0.0 and 1.0\nAlso acts throttle input when reversing." }
+    inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
+    inputs[#inputs + 1] = { "Gear", "NORMAL", "-2: Let the vehicle do auto gear shifting\n-1: Reverse\n0: Neutral\n1+: other gears" }
 
-    WireLib.CreateSpecialInputs( self,
-        { "Ignition", "Steer", "Throttle", "Brake", "Handbrake", "Gear" },
-        { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" },
-        {
-            "1: Turn the engine on\n0: Turn the engine off",
-            "A value between -1.0 and 1.0",
-            "A value between 0.0 and 1.0\nAlso acts brake input when reversing.",
-            "A value between 0.0 and 1.0\nAlso acts throttle input when reversing.",
-            "A value larger than 0 will set the handbrake",
-            "-2: Let the vehicle do auto gear shifting\n-1: Reverse\n0: Neutral\n1+: other gears"
-        }
-    )
-
-    TriggerOutput( self, "MaxGear", self.maxGear )
-    TriggerOutput( self, "Gear", 0 )
-    TriggerOutput( self, "EngineRPM", 0 )
+    outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
+    outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
+    outputs[#outputs + 1] = { "EngineState", "NORMAL", "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
+    outputs[#outputs + 1] = { "EngineRPM", "NORMAL", "Current engine RPM" }
+    outputs[#outputs + 1] = { "MaxRPM", "NORMAL", "Max. engine RPM" }
 end
 
 local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
+local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
 
 --- Implement this base class function.
 function ENT:OnPostThink( dt )

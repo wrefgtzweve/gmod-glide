@@ -191,6 +191,18 @@ if SERVER then
     ENT.SuspensionDownSound = "Glide.Suspension.Down"
     ENT.SuspensionUpSound = "Glide.Suspension.Up"
 
+    -- If Wiremod is installed, this function gets called to add
+    -- inputs/outputs to be created when the vehicle is initialized.
+    -- Children classes can override this function, but they should
+    -- call `BaseClass.SetupWiremodPorts( self, inputs, outputs )` before
+    -- adding their own entries to these inputs/outputs tables.
+    function ENT:SetupWiremodPorts( _inputs, outputs )
+        -- Output name, output type, output description (optional)
+        outputs[#outputs + 1] = { "MaxChassisHealth", "NORMAL", "Max. chassis health" }
+        outputs[#outputs + 1] = { "ChassisHealth", "NORMAL", "Current chassis health (between 0.0 and MaxChassisHealth)" }
+        outputs[#outputs + 1] = { "EngineHealth", "NORMAL", "Current engine health (between 0.0 and 1.0)" }
+    end
+
     -- You can safely override these on children classes
     function ENT:CreateFeatures() end
 

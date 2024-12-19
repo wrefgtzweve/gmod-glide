@@ -112,11 +112,37 @@ function ENT:Initialize()
     self:SetColor( data.Color )
     duplicator.StoreEntityModifier( self, "colour", data )
 
+    -- Setup wiremod ports
+    if WireLib then
+        local inputs, outputs = {}, {}
+
+        self:SetupWiremodPorts( inputs, outputs )
+
+        -- Separate input names, types and descriptions
+        local inNames, inTypes, inDescr = {}, {}, {}
+
+        for i, v in ipairs( inputs ) do
+            inNames[i] = v[1]
+            inTypes[i] = v[2]
+            inDescr[i] = v[3]
+        end
+
+        WireLib.CreateSpecialInputs( self, inNames, inTypes, inDescr )
+
+        -- Separate output names, types and descriptions
+        local outNames, outTypes, outDescr = {}, {}, {}
+
+        for i, v in ipairs( outputs ) do
+            outNames[i] = v[1]
+            outTypes[i] = v[2]
+            outDescr[i] = v[3]
+        end
+
+        WireLib.CreateSpecialOutputs( self, outNames, outTypes, outDescr )
+    end
+
     -- Let child classes add their own features
     self:OnPostInitialize()
-
-    -- Setup wiremod ports
-    self:SetupWirePorts()
 
     -- Set health back to defaults
     self:Repair()
@@ -434,16 +460,6 @@ function ENT:Think()
 end
 
 local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
-
-function ENT:SetupWirePorts()
-    if not TriggerOutput then return end
-
-    -- Create Wiremod outputs for health values
-    WireLib.CreateSpecialOutputs( self,
-        { "MaxChassisHealth", "ChassisHealth", "EngineHealth" },
-        { "NORMAL", "NORMAL", "NORMAL" }
-    )
-end
 
 function ENT:UpdateHealthOutputs()
     if not TriggerOutput then return end
