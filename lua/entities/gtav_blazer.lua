@@ -166,10 +166,8 @@ if SERVER then
         self:SetSteerConeMaxAngle( 0.3 )
         self:SetSteerConeMaxSpeed( 800 )
 
-        self:SetTractionBias( -0.1 )
-        self:SetTractionCurveMinAng( 50 )
-        self:SetTractionCurveMin( 2000 )
-        self:SetTractionCurveMax( 1000 )
+        self:SetTractionBias( 0 )
+        self:SetTractionCurveMin( 2500 )
 
         self:SetPowerDistribution( -0.7 )
         self:SetDifferentialRatio( 1.2 )
