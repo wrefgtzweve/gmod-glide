@@ -20,6 +20,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Entity", "GunUser" )
     self:NetworkVar( "Entity", "GunBody" )
     self:NetworkVar( "Vector", "BulletOffset" )
+    self:NetworkVar( "Angle", "LastBodyAngle" )
 
     self:NetworkVar( "Float", "MinPitch" )
     self:NetworkVar( "Float", "MaxPitch" )
@@ -53,6 +54,7 @@ function ENT:Think()
 end
 
 local Clamp = math.Clamp
+local LocalPlayer = LocalPlayer
 
 function ENT:UpdateTurret( parent, body, t )
     local user = self:GetGunUser()
@@ -62,10 +64,6 @@ function ENT:UpdateTurret( parent, body, t )
 
     if IsValid( user ) then
         self:SetIsFiring( user:KeyDown( 1 ) ) -- IN_ATTACK
-
-        if SERVER then
-            SuppressHostEvents( user )
-        end
 
         local fromPos = body:GetPos() + body:GetUp() * self:GetBulletOffset()[3]
         local aimPos = SERVER and user:GlideGetAimPos() or Glide.GetCameraAimPos()
@@ -86,7 +84,13 @@ function ENT:UpdateTurret( parent, body, t )
 
         body:SetLocalAngles( ang )
 
+        if SERVER then
+            self:SetLastBodyAngle( ang )
+            SuppressHostEvents( user )
+        end
+
         if CLIENT then
+            self.predictedBodyAngle = ang
             self.nextPunch = self.nextPunch or 0
 
             if self:GetIsFiring() and t > self.nextPunch then
