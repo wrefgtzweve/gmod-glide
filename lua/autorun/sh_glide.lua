@@ -287,6 +287,7 @@ do
     function Glide.HideEntity( ent, hide )
         ent:SetRenderMode( hide and RENDERMODE_TRANSCOLOR or RENDERMODE_NORMAL )
         ent:SetColor( hide and COLOR_HIDDEN or color_white )
+        ent.GlideIsHidden = Either( hide, true, nil )
     end
 end
 

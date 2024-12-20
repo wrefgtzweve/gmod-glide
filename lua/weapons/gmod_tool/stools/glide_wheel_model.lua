@@ -45,7 +45,7 @@ function TOOL:GetGlideWheels( trace )
     if ent.wheels then
         for _, w in ipairs( ent.wheels ) do
             if IsValid( w ) then
-                if w:GetNoDraw() then
+                if w.GlideIsHidden then
                     hiddenCount = hiddenCount + 1
                 end
 
