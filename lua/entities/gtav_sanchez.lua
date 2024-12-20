@@ -100,14 +100,18 @@ if SERVER then
             modelScale = Vector( 0.4, 1, 1 ),
             modelAngle = Angle( 0, 90, 0 ),
             steerMultiplier = 1
-        } ):SetNoDraw( true )
+        } )
 
         -- Rear
         self:CreateWheel( Vector( -29, 0, -1 ), {
             model = "models/gta5/vehicles/blazer/wheel.mdl",
             modelScale = Vector( 0.4, 1, 1 ),
             modelAngle = Angle( 0, 90, 0 )
-        } ):SetNoDraw( true )
+        } )
+
+        for _, w in ipairs( self.wheels ) do
+            Glide.HideEntity( w, true )
+        end
 
         self:ChangeWheelRadius( 14 )
     end

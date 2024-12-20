@@ -44,7 +44,7 @@ function ENT:SetupWheel( params )
     -- Regular model
     if params.model then
         self.model = params.model
-        self:SetNoDraw( false )
+        Glide.HideEntity( self, false )
     end
 
     -- Model rotation and scale

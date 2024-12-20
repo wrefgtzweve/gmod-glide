@@ -167,28 +167,32 @@ if SERVER then
         -- Front left
         self:CreateWheel( Vector( 88, 55, -5 ), {
             steerMultiplier = 1
-        } ):SetNoDraw( true )
+        } )
 
         -- Middle left
-        self:CreateWheel( Vector( 5, 55, -5 ) ):SetNoDraw( true )
+        self:CreateWheel( Vector( 5, 55, -5 ) )
 
         -- Rear left
         self:CreateWheel( Vector( -76, 55, -5 ), {
             steerMultiplier = -1
-        } ):SetNoDraw( true )
+        } )
 
         -- Front right
         self:CreateWheel( Vector( 88, -55, -5 ), {
             steerMultiplier = 1
-        } ):SetNoDraw( true )
+        } )
 
         -- Middle right
-        self:CreateWheel( Vector( 5, -55, -5 ) ):SetNoDraw( true )
+        self:CreateWheel( Vector( 5, -55, -5 ) )
 
         -- Rear right
         self:CreateWheel( Vector( -76, -55, -5 ), {
             steerMultiplier = -1
-        } ):SetNoDraw( true )
+        } )
+
+        for _, w in ipairs( self.wheels ) do
+            Glide.HideEntity( w, true )
+        end
 
         -- Manipulate these on the server side only, to allow
         -- spawning projectiles on the correct position.

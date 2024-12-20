@@ -226,7 +226,7 @@ if SERVER then
         self:ChangeWheelRadius( 12 )
 
         for _, w in ipairs( self.wheels ) do
-            w:SetNoDraw( true )
+            Glide.HideEntity( w, true )
         end
 
         self.missileIndex = 0

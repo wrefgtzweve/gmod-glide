@@ -337,8 +337,6 @@ function ENT:GetFreeSeat()
     end
 end
 
-local COLOR_HIDDEN = Color( 0, 0, 0, 0 )
-
 --- Create a new seat.
 ---
 --- `offset` is the seat's position relative to the chassis.
@@ -377,10 +375,7 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     seat:PhysicsDestroy()
 
     if isHidden then
-        -- This wont let the entity show up on self:GetChildren clientside
-        --seat:SetNoDraw( true )
-        seat:SetRenderMode( RENDERMODE_TRANSCOLOR )
-        seat:SetColor( COLOR_HIDDEN )
+        Glide.HideEntity( seat, true )
     end
 
     -- Let Glide know it should handle this seat differently
