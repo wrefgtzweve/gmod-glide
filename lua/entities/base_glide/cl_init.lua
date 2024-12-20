@@ -356,8 +356,6 @@ do
             self:DrawHUDSeats( screenW, screenH )
         end
 
-        -- TODO: glide.hud.health=Health
-
         local crosshair = self.crosshair
 
         if crosshair.enabled then

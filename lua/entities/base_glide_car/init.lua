@@ -330,7 +330,6 @@ function ENT:OnPostThink( dt )
             if CurTime() > self.startupTimer then
                 self.startupTimer = nil
 
-                -- TODO: check fuel before allowing startup
                 if health > 0 then
                     self:SetEngineState( 2 )
                     self:SetEngineThrottle( 2 )
