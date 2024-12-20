@@ -197,10 +197,22 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
 
     util.Effect( "RifleShellEject", eff )
 
-    -- Play single shot sound, if set
     local singlePath = self:GetSingleShotSound()
+    if singlePath == "" then return end
 
-    if singlePath ~= "" then
-        Glide.PlaySoundSet( singlePath, self )
+    local user = self:GetGunUser()
+
+    -- Only let the server and the current user's client play the single shot sound
+    if not SERVER and not ( CLIENT and LocalPlayer() == user ) then return end
+
+    local filter
+
+    if SERVER and IsValid( user ) then
+        -- Don't send the sound event to the user
+        filter = RecipientFilter( true )
+        filter:AddAllPlayers()
+        filter:RemovePlayer( user )
     end
+
+    Glide.PlaySoundSet( singlePath, IsValid( user ) and user or self, nil, nil, nil, filter )
 end
