@@ -25,6 +25,7 @@ function ENT:Initialize()
 
     self:DeleteOnRemove( body )
     self:SetGunBody( body )
+    self:SetFireDelay( 0.05 )
 
     self:SetSingleShotSound( "" )
     self:SetShootLoopSound( "glide/weapons/turret_mg_loop.wav" )

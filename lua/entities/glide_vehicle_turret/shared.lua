@@ -21,6 +21,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "String", "ShootStopSound" )
 
     self:NetworkVar( "Bool", "IsFiring" )
+    self:NetworkVar( "Float", "FireDelay" )
     self:NetworkVar( "Entity", "GunUser" )
     self:NetworkVar( "Entity", "GunBody" )
     self:NetworkVar( "Vector", "BulletOffset" )
@@ -112,7 +113,7 @@ function ENT:UpdateTurret( parent, body, t )
         local pos = body:LocalToWorld( self:GetBulletOffset() )
         local ang = body:GetAngles()
 
-        self.nextFire = t + 0.05
+        self.nextFire = t + self:GetFireDelay()
         self:FireBullet( pos, ang, user, self:GetRight() )
     end
 end
