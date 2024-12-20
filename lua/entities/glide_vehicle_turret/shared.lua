@@ -16,6 +16,10 @@ ENT.BulletDamage = 10
 ENT.BulletMaxDistance = 15000
 
 function ENT:SetupDataTables()
+    self:NetworkVar( "String", "SingleShotSound" )
+    self:NetworkVar( "String", "ShootLoopSound" )
+    self:NetworkVar( "String", "ShootStopSound" )
+
     self:NetworkVar( "Bool", "IsFiring" )
     self:NetworkVar( "Entity", "GunUser" )
     self:NetworkVar( "Entity", "GunBody" )
@@ -191,4 +195,11 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
     eff:SetAngles( shellDir:Angle() )
 
     util.Effect( "RifleShellEject", eff )
+
+    -- Play single shot sound, if set
+    local singlePath = self:GetSingleShotSound()
+
+    if singlePath ~= "" then
+        Glide.PlaySoundSet( singlePath, self )
+    end
 end

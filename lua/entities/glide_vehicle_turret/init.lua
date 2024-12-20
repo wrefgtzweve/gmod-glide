@@ -25,6 +25,10 @@ function ENT:Initialize()
 
     self:DeleteOnRemove( body )
     self:SetGunBody( body )
+
+    self:SetSingleShotSound( "" )
+    self:SetShootLoopSound( "glide/weapons/turret_mg_loop.wav" )
+    self:SetShootStopSound( "glide/weapons/turret_mg_end.wav" )
 end
 
 function ENT:SetBodyModel( model, offset )
