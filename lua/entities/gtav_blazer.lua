@@ -6,12 +6,15 @@ ENT.PrintName = "Blazer"
 
 ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/blazer/chassis.mdl"
-ENT.SeatDriverAnim = "drive_airboat" -- sit, sit_rollercoaster
 
 DEFINE_BASECLASS( "base_glide_car" )
 
 function ENT:GetFirstPersonOffset( _, localEyePos )
     return localEyePos
+end
+
+function ENT:GetPlayerSitSequence( _seatIndex )
+    return "drive_airboat"
 end
 
 if CLIENT then

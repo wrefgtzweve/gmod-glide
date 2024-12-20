@@ -9,10 +9,6 @@ ENT.AutomaticFrameAdvance = true
 -- Change vehicle type
 ENT.VehicleType = Glide.VEHICLE_TYPE.TANK
 
--- Setup player sit animations
-ENT.SeatDriverAnim = "sit"
-ENT.SeatPassengerAnim = "sit"
-
 -- Increase default max. chassis health
 ENT.MaxChassisHealth = 3000
 
@@ -54,6 +50,11 @@ end
 --- Override this base class function.
 function ENT:GetFirstPersonOffset()
     return Vector( 0, 0, 90 )
+end
+
+--- Override this base class function.
+function ENT:GetPlayerSitSequence( _seatIndex )
+    return "sit"
 end
 
 -- Children classes should override this function

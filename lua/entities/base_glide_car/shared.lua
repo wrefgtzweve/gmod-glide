@@ -9,10 +9,6 @@ ENT.Editable = true
 -- Change vehicle type
 ENT.VehicleType = Glide.VEHICLE_TYPE.CAR
 
--- Setup player sit animations
-ENT.SeatDriverAnim = "drive_jeep"
-ENT.SeatPassengerAnim = "sit"
-
 -- Decrease default max. chassis health
 ENT.MaxChassisHealth = 900
 

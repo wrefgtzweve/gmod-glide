@@ -11,10 +11,6 @@ ENT.AdminOnly = false
 ENT.IsGlideVehicle = true
 ENT.VehicleType = Glide.VEHICLE_TYPE.UNDEFINED
 
--- Player sit animations
-ENT.SeatDriverAnim = "drive_jeep" -- drive_airboat, drive_pd, sit, sit_rollercoaster
-ENT.SeatPassengerAnim = "sit"
-
 -- Max. chassis health
 ENT.MaxChassisHealth = 1000
 
@@ -68,6 +64,11 @@ function ENT:OnTurnOn() end
 function ENT:OnTurnOff() end
 function ENT:OnSwitchWeapon( _weaponIndex ) end
 function ENT:UpdatePlayerPoseParameters( _ply ) return false end
+
+-- drive_airboat, drive_pd, sit, sit_rollercoaster
+function ENT:GetPlayerSitSequence( seatIndex )
+    return seatIndex > 1 and "sit" or "drive_jeep"
+end
 
 function ENT:GetFirstPersonOffset( _seatIndex, localEyePos )
     localEyePos[1] = localEyePos[1] + 10

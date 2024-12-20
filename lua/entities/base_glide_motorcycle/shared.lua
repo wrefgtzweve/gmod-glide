@@ -8,15 +8,16 @@ ENT.AdminOnly = false
 -- Change vehicle type
 ENT.VehicleType = Glide.VEHICLE_TYPE.MOTORCYCLE
 
--- Setup player sit animations
-ENT.SeatDriverAnim = "drive_airboat"
-ENT.SeatPassengerAnim = "sit"
-
 ENT.UneditableNWVars = {
     WheelRadius = true,
     SuspensionLength = true,
     PowerDistribution = true
 }
+
+--- Override this base class function.
+function ENT:GetPlayerSitSequence( seatIndex )
+    return seatIndex > 1 and "sit" or "drive_airboat"
+end
 
 if CLIENT then
     ENT.EngineSmokeMaxZVel = 20

@@ -9,6 +9,10 @@ ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/insurgent/chassis.mdl"
 ENT.MaxChassisHealth = 1500
 
+function ENT:GetPlayerSitSequence( seatIndex )
+    return seatIndex == 5 and "drive_pd" or ( seatIndex > 1 and "sit" or "drive_jeep" )
+end
+
 if CLIENT then
     ENT.CameraOffset = Vector( -400, 0, 120 )
 

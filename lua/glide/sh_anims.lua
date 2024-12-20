@@ -21,7 +21,6 @@ end )
 hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
     local vehicle = ply:GlideGetVehicle()
     if not IsValid( vehicle ) then return end
-    if not vehicle.GetDriver then return end
 
     if ply.m_bWasNoclipping then
         ply.m_bWasNoclipping = nil
@@ -32,7 +31,7 @@ hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
         end
     end
 
-    local anim = ply == vehicle:GetDriver() and vehicle.SeatDriverAnim or vehicle.SeatPassengerAnim
+    local anim = vehicle:GetPlayerSitSequence( ply:GlideGetSeatIndex() )
 
     ply.CalcIdeal = 47 -- ACT_STAND
     ply.CalcSeqOverride = ply:LookupSequence( anim )

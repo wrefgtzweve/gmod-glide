@@ -6,10 +6,6 @@ ENT.Author = "StyledStrike"
 ENT.AdminOnly = false
 ENT.AutomaticFrameAdvance = true
 
--- Setup player sit animations
-ENT.SeatDriverAnim = "sit"
-ENT.SeatPassengerAnim = "sit"
-
 -- Increase default max. chassis health
 ENT.MaxChassisHealth = 1200
 
@@ -21,6 +17,11 @@ function ENT:SetupDataTables()
 
     self:NetworkVar( "Float", "Power" )
     self:SetPower( 0 )
+end
+
+--- Override this base class function.
+function ENT:GetPlayerSitSequence( _seatIndex )
+    return "sit"
 end
 
 if CLIENT then
