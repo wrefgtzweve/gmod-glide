@@ -42,7 +42,7 @@ local audioExt = { [".wav"] = true, [".mp3"] = true }
 
 --- Play a random sound from a sound set.
 --- If you pass a .wav file path as a set `id`, that will be played instead.
-function Glide.PlaySoundSet( id, source, volume, pitch, level )
+function Glide.PlaySoundSet( id, source, volume, pitch, level, filter )
     local set = soundSets[id]
 
     if not set then
@@ -62,9 +62,9 @@ function Glide.PlaySoundSet( id, source, volume, pitch, level )
     local path = set.paths[RandomInt( #set.paths )]
 
     if IsEntity( source ) then
-        source:EmitSound( path, level, pitch, volume, set.channel, 0, 0 )
+        source:EmitSound( path, level, pitch, volume, set.channel, 0, 0, filter )
     else
-        EmitSound( path, source, 0, set.channel, volume, level, 0, pitch, 0 )
+        EmitSound( path, source, 0, set.channel, volume, level, 0, pitch, 0, filter )
     end
 end
 
@@ -85,6 +85,12 @@ Glide.AddSoundSet( "Glide.MissileLaunch", 90, 95, 105, {
 Glide.AddSoundSet( "Glide.FlareLaunch", 90, 95, 105, {
     ")glide/weapons/flare_deploy1.wav",
     ")glide/weapons/flare_deploy2.wav"
+} )
+
+Glide.AddSoundSet( "Glide.InsurgentShoot", 90, 95, 105, {
+    ")glide/weapons/insurgent_shoot_1.wav",
+    ")glide/weapons/insurgent_shoot_2.wav",
+    ")glide/weapons/insurgent_shoot_3.wav"
 } )
 
 ----- Explosion sounds
