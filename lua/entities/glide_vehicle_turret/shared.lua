@@ -167,6 +167,7 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
     eff:SetScale( 1 )
     eff:SetFlags( tr.Hit and 1 or 0 )
     eff:SetEntity( self )
+    eff:SetColor( 0 )
     util.Effect( "glide_tracer", eff )
 
     -- Shells

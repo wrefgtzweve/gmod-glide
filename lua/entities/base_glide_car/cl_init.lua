@@ -381,7 +381,7 @@ function ENT:DoExhaustPop()
         eff:SetStart( pos + dir * 10 )
         eff:SetScale( 0.5 )
         eff:SetFlags( 0 )
-
+        eff:SetColor( 0 )
         util.Effect( "glide_tracer", eff )
 
         local dlight = DynamicLight( self:EntIndex() + i )
