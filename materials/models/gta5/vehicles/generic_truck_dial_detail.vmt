@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/generic_truck_dial_detail"
+	"$allowdiffusemodulation" "false"
+}

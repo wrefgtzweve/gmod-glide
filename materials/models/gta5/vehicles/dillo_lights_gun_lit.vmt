@@ -1,0 +1,13 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/dillo_lights_gun"
+	"$allowdiffusemodulation" "false"
+
+	$emissiveBlendEnabled "1"
+	$emissiveBlendStrength "1"
+	$emissiveBlendTexture "vgui/white"
+	$emissiveBlendBaseTexture "models/gta5/vehicles/dillo_lights_gun"
+	$emissiveBlendFlowTexture "vgui/white"
+	$emissiveBlendTint "[ 4 4 4 ]"
+	$emissiveBlendScrollVector "[ 0 0 ]"
+}

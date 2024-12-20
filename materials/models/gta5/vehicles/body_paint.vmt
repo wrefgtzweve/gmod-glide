@@ -3,7 +3,7 @@
 	"$basetexture" "models/gta5/vehicles/body_paint"
 	"$bumpmap" "models/gta5/vehicles/body_normal"
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[0.1 0.1 0.1]"
+	"$envmaptint" "[0.05 0.05 0.05]"
 
 	"$phong" "1"
 	"$phongboost" "4.0"
