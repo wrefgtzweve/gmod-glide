@@ -20,8 +20,8 @@ local function DrawPlayerTag( ply, health, pos )
     surface.SetFont( "GlideSelectedWeapon" )
 
     local w, h = GetTextSize( nick )
-    local minW = Floor( screenH * 0.1 )
-    local padding = math.floor( screenH * 0.004 )
+    local minW = Floor( screenH * 0.15 )
+    local padding = Floor( screenH * 0.004 )
 
     w = Clamp( w, minW, screenH ) + padding * 2
     h = h + padding * 2
@@ -32,6 +32,8 @@ local function DrawPlayerTag( ply, health, pos )
     DrawRoundedBox( screenH * 0.005, x, y, w, h, BG_COLOR, true, true, false, false )
     DrawSimpleText( nick, "GlideSelectedWeapon", x + w * 0.5, y + h * 0.5, TEXT_COLOR, 1, 1 )
 
+    if health < 0 then return x, y + h, w end
+
     y = y + h
     h = h * 0.25
 
@@ -40,6 +42,8 @@ local function DrawPlayerTag( ply, health, pos )
 
     SetColor( 255 * ( 1 - health ), 255 * health, 0, 255 )
     DrawRect( x, y, w * health, h )
+
+    return x, y + h, w
 end
 
 local IsValid = IsValid
@@ -48,15 +52,24 @@ local LocalPlayer = LocalPlayer
 local SetAlphaMultiplier = surface.SetAlphaMultiplier
 
 local Camera = Glide.Camera
-local lastTarget = NULL
-local alpha = 0
+local lastTarget, alpha = NULL, 0
 
 hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
-    local target = Camera.isActive and Camera.lastAimEntity or LocalPlayer():GetEyeTrace().Entity
+    if Camera.isActive then
+        local target = Camera.lastAimEntity
 
-    if IsValid( target ) and not target:IsWorld() then
-        lastTarget = target
-        alpha = 1
+        if IsValid( target ) and ( target:IsPlayer() or target.IsGlideVehicle ) then
+            lastTarget = target
+            alpha = 1
+        end
+    else
+        -- If the camera is not active, only return Glide vehicles
+        local target = LocalPlayer():GetEyeTrace().Entity
+
+        if IsValid( target ) and target.IsGlideVehicle then
+            lastTarget = target
+            alpha = 1
+        end
     end
 
     if not IsValid( lastTarget ) then
@@ -76,14 +89,23 @@ hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
     if lastTarget.IsGlideVehicle then
         local health = lastTarget:GetChassisHealth() / lastTarget.MaxChassisHealth
         local driver = lastTarget:GetDriver()
+        local pos = lastTarget:GetPos()
+        local h = ScrH() * 0.02
+
+        pos[3] = pos[3] + lastTarget:OBBMaxs()[3]
 
         if IsValid( driver ) then
-            local pos = lastTarget:GetPos()
-            local maxs = lastTarget:OBBMaxs()
+            local x, y, w = DrawPlayerTag( driver, -1, pos )
+            Glide.DrawHealthBar( x, y, w, h, health, Glide.GetVehicleIcon( lastTarget.VehicleType ) )
 
-            pos[3] = pos[3] + maxs[3]
+        elseif Glide.Config.showEmptyVehicleHealth then
+            pos = pos:ToScreen()
 
-            DrawPlayerTag( driver, health, pos )
+            local w = ScrH() * 0.15
+            local x = pos.x - w * 0.5
+            local y = pos.y - h * 0.5
+
+            Glide.DrawHealthBar( x, y, w, h, health, Glide.GetVehicleIcon( lastTarget.VehicleType ) )
         end
 
     elseif lastTarget:IsPlayer() then

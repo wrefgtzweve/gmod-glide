@@ -50,35 +50,33 @@ function Glide.DrawWeaponSelection( name, icon )
     DrawTexturedRectRotated( sw * 0.5, y - size * 0.1, size * 0.3, size * 0.3, 0 )
 end
 
-local DrawRoundedBox = draw.RoundedBoxEx
+local DrawRect = surface.DrawRect
 local GetCachedIcon = Glide.GetCachedIcon
 
 local THEME_COLOR = Glide.THEME_COLOR
-local BG_COLOR = Color( 20, 20, 20, 240 )
-local FG_COLOR = Color( 0, 255, 0, 255 )
 
 function Glide.DrawHealthBar( x, y, w, h, health, icon )
     icon = GetCachedIcon( icon or "materials/glide/icons/cogs.png" )
 
-    local radius = h * 0.25
+    SetColor( 20, 20, 20, 240 )
+    DrawRect( x, y, w, h )
 
-    THEME_COLOR.a = 255
-    DrawRoundedBox( radius, x, y, h, h, THEME_COLOR, true, false, true, false )
-    DrawRoundedBox( radius, x + h, y, w - h, h, BG_COLOR, false, true, false, true )
+    SetColor( THEME_COLOR:Unpack() )
+    DrawRect( x + 1, y + 1, h - 2, h - 2 )
 
     SetMaterial( icon )
     SetColor( 255, 255, 255, 255 )
-    DrawTexturedRectRotated( x + h * 0.5, y + h * 0.5, h, h, 0 )
+    DrawTexturedRectRotated( x + h * 0.5, y + h * 0.5, h * 0.9, h * 0.9, 0 )
 
-    FG_COLOR.r = 255 * ( 1 - health )
-    FG_COLOR.g = 255 * health
+    local padding = 1 + Floor( h * 0.13 )
 
-    x = x + h + 2
-    y = y + 2
-    w = w - h - 4
-    h = h - 4
+    x = x + h + padding
+    y = y + padding
+    w = w - h - padding * 2
+    h = h - padding * 2
 
-    DrawRoundedBox( radius, x, y, w * health, h, FG_COLOR, false, true, false, true )
+    SetColor( 255 * ( 1 - health ), 255 * health, 0, 255 )
+    DrawRect( x, y, w * health, h )
 end
 
 local VEHICLE_ICONS = {
@@ -88,6 +86,10 @@ local VEHICLE_ICONS = {
     [Glide.VEHICLE_TYPE.PLANE] = "materials/glide/icons/plane.png",
     [Glide.VEHICLE_TYPE.TANK] = "materials/glide/icons/tank.png"
 }
+
+function Glide.GetVehicleIcon( vehicleType )
+    return VEHICLE_ICONS[vehicleType] or VEHICLE_ICONS[1]
+end
 
 local DrawHealthBar = Glide.DrawHealthBar
 

@@ -43,6 +43,7 @@ function Config:Reset()
     -- Misc. settings
     self.manualGearShifting = false
     self.showPassengerList = true
+    self.showEmptyVehicleHealth = false
     self.autoHeadlightOn = true
     self.autoHeadlightOff = true
     self.headlightShadows = true
@@ -118,6 +119,7 @@ function Config:Save( immediate )
         -- Misc. settings
         manualGearShifting = self.manualGearShifting,
         showPassengerList = self.showPassengerList,
+        showEmptyVehicleHealth = self.showEmptyVehicleHealth,
         autoHeadlightOn = self.autoHeadlightOn,
         autoHeadlightOff = self.autoHeadlightOff,
         headlightShadows = self.headlightShadows,
@@ -198,6 +200,7 @@ function Config:Load()
     -- Misc. settings
     LoadBool( "manualGearShifting", false )
     LoadBool( "showPassengerList", true )
+    LoadBool( "showEmptyVehicleHealth", false )
     LoadBool( "autoHeadlightOn", true )
     LoadBool( "autoHeadlightOff", false )
     LoadBool( "headlightShadows", true )
@@ -611,6 +614,11 @@ function Config:OpenFrame()
 
     theme:CreateToggleButton( panelMisc, L"misc.show_passenger_list", self.showPassengerList, function( value )
         self.showPassengerList = value
+        self:Save()
+    end )
+
+    theme:CreateToggleButton( panelMisc, L"misc.show_health_empty_vehicles", self.showEmptyVehicleHealth, function( value )
+        self.showEmptyVehicleHealth = value
         self:Save()
     end )
 
