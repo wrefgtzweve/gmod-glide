@@ -9,8 +9,17 @@ ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/insurgent/chassis.mdl"
 ENT.MaxChassisHealth = 1500
 
+DEFINE_BASECLASS( "base_glide_car" )
+
+function ENT:SetupDataTables()
+    BaseClass.SetupDataTables( self )
+
+    self:NetworkVar( "Entity", "Turret" )
+    self:NetworkVar( "Entity", "TurretSeat" )
+end
+
 function ENT:GetPlayerSitSequence( seatIndex )
-    return seatIndex == 5 and "drive_pd" or ( seatIndex > 1 and "sit" or "drive_jeep" )
+    return seatIndex == 5 and "drive_airboat" or ( seatIndex > 1 and "sit" or "drive_jeep" )
 end
 
 if CLIENT then
@@ -50,6 +59,114 @@ if CLIENT then
     function ENT:OnCreateEngineStream( stream )
         stream:LoadPreset( "insurgent" )
     end
+
+    function ENT:OnLocalPlayerEnter( seatIndex )
+        self:DisableCrosshair()
+        self.isUsingTurret = false
+
+        if seatIndex == 5 then
+            self:EnableCrosshair( { iconType = "dot", color = Color( 0, 255, 0 ) } )
+            self.isUsingTurret = true
+        else
+            BaseClass.OnLocalPlayerEnter( self, seatIndex )
+        end
+    end
+
+    function ENT:OnLocalPlayerExit()
+        self:DisableCrosshair()
+        self.isUsingTurret = false
+    end
+
+    function ENT:UpdateCrosshairPosition()
+        self.crosshair.origin = Glide.GetCameraAimPos()
+    end
+
+    function ENT:OnActivateMisc()
+        BaseClass.OnActivateMisc( self )
+
+        self.turretBaseBone = self:LookupBone( "turret_base" )
+        self.turretWeaponBone = self:LookupBone( "turret_weapon" )
+    end
+
+    local ang = Angle()
+    local offset = Vector()
+    local matrix = Matrix()
+
+    function ENT:OnUpdateAnimations()
+        BaseClass.OnUpdateAnimations( self )
+
+        local turret = self:GetTurret()
+        if not IsValid( turret ) then return end
+
+        local bodyAng = self.isUsingTurret and turret.predictedBodyAngle or turret:GetLastBodyAngle()
+        local seat = self:GetTurretSeat()
+
+        if IsValid( seat ) then
+            ang[1] = 0
+            ang[2] = bodyAng[2]
+            ang[3] = 0
+
+            -- Manually move/rotate the seat to match the turret angles
+            local rad = math.rad( ang[2] )
+
+            offset[1] = math.sin( rad ) * 12.5
+            offset[2] = 13 + math.cos( rad ) * -13
+            offset[3] = 0
+
+            matrix:SetTranslation( offset )
+            matrix:SetAngles( ang )
+            seat:EnableMatrix( "RenderMultiply", matrix )
+        end
+
+        if not self.turretBaseBone then return end
+
+        bodyAng[1] = math.NormalizeAngle( bodyAng[1] ) -- Stay on the -180/180 range
+
+        ang[1] = 0
+        ang[2] = bodyAng[2]
+        ang[3] = 0
+        self:ManipulateBoneAngles( self.turretBaseBone, ang )
+
+        ang[2] = 0
+        ang[3] = -bodyAng[1] * 1.4
+        self:ManipulateBoneAngles( self.turretWeaponBone, ang )
+    end
+
+    function ENT:GetFirstPersonOffset( seatIndex, localEyePos )
+        if seatIndex == 5 then
+            return Vector( -30, 0, 115 )
+        end
+
+        return BaseClass.GetFirstPersonOffset( self, seatIndex, localEyePos )
+    end
+
+    function ENT:GetCameraType( seatIndex )
+        return seatIndex == 5 and 1 or 0 -- Glide.CAMERA_TYPE.TURRET or Glide.CAMERA_TYPE.CAR
+    end
+
+    function ENT:AllowFirstPersonMuffledSound( seatIndex )
+        return seatIndex < 5
+    end
+
+    local POSE_DATA = {
+        ["ValveBiped.Bip01_L_UpperArm"] = Angle( 0.1, -21.7, -18.1 ),
+        ["ValveBiped.Bip01_L_Forearm"] = Angle( -6, -19.5, -64.5 ),
+
+        ["ValveBiped.Bip01_R_UpperArm"] = Angle( 0.1, -21.7, 18.1 ),
+        ["ValveBiped.Bip01_R_Forearm"] = Angle( -6.3, -16.4, 90 ),
+
+        ["ValveBiped.Bip01_L_Thigh"] = Angle( 3, -4.3, 0 ),
+        ["ValveBiped.Bip01_L_Calf"] = Angle( -10.3, 91.6, -16.3 ),
+
+        ["ValveBiped.Bip01_R_Thigh"] = Angle( -3, -4.3, 0 ),
+        ["ValveBiped.Bip01_R_Calf"] = Angle( 10.3, 91.6, 16.3 )
+    }
+
+    function ENT:GetSeatBoneManipulations( seatIndex )
+        if seatIndex == 5 then
+            return POSE_DATA
+        end
+    end
 end
 
 if SERVER then
@@ -66,7 +183,7 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetWheelInertia( 11 )
+        self:SetWheelInertia( 11.5 )
         self:SetBrakePower( 3800 )
         self:SetDifferentialRatio( 3.3 )
         self:SetPowerDistribution( -0.4 )
@@ -86,7 +203,25 @@ if SERVER then
         self:CreateSeat( Vector( -35, 20, 6 ), Angle( 0, 270, 5 ), Vector( -40, 100, 0 ), true )
         self:CreateSeat( Vector( -35, -20, 6 ), Angle( 0, 270, 5 ), Vector( -40, -100, 0 ), true )
 
-        self.turretSeat = self:CreateSeat( Vector( -39, 0, 55 ), Angle( 0, 270, 0 ), Vector( -80, -100, 0 ), true )
+        local turretSeat = self:CreateSeat( Vector( -44.7, 0, 55.6 ), Angle( 0, 270, -10 ), Vector( -80, -100, 0 ), true )
+
+        local turret = Glide.CreateTurret( self, Vector( -30, 0, 90 ), Angle() )
+        turret:SetFireDelay( 0.13 )
+        turret:SetBulletOffset( Vector( 80, 0, 0 ) )
+        turret:SetMinPitch( -40 )
+        turret:SetMaxPitch( 20 )
+        turret:SetSingleShotSound( "Glide.InsurgentShoot" )
+        turret:SetShootLoopSound( "" )
+        turret:SetShootStopSound( "" )
+
+        turret.BulletDamage = 40
+        turret.BulletMaxDistance = 30000
+
+        self:SetTurret( turret )
+        self:SetTurretSeat( turretSeat )
+
+        Glide.HideEntity( turret, true )
+        Glide.HideEntity( turret:GetGunBody(), true )
 
         -- Front left
         self:CreateWheel( Vector( 82, 48, -8 ), {
@@ -117,5 +252,17 @@ if SERVER then
         } )
 
         self:ChangeWheelRadius( 24 )
+    end
+
+    function ENT:Think()
+        BaseClass.Think( self )
+
+        local turret = self:GetTurret()
+
+        if IsValid( turret ) then
+            turret:UpdateUser( self:GetSeatDriver( 5 ) )
+        end
+
+        return true
     end
 end
