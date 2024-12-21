@@ -110,6 +110,19 @@ do
     end
 end
 
+hook.Add( "InitPostEntity", "Glide.RegisterEntityClasses", function()
+    -- Find and register all entities that are children of `base_glide`
+    -- (or any of it's children classes) on the duplicator/entity limit system.
+    local IsBasedOn = scripted_ents.IsBasedOn
+    local RegisterEntityClass = duplicator.RegisterEntityClass
+
+    for class, _ in pairs( scripted_ents.GetList() ) do
+        if IsBasedOn( class, "base_glide" ) then
+            RegisterEntityClass( class, Glide.VehicleFactory, "Data" )
+        end
+    end
+end )
+
 local IsValid = IsValid
 
 function Glide.CanSpawnVehicle( ply )
@@ -119,9 +132,6 @@ function Glide.CanSpawnVehicle( ply )
     return true
 end
 
---- On children classes, you can use this function on
---- `duplicator.RegisterEntityClass` if you want to share
---- the spawn limit with other Glide vehicles.
 function Glide.VehicleFactory( ply, data )
     if not Glide.CanSpawnVehicle( ply ) then return end
 

@@ -151,8 +151,6 @@ if CLIENT then
 end
 
 if SERVER then
-    duplicator.RegisterEntityClass( "gtav_rhino", Glide.VehicleFactory, "Data" )
-
     ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
 
     ENT.ExplosionGibs = {

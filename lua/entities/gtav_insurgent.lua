@@ -170,8 +170,6 @@ if CLIENT then
 end
 
 if SERVER then
-    duplicator.RegisterEntityClass( "gtav_insurgent", Glide.VehicleFactory, "Data" )
-
     ENT.SpawnPositionOffset = Vector( 0, 0, 45 )
     ENT.ChassisMass = 1000
 

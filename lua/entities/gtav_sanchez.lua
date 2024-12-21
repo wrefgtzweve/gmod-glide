@@ -66,8 +66,6 @@ if CLIENT then
 end
 
 if SERVER then
-    duplicator.RegisterEntityClass( "gtav_sanchez", Glide.VehicleFactory, "Data" )
-
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
     ENT.StartupTime = 0.4
     ENT.BurnoutForce = 200

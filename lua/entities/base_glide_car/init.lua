@@ -1,8 +1,6 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 
-duplicator.RegisterEntityClass( "base_glide_car", Glide.VehicleFactory, "Data" )
-
 DEFINE_BASECLASS( "base_glide" )
 
 include( "shared.lua" )

@@ -117,8 +117,6 @@ if CLIENT then
 end
 
 if SERVER then
-    duplicator.RegisterEntityClass( "gtav_wolfsbane", Glide.VehicleFactory, "Data" )
-
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
     ENT.StartupTime = 0.5
 

@@ -3,8 +3,6 @@ AddCSLuaFile( "shared.lua" )
 
 include( "shared.lua" )
 
-duplicator.RegisterEntityClass( "base_glide_aircraft", Glide.VehicleFactory, "Data" )
-
 DEFINE_BASECLASS( "base_glide" )
 
 --- Implement this base class function.

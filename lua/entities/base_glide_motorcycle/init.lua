@@ -2,8 +2,6 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
-duplicator.RegisterEntityClass( "base_glide_motorcycle", Glide.VehicleFactory, "Data" )
-
 DEFINE_BASECLASS( "base_glide_car" )
 
 --- Override this base class function.

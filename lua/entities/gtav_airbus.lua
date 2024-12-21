@@ -56,8 +56,6 @@ if CLIENT then
 end
 
 if SERVER then
-    duplicator.RegisterEntityClass( "gtav_airbus", Glide.VehicleFactory, "Data" )
-
     ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
     ENT.ChassisMass = 1800
     ENT.IsHeavyVehicle = true
