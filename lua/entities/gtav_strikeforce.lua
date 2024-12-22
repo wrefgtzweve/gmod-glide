@@ -56,7 +56,7 @@ if CLIENT then
 
     ENT.EngineSoundPath = "glide/aircraft/engine_luxor.wav"
     ENT.EngineSoundLevel = 90
-    ENT.EngineSoundVolume = 0.5
+    ENT.EngineSoundVolume = 0.45
     ENT.EngineSoundMinPitch = 103
     ENT.EngineSoundMaxPitch = 132
 
