@@ -205,8 +205,12 @@ function ENT:RagdollPlayers( time, vel )
     time = time or 3
     vel = vel or self:GetVelocity()
 
-    for index, ply in ipairs( self:GetAllPlayers() ) do
-        if self:CanFallOnCollision( index ) then
+    local ply
+
+    for seatIndex, seat in ipairs( self.seats ) do
+        ply = seat:GetDriver()
+
+        if IsValid( ply ) and self:CanFallOnCollision( seatIndex ) then
             Glide.RagdollPlayer( ply, vel, time )
         end
     end
