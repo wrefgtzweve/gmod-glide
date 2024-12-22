@@ -11,6 +11,7 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 ## Features
 
 - Includes base classes for cars, motorcycles, helicopters, planes and tanks
+- Duplicator/Advanced Duplicator 2 support
 - No constraints are used for wheel physics
 - Comes with 4 cars, a bus, a ATV, 2 motorcycles, 2 planes and a tank
 - First person and GTA-like third person camera
@@ -54,6 +55,50 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 - Custom tags when looking at players while driving Glide vehicles
 - Lots of optimizations (model LODs, client-side vehicle sounds/animations only play when they are near you, etc)
 - Custom notifications system
+
+## Server console variables
+
+### Vehicle damage multipliers
+
+| Command | Description
+| --------------------------------- | ------
+| `glide_damage_multiplier_bullet` `<number>` | Damage multiplier for bullets hitting Glide vehicles
+| `glide_damage_multiplier_blast` `<number>` | Damage multiplier for explosions hitting Glide vehicles
+| `glide_damage_multiplier_collision` `<number>` | Damage multiplier taken by Glide vehicles after colliding against other things
+
+### Sandbox limits
+
+| Command | Description
+| --------------------------------- | ------
+| `sbox_maxglide_vehicles` `<number>` | Max. number of Glide vehicles that one player can have
+| `sbox_maxglide_standalone_turrets` `<number>` | Max. number of Glide Turrets that one player can have
+| `sbox_maxglide_missile_launchers` `<number>` | Max. number of Glide Missile Launchers that one player can have
+| `sbox_maxglide_projectile_launchers` `<number>` | Max. number of Glide Projectile Launchers that one player can have
+
+### Turret tool limits
+
+| Command | Description
+| --------------------------------- | ------
+| `glide_turret_max_damage` `<number>` | Maximum damage dealt per bullet for Glide Turrets
+| `glide_turret_min_delay` `<number>` | Minimum delay allowed for Glide Turrets
+
+### Missile Launcher tool limits
+
+| Command | Description
+| --------------------------------- | ------
+| `glide_missile_launcher_min_delay` `<number>` | Minimum delay allowed for Glide Missile Launchers
+| `glide_missile_launcher_max_lifetime` `<number>` | Maximum missile flight time allowed for Glide Missile Launchers
+| `glide_missile_launcher_max_radius` `<number>` | Maximum radius from explosions created by Glide Missile Launchers
+| `glide_missile_launcher_max_damage` `<number>` | Maximum damage dealt by explosions from Glide Missile Launchers
+
+### Projectile Launcher tool limits
+
+| Command | Description
+| --------------------------------- | ------
+| `glide_projectile_launcher_min_delay` `<number>` | Minimum delay allowed for Glide Projectile Launchers
+| `glide_projectile_launcher_max_lifetime` `<number>` | Maximum projectile flight time allowed for Glide Projectile Launchers
+| `glide_projectile_launcher_max_radius` `<number>` | Maximum radius from explosions created by Glide Projectile Launchers
+| `glide_projectile_launcher_max_damage` `<number>` | Maximum damage dealt by explosions from Glide Projectile Launchers
 
 ## Contributing
 
