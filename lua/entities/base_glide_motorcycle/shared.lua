@@ -11,7 +11,8 @@ ENT.VehicleType = Glide.VEHICLE_TYPE.MOTORCYCLE
 ENT.UneditableNWVars = {
     WheelRadius = true,
     SuspensionLength = true,
-    PowerDistribution = true
+    PowerDistribution = true,
+    ForwardTractionBias = true
 }
 
 --- Override this base class function.

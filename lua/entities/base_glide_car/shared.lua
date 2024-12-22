@@ -91,18 +91,19 @@ function ENT:SetupDataTables()
 
     -- Make wheel parameters available as network variables too
     AddFloatVar( "WheelRadius", 10, 40, "#glide.editvar.wheels" )
-    AddFloatVar( "WheelInertia", 1, 100, "#glide.editvar.wheels" )
     AddFloatVar( "BrakePower", 500, 5000, "#glide.editvar.wheels" )
 
     AddFloatVar( "SuspensionLength", 5, 50, "#glide.editvar.suspension" )
     AddFloatVar( "SpringStrength", 100, 5000, "#glide.editvar.suspension" )
     AddFloatVar( "SpringDamper", 100, 10000, "#glide.editvar.suspension" )
 
-    AddFloatVar( "TractionBias", -1, 1, "#glide.editvar.traction" )
-    AddFloatVar( "TractionMultiplier", 5, 100, "#glide.editvar.traction" )
-    AddFloatVar( "TractionCurveMinAng", 5, 90, "#glide.editvar.traction" )
-    AddFloatVar( "TractionCurveMin", 100, 5000, "#glide.editvar.traction" )
-    AddFloatVar( "TractionCurveMax", 100, 5000, "#glide.editvar.traction" )
+    AddFloatVar( "ForwardTractionMax", 1000, 10000, "#glide.editvar.traction" )
+    AddFloatVar( "ForwardTractionBias", -1, 1, "#glide.editvar.traction" )
+
+    AddFloatVar( "SideTractionMultiplier", 5, 100, "#glide.editvar.traction" )
+    AddFloatVar( "SideTractionMaxAng", 5, 90, "#glide.editvar.traction" )
+    AddFloatVar( "SideTractionMax", 100, 5000, "#glide.editvar.traction" )
+    AddFloatVar( "SideTractionMin", 100, 5000, "#glide.editvar.traction" )
 
     if SERVER then
         -- Callback used to change the wheel radius
@@ -201,7 +202,7 @@ if SERVER then
     ENT.LightBodygroups = {}
 
     -- How much force to apply when trying to turn while doing a burnout?
-    ENT.BurnoutForce = 35
+    ENT.BurnoutForce = 70
 
     -- How much force to apply when the driver tries to unflip the vehicle?
     ENT.UnflipForce = 3
@@ -238,19 +239,25 @@ if SERVER then
     ENT.DuplicatorNetworkVariables = {
         TireSmokeColor = true,
         WheelRadius = true,
-        WheelInertia = true,
+
         MaxSteerAngle = true,
+        SteerConeChangeRate = true,
+        SteerConeMaxSpeed = true,
+        SteerConeMaxAngle = true,
+        CounterSteer = true,
 
         BrakePower = true,
         SuspensionLength = true,
         SpringStrength = true,
         SpringDamper = true,
 
-        TractionBias = true,
-        TractionMultiplier = true,
-        TractionCurveMinAng = true,
-        TractionCurveMin = true,
-        TractionCurveMax = true,
+        ForwardTractionMax = true,
+        ForwardTractionBias = true,
+
+        SideTractionMultiplier = true,
+        SideTractionMaxAng = true,
+        SideTractionMin = true,
+        SideTractionMax = true,
 
         MinRPM = true,
         MaxRPM = true,
@@ -258,6 +265,7 @@ if SERVER then
         MaxRPMTorque = true,
         DifferentialRatio = true,
         TransmissionEfficiency = true,
+        PowerDistribution = true,
 
         TurboCharged = true,
         FastTransmission = true

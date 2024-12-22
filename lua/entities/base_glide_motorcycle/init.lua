@@ -22,11 +22,9 @@ function ENT:OnPostInitialize()
     self:SetPowerDistribution( -1 )
 
     -- Change traction parameters to better suit bikes
-    self:SetTractionBias( -0.3 )
-    self:SetTractionMultiplier( 50 )
-    self:SetTractionCurveMinAng( 70 )
-    self:SetTractionCurveMin( 4500 )
-    self:SetTractionCurveMax( 3500 )
+    self:SetSideTractionMultiplier( 40 )
+    self:SetSideTractionMaxAng( 40 )
+    self:SetSideTractionMax( 1800 )
 end
 
 function ENT:SetStaySpright( toggle )

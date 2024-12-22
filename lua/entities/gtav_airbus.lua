@@ -60,7 +60,7 @@ if SERVER then
     ENT.ChassisMass = 1800
     ENT.IsHeavyVehicle = true
 
-    ENT.BurnoutForce = 30
+    ENT.BurnoutForce = 20
     ENT.UnflipForce = 4
 
     ENT.AirControlForce = Vector( 0.1, 0.05, 0.1 ) -- Roll, pitch, yaw
@@ -94,15 +94,13 @@ if SERVER then
         self:SetSpringDamper( 6000 )
 
         self:SetSuspensionLength( 13 )
-        self:SetTransmissionEfficiency( 0.8 )
         self:SetDifferentialRatio( 1.6 )
         self:SetPowerDistribution( -0.7 )
 
         self:SetBrakePower( 2500 )
-        self:SetWheelInertia( 8 )
         self:SetMaxSteerAngle( 60 )
         self:SetSteerConeChangeRate( 6 )
-        self:SetSteerConeMaxSpeed( 500 )
+        self:SetSteerConeMaxSpeed( 800 )
         self:SetSteerConeMaxAngle( 0.2 )
 
         self:SetMinRPM( 1000 )
@@ -110,10 +108,9 @@ if SERVER then
         self:SetMinRPMTorque( 1100 )
         self:SetMaxRPMTorque( 1200 )
 
-        self:SetTractionBias( -0.25 )
-        self:SetTractionMultiplier( 60 )
-        self:SetTractionCurveMin( 3000 )
-        self:SetTractionCurveMax( 2500 )
+        self:SetForwardTractionMax( 3000 )
+        self:SetSideTractionMax( 3000 )
+        self:SetSideTractionMin( 2500 )
 
         self:CreateSeat( Vector( 230, 35.5, -4 ), Angle( 0, 270, -5 ), Vector( 250, -100, 5 ), true )
 

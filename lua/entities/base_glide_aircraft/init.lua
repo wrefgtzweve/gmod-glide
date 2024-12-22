@@ -26,6 +26,13 @@ function ENT:OnPostInitialize()
     -- Countermeasure system
     self.countermeasureCD = 0
 
+    -- Update default wheel params
+    local params = self.wheelParams
+
+    params.forwardTractionMax = 50000
+    params.sideTractionMultiplier = 200
+    params.sideTractionMinAng = 70
+
     -- Trigger wire outputs
     if WireLib then
         WireLib.TriggerOutput( self, "Power", 0 )

@@ -141,7 +141,7 @@ if SERVER then
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
     ENT.StartupTime = 0.4
 
-    ENT.BurnoutForce = 80
+    ENT.BurnoutForce = 150
 
     ENT.AirControlForce = Vector( 3, 2, 0.2 ) -- Roll, pitch, yaw
     ENT.AirMaxAngularVelocity = Vector( 400, 400, 150 ) -- Roll, pitch, yaw
@@ -164,16 +164,12 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetSteerConeMaxAngle( 0.3 )
+        self:SetSteerConeMaxAngle( 0.2 )
         self:SetSteerConeMaxSpeed( 800 )
-
-        self:SetTractionBias( 0 )
-        self:SetTractionCurveMin( 2500 )
 
         self:SetPowerDistribution( -0.7 )
         self:SetDifferentialRatio( 1.2 )
         self:SetBrakePower( 1300 )
-        self:SetWheelInertia( 5 )
 
         self:SetMaxRPM( 15000 )
         self:SetMinRPMTorque( 1000 )
@@ -182,6 +178,10 @@ if SERVER then
         self:SetSuspensionLength( 10 )
         self:SetSpringStrength( 450 )
         self:SetSpringDamper( 2800 )
+
+        self:SetSideTractionMultiplier( 15 )
+        self:SetSideTractionMax( 2400 )
+        self:SetSideTractionMin( 500 )
 
         self:CreateSeat( Vector( -23, 0, 4 ), Angle( 0, 270, -16 ), Vector( 0, 60, 0 ), true )
 

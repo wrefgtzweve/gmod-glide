@@ -36,9 +36,6 @@ function ENT:OnPostInitialize()
     -- Setup default NW wheel params
     local params = self.wheelParams
 
-    -- Wheel inertia
-    self:SetWheelInertia( params.inertia )
-
     -- Maximum length of the suspension
     self:SetSuspensionLength( params.suspensionLength )
 
@@ -51,12 +48,14 @@ function ENT:OnPostInitialize()
     -- Brake coefficient
     self:SetBrakePower( params.brakePower )
 
-    -- Side traction parameters
-    self:SetTractionBias( -0.05 )
-    self:SetTractionMultiplier( params.tractionMultiplier )
-    self:SetTractionCurveMinAng( params.tractionCurveMinAng )
-    self:SetTractionCurveMin( params.tractionCurveMin )
-    self:SetTractionCurveMax( params.tractionCurveMax )
+    -- Traction parameters
+    self:SetForwardTractionMax( params.forwardTractionMax )
+    self:SetForwardTractionBias( 0.0 )
+
+    self:SetSideTractionMultiplier( params.sideTractionMultiplier )
+    self:SetSideTractionMaxAng( params.sideTractionMaxAng )
+    self:SetSideTractionMax( params.sideTractionMax )
+    self:SetSideTractionMin( params.sideTractionMin )
 
     -- Fake engine parameters
     self:SetMinRPM( 2000 )
@@ -99,12 +98,12 @@ function ENT:UpdateWheelParameters()
     p.springStrength = self:GetSpringStrength()
     p.springDamper = self:GetSpringDamper()
     p.brakePower = self:GetBrakePower()
-    p.inertia = self:GetWheelInertia()
 
-    p.tractionMultiplier = self:GetTractionMultiplier()
-    p.tractionCurveMinAng = self:GetTractionCurveMinAng()
-    p.tractionCurveMin = self:GetTractionCurveMin()
-    p.tractionCurveMax = self:GetTractionCurveMax()
+    p.forwardTractionMax = self:GetForwardTractionMax()
+    p.sideTractionMultiplier = self:GetSideTractionMultiplier()
+    p.sideTractionMaxAng = self:GetSideTractionMaxAng()
+    p.sideTractionMin = self:GetSideTractionMin()
+    p.sideTractionMax = self:GetSideTractionMax()
 end
 
 --- Implement this base class function.
@@ -487,7 +486,6 @@ end
 --- Override this base class function.
 function ENT:CreateWheel( offset, params )
     local wheel = BaseClass.CreateWheel( self, offset, params )
-    wheel.enableTorqueInertia = true
 
     -- If the `isFrontWheel` param is not forced, figure it out now
     if params.isFrontWheel == nil then
@@ -504,7 +502,7 @@ function ENT:CreateWheel( offset, params )
 end
 
 local traction, tractionFront, tractionRear
-local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake, frontVelMult, rearVelMult
+local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake
 local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip
 
 --- Implement this base class function.
@@ -512,17 +510,17 @@ function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = IsValid( phys ) and phys:IsAsleep()
     local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
+    local inputHandbrake = self:GetInputBool( 1, "handbrake" )
 
-    traction = self:GetTractionBias()
-    tractionFront = 1 + Clamp( traction, -1, 0 )
-    tractionRear = 1 - Clamp( traction, 0, 1 )
+    traction = self:GetForwardTractionBias()
+    tractionFront = ( 1 + Clamp( traction, -1, 0 ) ) * self.frontTractionMult
+    tractionRear = ( 1 - Clamp( traction, 0, 1 ) ) * self.rearTractionMult
 
     frontTorque = self.availableFrontTorque
     rearTorque = self.availableRearTorque
     steerAngle = self.steerAngle
 
     frontBrake, rearBrake = self.frontBrake, self.rearBrake
-    frontVelMult, rearVelMult = self.frontWheelsAngVelMult, self.rearWheelsAngVelMult
     groundedCount, avgRPM, totalSideSlip, totalForwardSlip = 0, 0, 0, 0
 
     for _, w in ipairs( self.wheels ) do
@@ -536,8 +534,11 @@ function ENT:WheelThink( dt )
 
         w.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
         w.brake = w.isFrontWheel and frontBrake or rearBrake
-        w.angularVelocity = w.angularVelocity * ( w.isFrontWheel and frontVelMult or rearVelMult )
-        w.tractionMult = w.isFrontWheel and tractionFront or tractionRear
+        w.forwardTractionMult = w.isFrontWheel and tractionFront or tractionRear
+
+        if inputHandbrake and not w.isFrontWheel then
+            w.angularVelocity = 0
+        end
 
         if rpm > maxRPM then
             w:SetRPM( maxRPM )

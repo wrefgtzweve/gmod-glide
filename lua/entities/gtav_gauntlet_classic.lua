@@ -59,7 +59,7 @@ end
 
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
-    ENT.BurnoutForce = 40
+    ENT.BurnoutForce = 80
 
     function ENT:GetGears()
         return {
@@ -81,13 +81,13 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetWheelInertia( 10 )
         self:SetDifferentialRatio( 1.9 )
-        self:SetTractionMultiplier( 30 )
 
         self:SetMaxRPM( 25000 )
-        self:SetMinRPMTorque( 1200 )
-        self:SetMaxRPMTorque( 1400 )
+        self:SetMinRPMTorque( 1300 )
+        self:SetMaxRPMTorque( 1500 )
+
+        self:SetForwardTractionMax( 2500 )
 
         self:CreateSeat( Vector( -22, 18, -3 ), Angle( 0, 270, -10 ), Vector( 40, 80, 0 ), true )
         self:CreateSeat( Vector( -8, -18, -3 ), Angle( 0, 270, 5 ), Vector( -40, -80, 0 ), true )
