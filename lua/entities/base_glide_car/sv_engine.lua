@@ -305,8 +305,8 @@ function ENT:EngineThink( dt )
         local frontBurnout = self:GetPowerDistribution() > 0
         local dir = frontBurnout and self:GetRight() or -self:GetRight()
 
-        self.frontBrake = frontBurnout and 0 or 1
-        self.rearBrake = frontBurnout and 1 or 0
+        self.frontBrake = frontBurnout and 0 or 0.5
+        self.rearBrake = frontBurnout and 0.5 or 0
 
         self.frontTractionMult = frontBurnout and 0.25 or 2
         self.rearTractionMult = frontBurnout and 2 or 0.25

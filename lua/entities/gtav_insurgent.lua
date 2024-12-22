@@ -181,7 +181,6 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetWheelInertia( 11.5 )
         self:SetBrakePower( 3800 )
         self:SetDifferentialRatio( 3.3 )
         self:SetPowerDistribution( -0.4 )
@@ -193,8 +192,8 @@ if SERVER then
         self:SetSpringStrength( 500 )
         self:SetSpringDamper( 2500 )
 
-        self:SetTractionCurveMinAng( 30 )
-        self:SetTractionCurveMax( 1000 )
+        self:SetForwardTractionMax( 3000 )
+        self:SetSideTractionMin( 1000 )
 
         self:CreateSeat( Vector( -2, 21.5, 9 ), Angle( 0, 270, -5 ), Vector( 40, 100, 0 ), true )
         self:CreateSeat( Vector( 15, -21.5, 7 ), Angle( 0, 270, 5 ), Vector( 40, -100, 0 ), true )

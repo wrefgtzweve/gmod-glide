@@ -68,7 +68,7 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
     ENT.StartupTime = 0.4
-    ENT.BurnoutForce = 200
+    ENT.BurnoutForce = 220
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 6, subModelId = 1 }, -- Headlight
@@ -79,7 +79,6 @@ if SERVER then
         self:SetTransmissionEfficiency( 0.7 )
         self:SetDifferentialRatio( 1.8 )
         self:SetBrakePower( 2000 )
-        self:SetWheelInertia( 9 )
 
         self:SetMaxRPM( 15000 )
         self:SetMinRPMTorque( 500 )

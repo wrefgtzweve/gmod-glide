@@ -49,7 +49,7 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 50 )
     ENT.ChassisMass = 900
-    ENT.BurnoutForce = 30
+    ENT.BurnoutForce = 35
 
     ENT.AirControlForce = Vector( 0.4, 0.2, 0.1 ) -- Roll, pitch, yaw
     ENT.AirMaxAngularVelocity = Vector( 200, 200, 150 ) -- Roll, pitch, yaw
@@ -61,15 +61,15 @@ if SERVER then
     }
 
     function ENT:CreateFeatures()
-        self:SetWheelInertia( 10 )
         self:SetSpringStrength( 700 )
         self:SetSteerConeMaxSpeed( 1000 )
-        self:SetTractionBias( -0.15 )
+        self:SetForwardTractionBias( -0.15 )
+        self:SetForwardTractionMax( 2900 )
 
         self:SetDifferentialRatio( 2.3 )
         self:SetTransmissionEfficiency( 0.75 )
         self:SetPowerDistribution( 0.8 )
-        self:SetBrakePower( 3000 )
+        self:SetBrakePower( 2500 )
 
         self:SetMinRPMTorque( 1000 )
         self:SetMaxRPMTorque( 1200 )

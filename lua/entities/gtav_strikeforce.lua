@@ -211,7 +211,7 @@ if SERVER then
         self.wheelParams.springStrength = 1500
         self.wheelParams.springDamper = 6000
         self.wheelParams.brakePower = 2000
-        self.wheelParams.tractionMultiplier = 40
+        self.wheelParams.sideTractionMultiplier = 250
 
         -- Front
         self:CreateWheel( Vector( 180, -12, -25 ), {

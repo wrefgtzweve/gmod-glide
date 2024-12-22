@@ -27,10 +27,11 @@ function ENT:OnPostInitialize()
     params.springStrength = 6000
     params.springDamper = 30000
 
-    params.tractionMultiplier = 800
-    params.tractionMinAng = 70
-    params.tractionMin = 25000.0
-    params.tractionMax = 22000.0
+    params.forwardTractionMax = 50000
+    params.sideTractionMultiplier = 800
+    params.sideTractionMinAng = 70
+    params.sideTractionMax = 12000
+    params.sideTractionMin = 10000
 
     self:SetEngineThrottle( 0 )
     self:SetEnginePower( 0 )
