@@ -91,7 +91,6 @@ function ENT:UpdateTurret( parent, body, t )
 
         if SERVER then
             self:SetLastBodyAngle( ang )
-            SuppressHostEvents( user )
         end
 
         if CLIENT then
@@ -133,6 +132,10 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
             local entPos = ent:IsPlayer() and ent:GetShootPos() + PLAYER_COMPENSATION_OFFSET or ent:GetPos()
             dir = entPos - pos
             dir:Normalize()
+        end
+
+        if IsValid( attacker ) and attacker:IsPlayer() then
+            SuppressHostEvents( attacker )
         end
     end
 
