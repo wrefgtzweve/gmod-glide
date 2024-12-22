@@ -5,6 +5,7 @@ ENT.AutomaticFrameAdvance = true
 
 function ENT:Initialize()
     self.sounds = {}
+    self.isLocalPlayerInFirstPerson = false
 
     self.crosshair = {
         enabled = false

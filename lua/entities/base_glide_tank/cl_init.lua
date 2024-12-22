@@ -226,6 +226,8 @@ function ENT:OnUpdateSounds()
         return
     end
 
+    stream.firstPerson = self.isLocalPlayerInFirstPerson
+
     local inputs = stream.inputs
 
     inputs.rpmFraction = self:GetEnginePower()

@@ -115,10 +115,7 @@ function Camera:SetFirstPerson( enable )
     local muffleSound = self.isInFirstPerson
 
     if IsValid( self.vehicle ) then
-        if self.vehicle.stream then
-            self.vehicle.stream.firstPerson = enable
-        end
-
+        self.vehicle.isLocalPlayerInFirstPerson = enable
         muffleSound = muffleSound and self.vehicle:AllowFirstPersonMuffledSound( self.seatIndex )
     end
 

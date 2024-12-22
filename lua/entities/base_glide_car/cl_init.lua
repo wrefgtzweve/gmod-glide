@@ -174,6 +174,8 @@ function ENT:OnUpdateSounds()
         return
     end
 
+    stream.firstPerson = self.isLocalPlayerInFirstPerson
+
     local health = self:GetEngineHealth()
     local inputs = stream.inputs
 
