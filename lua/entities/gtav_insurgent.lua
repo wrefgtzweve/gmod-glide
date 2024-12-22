@@ -172,6 +172,7 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 45 )
     ENT.ChassisMass = 1000
+    ENT.FallOnCollision = true
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 14, subModelId = 1 }, -- Tail lights
@@ -179,6 +180,10 @@ if SERVER then
         { type = "headlight", bodyGroupId = 15, subModelId = 1 },  -- Extra lights
         { type = "reverse", bodyGroupId = 13, subModelId = 1 }
     }
+
+    function ENT:CanFallOnCollision( seatIndex )
+        return seatIndex > 5
+    end
 
     function ENT:CreateFeatures()
         self:SetBrakePower( 3800 )
@@ -201,6 +206,9 @@ if SERVER then
         self:CreateSeat( Vector( -35, -20, 6 ), Angle( 0, 270, 5 ), Vector( -40, -100, 0 ), true )
 
         local turretSeat = self:CreateSeat( Vector( -44.7, 0, 55.6 ), Angle( 0, 270, -10 ), Vector( -80, -100, 0 ), true )
+
+        self:CreateSeat( Vector( -110, 30, 20.5 ), Angle( 0, 180, 3 ), Vector( 40, 100, 0 ), true )
+        self:CreateSeat( Vector( -110, -30, 20.5 ), Angle( 0, 0, 3 ), Vector( 40, 100, 0 ), true )
 
         local turret = Glide.CreateTurret( self, Vector( -30, 0, 90 ), Angle() )
         turret:SetFireDelay( 0.13 )
