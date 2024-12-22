@@ -239,7 +239,12 @@ if SERVER then
     ENT.DuplicatorNetworkVariables = {
         TireSmokeColor = true,
         WheelRadius = true,
+
         MaxSteerAngle = true,
+        SteerConeChangeRate = true,
+        SteerConeMaxSpeed = true,
+        SteerConeMaxAngle = true,
+        CounterSteer = true,
 
         BrakePower = true,
         SuspensionLength = true,
@@ -260,6 +265,7 @@ if SERVER then
         MaxRPMTorque = true,
         DifferentialRatio = true,
         TransmissionEfficiency = true,
+        PowerDistribution = true,
 
         TurboCharged = true,
         FastTransmission = true
