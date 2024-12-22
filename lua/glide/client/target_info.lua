@@ -55,16 +55,18 @@ local Camera = Glide.Camera
 local lastTarget, alpha = NULL, 0
 
 hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
+    local localPly = LocalPlayer()
+
     if Camera.isActive then
         local target = Camera.lastAimEntity
 
-        if IsValid( target ) and ( target:IsPlayer() or target.IsGlideVehicle ) then
+        if IsValid( target ) and ( target:IsPlayer() or target.IsGlideVehicle ) and target ~= localPly then
             lastTarget = target
             alpha = 1
         end
     else
         -- If the camera is not active, only return Glide vehicles
-        local target = LocalPlayer():GetEyeTrace().Entity
+        local target = localPly:GetEyeTrace().Entity
 
         if IsValid( target ) and target.IsGlideVehicle then
             lastTarget = target
@@ -95,6 +97,11 @@ hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
         pos[3] = pos[3] + lastTarget:OBBMaxs()[3]
 
         if IsValid( driver ) then
+            if driver == localPly then
+                alpha = 0
+                return
+            end
+
             local x, y, w = DrawPlayerTag( driver, -1, pos )
             Glide.DrawHealthBar( x, y, w, h, health, Glide.GetVehicleIcon( lastTarget.VehicleType ) )
 
