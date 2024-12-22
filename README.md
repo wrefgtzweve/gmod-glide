@@ -12,6 +12,7 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 
 - Includes base classes for cars, motorcycles, helicopters, planes and tanks
 - Duplicator/Advanced Duplicator 2 support
+- You can use the regular sandbox Color tool
 - No constraints are used for wheel physics
 - Comes with 4 cars, a bus, a ATV, 2 motorcycles, 2 planes and a tank
 - First person and GTA-like third person camera
