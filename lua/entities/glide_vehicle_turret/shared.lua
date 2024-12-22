@@ -214,5 +214,5 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
         filter:RemovePlayer( user )
     end
 
-    Glide.PlaySoundSet( singlePath, IsValid( user ) and user or self, nil, nil, nil, filter )
+    Glide.PlaySoundSet( singlePath, self, nil, nil, nil, filter )
 end
