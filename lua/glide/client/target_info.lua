@@ -96,12 +96,7 @@ hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
 
         pos[3] = pos[3] + lastTarget:OBBMaxs()[3]
 
-        if IsValid( driver ) then
-            if driver == localPly then
-                alpha = 0
-                return
-            end
-
+        if IsValid( driver ) and driver ~= localPly then
             local x, y, w = DrawPlayerTag( driver, -1, pos )
             Glide.DrawHealthBar( x, y, w, h, health, Glide.GetVehicleIcon( lastTarget.VehicleType ) )
 
