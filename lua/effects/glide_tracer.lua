@@ -65,7 +65,7 @@ function EFFECT:Render()
         DrawBeam( self.traceStart, self.traceEnd, self.traceWidth, 1, 0, self.traceColor )
     end
 
-    SMOKE_COLOR[4] = 255 * anim
+    SMOKE_COLOR.a = 255 * anim
 
     DrawBeam( self.traceStart, self.traceEnd, self.traceWidth * 6, 1, 0, SMOKE_COLOR )
 end
