@@ -229,7 +229,7 @@ function ENT:PhysicsCollideFall( speed, speedNormal, data )
     -- Timer to avoid the "likely crashes the game" warning in console
     timer.Simple( 0, function()
         if IsValid( self ) then
-            self:RagdollAllPlayers( 3, vel )
+            self:RagdollPlayers( 3, vel )
         end
     end )
 end

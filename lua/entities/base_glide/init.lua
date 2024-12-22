@@ -201,12 +201,14 @@ function ENT:GetTraceData( startPos, endPos )
 end
 
 --- Kicks out all passengers, then ragdoll them.
-function ENT:RagdollAllPlayers( time, vel )
+function ENT:RagdollPlayers( time, vel )
     time = time or 3
     vel = vel or self:GetVelocity()
 
-    for _, ply in ipairs( self:GetAllPlayers() ) do
-        Glide.RagdollPlayer( ply, vel, time )
+    for index, ply in ipairs( self:GetAllPlayers() ) do
+        if self:CanFallOnCollision( index ) then
+            Glide.RagdollPlayer( ply, vel, time )
+        end
     end
 
     self.hasRagdolledAllPlayers = true
@@ -436,7 +438,7 @@ function ENT:Think()
 
     -- If necessary, kick passengers when underwater
     if self.FallOnCollision and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
-        self:RagdollAllPlayers( 2 )
+        self:RagdollPlayers( 2 )
     end
 
     local dt = TickInterval()

@@ -209,6 +209,13 @@ if SERVER then
         outputs[#outputs + 1] = { "EngineHealth", "NORMAL", "Current engine health (between 0.0 and 1.0)" }
     end
 
+    --- When this vehicle's `FallOnCollision` is `true`,
+    --- this function runs for all seats. You can use it
+    --- to make only some players ragdoll off the vehicle.
+    function ENT:CanFallOnCollision( _seatIndex )
+        return true
+    end
+
     -- You can safely override these on children classes
     function ENT:CreateFeatures() end
 
