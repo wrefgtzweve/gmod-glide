@@ -22,8 +22,9 @@ function ENT:EngineInit()
     self.rearBrake = 0.2
     self.availableFrontTorque = 0
     self.availableRearTorque = 0
-    self.frontWheelsAngVelMult = 1
-    self.rearWheelsAngVelMult = 1
+
+    self.frontTractionMult = 1
+    self.rearTractionMult = 1
 
     self.avgSideSlip = 0
     self.avgPoweredRPM = 0
@@ -291,8 +292,6 @@ function ENT:EngineThink( dt )
     -- Do a burnout when holding down the throttle and brake inputs
     if inputThrottle > 0.1 and inputBrake > 0.1 and Abs( self.forwardSpeed ) < 50 then
         self.burnout = Approach( self.burnout, 1, dt )
-        self.frontWheelsAngVelMult = 1
-        self.rearWheelsAngVelMult = 1
 
         clutch = 0
 
@@ -301,13 +300,16 @@ function ENT:EngineThink( dt )
         local mins, maxs = self:OBBMins(), self:OBBMaxs()
         local burnoutForce = phys:GetMass() * self.BurnoutForce * self.burnout * dt
 
-        burnoutForce = burnoutForce * self.inputSteer * Clamp( Abs( self.avgForwardSlip ) * 0.05, 0, 1 )
+        burnoutForce = burnoutForce * self.inputSteer * Clamp( Abs( self.avgForwardSlip ) * 0.1, 0, 1 )
 
         local frontBurnout = self:GetPowerDistribution() > 0
         local dir = frontBurnout and self:GetRight() or -self:GetRight()
 
-        self.frontBrake = frontBurnout and 1 or 0
-        self.rearBrake = frontBurnout and 0 or 1
+        self.frontBrake = frontBurnout and 0 or 1
+        self.rearBrake = frontBurnout and 1 or 0
+
+        self.frontTractionMult = frontBurnout and 0.25 or 2
+        self.rearTractionMult = frontBurnout and 2 or 0.25
 
         for _, w in ipairs( self.wheels ) do
             if w.isFrontWheel == frontBurnout then
@@ -321,12 +323,11 @@ function ENT:EngineThink( dt )
         end
 
     elseif inputHandbrake then
-        -- Lock only the rear wheels while using the handbrake
-        self.frontWheelsAngVelMult = 1
-        self.rearWheelsAngVelMult = Approach( self.rearWheelsAngVelMult, 0, dt * 2 )
+        self.frontTractionMult = 1
+        self.rearTractionMult = 0.5
 
         self.frontBrake = 0
-        self.rearBrake = 1
+        self.rearBrake = 0.5
         self.clutch = 1
         clutch = 1
 
@@ -339,8 +340,8 @@ function ENT:EngineThink( dt )
         self.frontBrake = 0
         self.rearBrake = inputBrake
 
-        self.frontWheelsAngVelMult = 1
-        self.rearWheelsAngVelMult = Approach( self.rearWheelsAngVelMult, 1, dt * 2 )
+        self.frontTractionMult = 1
+        self.rearTractionMult = 1
     end
 
     rpm = self:GetFlywheelRPM()
