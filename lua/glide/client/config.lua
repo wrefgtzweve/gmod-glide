@@ -211,7 +211,7 @@ function Config:Load()
 
     LoadBool( "manualGearShifting", false )
     LoadBool( "autoHeadlightOn", true )
-    LoadBool( "autoHeadlightOff", false )
+    LoadBool( "autoHeadlightOff", true )
     LoadBool( "headlightShadows", true )
     LoadBool( "enableTips", true )
 
