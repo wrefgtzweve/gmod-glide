@@ -1,6 +1,6 @@
 {
 	"title": "Glide // Styled's Vehicle Base",
-	"type": "entity",
+	"type": "vehicle",
 	"tags":	["fun", "roleplay"],
 	"ignore": [
 		".git*",
