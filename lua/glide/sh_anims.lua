@@ -23,8 +23,10 @@ end )
 
 hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
     local vehicle = ply:GlideGetVehicle()
-    if not IsValid( vehicle ) then return end
-    if not vehicle.GetPlayerSitSequence then return end
+
+    local vehTbl = getTable( vehicle )
+    if not vehTbl then return end
+    if not vehTbl.GetPlayerSitSequence then return end
 
     local plyTbl = getTable( ply )
     if plyTbl.m_bWasNoclipping then
