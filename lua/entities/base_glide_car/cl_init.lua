@@ -486,10 +486,13 @@ local GEAR_LABELS = {
 }
 
 local throttle = 0
+local Config = Glide.Config
 
 --- Override this base class function.
 function ENT:DrawVehicleHUD( screenW, screenH )
     BaseClass.DrawVehicleHUD( self, screenW, screenH )
+
+    if not Config.showHUD then return end
 
     infoW = Floor( screenH * 0.23 )
     infoH = Floor( screenH * 0.035 )

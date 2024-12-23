@@ -41,9 +41,11 @@ function Config:Reset()
     self.mouseShow = true
 
     -- Misc. settings
-    self.manualGearShifting = false
+    self.showHUD = true
     self.showPassengerList = true
     self.showEmptyVehicleHealth = false
+
+    self.manualGearShifting = false
     self.autoHeadlightOn = true
     self.autoHeadlightOff = true
     self.headlightShadows = true
@@ -117,9 +119,11 @@ function Config:Save( immediate )
         mouseShow = self.mouseShow,
 
         -- Misc. settings
-        manualGearShifting = self.manualGearShifting,
+        showHUD = self.showHUD,
         showPassengerList = self.showPassengerList,
         showEmptyVehicleHealth = self.showEmptyVehicleHealth,
+
+        manualGearShifting = self.manualGearShifting,
         autoHeadlightOn = self.autoHeadlightOn,
         autoHeadlightOff = self.autoHeadlightOff,
         headlightShadows = self.headlightShadows,
@@ -198,9 +202,11 @@ function Config:Load()
     LoadBool( "mouseShow", true )
 
     -- Misc. settings
-    LoadBool( "manualGearShifting", false )
+    LoadBool( "showHUD", true )
     LoadBool( "showPassengerList", true )
     LoadBool( "showEmptyVehicleHealth", false )
+
+    LoadBool( "manualGearShifting", false )
     LoadBool( "autoHeadlightOn", true )
     LoadBool( "autoHeadlightOff", false )
     LoadBool( "headlightShadows", true )
@@ -611,6 +617,11 @@ function Config:OpenFrame()
     local panelMisc = frame:AddTab( "icon16/cog.png", L"settings.misc" )
 
     theme:CreateHeader( panelMisc, L"settings.misc" )
+
+    theme:CreateToggleButton( panelMisc, L"misc.show_hud", self.showHUD, function( value )
+        self.showHUD = value
+        self:Save()
+    end )
 
     theme:CreateToggleButton( panelMisc, L"misc.show_passenger_list", self.showPassengerList, function( value )
         self.showPassengerList = value
