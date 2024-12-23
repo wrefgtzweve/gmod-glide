@@ -474,7 +474,7 @@ function ENT:Think()
     return true
 end
 
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 function ENT:UpdateHealthOutputs()
     if not TriggerOutput then return end

@@ -263,7 +263,7 @@ end
 
 local WORLD_UP = Vector( 0, 0, 1 )
 local TraceLine = util.TraceLine
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 function ENT:UpdateAltitude()
     local mins = self:OBBMins()

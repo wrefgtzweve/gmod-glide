@@ -104,7 +104,7 @@ local Approach = math.Approach
 local ExpDecay = Glide.ExpDecay
 
 local IsValid = IsValid
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 local WORLD_DOWN = Vector( 0, 0, -1 )
 

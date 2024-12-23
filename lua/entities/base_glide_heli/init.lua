@@ -105,7 +105,7 @@ end
 local IsValid = IsValid
 local Approach = math.Approach
 local ExpDecay = Glide.ExpDecay
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 --- Override this base class function.
 function ENT:OnPostThink( dt )

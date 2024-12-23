@@ -269,7 +269,7 @@ end
 local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
-local TriggerOutput = Either( WireLib, WireLib.TriggerOutput, nil )
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 --- Implement this base class function.
 function ENT:OnPostThink( dt )
