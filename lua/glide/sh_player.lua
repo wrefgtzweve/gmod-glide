@@ -1,10 +1,10 @@
 local PlayerMeta = FindMetaTable( "Player" )
-local eyePos = PlayerMeta.EyePos
-local eyeAngles = PlayerMeta.EyeAngles
 
 local EntityMeta = FindMetaTable( "Entity" )
 local getTable = EntityMeta.GetTable
 local getNWEntity = EntityMeta.GetNWEntity
+local eyeAngles = EntityMeta.EyeAngles
+local eyePos = EntityMeta.EyePos
 
 function PlayerMeta:GlideGetVehicle()
     return getNWEntity( self, "GlideVehicle", NULL )
