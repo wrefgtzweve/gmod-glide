@@ -6,6 +6,9 @@ Glide.playerSettings = playerSettings
 local activeData = Glide.activeInputData or {}
 Glide.activeInputData = activeData
 
+local entMeta = FindMetaTable( "Entity" )
+local getTable = entMeta.GetTable
+
 do
     local SetNumber = Glide.SetNumber
 
@@ -210,8 +213,9 @@ local function HandleMouseInput( ply, active )
     local settings = playerSettings[ply]
     if not settings then return end
 
+    local vehTbl = getTable( vehicle )
     -- Ignore is this vehicle is not an aircraft
-    if vehicle.VehicleType ~= 3 and vehicle.VehicleType ~= 4 then return end
+    if vehTbl.VehicleType ~= 3 and vehTbl.VehicleType ~= 4 then return end
 
     -- Ignore if the mouse aim mode is "Free camera"
     if settings.mouseFlyMode == 2 then return end
@@ -231,7 +235,7 @@ local function HandleMouseInput( ply, active )
         local pitchDrag = Clamp( angVel[2] * -0.1, -3, 3 ) * dt * 40
         local rudderDrag = Clamp( angVel[3] * 0.1, -3, 3 ) * dt * 40
 
-        local mult = vehicle.VehicleType == 4 and 15 or 8
+        local mult = vehTbl.VehicleType == 4 and 15 or 8
         local pitch = Clamp( ( targetDir:Dot( vehicle:GetUp() ) * -mult ) + pitchDrag, -1, 1 )
         local rudder = Clamp( ( targetDir:Dot( vehicle:GetRight() ) * mult ) + rudderDrag, -1, 1 )
 
