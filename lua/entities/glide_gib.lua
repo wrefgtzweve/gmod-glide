@@ -43,12 +43,18 @@ end
 
 if not SERVER then return end
 
+local lifetimeCvar = GetConVar( "glide_gib_lifetime" )
+local collisionCvar = GetConVar( "glide_gib_enable_collisions" )
+
 function ENT:Initialize()
     self:SetSolid( SOLID_VPHYSICS )
     self:SetMoveType( MOVETYPE_VPHYSICS )
-    self:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
-    self:PhysicsInit( SOLID_VPHYSICS )
 
+    if collisionCvar:GetInt() == 0 then
+        self:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
+    end
+
+    self:PhysicsInit( SOLID_VPHYSICS )
     self:SetMaterial( "glide/vehicles/generic_burnt" )
     self:DrawShadow( false )
 
@@ -60,7 +66,7 @@ function ENT:Initialize()
         phys:SetDragCoefficient( 1 )
     end
 
-    self.lifeTime = RealTime() + 8
+    self.lifeTime = RealTime() + lifetimeCvar:GetFloat()
 end
 
 function ENT:OnRemove()
@@ -106,7 +112,7 @@ end
 function ENT:Think()
     local t = RealTime()
 
-    if t > self.lifeTime then
+    if t > self.lifeTime and self.lifeTime ~= 0 then
         self:Remove()
         return
     end
