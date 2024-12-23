@@ -172,6 +172,17 @@ hook.Add( "OnPhysgunPickup", "Glide.DisableKeepUpright", function( _, ent )
     end
 end )
 
+-- Make sure all Glide vehicles are delete-able on map cleanup.
+hook.Add( "PreCleanupMap", "Glide.ClearEntityPersistFlag", function()
+    local IsBasedOn = scripted_ents.IsBasedOn
+
+    for _, e in ents.Iterator() do
+        if IsValid( e ) and e.GetClass and IsBasedOn( e:GetClass(), "base_glide" ) then
+            e:RemoveEFlags( EFL_KEEP_ON_RECREATE_ENTITIES )
+        end
+    end
+end )
+
 if not game.SinglePlayer() then return end
 
 local function ResetVehicle( vehicle )
