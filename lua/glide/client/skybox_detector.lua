@@ -81,7 +81,7 @@ local function DetectSkybox( isDrawingDepth, isDrawSkybox, isDraw3DSkybox )
     local tr = TraceLine( traceData )
 
     plane = skyboxPlanes[dirIndex]
-    plane.origin = tr.HitPos
+    plane.origin = tr.HitPos - tr.HitNormal * tr.Fraction * 10
     plane.hit = tr.HitSky
     plane.alpha = 255 * ( 1 - tr.Fraction )
 end
