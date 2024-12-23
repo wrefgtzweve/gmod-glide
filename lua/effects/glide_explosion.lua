@@ -169,7 +169,7 @@ function EFFECT:Debris( emitter, origin, normal, scale )
             mask = 16395 -- MASK_SOLID_BRUSHONLY
         } )
 
-        if tr.Hit and not tr.HitNonWorld then
+        if tr and tr.Hit and not tr.HitNonWorld then
             util.DecalEx( DECAL_MATERIAL, tr.Entity, tr.HitPos + tr.HitNormal, tr.HitNormal,
                 color_white, RandomFloat( 1, 2 ) * scale, RandomFloat( 1, 2 ) * scale )
         end
