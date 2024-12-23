@@ -86,12 +86,24 @@ local function DetectSkybox( isDrawingDepth, isDrawSkybox, isDraw3DSkybox )
     plane.alpha = 255 * ( 1 - tr.Fraction )
 end
 
-hook.Add( "Glide_OnLocalEnterVehicle", "Glide.EnableSkyboxDetection", function( _, seatIndex )
-    if seatIndex < 2 then
-        hook.Add( "PostDrawTranslucentRenderables", "Glide.DetectSkybox", DetectSkybox )
-    end
+function Glide.EnableSkyboxIndicator()
+    Glide.DisableSkyboxIndicator()
+
+    if not Glide.Config.showSkybox then return end
+    if not Glide.currentSeatIndex then return end
+    if Glide.currentSeatIndex > 1 then return end
+
+    hook.Add( "PostDrawTranslucentRenderables", "Glide.DetectSkybox", DetectSkybox )
+end
+
+function Glide.DisableSkyboxIndicator()
+    hook.Remove( "PostDrawTranslucentRenderables", "Glide.DetectSkybox" )
+end
+
+hook.Add( "Glide_OnLocalEnterVehicle", "Glide.EnableSkyboxDetection", function()
+    Glide.EnableSkyboxIndicator()
 end )
 
 hook.Add( "Glide_OnLocalExitVehicle", "Glide.DisableSkyboxDetection", function()
-    hook.Remove( "PostDrawTranslucentRenderables", "Glide.DetectSkybox" )
+    Glide.DisableSkyboxIndicator()
 end )

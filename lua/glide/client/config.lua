@@ -44,6 +44,7 @@ function Config:Reset()
     self.showHUD = true
     self.showPassengerList = true
     self.showEmptyVehicleHealth = false
+    self.showSkybox = true
 
     self.manualGearShifting = false
     self.autoHeadlightOn = true
@@ -122,6 +123,7 @@ function Config:Save( immediate )
         showHUD = self.showHUD,
         showPassengerList = self.showPassengerList,
         showEmptyVehicleHealth = self.showEmptyVehicleHealth,
+        showSkybox = self.showSkybox,
 
         manualGearShifting = self.manualGearShifting,
         autoHeadlightOn = self.autoHeadlightOn,
@@ -205,6 +207,7 @@ function Config:Load()
     LoadBool( "showHUD", true )
     LoadBool( "showPassengerList", true )
     LoadBool( "showEmptyVehicleHealth", false )
+    LoadBool( "showSkybox", true )
 
     LoadBool( "manualGearShifting", false )
     LoadBool( "autoHeadlightOn", true )
@@ -631,6 +634,12 @@ function Config:OpenFrame()
     theme:CreateToggleButton( panelMisc, L"misc.show_health_empty_vehicles", self.showEmptyVehicleHealth, function( value )
         self.showEmptyVehicleHealth = value
         self:Save()
+    end )
+
+    theme:CreateToggleButton( panelMisc, L"misc.show_skybox", self.showSkybox, function( value )
+        self.showSkybox = value
+        self:Save()
+        Glide.EnableSkyboxIndicator()
     end )
 
     theme:CreateToggleButton( panelMisc, L"misc.auto_headlights_on", self.autoHeadlightOn, function( value )
