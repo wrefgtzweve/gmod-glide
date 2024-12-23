@@ -197,10 +197,6 @@ do
     --- Set `includeEmpty` to true to include vehicles without a driver.
     --- `traceData` is a optional, to make use of it's filtering options.
     function Glide.CanLockOnEntity( ent, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
-        if ent.GlideSeatIndex then
-            return false -- Don't lock on seats inside Glide vehicles
-        end
-
         if not includeEmpty and ent.GetDriver and ent:GetDriver() == NULL then
             return false -- Don't lock on empty seats
         end
@@ -212,6 +208,7 @@ do
 
         -- Is the entity too far away?
         if diff:LengthSqr() > maxDistance then return false end
+        if not ent:TestPVS( origin ) then return false end
 
         -- Is the entity within the field of view threshold?
         diff:Normalize()
@@ -230,7 +227,11 @@ do
         local tr = TraceLine( traceData )
         if not tr.Hit then return true, dot end
 
-        return tr.Entity == ent and ent:TestPVS( origin ), dot
+        -- Check if the trace hit the target directly
+        if tr.Entity == ent then return true, dot end
+
+        -- Check if the trace hit the target's parent
+        return IsValid( tr.Entity ) and ent:GetParent() == tr.Entity, dot
     end
 end
 

@@ -249,8 +249,7 @@ function ENT:Think()
     if IsValid( target ) then
         self:SetHasTarget( target.IsCountermeasure ~= true )
 
-        local targetPos = target:LocalToWorld( target:OBBCenter() ) + target:GetVelocity() * dt
-
+        local targetPos = target:GetPos()
         local dir = targetPos - myPos
         dir:Normalize()
 
