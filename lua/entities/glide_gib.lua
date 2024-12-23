@@ -11,6 +11,8 @@ ENT.PhysgunDisabled = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
+local lifetimeCvar = GetConVar( "glide_gib_lifetime" )
+
 function ENT:SetupDataTables()
     self:NetworkVar( "Bool", "IsOnFire" )
 end
@@ -60,7 +62,7 @@ function ENT:Initialize()
         phys:SetDragCoefficient( 1 )
     end
 
-    self.lifeTime = RealTime() + 8
+    self.lifeTime = RealTime() + lifetimeCvar:GetFloat()
 end
 
 function ENT:OnRemove()
@@ -106,7 +108,7 @@ end
 function ENT:Think()
     local t = RealTime()
 
-    if t > self.lifeTime then
+    if t > self.lifeTime and self.lifeTime ~= 0 then
         self:Remove()
         return
     end
