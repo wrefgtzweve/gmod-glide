@@ -1,5 +1,8 @@
 local IsValid = IsValid
 
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
+
 hook.Add( "UpdateAnimation", "Glide.OverridePlayerAnim", function( ply )
     local vehicle = ply:GlideGetVehicle()
     if not IsValid( vehicle ) then return end
@@ -20,11 +23,14 @@ end )
 
 hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
     local vehicle = ply:GlideGetVehicle()
-    if not IsValid( vehicle ) then return end
-    if not vehicle.GetPlayerSitSequence then return end
 
-    if ply.m_bWasNoclipping then
-        ply.m_bWasNoclipping = nil
+    local vehTbl = getTable( vehicle )
+    if not vehTbl then return end
+    if not vehTbl.GetPlayerSitSequence then return end
+
+    local plyTbl = getTable( ply )
+    if plyTbl.m_bWasNoclipping then
+        plyTbl.m_bWasNoclipping = nil
         ply:AnimResetGestureSlot( 6 ) -- GESTURE_SLOT_CUSTOM
 
         if CLIENT then
@@ -34,10 +40,10 @@ hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
 
     local anim = vehicle:GetPlayerSitSequence( ply:GlideGetSeatIndex() )
 
-    ply.CalcIdeal = 47 -- ACT_STAND
-    ply.CalcSeqOverride = ply:LookupSequence( anim )
+    plyTbl.CalcIdeal = 47 -- ACT_STAND
+    plyTbl.CalcSeqOverride = ply:LookupSequence( anim )
 
-    return ply.CalcIdeal, ply.CalcSeqOverride
+    return plyTbl.CalcIdeal, plyTbl.CalcSeqOverride
 end )
 
 if not CLIENT then return end

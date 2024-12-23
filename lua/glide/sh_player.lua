@@ -1,22 +1,30 @@
 local PlayerMeta = FindMetaTable( "Player" )
+local eyePos = PlayerMeta.EyePos
+local eyeAngles = PlayerMeta.EyeAngles
+
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
+local getNWEntity = EntityMeta.GetNWEntity
 
 function PlayerMeta:GlideGetVehicle()
-    return self:GetNWEntity( "GlideVehicle", NULL )
+    return getNWEntity( self, "GlideVehicle", NULL )
 end
 
 function PlayerMeta:GlideGetSeatIndex()
-    return self:GetNWEntity( "GlideSeatIndex", -1 )
+    return getNWEntity( self, "GlideSeatIndex", -1 )
 end
 
 if SERVER then
     --- Get the player's Glide camera position.
     function PlayerMeta:GlideGetCameraPos()
-        return self.GlideCam and self.GlideCam.origin or self:EyePos()
+        local selfTbl = getTable( self )
+        return selfTbl.GlideCam and selfTbl.GlideCam.origin or eyePos( self )
     end
 
     --- Get the player's Glide camera angles.
     function PlayerMeta:GlideGetCameraAngles()
-        return self.GlideCam and self.GlideCam.angle or self:EyeAngles()
+        local selfTbl = getTable( self )
+        return selfTbl.GlideCam and selfTbl.GlideCam.angle or eyeAngles( self )
     end
 
     local TraceLine = util.TraceLine
