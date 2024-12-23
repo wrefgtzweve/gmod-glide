@@ -184,6 +184,9 @@ CreateConVar( "glide_projectile_launcher_max_lifetime", "10", FCVAR_ARCHIVE + FC
 CreateConVar( "glide_projectile_launcher_max_radius", "500", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Maximum radius from explosions created by Glide Projectile Launchers.", 10 )
 CreateConVar( "glide_projectile_launcher_max_damage", "200", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Maximum damage dealt by explosions from Glide Projectile Launchers.", 1 )
 
+-- Gib convar
+CreateConVar( "glide_gib_lifetime", "8", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Lifetime of Glide Gibs, 0 for no despawning.", 0 )
+
 function Glide.Print( str, ... )
     MsgC( Color( 0, 0, 255 ), "[Glide] ", color_white, string.format( str, ... ), "\n" )
 end
