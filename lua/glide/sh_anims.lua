@@ -1,7 +1,7 @@
 local IsValid = IsValid
 
-local entMeta = FindMetaTable( "Entity" )
-local getTable = entMeta.GetTable
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
 
 hook.Add( "UpdateAnimation", "Glide.OverridePlayerAnim", function( ply )
     local vehicle = ply:GlideGetVehicle()

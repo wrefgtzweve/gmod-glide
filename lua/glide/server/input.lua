@@ -6,8 +6,8 @@ Glide.playerSettings = playerSettings
 local activeData = Glide.activeInputData or {}
 Glide.activeInputData = activeData
 
-local entMeta = FindMetaTable( "Entity" )
-local getTable = entMeta.GetTable
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
 
 do
     local SetNumber = Glide.SetNumber
