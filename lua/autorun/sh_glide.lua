@@ -333,6 +333,8 @@ local function IncludeDir( dirPath, doInclude, doTransfer )
 end
 
 if SERVER then
+    resource.AddWorkshop( "3389728250" )
+
     -- Shared files
     IncludeDir( "glide/", true, true )
 
