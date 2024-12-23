@@ -20,8 +20,8 @@ function Config:Reset()
 
     self.cameraDistance = 1.0
     self.cameraHeight = 1.0
-    self.cameraFOVInternal = 75
-    self.cameraFOVExternal = 75
+    self.cameraFOVInternal = GetConVar( "fov_desired" ):GetFloat()
+    self.cameraFOVExternal = GetConVar( "fov_desired" ):GetFloat()
 
     self.relativeToVehicle = false
     self.enableAutoCenter = true
@@ -176,8 +176,8 @@ function Config:Load()
 
     SetNumber( self, "cameraDistance", data.cameraDistance, 0.5, 3, self.cameraDistance )
     SetNumber( self, "cameraHeight", data.cameraHeight, 0.25, 2, self.cameraHeight )
-    SetNumber( self, "cameraFOVInternal", data.cameraFOVInternal, 30, 100, self.cameraFOVInternal )
-    SetNumber( self, "cameraFOVExternal", data.cameraFOVExternal, 30, 100, self.cameraFOVExternal )
+    SetNumber( self, "cameraFOVInternal", data.cameraFOVInternal, 30, 120, self.cameraFOVInternal )
+    SetNumber( self, "cameraFOVExternal", data.cameraFOVExternal, 30, 120, self.cameraFOVExternal )
 
     LoadBool( "relativeToVehicle", false )
     LoadBool( "enableAutoCenter", true )
@@ -340,7 +340,7 @@ function Config:OpenFrame()
         self:Save()
     end )
 
-    theme:CreateSlider( panelCamera, L"camera.fov_internal", self.cameraFOVInternal, 30, 100, 0, function( value )
+    theme:CreateSlider( panelCamera, L"camera.fov_internal", self.cameraFOVInternal, 30, 120, 0, function( value )
         self.cameraFOVInternal = value
         self:Save()
 
@@ -349,7 +349,7 @@ function Config:OpenFrame()
         end
     end )
 
-    theme:CreateSlider( panelCamera, L"camera.fov_external", self.cameraFOVExternal, 30, 100, 0, function( value )
+    theme:CreateSlider( panelCamera, L"camera.fov_external", self.cameraFOVExternal, 30, 120, 0, function( value )
         self.cameraFOVExternal = value
         self:Save()
 
