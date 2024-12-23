@@ -78,6 +78,8 @@ if CLIENT then
     local offset = Vector()
 
     function ENT:OnUpdateAnimations()
+        if not self.pivotFL then return end
+
         local dt = FrameTime()
         local spinL = -self:GetWheelSpin( 2 )
 
