@@ -24,6 +24,8 @@ ENT.VehicleColors = {
 local EntityMeta = FindMetaTable( "Entity" )
 local getTable = EntityMeta.GetTable
 
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
+
 function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, self.DuplicatorNetworkVariables )
 end
@@ -402,6 +404,21 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     local filter = self.traceData.filter
     filter[#filter + 1] = seat
 
+    -- Update seat wire outputs
+    if TriggerOutput then
+        if index == 1 then
+            TriggerOutput( self, "DriverSeat", seat )
+        else
+            local passengerSeats = {}
+
+            for i = 2, #self.seats do
+                passengerSeats[i - 1] = self.seats[i]
+            end
+
+            TriggerOutput( self, "PassengerSeats", passengerSeats )
+        end
+    end
+
     return seat
 end
 
@@ -429,9 +446,19 @@ function ENT:Think()
             self:ClearLockOnTarget()
 
             if IsValid( driver ) then
+                if TriggerOutput then
+                    TriggerOutput( self, "Active", 1 )
+                    TriggerOutput( self, "Driver", driver )
+                end
+
                 self:OnDriverEnter()
                 selfTbl.lastDriver = driver
             else
+                if TriggerOutput then
+                    TriggerOutput( self, "Active", 0 )
+                    TriggerOutput( self, "Driver", NULL )
+                end
+
                 self:OnDriverExit()
             end
 
@@ -477,8 +504,6 @@ function ENT:Think()
 
     return true
 end
-
-local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 function ENT:UpdateHealthOutputs()
     if not TriggerOutput then return end

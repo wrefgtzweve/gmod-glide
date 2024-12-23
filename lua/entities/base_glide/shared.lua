@@ -207,6 +207,10 @@ if SERVER then
         outputs[#outputs + 1] = { "MaxChassisHealth", "NORMAL", "Max. chassis health" }
         outputs[#outputs + 1] = { "ChassisHealth", "NORMAL", "Current chassis health (between 0.0 and MaxChassisHealth)" }
         outputs[#outputs + 1] = { "EngineHealth", "NORMAL", "Current engine health (between 0.0 and 1.0)" }
+        outputs[#outputs + 1] = { "Active", "NORMAL", "0: No driver\n1: Has a driver" }
+        outputs[#outputs + 1] = { "Driver", "ENTITY", "The current driver" }
+        outputs[#outputs + 1] = { "DriverSeat", "ENTITY", "The driver seat" }
+        outputs[#outputs + 1] = { "PassengerSeats", "ARRAY", "All other seats" }
     end
 
     --- When this vehicle's `FallOnCollision` is `true`,
