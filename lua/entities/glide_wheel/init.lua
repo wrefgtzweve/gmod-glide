@@ -3,6 +3,9 @@ AddCSLuaFile( "cl_init.lua" )
 
 include( "shared.lua" )
 
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
+
 function ENT:Initialize()
     self:SetModel( "models/editor/axis_helper.mdl" )
     self:SetSolid( SOLID_NONE )
@@ -94,25 +97,26 @@ do
     local Approach = math.Approach
 
     function ENT:Update( vehicle, steerAngle, isAsleep, dt )
+        local selfTbl = getTable( self )
         -- Get the wheel rotation relative to the vehicle, while applying the steering angle
-        local ang = vehicle:LocalToWorldAngles( steerAngle * self.steerMultiplier )
+        local ang = vehicle:LocalToWorldAngles( steerAngle * selfTbl.steerMultiplier )
 
         -- Rotate the wheel around the axle axis
-        self.spin = ( self.spin - Deg( self.angularVelocity ) * dt ) % 360
-        ang:RotateAroundAxis( ang:Right(), self.spin )
+        selfTbl.spin = ( selfTbl.spin - Deg( selfTbl.angularVelocity ) * dt ) % 360
+        ang:RotateAroundAxis( ang:Right(), selfTbl.spin )
         self:SetAngles( ang )
 
         if isAsleep then
             self:SetForwardSlip( 0 )
             self:SetSideSlip( 0 )
         else
-            self:SetLastSpin( self.spin )
-            self:SetLastOffset( self:GetLocalPos()[3] - self.basePos[3] )
+            self:SetLastSpin( selfTbl.spin )
+            self:SetLastOffset( self:GetLocalPos()[3] - selfTbl.basePos[3] )
         end
 
-        if isAsleep or not self.isOnGround then
-            self.angularVelocity = self.angularVelocity + ( self.torque / 20 ) * dt
-            self.angularVelocity = Approach( self.angularVelocity, 0, dt * 5 )
+        if isAsleep or not selfTbl.isOnGround then
+            selfTbl.angularVelocity = selfTbl.angularVelocity + ( selfTbl.torque / 20 ) * dt
+            selfTbl.angularVelocity = Approach( selfTbl.angularVelocity, 0, dt * 5 )
         end
     end
 
@@ -177,11 +181,12 @@ local slipAngle, sideForce
 local force, linearImp, angularImp
 
 function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
+    local selfTbl = getTable( self )
     -- Get the starting point of the raycast, where the suspension connects to the chassis
-    pos = phys:LocalToWorld( self.basePos )
+    pos = phys:LocalToWorld( selfTbl.basePos )
 
     -- Get the wheel rotation relative to the chassis, applying the steering angle if necessary
-    ang = vehicle:LocalToWorldAngles( vehicle.steerAngle * self.steerMultiplier )
+    ang = vehicle:LocalToWorldAngles( vehicle.steerAngle * selfTbl.steerMultiplier )
 
     -- Store some directions
     fw = ang:Forward()
@@ -194,8 +199,8 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
 
     traceData.start = pos
     traceData.endpos = pos - up * maxLen
-    traceData.mins = self.traceMins
-    traceData.maxs = self.traceMaxs
+    traceData.mins = selfTbl.traceMins
+    traceData.maxs = selfTbl.traceMaxs
 
     ray = TraceHull( traceData )
     fraction = Clamp( ray.Fraction, radius / maxLen, 1 )
@@ -208,20 +213,20 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     --debugoverlay.Cross( pos, 10, 0.05, Color( 100, 100, 100 ), true )
     --debugoverlay.Box( contactPos, self.traceMins, self.traceMaxs, 0.05, Color( 0, 200, 0 ) )
 
-    self.isOnGround = ray.Hit
+    selfTbl.isOnGround = ray.Hit
     self:SetContactSurface( surfaceId )
 
     -- Update the wheel position and sounds
     self:SetLocalPos( phys:WorldToLocal( contactPos + up * radius ) )
-    self:DoSuspensionSounds( fraction - self.lastFraction, vehicle )
-    self.lastFraction = fraction
+    self:DoSuspensionSounds( fraction - selfTbl.lastFraction, vehicle )
+    selfTbl.lastFraction = fraction
 
     if not ray.Hit then
         self:SetForwardSlip( 0 )
         self:SetSideSlip( 0 )
 
         -- Let the torque spin the wheel's fake mass
-        self.angularVelocity = self.angularVelocity + ( self.torque / 20 ) * dt
+        selfTbl.angularVelocity = selfTbl.angularVelocity + ( selfTbl.torque / 20 ) * dt
 
         return
     end
@@ -239,9 +244,9 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     -- Suspension spring force & damping
     offset = maxLen - ( fraction * maxLen )
     springForce = ( offset * params.springStrength )
-    damperForce = ( self.lastSpringOffset - offset ) * params.springDamper
+    damperForce = ( selfTbl.lastSpringOffset - offset ) * params.springDamper
 
-    self.lastSpringOffset = offset
+    selfTbl.lastSpringOffset = offset
 
     upDotNormal = up:Dot( ray.HitNormal )
     force = ( springForce - damperForce ) * upDotNormal * ray.HitNormal
@@ -250,13 +255,13 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     force:Add( ( SURFACE_RESISTANCE[surfaceId] or 0.05 ) * fw * -velF )
 
     -- Brake and torque forces
-    brake = self.brake
+    brake = selfTbl.brake
     surfaceGrip = SURFACE_GRIP[surfaceId] or 1
-    maxTraction = params.forwardTractionMax * surfaceGrip * self.forwardTractionMult
+    maxTraction = params.forwardTractionMax * surfaceGrip * selfTbl.forwardTractionMult
 
     -- This grip loss logic was inspired by simfphys
     brakeForce = Clamp( -velF, -brake, brake ) * params.brakePower * surfaceGrip
-    forwardForce = self.torque + brakeForce
+    forwardForce = selfTbl.torque + brakeForce
     signForwardForce = forwardForce > 0 and 1 or ( forwardForce < 0 and -1 or 0 )
 
     -- Given an amount of sideways slippage (up to the max. traction)
@@ -274,12 +279,12 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     groundAngularVelocity = TAU * ( velF / ( radius * TAU ) )
 
     -- Add our grip loss to our spin velocity
-    angularVelocity = groundAngularVelocity + gripLoss * ( self.torque > 0 and 1 or ( self.torque < 0 and -1 or 0 ) )
+    angularVelocity = groundAngularVelocity + gripLoss * ( selfTbl.torque > 0 and 1 or ( selfTbl.torque < 0 and -1 or 0 ) )
 
     -- Smoothly match our current angular velocity to the angular velocity affected by grip loss
-    self.angularVelocity = Approach( self.angularVelocity, angularVelocity, dt * 200 )
+    selfTbl.angularVelocity = Approach( selfTbl.angularVelocity, angularVelocity, dt * 200 )
 
-    gripLoss = groundAngularVelocity - self.angularVelocity
+    gripLoss = groundAngularVelocity - selfTbl.angularVelocity
     self:SetForwardSlip( gripLoss )
 
     -- Calculate side slip angle

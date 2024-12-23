@@ -109,8 +109,8 @@ local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 local WORLD_DOWN = Vector( 0, 0, -1 )
 
 --- Override this base class function.
-function ENT:OnPostThink( dt )
-    BaseClass.OnPostThink( self, dt )
+function ENT:OnPostThink( dt, selfTbl )
+    BaseClass.OnPostThink( self, dt, selfTbl )
 
     -- Damage the engine when underwater
     if self:WaterLevel() > 2 then
@@ -119,19 +119,19 @@ function ENT:OnPostThink( dt )
         self:UpdateHealthOutputs()
     end
 
-    self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 10, dt )
-    self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 10, dt )
-    self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "yaw" ), 10, dt )
+    selfTbl.inputPitch = ExpDecay( selfTbl.inputPitch, self:GetInputFloat( 1, "pitch" ), 10, dt )
+    selfTbl.inputRoll = ExpDecay( selfTbl.inputRoll, self:GetInputFloat( 1, "roll" ), 10, dt )
+    selfTbl.inputYaw = ExpDecay( selfTbl.inputYaw, self:GetInputFloat( 1, "yaw" ), 10, dt )
 
-    self:SetElevator( self.inputPitch )
-    self:SetRudder( self.inputYaw )
-    self:SetAileron( self.inputRoll )
+    self:SetElevator( selfTbl.inputPitch )
+    self:SetRudder( selfTbl.inputYaw )
+    self:SetAileron( selfTbl.inputRoll )
 
     local power = self:GetPower()
     local throttle = self:GetInputFloat( 1, "throttle" )
 
     -- If the main propeller was destroyed, turn off and disable power
-    if not IsValid( self.mainProp ) and self.PropModel ~= "" then
+    if not IsValid( selfTbl.mainProp ) and selfTbl.PropModel ~= "" then
         if self:IsEngineOn() then
             self:TurnOff()
         end
@@ -151,8 +151,8 @@ function ENT:OnPostThink( dt )
             local pitchVel = Clamp( Abs( phys:GetAngleVelocity()[2] / 50 ), -1, 1 ) * 0.1
             local downDot = WORLD_DOWN:Dot( self:GetForward() )
 
-            self.divePitch = Approach( self.divePitch, downDot > 0.5 and downDot or 0, dt * 0.5 )
-            self:SetExtraPitch( Approach( self:GetExtraPitch(), 1 + pitchVel + ( self.divePitch * 0.3 ), dt * 0.1 ) )
+            selfTbl.divePitch = Approach( selfTbl.divePitch, downDot > 0.5 and downDot or 0, dt * 0.5 )
+            self:SetExtraPitch( Approach( self:GetExtraPitch(), 1 + pitchVel + ( selfTbl.divePitch * 0.3 ), dt * 0.1 ) )
 
             if phys:IsAsleep() then
                 phys:Wake()
@@ -160,10 +160,10 @@ function ENT:OnPostThink( dt )
         end
 
         if self:GetEngineHealth() > 0 then
-            if self.isGrounded then
-                power = Approach( power, 1 + Clamp( throttle, -0.2, 1 ), dt * self.powerResponse )
+            if selfTbl.isGrounded then
+                power = Approach( power, 1 + Clamp( throttle, -0.2, 1 ), dt * selfTbl.powerResponse )
             else
-                local response = throttle < 0 and self.powerResponse * 0.75 or self.powerResponse
+                local response = throttle < 0 and selfTbl.powerResponse * 0.75 or selfTbl.powerResponse
 
                 -- Approach towards the idle power plus the throttle input
                 power = Approach( power, 1 + throttle, dt * response )
@@ -175,7 +175,7 @@ function ENT:OnPostThink( dt )
             end
         else
             -- Turn off
-            power = Approach( power, 0, dt * self.powerResponse * 0.4 )
+            power = Approach( power, 0, dt * selfTbl.powerResponse * 0.4 )
 
             if power < 0.1 then
                 self:TurnOff()
@@ -188,7 +188,7 @@ function ENT:OnPostThink( dt )
         self:DamageThink( dt )
     else
         -- Approach towards 0 power
-        power = ( power > 0 ) and ( power - dt * self.powerResponse * 0.6 ) or 0
+        power = ( power > 0 ) and ( power - dt * selfTbl.powerResponse * 0.6 ) or 0
 
         self:SetPower( power )
         self:SetExtraPitch( Approach( self:GetExtraPitch(), 1, dt * 0.1 ) )
@@ -199,7 +199,7 @@ function ENT:OnPostThink( dt )
     end
 
     -- Spin the propellers
-    for _, prop in ipairs( self.propellers ) do
+    for _, prop in ipairs( selfTbl.propellers ) do
         if IsValid( prop ) then
             prop.spinMultiplier = power
         end
@@ -212,18 +212,18 @@ function ENT:OnPostThink( dt )
     -- Update wheels
     local torque = 0
 
-    if throttle < 0 and self.forwardSpeed < 100 then
-        self.brake = 0.1
+    if throttle < 0 and selfTbl.forwardSpeed < 100 then
+        selfTbl.brake = 0.1
 
-        if self.forwardSpeed > self.MaxReverseSpeed then
-            torque = -self.ReverseTorque
+        if selfTbl.forwardSpeed > selfTbl.MaxReverseSpeed then
+            torque = -selfTbl.ReverseTorque
         end
 
-    elseif throttle < 0 and self.forwardSpeed > 0 then
-        self.brake = 1
+    elseif throttle < 0 and selfTbl.forwardSpeed > 0 then
+        selfTbl.brake = 1
 
     else
-        self.brake = 0.5
+        selfTbl.brake = 0.5
     end
 
     local isGrounded = false
@@ -239,20 +239,20 @@ function ENT:OnPostThink( dt )
         end
     end
 
-    self.isGrounded = isGrounded
+    selfTbl.isGrounded = isGrounded
 
-    local inputSteer = self.inputYaw --self:GetInputFloat( 1, "steer" )
-    local sideSlip = Clamp( totalSideSlip / self.wheelCount, -1, 1 )
+    local inputSteer = selfTbl.inputYaw --self:GetInputFloat( 1, "steer" )
+    local sideSlip = Clamp( totalSideSlip / selfTbl.wheelCount, -1, 1 )
 
     -- Limit the input and the rate of change depending on speed.
-    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self.SteerConeMaxSpeed, 0, 0.9 )
+    local invSpeedOverFactor = 1 - Clamp( selfTbl.totalSpeed / selfTbl.SteerConeMaxSpeed, 0, 0.9 )
     inputSteer = inputSteer * invSpeedOverFactor
 
     -- Counter-steer when slipping and going fast
     local counterSteer = Clamp( sideSlip * ( 1 - invSpeedOverFactor ), -0.5, 0.5 )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
-    self.steerAngle[2] = inputSteer * -self.MaxSteerAngle
+    selfTbl.steerAngle[2] = inputSteer * -selfTbl.MaxSteerAngle
 end
 
 --- Implement this base class function.

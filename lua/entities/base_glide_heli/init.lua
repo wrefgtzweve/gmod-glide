@@ -108,24 +108,24 @@ local ExpDecay = Glide.ExpDecay
 local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 --- Override this base class function.
-function ENT:OnPostThink( dt )
-    BaseClass.OnPostThink( self, dt )
+function ENT:OnPostThink( dt, selfTbl )
+    BaseClass.OnPostThink( self, dt, selfTbl )
 
-    if self.inputFlyMode == 0 then -- Glide.MOUSE_FLY_MODE.AIM
-        self.inputPitch = self:GetInputFloat( 1, "pitch" )
-        self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
-        self.inputYaw = self:GetInputFloat( 1, "yaw" )
+    if selfTbl.inputFlyMode == 0 then -- Glide.MOUSE_FLY_MODE.AIM
+        selfTbl.inputPitch = self:GetInputFloat( 1, "pitch" )
+        selfTbl.inputRoll = ExpDecay( selfTbl.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
+        selfTbl.inputYaw = self:GetInputFloat( 1, "yaw" )
     else
-        self.inputPitch = ExpDecay( self.inputPitch, self:GetInputFloat( 1, "pitch" ), 6, dt )
-        self.inputRoll = ExpDecay( self.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
-        self.inputYaw = ExpDecay( self.inputYaw, self:GetInputFloat( 1, "yaw" ), 6, dt )
+        selfTbl.inputPitch = ExpDecay( selfTbl.inputPitch, self:GetInputFloat( 1, "pitch" ), 6, dt )
+        selfTbl.inputRoll = ExpDecay( selfTbl.inputRoll, self:GetInputFloat( 1, "roll" ), 6, dt )
+        selfTbl.inputYaw = ExpDecay( selfTbl.inputYaw, self:GetInputFloat( 1, "yaw" ), 6, dt )
     end
 
     local power = self:GetPower()
     local throttle = self:GetInputFloat( 1, "throttle" )
 
     -- If the main rotor was destroyed, turn off and disable power
-    if not IsValid( self.mainRotor ) then
+    if not IsValid( selfTbl.mainRotor ) then
         if self:IsEngineOn() then
             self:TurnOff()
         end
@@ -147,18 +147,18 @@ function ENT:OnPostThink( dt )
             local powerOffset = throttle * 0.2
 
             -- If no throttle input and low on the ground, decrease power
-            if self.altitude < 25 and throttle < 0.1 then
+            if selfTbl.altitude < 25 and throttle < 0.1 then
                 powerOffset = powerOffset - 0.1
             end
 
-            power = Approach( power, 1 + powerOffset, dt * self.powerResponse )
+            power = Approach( power, 1 + powerOffset, dt * selfTbl.powerResponse )
 
-        elseif self.altitude > 20 then
+        elseif selfTbl.altitude > 20 then
             -- Fake auto-rotation
             power = Approach( power, 0.6, dt * 0.1 )
         else
             -- Turn off
-            power = Approach( power, 0, dt * self.powerResponse * 0.5 )
+            power = Approach( power, 0, dt * selfTbl.powerResponse * 0.5 )
 
             if power < 0.1 then
                 self:TurnOff()
@@ -171,12 +171,12 @@ function ENT:OnPostThink( dt )
         self:DamageThink( dt )
     else
         -- Approach towards 0 power
-        power = ( power > 0 ) and ( power - dt * self.powerResponse * 0.5 ) or 0
+        power = ( power > 0 ) and ( power - dt * selfTbl.powerResponse * 0.5 ) or 0
         self:SetPower( power )
     end
 
     -- Spin the rotors
-    for _, rotor in ipairs( self.rotors ) do
+    for _, rotor in ipairs( selfTbl.rotors ) do
         if IsValid( rotor ) then
             rotor.spinMultiplier = power
         end
@@ -190,9 +190,9 @@ function ENT:OnPostThink( dt )
             local phys = self:GetPhysicsObject()
             local force = self:GetRight() * power * phys:GetMass() * -100
 
-            phys:ApplyForceOffset( force * dt, self:LocalToWorld( self.TailRotorOffset ) )
+            phys:ApplyForceOffset( force * dt, self:LocalToWorld( selfTbl.TailRotorOffset ) )
 
-        elseif power > 0.5 and not IsValid( self.tailRotor ) and self.TailRotorModel then
+        elseif power > 0.5 and not IsValid( selfTbl.tailRotor ) and selfTbl.TailRotorModel then
             self:SetOutOfControl( true )
         end
     end
