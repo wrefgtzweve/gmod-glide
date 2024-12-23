@@ -189,13 +189,15 @@ do
     --- Returns true if the target entity can be locked on from a starting position and direction.
     --- Part of that includes checking if the dot product between `normal` and
     --- the direction towards the target entity is larger than `threshold`.
-    --- `data` is a optional `TraceData` struct, to make use of it's filtering options.
-    function Glide.CanLockOnEntity( ent, origin, normal, threshold, maxDistance, data )
+    --- `attacker` is the player who is trying to lock-on.
+    --- Set `includeEmpty` to true to include vehicles without a driver.
+    --- `traceData` is a optional, to make use of it's filtering options.
+    function Glide.CanLockOnEntity( ent, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
         if ent.GlideSeatIndex then
             return false -- Don't lock on seats inside Glide vehicles
         end
 
-        if ent.GetDriver and ent:GetDriver() == NULL then
+        if not includeEmpty and ent.GetDriver and ent:GetDriver() == NULL then
             return false -- Don't lock on empty seats
         end
 
@@ -212,16 +214,16 @@ do
         local dot = diff:Dot( normal )
         if dot < threshold then return false end
 
-        -- Check if other addons don't want us to lock on this
-        if hook.Run( "GlideCanLockOn", ent ) == false then
+        -- Check if other addons don't want the `attacker` to lock on this entity
+        if hook.Run( "Glide_CanLockOn", ent, attacker ) == false then
             return false
         end
 
-        data = data or emptyData
-        data.start = origin
-        data.endpos = entPos
+        traceData = traceData or emptyData
+        traceData.start = origin
+        traceData.endpos = entPos
 
-        local tr = TraceLine( data )
+        local tr = TraceLine( traceData )
         if not tr.Hit then return true, dot end
 
         return tr.Entity == ent and ent:TestPVS( origin ), dot
@@ -234,15 +236,18 @@ local WHITELIST = Glide.LOCKON_WHITELIST
 
 --- Finds all entities that we can lock on with `Glide.CanLockOnEntity`,
 --- then returns which one has the largest dot product between `normal` and the direction towards them.
-function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, data, ignore )
+function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, attacker, traceData )
     local largestDot = 0
     local canLock, dot, target
 
+    local includeEmpty = attacker:GetInfoNum( "glide_homing_launcher_lock_on_empty", 0 )
+    includeEmpty = includeEmpty and includeEmpty > 0 -- Could be nil
+
     for _, e in AllEnts() do
         if
-            e ~= ignore and ( WHITELIST[e:GetClass()] or e:IsVehicle() or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
+            e ~= attacker and ( WHITELIST[e:GetClass()] or e:IsVehicle() or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
         then
-            canLock, dot = CanLockOnEntity( e, origin, normal, threshold, maxDistance, data )
+            canLock, dot = CanLockOnEntity( e, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
 
             if canLock and dot > largestDot then
                 largestDot = dot
