@@ -1,5 +1,8 @@
 include( "shared.lua" )
 
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
+
 function ENT:Initialize()
     self.isActive = false
     self.modelCD = 0
@@ -88,15 +91,16 @@ local MAT_SLOSH = MAT_SLOSH
 function ENT:Think()
     local t = CurTime()
 
+    local selfTbl = getTable( self )
     self:SetNextClientThink( t + 0.01 )
 
     -- Periodically rotate and resize the wheel model
-    if t > self.modelCD then
+    if t > selfTbl.modelCD then
         m:SetTranslation( self:GetModelOffset() )
         m:SetAngles( self:GetModelAngle() )
         m:SetScale( self:GetModelScale2() )
         self:EnableMatrix( "RenderMultiply", m )
-        self.modelCD = t + 1
+        selfTbl.modelCD = t + 1
     end
 
     local parent = self:GetParent()
@@ -152,17 +156,17 @@ function ENT:Think()
         forwardSlipFactor, 100 - forwardSlipFactor * 10 )
 
     if muteRollSound then
-        self.lastSkidId = nil
-        self.lastRollId = nil
+        selfTbl.lastSkidId = nil
+        selfTbl.lastRollId = nil
 
         return true
     end
 
-    if t < self.particleCD then
+    if t < selfTbl.particleCD then
         return true
     end
 
-    self.particleCD = t + 0.05
+    selfTbl.particleCD = t + 0.05
 
     -- Emit side slip/tire roll particles
     local particleSize = Clamp( self:GetRadius(), 5, 10 )
@@ -197,8 +201,8 @@ function ENT:Think()
     end
 
     if surfaceId == MAT_SLOSH then
-        self.lastSkidId = nil
-        self.lastRollId = nil
+        selfTbl.lastSkidId = nil
+        selfTbl.lastRollId = nil
         return true
     end
 
@@ -210,24 +214,24 @@ function ENT:Think()
 
     if ROLL_MARK_SURFACES[surfaceId] then
         if Abs( fastFactor ) + forwardSlipFactor + sideSlipFactor > 0.01 then
-            self.lastRollId = AddTireRollPiece( self.lastRollId, contactPos, velocity, up, skidmarkSize, 1 )
+            selfTbl.lastRollId = AddTireRollPiece( selfTbl.lastRollId, contactPos, velocity, up, skidmarkSize, 1 )
         else
-            self.lastRollId = nil
+            selfTbl.lastRollId = nil
         end
 
         -- Don't create skidmarks if this surface uses roll marks
-        self.lastSkidId = nil
+        selfTbl.lastSkidId = nil
         return true
     end
 
-    self.lastRollId = nil
+    selfTbl.lastRollId = nil
 
     local totalSlipFactor = Clamp( forwardSlipFactor + sideSlipFactor, 0, 1 )
 
     if totalSlipFactor > 0.3 then
-        self.lastSkidId = AddSkidMarkPiece( self.lastSkidId, contactPos, velocity, up, skidmarkSize, totalSlipFactor )
+        selfTbl.lastSkidId = AddSkidMarkPiece( selfTbl.lastSkidId, contactPos, velocity, up, skidmarkSize, totalSlipFactor )
     else
-        self.lastSkidId = nil
+        selfTbl.lastSkidId = nil
     end
 
     return true

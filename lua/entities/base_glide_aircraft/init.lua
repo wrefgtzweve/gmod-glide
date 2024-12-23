@@ -204,12 +204,12 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
 end
 
 --- Implement this base class function.
-function ENT:OnPostThink( dt )
+function ENT:OnPostThink( dt, selfTbl )
     -- Find the altitude
     self:UpdateAltitude()
 
     -- Update landing gear
-    if self.HasLandingGear then
+    if selfTbl.HasLandingGear then
         self:LandingGearThink( dt )
     end
 end
