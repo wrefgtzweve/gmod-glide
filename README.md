@@ -17,6 +17,7 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 - Comes with 4 cars, a bus, a ATV, 2 motorcycles, 2 planes and a tank
 - First person and GTA-like third person camera
 - Players can fall off motorcycles
+- Vehicles can set custom player poses per seat
 - Editable engine/transmission/traction properties for cars and motorcycles
 - Car headlights, reverse lights, break lights and horns
 - Separate chassis and engine health
