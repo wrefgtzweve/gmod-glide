@@ -11,6 +11,10 @@ function Glide.CreateTurret( vehicle, offset, angles )
 
     vehicle:DeleteOnRemove( turret )
 
+    if vehicle.turretCount then
+        vehicle.turretCount = vehicle.turretCount + 1
+    end
+
     turret:SetParent( vehicle )
     turret:SetLocalPos( offset )
     turret:SetLocalAngles( angles )

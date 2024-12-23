@@ -7,6 +7,7 @@ end
 function ENT:WeaponInit()
     self.weapons = {}
     self.weaponCount = #self.WeaponSlots
+    self.turretCount = 0
 
     self.lockOnThinkCD = 0
     self.lockOnStateCD = 0
@@ -39,6 +40,13 @@ function ENT:WeaponInit()
 
         self.weapons[i] = weapon
     end
+end
+
+--- Returns the total count of weapons on this vehicle.
+--- This includes both weapons from `ENT.WeaponSlots`
+--- and turrets parented to this vehicle.
+function ENT:GetWeaponCount()
+    return self.weaponCount + self.turretCount
 end
 
 --- Switch the current active weapon.
