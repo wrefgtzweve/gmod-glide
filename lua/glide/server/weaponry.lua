@@ -1,5 +1,9 @@
 local IsValid = IsValid
 
+local EntityMeta = FindMetaTable( "Entity" )
+local getClass = EntityMeta.GetClass
+local isVehicle = EntityMeta.IsVehicle
+
 function Glide.CreateTurret( vehicle, offset, angles )
     local turret = ents.Create( "glide_vehicle_turret" )
 
@@ -245,7 +249,7 @@ function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, attacke
 
     for _, e in AllEnts() do
         if
-            e ~= attacker and ( WHITELIST[e:GetClass()] or e:IsVehicle() or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
+            e ~= attacker and ( WHITELIST[getClass( e )] or isVehicle( e ) or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
         then
             canLock, dot = CanLockOnEntity( e, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
 

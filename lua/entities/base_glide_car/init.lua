@@ -6,6 +6,9 @@ DEFINE_BASECLASS( "base_glide" )
 include( "shared.lua" )
 include( "sv_engine.lua" )
 
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
+
 --- Implement this base class function.
 function ENT:OnPostInitialize()
     -- Setup variables used on all cars
@@ -272,14 +275,14 @@ local Approach = math.Approach
 local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 --- Implement this base class function.
-function ENT:OnPostThink( dt )
+function ENT:OnPostThink( dt, selfTbl )
     self:UpdateBodygroups()
 
-    if self.shouldUpdateWheelParams then
+    if selfTbl.shouldUpdateWheelParams then
         self:UpdateWheelParameters()
     end
 
-    if self.shouldUpdatePowerDistribution then
+    if selfTbl.shouldUpdatePowerDistribution then
         self:UpdatePowerDistribution()
     end
 
@@ -292,8 +295,8 @@ function ENT:OnPostThink( dt )
         TriggerOutput( self, "EngineState", state )
         TriggerOutput( self, "EngineRPM", Clamp( self:GetFlywheelRPM(), 0, maxRPM ) )
 
-        if self.wireSetEngineOn ~= nil then
-            if self.wireSetEngineOn then
+        if selfTbl.wireSetEngineOn ~= nil then
+            if selfTbl.wireSetEngineOn then
                 if state < 1 then
                     self:TurnOn()
                 end
@@ -302,7 +305,7 @@ function ENT:OnPostThink( dt )
                 self:TurnOff()
             end
 
-            self.wireSetEngineOn = nil
+            selfTbl.wireSetEngineOn = nil
         end
     end
 
@@ -323,9 +326,9 @@ function ENT:OnPostThink( dt )
 
     -- Attempt to start the engine
     if state == 1 then
-        if self.startupTimer then
-            if CurTime() > self.startupTimer then
-                self.startupTimer = nil
+        if selfTbl.startupTimer then
+            if CurTime() > selfTbl.startupTimer then
+                selfTbl.startupTimer = nil
 
                 if health > 0 then
                     self:SetEngineState( 2 )
@@ -336,25 +339,25 @@ function ENT:OnPostThink( dt )
                 end
             end
         else
-            local startupTime = health < 0.5 and math.Rand( 1, 2 ) or self.StartupTime
-            self.startupTimer = CurTime() + startupTime
+            local startupTime = health < 0.5 and math.Rand( 1, 2 ) or selfTbl.StartupTime
+            selfTbl.startupTimer = CurTime() + startupTime
         end
 
     elseif state == 2 then
         -- Stop rising the throttle at random intervals
         if health < 0.25 then
-            if self.damageThrottleCooldown and self.damageThrottleCooldown > 0 then
-                self.damageThrottleCooldown = self.damageThrottleCooldown - dt
+            if selfTbl.damageThrottleCooldown and selfTbl.damageThrottleCooldown > 0 then
+                selfTbl.damageThrottleCooldown = selfTbl.damageThrottleCooldown - dt
             else
-                self.damageThrottleCooldown = math.Rand( 3, 0.2 )
+                selfTbl.damageThrottleCooldown = math.Rand( 3, 0.2 )
                 Glide.PlaySoundSet( "Glide.Damaged.GearGrind", self, 0.6 - health )
             end
         else
-            self.damageThrottleCooldown = nil
+            selfTbl.damageThrottleCooldown = nil
         end
     else
-        self.damageThrottleCooldown = nil
-        self.startupTimer = nil
+        selfTbl.damageThrottleCooldown = nil
+        selfTbl.startupTimer = nil
     end
 
     if self:IsEngineOn() then
@@ -374,9 +377,9 @@ function ENT:OnPostThink( dt )
         if state == 3 then
             local rpm = self:GetFlywheelRPM()
 
-            self.clutch = 1
+            selfTbl.clutch = 1
             self:SetFlywheelRPM( rpm )
-            self:EngineAccelerate( self.flywheelFriction, dt )
+            self:EngineAccelerate( selfTbl.flywheelFriction, dt )
             self:SetEngineThrottle( Approach( self:GetEngineThrottle(), 0, dt ) )
 
             if rpm < self:GetMinRPM() then
@@ -387,8 +390,8 @@ function ENT:OnPostThink( dt )
             self:EngineThink( dt )
         end
     else
-        self.availableFrontTorque = 0
-        self.availableRearTorque = 0
+        selfTbl.availableFrontTorque = 0
+        selfTbl.availableRearTorque = 0
     end
 
     -- Update driver inputs
@@ -396,16 +399,16 @@ function ENT:OnPostThink( dt )
 
     local phys = self:GetPhysicsObject()
 
-    if self.groundedCount < 1 and IsValid( phys ) then
-        if self.totalSpeed > 200 then
+    if selfTbl.groundedCount < 1 and IsValid( phys ) then
+        if selfTbl.totalSpeed > 200 then
             self:UpdateAirControls( phys, dt )
         else
             self:UpdateUnflip( phys, dt )
         end
     else
-        self.inputAirRoll = 0
-        self.inputAirPitch = 0
-        self.inputAirYaw = 0
+        selfTbl.inputAirRoll = 0
+        selfTbl.inputAirPitch = 0
+        selfTbl.inputAirYaw = 0
     end
 
     return true
@@ -507,23 +510,25 @@ local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip
 
 --- Implement this base class function.
 function ENT:WheelThink( dt )
+    local selfTbl = getTable( self )
+
     local phys = self:GetPhysicsObject()
     local isAsleep = IsValid( phys ) and phys:IsAsleep()
     local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
     local inputHandbrake = self:GetInputBool( 1, "handbrake" )
 
     traction = self:GetForwardTractionBias()
-    tractionFront = ( 1 + Clamp( traction, -1, 0 ) ) * self.frontTractionMult
-    tractionRear = ( 1 - Clamp( traction, 0, 1 ) ) * self.rearTractionMult
+    tractionFront = ( 1 + Clamp( traction, -1, 0 ) ) * selfTbl.frontTractionMult
+    tractionRear = ( 1 - Clamp( traction, 0, 1 ) ) * selfTbl.rearTractionMult
 
-    frontTorque = self.availableFrontTorque
-    rearTorque = self.availableRearTorque
-    steerAngle = self.steerAngle
+    frontTorque = selfTbl.availableFrontTorque
+    rearTorque = selfTbl.availableRearTorque
+    steerAngle = selfTbl.steerAngle
 
-    frontBrake, rearBrake = self.frontBrake, self.rearBrake
+    frontBrake, rearBrake = selfTbl.frontBrake, selfTbl.rearBrake
     groundedCount, avgRPM, totalSideSlip, totalForwardSlip = 0, 0, 0, 0
 
-    for _, w in ipairs( self.wheels ) do
+    for _, w in ipairs( selfTbl.wheels ) do
         w:Update( self, steerAngle, isAsleep, dt )
 
         totalSideSlip = totalSideSlip + w:GetSideSlip()
@@ -549,10 +554,10 @@ function ENT:WheelThink( dt )
         end
     end
 
-    self.avgPoweredRPM = avgRPM
-    self.groundedCount = groundedCount
-    self.avgSideSlip = totalSideSlip / self.wheelCount
-    self.avgForwardSlip = totalForwardSlip / self.wheelCount
+    selfTbl.avgPoweredRPM = avgRPM
+    selfTbl.groundedCount = groundedCount
+    selfTbl.avgSideSlip = totalSideSlip / selfTbl.wheelCount
+    selfTbl.avgForwardSlip = totalForwardSlip / selfTbl.wheelCount
 end
 
 local Floor = math.floor

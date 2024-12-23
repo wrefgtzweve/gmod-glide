@@ -10,6 +10,8 @@ include( "sv_wheels.lua" )
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
 
 local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
+local EntityMeta = FindMetaTable( "Entity" )
+local getTable = EntityMeta.GetTable
 
 function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, self.DuplicatorNetworkVariables )
@@ -424,18 +426,20 @@ local CurTime = CurTime
 local TickInterval = engine.TickInterval
 
 function ENT:Think()
+    local selfTbl = getTable( self )
+
     -- Run again next tick
     self:NextThink( CurTime() )
 
     -- Update speed variables
-    self.localVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
-    self.forwardSpeed = self.localVelocity[1]
-    self.totalSpeed = self.localVelocity:Length()
+    selfTbl.localVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
+    selfTbl.forwardSpeed = selfTbl.localVelocity[1]
+    selfTbl.totalSpeed = selfTbl.localVelocity:Length()
 
     -- If we have at least one seat...
-    if #self.seats > 0 then
+    if #selfTbl.seats > 0 then
         -- Use it to check if we have a driver
-        local driver = self.seats[1]:GetDriver()
+        local driver = selfTbl.seats[1]:GetDriver()
 
         if driver ~= self:GetDriver() then
             self:SetDriver( driver )
@@ -448,7 +452,7 @@ function ENT:Think()
                 end
 
                 self:OnDriverEnter()
-                self.lastDriver = driver
+                selfTbl.lastDriver = driver
             else
                 if TriggerOutput then
                     TriggerOutput( self, "Active", 0 )
@@ -458,17 +462,17 @@ function ENT:Think()
                 self:OnDriverExit()
             end
 
-            self.hasRagdolledAllPlayers = nil
+            selfTbl.hasRagdolledAllPlayers = nil
         end
     end
 
     -- Update weapons
-    if self.weaponCount > 0 then
+    if selfTbl.weaponCount > 0 then
         self:WeaponThink()
     end
 
     -- If necessary, kick passengers when underwater
-    if self.FallOnCollision and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
+    if selfTbl.FallOnCollision and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
         self:RagdollPlayers( 2 )
     end
 
@@ -491,12 +495,12 @@ function ENT:Think()
     end
 
     -- Update wheels
-    if self.wheelCount > 0 then
+    if selfTbl.wheelCount > 0 then
         self:WheelThink( dt )
     end
 
     -- Let children classes do their own stuff
-    self:OnPostThink( dt )
+    self:OnPostThink( dt, selfTbl )
 
     return true
 end

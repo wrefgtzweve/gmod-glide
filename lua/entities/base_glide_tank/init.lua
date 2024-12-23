@@ -184,7 +184,7 @@ local Abs = math.abs
 local Clamp = math.Clamp
 
 --- Implement this base class function.
-function ENT:OnPostThink( dt )
+function ENT:OnPostThink( dt, selfTbl )
     local state = self:GetEngineState()
 
     -- Damage the engine when underwater
@@ -201,9 +201,9 @@ function ENT:OnPostThink( dt )
 
     -- Attempt to start the engine
     if state == 1 then
-        if self.startupTimer then
-            if CurTime() > self.startupTimer then
-                self.startupTimer = nil
+        if selfTbl.startupTimer then
+            if CurTime() > selfTbl.startupTimer then
+                selfTbl.startupTimer = nil
 
                 if health > 0 then
                     self:SetEngineState( 2 )
@@ -212,8 +212,8 @@ function ENT:OnPostThink( dt )
                 end
             end
         else
-            local startupTime = health < 0.5 and math.Rand( 1, 2 ) or self.StartupTime
-            self.startupTimer = CurTime() + startupTime
+            local startupTime = health < 0.5 and math.Rand( 1, 2 ) or selfTbl.StartupTime
+            selfTbl.startupTimer = CurTime() + startupTime
         end
     end
 
@@ -226,8 +226,8 @@ function ENT:OnPostThink( dt )
 
         if IsValid( phys ) and phys:IsAsleep() then
             self:SetTrackSpeed( 0 )
-            self.availableTorqueL = 0
-            self.availableTorqueR = 0
+            selfTbl.availableTorqueL = 0
+            selfTbl.availableTorqueR = 0
 
             local driverInput = self:GetInputFloat( 1, "accelerate" ) + self:GetInputFloat( 1, "brake" ) + self:GetInputFloat( 1, "steer" )
 
@@ -237,8 +237,8 @@ function ENT:OnPostThink( dt )
         end
     end
 
-    local torqueL = self.availableTorqueL / self.wheelCountL
-    local torqueR = self.availableTorqueR / self.wheelCountR
+    local torqueL = selfTbl.availableTorqueL / selfTbl.wheelCountL
+    local torqueR = selfTbl.availableTorqueR / selfTbl.wheelCountR
 
     local isGrounded = false
     local totalSideSlip = 0
@@ -248,7 +248,7 @@ function ENT:OnPostThink( dt )
         totalAngVel = totalAngVel + Abs( w.angularVelocity )
 
         if w.isOnGround then
-            w.brake = self.brake
+            w.brake = selfTbl.brake
             w.torque = w.isLeftTrack and torqueL or torqueR
 
             isGrounded = true
@@ -259,15 +259,15 @@ function ENT:OnPostThink( dt )
         end
     end
 
-    self.isGrounded = isGrounded
-    self:SetTrackSpeed( totalAngVel / self.wheelCount )
+    selfTbl.isGrounded = isGrounded
+    self:SetTrackSpeed( totalAngVel / selfTbl.wheelCount )
 
     local inputSteer = self:GetInputFloat( 1, "steer" )
-    local sideSlip = Clamp( totalSideSlip / self.wheelCount, -1, 1 )
+    local sideSlip = Clamp( totalSideSlip / selfTbl.wheelCount, -1, 1 )
 
     -- Limit the input and the rate of change depending on speed,
     -- but allow a faster rate of change when slipping sideways.
-    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self.MaxSpeed, 0, 1 )
+    local invSpeedOverFactor = 1 - Clamp( selfTbl.totalSpeed / selfTbl.MaxSpeed, 0, 1 )
 
     inputSteer = inputSteer * Clamp( invSpeedOverFactor, 0.2, 1 )
 
@@ -275,10 +275,10 @@ function ENT:OnPostThink( dt )
     local counterSteer = Clamp( sideSlip * ( 1 - invSpeedOverFactor ), -0.05, 0.05 )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
-    local maxAng = self.isTurningInPlace and 90 or self.MaxSteerAngle
+    local maxAng = selfTbl.isTurningInPlace and 90 or selfTbl.MaxSteerAngle
 
-    self.inputSteer = inputSteer
-    self.steerAngle[2] = -inputSteer * maxAng
+    selfTbl.inputSteer = inputSteer
+    selfTbl.steerAngle[2] = -inputSteer * maxAng
 
     -- Update turret angles, if we have a driver
     local driver = self:GetDriver()
@@ -291,9 +291,9 @@ function ENT:OnPostThink( dt )
         local projectilePos = self:GetProjectileStartPos()
         local tr = TraceLine( self:GetTraceData( origin, projectilePos ) )
 
-        self.isCannonInsideWall = tr.Hit
+        selfTbl.isCannonInsideWall = tr.Hit
 
-        if self.isCannonInsideWall then
+        if selfTbl.isCannonInsideWall then
             isAimingAtTarget = false
         end
 
