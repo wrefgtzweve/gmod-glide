@@ -9,6 +9,18 @@ include( "sv_wheels.lua" )
 
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
 
+ENT.VehicleColors = {
+    Color( 180, 70, 70 ),
+    Color( 80, 65, 50 ),
+    Color( 162, 188, 243 ),
+    Color( 214, 106, 53 ),
+    Color( 45, 45, 45 ),
+    Color( 20, 20, 20 ),
+    Color( 100, 100, 100 ),
+    Color( 190, 190, 190 ),
+    Color( 255, 255, 255 )
+}
+
 local EntityMeta = FindMetaTable( "Entity" )
 local getTable = EntityMeta.GetTable
 
@@ -97,20 +109,7 @@ function ENT:Initialize()
         return
     end
 
-    -- Pretty colors
-    local colors = {
-        Color( 180, 70, 70 ),
-        Color( 80, 65, 50 ),
-        Color( 162, 188, 243 ),
-        Color( 214, 106, 53 ),
-        Color( 45, 45, 45 ),
-        Color( 20, 20, 20 ),
-        Color( 100, 100, 100 ),
-        Color( 190, 190, 190 ),
-        Color( 255, 255, 255 )
-    }
-
-    local data = { Color = colors[math.random( #colors )] }
+    local data = { Color = self.VehicleColors[math.random( #self.VehicleColors )] }
 
     self:SetColor( data.Color )
     duplicator.StoreEntityModifier( self, "colour", data )
