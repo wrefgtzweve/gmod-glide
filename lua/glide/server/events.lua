@@ -115,6 +115,13 @@ hook.Add( "CanEditVariable", "Glide.ValidateEditVariables", function( ent, _, _,
     end
 end )
 
+-- Block "Disable Collisions" option on tanks
+hook.Add( "CanProperty", "block_remover_property", function( ply, property, ent )
+    if not ply:IsAdmin() and property == "collision" and ent.VehicleType == Glide.VEHICLE_TYPE.TANK then
+        return false
+    end
+end )
+
 hook.Add( "EntityTakeDamage", "Glide.OverrideDamage", function( target, dmginfo )
     -- Don't let missiles deal crush damage
     local inflictor = dmginfo:GetInflictor()
