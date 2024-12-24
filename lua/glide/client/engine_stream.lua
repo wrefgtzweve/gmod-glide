@@ -58,7 +58,7 @@ function Glide.CreateEngineStream( parent )
     end
 
     streamInstances[id] = stream
-    Glide.Print( "Stream instance #%s has been created.", id )
+    Glide.PrintDev( "Stream instance #%s has been created.", id )
 
     return setmetatable( stream, EngineStream )
 end
@@ -69,7 +69,7 @@ function EngineStream:Destroy()
     self.parent = nil
 
     streamInstances[self.id] = nil
-    Glide.Print( "Stream instance #%s has been destroyed.", self.id )
+    Glide.PrintDev( "Stream instance #%s has been destroyed.", self.id )
 
     setmetatable( self, nil )
 end
@@ -351,7 +351,7 @@ local function LoadCallback( channel, _, errorName )
     local stream = streamInstances[loading.streamId]
 
     if not stream then
-        Glide.Print( "Destroying channel, stream instance #%s no longer exists.", loading.streamId )
+        Glide.PrintDev( "Destroying channel, stream instance #%s no longer exists.", loading.streamId )
         DestroyChannel( channel )
         loading = nil
         return
@@ -361,7 +361,7 @@ local function LoadCallback( channel, _, errorName )
     local layer = stream.layers[loading.layerId]
 
     if not layer then
-        Glide.Print( "Destroying channel, stream #%s/layer #%s no longer exists.", loading.streamId, loading.layerId )
+        Glide.PrintDev( "Destroying channel, stream #%s/layer #%s no longer exists.", loading.streamId, loading.layerId )
         DestroyChannel( channel )
         loading = nil
         return
@@ -369,7 +369,7 @@ local function LoadCallback( channel, _, errorName )
 
     -- Make sure the stream audio path has not changed
     if layer.path ~= loading.layerPath then
-        Glide.Print( "Destroying channel, stream #%s/layer #%s has a different path now.", loading.streamId, loading.layerId )
+        Glide.PrintDev( "Destroying channel, stream #%s/layer #%s has a different path now.", loading.streamId, loading.layerId )
         DestroyChannel( channel )
         loading = nil
         return

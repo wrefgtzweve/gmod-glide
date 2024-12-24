@@ -192,6 +192,16 @@ function Glide.Print( str, ... )
     MsgC( Color( 0, 0, 255 ), "[Glide] ", color_white, string.format( str, ... ), "\n" )
 end
 
+do
+    local cvarDeveloper = GetConVar( "developer" )
+
+    function Glide.PrintDev( str, ... )
+        if cvarDeveloper:GetInt() > 0 then
+            Glide.Print( str, ... )
+        end
+    end
+end
+
 function Glide.ValidateNumber( v, min, max, default )
     return math.Clamp( tonumber( v ) or default, min, max )
 end
