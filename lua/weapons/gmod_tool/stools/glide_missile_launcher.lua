@@ -107,7 +107,7 @@ function TOOL.BuildCPanel( panel )
         command = "glide_missile_launcher_delay",
         type = "float",
         min = cvarMinDelay and cvarMinDelay:GetFloat() or 0.5,
-        max = 5
+        max = 50
     } )
 
     panel:AddControl( "slider", {

@@ -160,7 +160,7 @@ function TOOL.BuildCPanel( panel )
         command = "glide_turret_delay",
         type = "float",
         min = cvarMinDelay and cvarMinDelay:GetFloat() or 0.02,
-        max = 0.5
+        max = 5
     } )
 
     panel:AddControl( "slider", {
