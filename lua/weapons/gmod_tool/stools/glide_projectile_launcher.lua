@@ -105,9 +105,9 @@ function TOOL:RightClick( trace )
         ply:ConCommand( "glide_projectile_launcher_radius " .. radius )
         ply:ConCommand( "glide_projectile_launcher_damage " .. damage )
 
-        local r = ent.smokeColor[1]
-        local g = ent.smokeColor[2]
-        local b = ent.smokeColor[3]
+        local r = ent.smokeColor.r
+        local g = ent.smokeColor.g
+        local b = ent.smokeColor.b
 
         ply:ConCommand( "glide_projectile_launcher_r " .. r )
         ply:ConCommand( "glide_projectile_launcher_g " .. g )
