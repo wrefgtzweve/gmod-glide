@@ -337,8 +337,8 @@ function ENT:EngineThink( dt )
             inputBrake = 0.2 * self.clutch
         end
 
-        self.frontBrake = 0
-        self.rearBrake = inputBrake
+        self.frontBrake = inputBrake * 0.3
+        self.rearBrake = inputBrake * 0.7
 
         self.frontTractionMult = 1
         self.rearTractionMult = 1
