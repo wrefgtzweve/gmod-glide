@@ -290,7 +290,7 @@ function EngineStream:Think( dt, eyePos, eyeRight )
     local redlineVol = 1
 
     if self.isRedlining then
-        redlineVol = 0.7 + Cos( Time() * self.redlineFrequency ) * 0.4
+        redlineVol = 0.75 + Cos( Time() * self.redlineFrequency ) * 0.25
     end
 
     local inputs = self.inputs
