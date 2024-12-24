@@ -123,9 +123,9 @@ function TOOL:RightClick( trace )
         ply:ConCommand( "glide_turret_spread " .. spread )
         ply:ConCommand( "glide_turret_is_explosive " .. ( isExplosive and "1" or "0" ) )
 
-        local r = ent.tracerColor[1]
-        local g = ent.tracerColor[2]
-        local b = ent.tracerColor[3]
+        local r = ent.tracerColor.r
+        local g = ent.tracerColor.g
+        local b = ent.tracerColor.b
 
         ply:ConCommand( "glide_turret_tracer_r " .. r )
         ply:ConCommand( "glide_turret_tracer_g " .. g )
