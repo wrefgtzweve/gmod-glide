@@ -121,6 +121,8 @@ function ENT:OnDriverExit()
     if not self.hasRagdolledAllPlayers and not keepOn then
         self:TurnOff()
     end
+
+    self:SetIsHonking( false )
 end
 
 --- Override this base class function.
@@ -186,7 +188,13 @@ end
 
 --- Implement this base class function.
 function ENT:OnSeatInput( seatIndex, action, pressed )
-    if not pressed or seatIndex > 1 then return end
+    if seatIndex > 1 then return end
+
+    if action == "horn" then
+        self:SetIsHonking( pressed )
+    end
+
+    if not pressed then return end
 
     if action == "headlights" then
         self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
@@ -217,13 +225,15 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     end
 end
 
-function ENT:ChangeHeadlightState( state )
+function ENT:ChangeHeadlightState( state, dontPlaySound )
     if not self.CanSwitchHeadlights then return end
 
     if state < 0 then state = 2 end
     if state > 2 then state = 0 end
 
     self:SetHeadlightState( state )
+
+    if dontPlaySound then return end
 
     local driver = self:GetDriver()
     local soundEnt = IsValid( driver ) and driver or self
@@ -260,7 +270,8 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     inputs[#inputs + 1] = { "Throttle", "NORMAL", "A value between 0.0 and 1.0\nAlso acts brake input when reversing." }
     inputs[#inputs + 1] = { "Brake", "NORMAL", "A value between 0.0 and 1.0\nAlso acts throttle input when reversing." }
     inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
-    inputs[#inputs + 1] = { "Gear", "NORMAL", "-2: Let the vehicle do auto gear shifting\n-1: Reverse\n0: Neutral\n1+: other gears" }
+    inputs[#inputs + 1] = { "Headlights", "NORMAL", "0: Off\n1: Low beams\n2: High beams" }
+    inputs[#inputs + 1] = { "Horn", "NORMAL", "Set to 1 to sound the horn" }
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
@@ -318,8 +329,6 @@ function ENT:OnPostThink( dt, selfTbl )
         self:SetEngineHealth( 0 )
         self:SetFlywheelRPM( 0 )
         self:UpdateHealthOutputs()
-    else
-        self:SetIsHonking( self:GetInputBool( 1, "horn" ) )
     end
 
     local health = self:GetEngineHealth()
@@ -595,5 +604,11 @@ function ENT:TriggerInput( name, value )
         else
             self.inputManualShift = false
         end
+
+    elseif name == "Headlights" then
+        self:ChangeHeadlightState( Clamp( Floor( value ), 0, 2 ), true )
+
+    elseif name == "Horn" then
+        self:SetIsHonking( value > 0 )
     end
 end
