@@ -249,7 +249,7 @@ function ENT:Think()
     if IsValid( target ) then
         self:SetHasTarget( target.IsCountermeasure ~= true )
 
-        local targetPos = target:GetPos()
+        local targetPos = target:WorldSpaceCenter()
         local dir = targetPos - myPos
         dir:Normalize()
 
