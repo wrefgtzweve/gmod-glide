@@ -70,6 +70,10 @@ function ENT:Initialize()
     self:PhysicsInit( SOLID_VPHYSICS )
     self:SetUseType( SIMPLE_USE )
 
+    -- Let NPCs see through this vehicle
+    self:AddEFlags( EFL_DONTBLOCKLOS )
+    self:AddFlags( FL_OBJECT )
+
     -- Setup weapon systems
     self:WeaponInit()
 
@@ -364,13 +368,21 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     seat:SetMoveType( MOVETYPE_NONE )
     seat:SetOwner( self )
     seat:Spawn()
+    seat:Activate()
+
+    local phys = seat:GetPhysicsObject()
+
+    if IsValid( phys ) then
+        phys:SetMass( 1 )
+        phys:EnableMotion( false )
+        phys:EnableDrag( false )
+    end
 
     seat.DoNotDuplicate = true
     seat:SetKeyValue( "limitview", 0 )
     seat:SetNotSolid( true )
     seat:SetParent( self )
     seat:DrawShadow( false )
-    seat:PhysicsDestroy()
 
     if isHidden then
         Glide.HideEntity( seat, true )
