@@ -190,7 +190,7 @@ function ENT:WeaponThink()
     end
 
     -- Find a new target
-    target = FindLockOnTarget( myPos, myDir, self.LockOnThreshold, self.LockOnMaxDistance, driver, self.traceData )
+    target = FindLockOnTarget( myPos, myDir, self.LockOnThreshold, self.LockOnMaxDistance, driver, self.traceData, self )
 
     if target ~= self:GetLockOnTarget() then
         self:SetLockOnTarget( target )
