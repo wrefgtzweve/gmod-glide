@@ -83,6 +83,12 @@ function ENT:OnTakeDamage( dmginfo )
     end
 end
 
+function ENT:CanTool( _ply, _trace, mode, _tool, button )
+    if mode == "nocollide" and button == 2 then return false end
+
+    return true
+end
+
 function ENT:GetTurretOrigin()
     return self:LocalToWorld( self.TurretOffset )
 end
