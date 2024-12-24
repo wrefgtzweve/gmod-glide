@@ -117,4 +117,4 @@ hook.Add( "HUDDrawTargetID", "Glide.HUDDrawTargetID", function()
     SetAlphaMultiplier( 1 )
 
     return false
-end )
+end, HOOK_HIGH )
