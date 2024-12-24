@@ -237,20 +237,27 @@ end
 
 local AllEnts = ents.Iterator
 local CanLockOnEntity = Glide.CanLockOnEntity
+
 local WHITELIST = Glide.LOCKON_WHITELIST
 
 --- Finds all entities that we can lock on with `Glide.CanLockOnEntity`,
 --- then returns which one has the largest dot product between `normal` and the direction towards them.
-function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, attacker, traceData, ignoreEntity )
+function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, attacker, traceData, filter )
     local largestDot = 0
     local canLock, dot, target
 
     local includeEmpty = attacker:GetInfoNum( "glide_homing_launcher_lock_on_empty", 0 )
     includeEmpty = includeEmpty and includeEmpty > 0 -- Could be nil
 
+    local ignore = {}
+
+    for _, ent in ipairs( filter or {} ) do
+        ignore[ent] = true
+    end
+
     for _, e in AllEnts() do
         if
-            e ~= attacker and e ~= ignoreEntity and ( WHITELIST[getClass( e )] or isVehicle( e ) or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
+            e ~= attacker and not ignore[e] and ( WHITELIST[getClass( e )] or isVehicle( e ) or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
         then
             canLock, dot = CanLockOnEntity( e, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
 
