@@ -54,11 +54,11 @@ function ENT:SetupDataTables()
     end
 end
 
+-- You can safely override these on children classes
 function ENT:IsEngineOn()
     return self:GetEngineState() > 0
 end
 
--- You can safely override these on children classes
 function ENT:OnPostInitialize() end
 function ENT:OnTurnOn() end
 function ENT:OnTurnOff() end

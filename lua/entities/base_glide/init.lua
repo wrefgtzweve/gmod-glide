@@ -543,5 +543,6 @@ local colors = {
 }
 
 function ENT:GetSpawnColor()
-    return colors[math.random( #colors )]
+    local color = colors[math.random( #colors )]
+    return Color( color.r, color.g, color.b )
 end
