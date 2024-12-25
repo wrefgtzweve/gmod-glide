@@ -65,7 +65,7 @@ function SWEP:GetVehicleFromTrace( trace, user )
 
     local ent = trace.Entity
 
-    if IsValid( ent ) and ent.IsGlideVehicle and self:WaterLevel() < 3 then
+    if IsValid( ent ) and ent.IsGlideVehicle and ent:WaterLevel() < 3 then
         return ent, trace
     end
 end
