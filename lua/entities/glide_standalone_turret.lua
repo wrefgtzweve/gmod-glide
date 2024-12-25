@@ -89,6 +89,11 @@ end
 
 function ENT:PostEntityPaste( ply, ent, createdEntities )
     Glide.PostEntityPaste( ply, ent, createdEntities )
+
+    -- Update parameters in case the limits/console variables are not set to default
+    self:SetTurretDamage( self.turretDamage )
+    self:SetTurretDelay( self.turretDelay )
+    self:SetTurretSpread( self.turretSpread )
 end
 
 local function MakeSpawner( ply, data )

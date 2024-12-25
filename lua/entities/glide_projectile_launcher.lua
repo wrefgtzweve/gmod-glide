@@ -31,6 +31,14 @@ end
 
 function ENT:PostEntityPaste( ply, ent, createdEntities )
     Glide.PostEntityPaste( ply, ent, createdEntities )
+
+    -- Update parameters in case the limits/console variables are not set to default
+    self:SetProjectileSpeed( self.projectileSpeed )
+    self:SetProjectileGravity( self.projectileGravity )
+    self:SetProjectileLifetime( self.projectileLifetime )
+    self:SetReloadDelay( self.reloadDelay )
+    self:SetExplosionRadius( self.explosionRadius )
+    self:SetExplosionDamage( self.explosionDamage )
 end
 
 local function MakeSpawner( ply, data )
