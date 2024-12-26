@@ -46,6 +46,9 @@ function Config:Reset()
     self.showEmptyVehicleHealth = false
     self.showSkybox = true
 
+    self.maxSkidMarkPieces = 500
+    self.maxTireRollPieces = 400
+
     self.manualGearShifting = false
     self.autoHeadlightOn = true
     self.autoHeadlightOff = true
@@ -120,6 +123,9 @@ function Config:Save( immediate )
         mouseShow = self.mouseShow,
 
         -- Misc. settings
+        maxSkidMarkPieces = self.maxSkidMarkPieces,
+        maxTireRollPieces = self.maxTireRollPieces,
+
         showHUD = self.showHUD,
         showPassengerList = self.showPassengerList,
         showEmptyVehicleHealth = self.showEmptyVehicleHealth,
@@ -204,6 +210,9 @@ function Config:Load()
     LoadBool( "mouseShow", true )
 
     -- Misc. settings
+    SetNumber( self, "maxSkidMarkPieces", data.maxSkidMarkPieces, 0, 1000, self.maxSkidMarkPieces )
+    SetNumber( self, "maxTireRollPieces", data.maxTireRollPieces, 0, 1000, self.maxTireRollPieces )
+
     LoadBool( "showHUD", true )
     LoadBool( "showPassengerList", true )
     LoadBool( "showEmptyVehicleHealth", false )
@@ -259,6 +268,22 @@ function Config:TransmitInputSettings( immediate )
     Glide.StartCommand( Glide.CMD_INPUT_SETTINGS )
     Glide.WriteTable( data )
     net.SendToServer()
+end
+
+--- Apply local skid mark limits.
+function Config:ApplySkidMarkLimits( immediate )
+    timer.Remove( "Glide.ApplySkidMarkLimits" )
+
+    if not immediate then
+        -- Don't spam when this function gets called in quick succession
+        timer.Create( "Glide.ApplySkidMarkLimits", 1, 1, function()
+            self:ApplySkidMarkLimits( true )
+        end )
+
+        return
+    end
+
+    Glide.SetupSkidMarkMeshes()
 end
 
 Config:Load()
@@ -619,6 +644,34 @@ function Config:OpenFrame()
 
     local panelMisc = frame:AddTab( "icon16/cog.png", L"settings.misc" )
 
+    theme:CreateHeader( panelMisc, L"settings.skidmarks" )
+
+    local maxSkidSlider
+
+    maxSkidSlider = theme:CreateSlider( panelMisc, L"misc.skid_mark_max", self.maxSkidMarkPieces, 0, 1000, 0, function( value )
+        if value < 10 then
+            value = 0
+            maxSkidSlider:SetValue( value )
+        end
+
+        self.maxSkidMarkPieces = value
+        self:Save()
+        self:ApplySkidMarkLimits()
+    end )
+
+    local maxRollSlider
+
+    maxRollSlider = theme:CreateSlider( panelMisc, L"misc.roll_mark_max", self.maxTireRollPieces, 0, 1000, 0, function( value )
+        if value < 10 then
+            value = 0
+            maxRollSlider:SetValue( value )
+        end
+
+        self.maxTireRollPieces = value
+        self:Save()
+        self:ApplySkidMarkLimits()
+    end )
+
     theme:CreateHeader( panelMisc, L"settings.misc" )
 
     theme:CreateToggleButton( panelMisc, L"misc.show_hud", self.showHUD, function( value )
@@ -684,6 +737,7 @@ function Config:OpenFrame()
             self:Reset()
             self:Save()
             self:TransmitInputSettings()
+            self:ApplySkidMarkLimits()
 
             timer.Simple( 1, function()
                 self:OpenFrame()

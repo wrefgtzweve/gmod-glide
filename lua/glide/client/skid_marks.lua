@@ -121,17 +121,25 @@ function Glide.DestroySkidMarkMeshes()
 end
 
 function Glide.SetupSkidMarkMeshes()
-    -- Mesh handler for skid marks
-    skidMarkHandler = SkidHandler.Instantiate( 500, "glide/skidmarks/skid_asphalt" )
+    Glide.DestroySkidMarkMeshes()
 
-    Glide.skidMarkHandler = skidMarkHandler
-    Glide.Print( "Initialized skid mark mesh with %d max. quads.", skidMarkHandler.maxPieces )
+    local Config = Glide.Config
+
+    -- Mesh handler for skid marks
+    if Config.maxSkidMarkPieces > 0 then
+        skidMarkHandler = SkidHandler.Instantiate( Config.maxSkidMarkPieces, "glide/skidmarks/skid_asphalt" )
+
+        Glide.skidMarkHandler = skidMarkHandler
+        Glide.Print( "Initialized skid mark mesh with %d max. quads.", skidMarkHandler.maxPieces )
+    end
 
     -- Mesh handler for tire roll marks
-    tireRollHandler = SkidHandler.Instantiate( 400, "glide/skidmarks/roll_dirt" )
+    if Config.maxTireRollPieces > 0 then
+        tireRollHandler = SkidHandler.Instantiate( Config.maxTireRollPieces, "glide/skidmarks/roll_dirt" )
 
-    Glide.tireRollHandler = tireRollHandler
-    Glide.Print( "Initialized tire roll mesh with %d max. quads.", tireRollHandler.maxPieces )
+        Glide.tireRollHandler = tireRollHandler
+        Glide.Print( "Initialized tire roll mesh with %d max. quads.", tireRollHandler.maxPieces )
+    end
 end
 
 hook.Add( "InitPostEntity", "Glide.CreateSkidMarkMeshes", Glide.SetupSkidMarkMeshes )
