@@ -94,12 +94,12 @@ function EFFECT:DoSmoke( emitter, origin, scale, normal, vehicle )
 end
 
 surfaceFX[MAT_GRASS] = {
-    mat = Material( "particle/particle_debris_02" ),
-    r = 255, g = 255, b = 255,
+    mat = Material( "glide/effects/grass_debris" ),
+    r = 100, g = 95, b = 40,
     lifetime = 0.8,
     alpha = 255,
-    minSize = 4,
-    maxSize = 5,
+    minSize = 1,
+    maxSize = 3,
     velocity = 30
 }
 
