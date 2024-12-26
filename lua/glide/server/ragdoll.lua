@@ -183,7 +183,11 @@ function Glide.UnRagdollPlayer( ply )
 
     if not ply:Alive() then return end
 
-    ply.GlideBlockLoadout = true
+    local bed = ply.SpawnBed
+
+    ply.SpawnBed = nil -- Spawn Beds workaround
+    ply.GlideBlockLoadout = true -- Custom Loadout workaround
+
     ply:Spawn()
     ply:SetPos( GetFreeSpace( pos, ragdoll ) )
     ply:SetEyeAngles( Angle( 0, yaw, 0 ) )
@@ -198,6 +202,10 @@ function Glide.UnRagdollPlayer( ply )
 
     if god then
         ply:GodEnable()
+    end
+
+    if IsValid( bed ) then
+        ply.SpawnBed = bed
     end
 end
 
