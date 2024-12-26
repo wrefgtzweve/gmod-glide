@@ -1,5 +1,94 @@
 local IsValid = IsValid
 
+--- Stores necessary data to respawn a player later,
+--- and to restore the health, armor and inventory.
+function Glide.StoreSpawnInfo( ply )
+    local data = {
+        health = ply:Health(),
+        armor = ply:Armor(),
+        god = ply:HasGodMode()
+    }
+
+    -- Store inventory
+    data.weapons = {}
+
+    for _, weapon in ipairs( ply:GetWeapons() ) do
+        data.weapons[weapon:GetClass()] = {
+            clip1 = weapon:Clip1(),
+            clip2 = weapon:Clip2(),
+            ammo1 = ply:GetAmmoCount( weapon:GetPrimaryAmmoType() ),
+            ammo2 = ply:GetAmmoCount( weapon:GetSecondaryAmmoType() )
+        }
+    end
+
+    -- Store current held weapon class
+    local weapon = ply:GetActiveWeapon()
+
+    if IsValid( weapon ) then
+        data.weaponClass = weapon:GetClass()
+    end
+
+    ply.GlideSpawnData = data
+end
+
+do
+    local function RestoreWeapons( ply, spawnData )
+        ply:StripWeapons()
+        ply:RemoveAllAmmo()
+
+        for class, data in pairs( spawnData.weapons ) do
+            local weapon = ply:Give( class )
+
+            if IsValid( weapon ) then
+                if weapon.SetClip1 then
+                    weapon:SetClip1( data.clip1 )
+                end
+
+                if weapon.SetClip2 then
+                    weapon:SetClip2( data.clip2 )
+                end
+
+                ply:SetAmmo( data.ammo1, weapon:GetPrimaryAmmoType() )
+                ply:SetAmmo( data.ammo2, weapon:GetSecondaryAmmoType() )
+            end
+        end
+
+        if spawnData.weaponClass then
+            ply:SelectWeapon( spawnData.weaponClass )
+        end
+    end
+
+    --- Retores health, armor and inventory previously stored on
+    --- `Glide.StoreSpawnInfo`. Does nothing if there is no data from that function.
+    function Glide.RestoreSpawnInfo( ply, restoreCallback )
+        ply:Spawn()
+
+        local spawnData = ply.GlideSpawnData
+        if not spawnData then return end
+
+        ply.GlideSpawnData = nil
+        ply:SetHealth( spawnData.health )
+        ply:SetArmor( spawnData.armor )
+
+        if spawnData.god then
+            ply:GodEnable()
+        end
+
+        timer.Simple( 0.1, function()
+            if not IsValid( ply ) then return end
+            if not ply:Alive() then return end
+
+            if spawnData.health > 0 then
+                RestoreWeapons( ply, spawnData )
+            end
+
+            if restoreCallback then
+                restoreCallback( ply )
+            end
+        end )
+    end
+end
+
 --- Returns a list of all bone positions/rotations from a player,
 --- while making sure those are relative to the world even while inside a vehicle.
 local function GetAllBones( ply )
@@ -66,9 +155,26 @@ end
 function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     if ply.GlideRagdoll then return end
 
+    -- Create ragdoll
     local ragdoll = ents.Create( "prop_ragdoll" )
     if not IsValid( ragdoll ) then return end
 
+    -- Store where the player started ragdolling
+    ply.GlideRagdollStartPos = ply:GetPos()
+
+    -- Setup ragdoll, disable grabbing/duplication
+    ragdoll:SetPos( ply.GlideRagdollStartPos )
+    ragdoll:SetModel( ply:GetModel() )
+    ragdoll:Spawn()
+    ragdoll:Activate()
+
+    ragdoll.PhysgunDisabled = true
+    ragdoll.DoNotDuplicate = true
+    ragdoll.DisableDuplicator = true
+    ragdoll.IsGlideRagdoll = true
+    ragdoll.GlideRagdollPlayer = ply
+
+    -- Get current player pose
     local bones = GetAllBones( ply )
     local bodygroups = {}
 
@@ -76,45 +182,33 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
         bodygroups[v.id] = ply:GetBodygroup( v.id )
     end
 
-    ply.GlideRagdollStartPos = ply:GetPos()
-
-    ragdoll:SetPos( ply.GlideRagdollStartPos )
-    ragdoll:SetModel( ply:GetModel() )
-    ragdoll:Spawn()
-    ragdoll:Activate()
-    ragdoll.PhysgunDisabled = true
-    ragdoll.DoNotDuplicate = true
-    ragdoll.DisableDuplicator = true
-    ragdoll.IsGlideRagdoll = true
-    ragdoll.GlidePlayer = ply
-    ragdoll.GlideHealth = ply:Health()
-    ragdoll.GlideArmor = ply:Armor()
-    ragdoll.GlideGodMode = ply:HasGodMode()
-    ragdoll.GlideModel = ply:GetModel()
-
-    if ply:InVehicle() then
-        ply:ExitVehicle()
-    end
-
+    -- Use the pose data on the ragdoll
     PoseRagdollBones( ragdoll, bones, velocity )
+
+    -- Copy the player's appearance to the ragdoll
+    ragdoll:SetSkin( ply:GetSkin() )
 
     for id, submodel in ipairs( bodygroups ) do
         ragdoll:SetBodygroup( id, submodel )
     end
 
-    ragdoll:SetSkin( ply:GetSkin() )
-
-    local weapon = ply:GetActiveWeapon()
-
-    if IsValid( weapon ) then
-        ply:SetActiveWeapon( NULL )
+    if ply:InVehicle() then
+        ply:ExitVehicle()
     end
 
+    -- Store health, armor and inventory
+    Glide.StoreSpawnInfo( ply )
+
+    -- Make the player spectate the ragdoll
+    ply:SetActiveWeapon( NULL )
     ply:SetVelocity( Vector() )
     ply:Spectate( OBS_MODE_CHASE )
     ply:SpectateEntity( ragdoll )
-    ply.GlideRagdoll = ragdoll
 
+    ply.GlideRagdoll = ragdoll
+    ply.GlideRagdollTimeout = CurTime() + 1
+
+    -- Automatically unragdoll after some time
     if unragdollTime then
         timer.Create( "Glide_Ragdoll_" .. ply:EntIndex(), unragdollTime, 1, function()
             Glide.UnRagdollPlayer( ply )
@@ -127,9 +221,7 @@ local traceData = {
     maxs = Vector( 16, 16, 64 )
 }
 
-local function GetFreeSpace( origin, filter )
-    traceData.filter = filter
-
+local function GetFreeSpace( origin )
     local offset = Vector( 0, 0, 20 )
     local rad, tr
 
@@ -152,61 +244,65 @@ local function GetFreeSpace( origin, filter )
     return origin
 end
 
-function Glide.UnRagdollPlayer( ply )
+function Glide.UnRagdollPlayer( ply, damage, attacker, inflictor )
     if not IsValid( ply ) then return end
 
     timer.Remove( "Glide_Ragdoll_" .. ply:EntIndex() )
 
+    -- Make sure this player is still ragdolled
     local ragdoll = ply.GlideRagdoll
     if not ragdoll then return end
 
     local pos = ply.GlideRagdollStartPos
-    local yaw = ply:GetAngles()[2]
     local velocity = Vector()
-    local health, armor = 1, 0
-    local god, model = false, nil
 
+    -- Get final position/velocity from the ragdoll
     if IsValid( ragdoll ) then
-        health = ragdoll.GlideHealth
-        armor = ragdoll.GlideArmor
         velocity = ragdoll:GetVelocity()
         pos = ragdoll:GetPos()
-        god = ragdoll.GlideGodMode
-        model = ragdoll.GlideModel
 
         ragdoll:Remove()
     end
 
+    -- Cleanup ragdoll data from the player
     ply.GlideRagdoll = nil
     ply.GlideRagdollStartPos = nil
+    ply.GlideRagdollTimeout = nil
     ply:UnSpectate()
 
     if not ply:Alive() then return end
 
+    local ang = Angle( 0, ply:GetAngles()[2], 0 )
     local bed = ply.SpawnBed
 
     ply.SpawnBed = nil -- Spawn Beds workaround
     ply.GlideBlockLoadout = true -- Custom Loadout workaround
 
-    ply:Spawn()
-    ply:SetPos( GetFreeSpace( pos, ragdoll ) )
-    ply:SetEyeAngles( Angle( 0, yaw, 0 ) )
-    ply:SetVelocity( velocity )
-    ply:SetHealth( health )
-    ply:SetArmor( armor )
-    ply.GlideBlockLoadout = nil
+    -- Restore health, armor and inventory
+    Glide.RestoreSpawnInfo( ply, function( restoredPly )
+        restoredPly:SetPos( GetFreeSpace( pos ) )
+        restoredPly:SetEyeAngles( ang )
+        restoredPly:SetVelocity( velocity )
 
-    if model then
-        ply:SetModel( model )
-    end
+        if damage then
+            attacker = IsValid( attacker ) and attacker or restoredPly
+            inflictor = IsValid( inflictor ) and inflictor or restoredPly
+            restoredPly:TakeDamage( damage, attacker, inflictor )
+        end
 
-    if god then
-        ply:GodEnable()
-    end
+        -- Custom Loadout workaround
+        restoredPly.GlideBlockLoadout = nil
 
-    if IsValid( bed ) then
-        ply.SpawnBed = bed
-    end
+        -- Spawn Beds workaround
+        if IsValid( bed ) then
+            restoredPly.SpawnBed = bed
+        end
+    end )
+
+    -- Immediately put the player close to where they will be
+    -- after the callback on `RestoreSpawnInfo` runs.
+    ply:SetPos( pos )
+    ply:SetEyeAngles( ang )
 end
 
 hook.Add( "CanTool", "Glide.BlockPlayerRagdolls", function( _, tr )
@@ -241,11 +337,15 @@ end )
 
 hook.Add( "EntityTakeDamage", "Glide.RagdollDamage", function( ent, dmginfo )
     if not ent.IsGlideRagdoll then return end
-    if ent.GlideGodMode then return end
-    if ent.GlideHealth < 1 then return end
 
-    local ply = ent.GlidePlayer
+    local ply = ent.GlideRagdollPlayer
     if not IsValid( ply ) then return end
+
+    local spawnData = ply.GlideSpawnData
+    if not spawnData then return end
+
+    if spawnData.god then return end
+    if spawnData.health < 1 then return end
 
     if dmginfo:IsDamageType( 1 ) then
         dmginfo:SetDamage( math.ceil( dmginfo:GetDamage() * 0.1 ) )
@@ -257,13 +357,19 @@ hook.Add( "EntityTakeDamage", "Glide.RagdollDamage", function( ent, dmginfo )
     local damage = dmginfo:GetDamage()
     if damage < 1 then return end
 
-    ent.GlideHealth = ent.GlideHealth - damage
-    if ent.GlideHealth > 0 then return end
+    spawnData.health = spawnData.health - damage
 
-    Glide.UnRagdollPlayer( ply )
-    ply:TakeDamageInfo( dmginfo )
+    if spawnData.health < 1 then
+        Glide.UnRagdollPlayer( ply, 1, dmginfo:GetAttacker(), dmginfo:GetInflictor() )
+    end
 end )
 
 hook.Add( "CLoadoutCanGiveWeapons", "Glide.BlockRagdollLoadout", function( ply )
     if ply.GlideBlockLoadout then return false end
+end )
+
+hook.Add( "KeyPress", "Glide.LeaveRagdoll", function( ply )
+    if ply.GlideRagdoll and CurTime() > ply.GlideRagdollTimeout then
+        Glide.UnRagdollPlayer( ply )
+    end
 end )

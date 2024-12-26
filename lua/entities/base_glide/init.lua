@@ -198,7 +198,7 @@ end
 
 --- Kicks out all passengers, then ragdoll them.
 function ENT:RagdollPlayers( time, vel )
-    time = time or 3
+    time = time or 8
     vel = vel or self:GetVelocity()
 
     local ply
@@ -473,7 +473,7 @@ function ENT:Think()
 
     -- If necessary, kick passengers when underwater
     if selfTbl.FallOnCollision and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
-        self:RagdollPlayers( 2 )
+        self:RagdollPlayers( 3 )
     end
 
     local dt = TickInterval()
