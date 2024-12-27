@@ -43,6 +43,28 @@ hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
     plyTbl.CalcIdeal = 47 -- ACT_STAND
     plyTbl.CalcSeqOverride = ply:LookupSequence( anim )
 
+    -- Just because we aren't a driver doesn't mean the vehicle can't have a custom sequence.
+    if anim == "sit" and ply ~= vehicle:GetDriver() and ply:GetAllowWeaponsInVehicle() then
+        local activeWep = ply:GetActiveWeapon()
+
+        if not IsValid( activeWep ) or activeWep == NULL then
+            return plyTbl.CalcIdeal, plyTbl.CalcSeqOverride
+        end
+
+        local holdType = activeWep:GetHoldType()
+
+        if holdType == "smg" then
+            holdType = "smg1"
+        end
+
+        local sequenceID = ply:LookupSequence( string.format( sitFormat, holdType ) )
+
+        if sequenceID ~= -1 then
+            plyTbl.CalcIdeal = 1970 -- ACT_HL2MP_SIT
+            plyTbl.CalcSeqOverride = sequenceID
+        end
+    end
+
     return plyTbl.CalcIdeal, plyTbl.CalcSeqOverride
 end )
 
