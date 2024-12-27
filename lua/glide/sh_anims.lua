@@ -21,6 +21,22 @@ hook.Add( "UpdateAnimation", "Glide.OverridePlayerAnim", function( ply )
     end
 end )
 
+local holdTypeSequences = {
+    ["pistol"] = "sit_pistol",
+    ["smg"] = "sit_smg1",
+    ["grenade"] = "sit_grenade",
+    ["ar2"] = "sit_ar2",
+    ["shotgun"] = "sit_shotgun",
+    ["rpg"] = "sit_rpg",
+    ["physgun"] = "sit_physgun",
+    ["crossbow"] = "sit_crossbow",
+    ["melee"] = "sit_melee",
+    ["slam"] = "sit_slam",
+    ["fist"] = "sit_fist",
+    ["camera"] = "sit_camera",
+    ["passive"] = "sit_passive"
+}
+
 hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
     local vehicle = ply:GlideGetVehicle()
 
@@ -42,6 +58,28 @@ hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
 
     plyTbl.CalcIdeal = 47 -- ACT_STAND
     plyTbl.CalcSeqOverride = ply:LookupSequence( anim )
+
+    -- We only apply a sit sequence when the vehicle actually uses one.
+    if anim == "sit" and ply:GetAllowWeaponsInVehicle() then
+        local activeWep = ply:GetActiveWeapon()
+
+        if not IsValid( activeWep ) or activeWep == NULL then
+            return plyTbl.CalcIdeal, plyTbl.CalcSeqOverride
+        end
+
+        local holdType = activeWep:GetHoldType()
+        local sitSequence = holdTypeSequences[holdType]
+
+        -- Not every hold type has a corresponding sit sequence.
+        if sitSequence then
+            local sequenceID = ply:LookupSequence( sitSequence )
+
+            if sequenceID ~= -1 then
+                plyTbl.CalcIdeal = 1970 -- ACT_HL2MP_SIT
+                plyTbl.CalcSeqOverride = sequenceID
+            end
+        end
+    end
 
     return plyTbl.CalcIdeal, plyTbl.CalcSeqOverride
 end )
