@@ -11,7 +11,10 @@ ENT.VehicleType = Glide.VEHICLE_TYPE.HELICOPTER
 
 -- Setup the helicopter's rotor positions
 ENT.MainRotorOffset = Vector()
+ENT.MainRotorAngle = Angle()
+
 ENT.TailRotorOffset = Vector()
+ENT.TailRotorAngle = Angle()
 
 DEFINE_BASECLASS( "base_glide_aircraft" )
 

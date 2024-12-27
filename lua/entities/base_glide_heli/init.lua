@@ -37,14 +37,14 @@ function ENT:Repair()
     -- Create main rotor, if it doesn't exist
     if not IsValid( self.mainRotor ) then
         self.mainRotor = self:CreateRotor( self.MainRotorOffset, self.MainRotorRadius, self.MainRotorModel, self.MainRotorFastModel )
-        self.mainRotor:SetSpinAngle( math.random( 0, 180 ) )
+        self.mainRotor:SetBaseAngles( self.MainRotorAngle )
     end
 
     -- Create tail rotor, if it doesn't exist and we have a model for it 
     if not IsValid( self.tailRotor ) then
         self.tailRotor = self:CreateRotor( self.TailRotorOffset, self.TailRotorRadius, self.TailRotorModel, self.TailRotorFastModel )
-        self.tailRotor:SetSpinAxis( 1 ) -- Pitch
-        self.tailRotor:SetSpinAngle( math.random( 0, 180 ) )
+        self.tailRotor:SetBaseAngles( self.TailRotorAngle )
+        self.tailRotor:SetSpinAxis( "Right" )
     end
 
     local validRotors = {}

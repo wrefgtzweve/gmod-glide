@@ -71,7 +71,7 @@ function ENT:CreatePropeller( offset, radius, slowModel, fastModel )
     prop:SetLocalPos( offset )
     prop:Spawn()
     prop:SetupRotor( offset, radius, slowModel, fastModel )
-    prop:SetSpinAxis( 3 )
+    prop:SetSpinAxis( "Forward" )
     prop.maxSpinSpeed = 5000
 
     self.propellers[#self.propellers + 1] = prop

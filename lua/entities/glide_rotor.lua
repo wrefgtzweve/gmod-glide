@@ -36,16 +36,17 @@ function ENT:Initialize()
     self.modelFast = "models/hunter/plates/plate7.mdl"
 
     -- Prepare spin variables
-    self.angle = Angle()
-    self.spinAxis = 2 -- Yaw
+    self.baseAngles = Angle()
+    self.spinAngle = 0
+    self.spinAxis = "Up"
+
     self.spinMultiplier = 0
     self.isSpinningFast = false
 
     -- Prepare damage & trace variables
     self.rotorHealth = 400
-    self.traceAngle = Angle()
-    self.traceAngleFunc = "Forward"
     self.hitSoundCD = 0
+    self.traceAngle = 0
 
     self.traceData = {
         filter = { self, self:GetParent() },
@@ -70,14 +71,36 @@ function ENT:SetupRotor( offset, radius, modelSlow, modelFast )
     self:SetModel( self.isSpinningFast and modelFast or modelSlow )
 end
 
-function ENT:SetSpinAxis( axis )
-    self.spinAxis = axis
-    self.traceAngleFunc = axis == 1 and "Forward" or ( axis == 2 and "Right" or "Up" )
+function ENT:SetBaseAngles( angles )
+    self.baseAngles = angles
 end
 
 function ENT:SetSpinAngle( ang )
-    self.angle[self.spinAxis] = ang
-    self.traceAngle[self.spinAxis] = ang
+    self.spinAngle = ang
+end
+
+local VALID_AXIS = {
+    ["Up"] = Vector( 0, 0, 1 ),
+    ["Right"] = Vector( 1, 0, 0 ),
+    ["Forward"] = Vector( 0, 1, 0 )
+}
+
+local AXIS_IDS = {
+    [1] = "Right",
+    [2] = "Up",
+    [3] = "Forward"
+}
+
+function ENT:SetSpinAxis( axis )
+    if AXIS_IDS[axis] then
+        axis = AXIS_IDS[axis]
+    end
+
+    assert( VALID_AXIS[axis] ~= nil, "Invalid rotor spin axis! Must be one of these: Up, Right, Forward" )
+
+    self.spinAxis = axis
+    self.traceAngle = 0
+    self.spinAngle = 0
 end
 
 function ENT:Repair()
@@ -118,14 +141,17 @@ function ENT:Think()
 
     local dt = FrameTime()
 
-    self.angle[self.spinAxis] = ( self.angle[self.spinAxis] + self.maxSpinSpeed * self.spinMultiplier * dt ) % 360
+    self.spinAngle = ( self.spinAngle + self.maxSpinSpeed * self.spinMultiplier * dt ) % 360
 
     -- Set position/angles relative to the parent
     local parent = self:GetParent()
 
     if IsValid( parent ) then
-        self:SetPos( parent:LocalToWorld( self.offset ) )
-        self:SetAngles( parent:LocalToWorldAngles( self.angle ) )
+        local angles = parent:LocalToWorldAngles( self.baseAngles )
+        angles:RotateAroundAxis( angles[self.spinAxis]( angles ), self.spinAngle )
+
+        self:SetLocalPos( self.offset )
+        self:SetAngles( angles )
 
         -- Pretty colors
         self:SetColor( parent:GetColor() )
@@ -144,10 +170,12 @@ end
 --- Check if the rotor blades are hitting things.
 function ENT:CheckRotorClearance( dt, parent )
     -- The trace will use a spinning angle separate from the model
-    self.traceAngle[self.spinAxis] = ( self.traceAngle[self.spinAxis] + dt * 1600 ) % 360
+    self.traceAngle = ( self.traceAngle + dt * 1600 ) % 360
 
-    local ang = parent:LocalToWorldAngles( self.traceAngle )
-    local dir = ang[self.traceAngleFunc]( ang )
+    local ang = parent:LocalToWorldAngles( self.baseAngles )
+    ang:RotateAroundAxis( ang[self.spinAxis]( ang ), self.traceAngle )
+
+    local dir = self.spinAxis == "Forward" and ang:Right() or ang:Forward()
     local data = self.traceData
     local origin = self:GetPos()
 
