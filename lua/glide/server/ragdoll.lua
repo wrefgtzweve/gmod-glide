@@ -244,7 +244,7 @@ local function GetFreeSpace( origin )
     return origin
 end
 
-function Glide.UnRagdollPlayer( ply, damage, attacker, inflictor )
+function Glide.UnRagdollPlayer( ply, restoreCallback )
     if not IsValid( ply ) then return end
 
     timer.Remove( "Glide_Ragdoll_" .. ply:EntIndex() )
@@ -284,18 +284,16 @@ function Glide.UnRagdollPlayer( ply, damage, attacker, inflictor )
         restoredPly:SetEyeAngles( ang )
         restoredPly:SetVelocity( velocity )
 
-        if damage then
-            attacker = IsValid( attacker ) and attacker or restoredPly
-            inflictor = IsValid( inflictor ) and inflictor or restoredPly
-            restoredPly:TakeDamage( damage, attacker, inflictor )
-        end
-
         -- Custom Loadout workaround
         restoredPly.GlideBlockLoadout = nil
 
         -- Spawn Beds workaround
         if IsValid( bed ) then
             restoredPly.SpawnBed = bed
+        end
+
+        if restoreCallback then
+            restoreCallback( restoredPly )
         end
     end )
 
@@ -360,7 +358,16 @@ hook.Add( "EntityTakeDamage", "Glide.RagdollDamage", function( ent, dmginfo )
     spawnData.health = spawnData.health - damage
 
     if spawnData.health < 1 then
-        Glide.UnRagdollPlayer( ply, 1, dmginfo:GetAttacker(), dmginfo:GetInflictor() )
+        local attacker = dmginfo:GetAttacker()
+        local inflictor = dmginfo:GetInflictor()
+
+        Glide.UnRagdollPlayer( ply, function( restoredPly )
+            attacker = IsValid( attacker ) and attacker or restoredPly
+            inflictor = IsValid( inflictor ) and inflictor or restoredPly
+
+            restoredPly:SetHealth( 1 )
+            restoredPly:TakeDamage( 999, attacker, inflictor )
+        end )
     end
 end )
 
