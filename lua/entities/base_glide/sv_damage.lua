@@ -95,7 +95,6 @@ function ENT:OnTakeDamage( dmginfo )
     if self.hasExploded then return end
 
     local health = self:GetChassisHealth()
-    local attacker = dmginfo:GetAttacker()
     local amount = dmginfo:GetDamage()
 
     if dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
@@ -120,12 +119,15 @@ function ENT:OnTakeDamage( dmginfo )
     self:TakeEngineDamage( amount * self.EngineDamageMultiplier )
     self:UpdateHealthOutputs()
 
+    self.lastDamageAttacker = dmginfo:GetAttacker()
+    self.lastDamageInflictor = dmginfo:GetInflictor()
+
     if health < 250 and self:WaterLevel() < 3 then
         self:SetIsEngineOnFire( true )
     end
 
     if health < 1 then
-        self:Explode( attacker, dmginfo:GetInflictor() )
+        self:Explode( self.lastDamageAttacker, self.lastDamageInflictor )
     end
 end
 

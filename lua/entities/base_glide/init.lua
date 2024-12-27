@@ -483,10 +483,13 @@ function ENT:Think()
         if self:WaterLevel() > 2 then
             self:SetIsEngineOnFire( false )
         else
+            local attacker = IsValid( self.lastDamageAttacker ) and self.lastDamageAttacker or self
+            local inflictor = IsValid( self.lastDamageInflictor ) and self.lastDamageInflictor or self
+
             local dmg = DamageInfo()
             dmg:SetDamage( 10 * dt )
-            dmg:SetAttacker( self )
-            dmg:SetInflictor( self )
+            dmg:SetAttacker( attacker )
+            dmg:SetInflictor( inflictor )
             dmg:SetDamageType( 0 )
             dmg:SetDamageForce( Vector() )
             dmg:SetDamagePosition( self:GetPos() )
