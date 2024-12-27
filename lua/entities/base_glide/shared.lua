@@ -82,6 +82,7 @@ if CLIENT then
 
     -- Setup the camera parameters for this vehicle
     ENT.CameraOffset = Vector( -200, 0, 50 )
+    ENT.CameraCenterOffset = Vector( 0, 0, 0 )
     ENT.CameraAngleOffset = Angle( 6, 0, 0 )
 
     -- Setup how far away players can hear sounds and update misc. features
@@ -90,14 +91,14 @@ if CLIENT then
 
     -- Set label/icons for each weapon slot.
     -- This should contain a array of tables, where each table looks like these:
-    -- 
+    --
     -- { name = "Machine Guns", icon = "glide/icons/bullets.png" }
     -- { name = "Missiles", icon = "glide/icons/rocket.png" }
     ENT.WeaponInfo = {}
 
     -- Set crosshair parameters per weapon slot.
     -- This should contain a array of tables, where each table looks like these:
-    -- 
+    --
     -- { iconType = "dot", traceOrigin = Vector() }
     -- { iconType = "square", traceOrigin = Vector(), traceAngle = Angle(), size = 0.1 }
     ENT.CrosshairInfo = {}
@@ -183,7 +184,7 @@ if SERVER then
 
     -- Setup available weapon slots.
     -- Should contain a array of tables, where each table looks like this:
-    -- 
+    --
     -- { maxAmmo = 0, fireRate = 0.02 }
     -- { maxAmmo = 2, fireRate = 1.0, replenishDelay = 2, ammoType = "missile" }
     ENT.WeaponSlots = {}
