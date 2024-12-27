@@ -205,7 +205,7 @@ if SERVER then
     ENT.BurnoutForce = 70
 
     -- How much force to apply when the driver tries to unflip the vehicle?
-    ENT.UnflipForce = 3
+    ENT.UnflipForce = 6
 
     -- How much force to apply when the driver tries to spin the airborne vehicle?
     ENT.AirControlForce = Vector( 0.8, 0.3, 0.2 ) -- Roll, pitch, yaw

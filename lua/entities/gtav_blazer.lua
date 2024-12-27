@@ -141,6 +141,7 @@ if SERVER then
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
     ENT.StartupTime = 0.4
 
+    ENT.UnflipForce = 20
     ENT.BurnoutForce = 150
 
     ENT.AirControlForce = Vector( 3, 2, 0.2 ) -- Roll, pitch, yaw
