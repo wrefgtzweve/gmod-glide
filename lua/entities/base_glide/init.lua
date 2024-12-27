@@ -370,19 +370,11 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     seat:Spawn()
     seat:Activate()
 
-    local phys = seat:GetPhysicsObject()
-
-    if IsValid( phys ) then
-        phys:SetMass( 1 )
-        phys:EnableMotion( false )
-        phys:EnableDrag( false )
-    end
-
-    seat.DoNotDuplicate = true
     seat:SetKeyValue( "limitview", 0 )
     seat:SetNotSolid( true )
     seat:SetParent( self )
     seat:DrawShadow( false )
+    seat:PhysicsDestroy()
 
     if isHidden then
         Glide.HideEntity( seat, true )
