@@ -5,7 +5,7 @@ function ENT:Repair()
     self:UpdateHealthOutputs()
 end
 
-function ENT:Explode( attacker )
+function ENT:Explode( attacker, inflictor )
     if self.hasExploded then return end
 
     -- Don't let stuff like collision/damage events
@@ -14,13 +14,14 @@ function ENT:Explode( attacker )
     self:SetChassisHealth( 0 )
 
     attacker = attacker or self:GetDriver() or self:GetCreator() or self
+    inflictor = IsValid( inflictor ) and inflictor or self
 
     -- Damage blast & effects
-    Glide.CreateExplosion( self, attacker, self:GetPos(), self.ExplosionRadius, 200, Vector( 0, 0, 1 ), Glide.EXPLOSION_TYPE.VEHICLE )
+    Glide.CreateExplosion( inflictor, attacker, self:GetPos(), self.ExplosionRadius, 200, Vector( 0, 0, 1 ), Glide.EXPLOSION_TYPE.VEHICLE )
 
     -- Damage passengers
     for _, ply in ipairs( self:GetAllPlayers() ) do
-        ply:TakeDamage( 999, attacker, self )
+        ply:TakeDamage( 999, attacker, inflictor )
     end
 
     self:Remove()
@@ -124,7 +125,7 @@ function ENT:OnTakeDamage( dmginfo )
     end
 
     if health < 1 then
-        self:Explode( attacker )
+        self:Explode( attacker, dmginfo:GetInflictor() )
     end
 end
 
