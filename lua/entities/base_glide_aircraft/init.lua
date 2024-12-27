@@ -76,7 +76,6 @@ function ENT:SetLandingGearState( state )
         -- Move the gear up
         self.landingGearExtend = 1
         self.wheelsEnabled = true
-        self:EmitSound( "glide/aircraft/gear_down.wav", 90, 100, 0.5 )
 
     elseif state == 2 then
         -- Set the gear up now
@@ -88,13 +87,18 @@ function ENT:SetLandingGearState( state )
         -- Move the gear down
         self.landingGearExtend = 0
         self.wheelsEnabled = true
-        self:EmitSound( "glide/aircraft/gear_down.wav", 90, 90, 0.5 )
 
     else
         -- Set the gear down now
         self.landingGearExtend = 1
         self.wheelsEnabled = true
         self.wheelParams.suspensionLength = self.landingGearLength
+    end
+
+    local soundParams = self.LandingGearSounds[state]
+
+    if soundParams[1] ~= "" then
+        self:EmitSound( soundParams[1], 90, soundParams[3], soundParams[2] )
     end
 end
 

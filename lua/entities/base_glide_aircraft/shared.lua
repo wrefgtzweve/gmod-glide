@@ -60,4 +60,13 @@ if SERVER then
         [2] = "gear_up",
         [3] = "move_gear_down"
     }
+
+    -- Sounds to play when the landing gear state changes
+    ENT.LandingGearSounds = {
+        -- Sound path (empty to not play), volume, pitch
+        [0] = { "", 1.0, 100 },
+        [1] = { "glide/aircraft/gear_down.wav", 0.65, 100 },
+        [2] = { "physics/metal/metal_barrel_impact_soft4.wav", 0.5, 100 },
+        [3] = { "glide/aircraft/gear_down.wav", 0.65, 90 }
+    }
 end
