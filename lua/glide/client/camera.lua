@@ -320,7 +320,7 @@ function Camera:CalcView()
     else
         local fraction = self.traceFraction
         local offset = self.shakeOffset + vehicle.CameraOffset * Vector( Config.cameraDistance, 1, Config.cameraHeight ) * fraction
-        local startPos = vehicle:GetPos()
+        local startPos = vehicle:LocalToWorld( vehicle.CameraCenterOffset )
 
         angles = angles + vehicle.CameraAngleOffset
 
