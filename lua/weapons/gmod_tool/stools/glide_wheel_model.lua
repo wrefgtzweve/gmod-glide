@@ -121,15 +121,15 @@ function TOOL:LeftClick( trace )
         local rearModel = self:GetClientInfo( "rear" )
 
         local frontScale = Vector(
-            self:GetClientNumber( "front_scale_x", 1 ),
-            self:GetClientNumber( "front_scale_y", 1 ),
-            self:GetClientNumber( "front_scale_z", 1 )
+            math.Clamp( self:GetClientNumber( "front_scale_x", 1 ), 0.1, 5 ),
+            math.Clamp( self:GetClientNumber( "front_scale_y", 1 ), 0.1, 5 ),
+            math.Clamp( self:GetClientNumber( "front_scale_z", 1 ), 0.1, 5 )
         )
 
         local rearScale = Vector(
-            self:GetClientNumber( "rear_scale_x", 1 ),
-            self:GetClientNumber( "rear_scale_y", 1 ),
-            self:GetClientNumber( "rear_scale_z", 1 )
+            math.Clamp( self:GetClientNumber( "rear_scale_x", 1 ), 0.1, 5 ),
+            math.Clamp( self:GetClientNumber( "rear_scale_y", 1 ), 0.1, 5 ),
+            math.Clamp( self:GetClientNumber( "rear_scale_z", 1 ), 0.1, 5 )
         )
 
         self:ApplyModifications( frontWheels, frontModel, frontScale )
