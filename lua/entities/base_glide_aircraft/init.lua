@@ -22,6 +22,7 @@ function ENT:OnPostInitialize()
     -- Landing gear system
     self.landingGearState = 0
     self.landingGearExtend = 1
+    self.landingGearAnimLen = 0
 
     -- Countermeasure system
     self.countermeasureCD = 0
@@ -69,7 +70,9 @@ function ENT:SetLandingGearState( state )
     local anim = self.LandingGearAnims[state]
 
     if anim then
+        self:ResetSequenceInfo()
         self:ResetSequence( anim )
+        self.landingGearAnimLen = math.max( 0.1, self:SequenceDuration() )
     end
 
     if state == 1 then
@@ -108,7 +111,7 @@ function ENT:LandingGearThink( dt )
     local state = self.landingGearState
 
     if state == 1 then -- Is it moving up?
-        self.landingGearExtend = self.landingGearExtend - dt
+        self.landingGearExtend = self.landingGearExtend - dt / self.landingGearAnimLen
 
         if self.landingGearExtend < 0 then
             self:SetLandingGearState( 2 ) -- Set fully up
@@ -116,7 +119,7 @@ function ENT:LandingGearThink( dt )
         end
 
     elseif state == 3 then -- Is it moving down?
-        self.landingGearExtend = self.landingGearExtend + dt
+        self.landingGearExtend = self.landingGearExtend + dt / self.landingGearAnimLen
 
         if self.landingGearExtend > 1 then
             self:SetLandingGearState( 0 ) -- Set fully down
