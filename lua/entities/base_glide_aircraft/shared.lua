@@ -69,4 +69,7 @@ if SERVER then
         [2] = { "physics/metal/metal_barrel_impact_soft4.wav", 0.5, 100 },
         [3] = { "glide/aircraft/gear_down.wav", 0.65, 90 }
     }
+
+    -- You can override this on your child classes.
+    function ENT:OnLandingGearStateChange( _state ) end
 end

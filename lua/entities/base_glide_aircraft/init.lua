@@ -100,6 +100,8 @@ function ENT:SetLandingGearState( state )
     if soundParams[1] ~= "" then
         self:EmitSound( soundParams[1], 90, soundParams[3], soundParams[2] )
     end
+
+    self:OnLandingGearStateChange( state )
 end
 
 function ENT:LandingGearThink( dt )
