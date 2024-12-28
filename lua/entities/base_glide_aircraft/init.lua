@@ -249,6 +249,8 @@ function ENT:OnPostThink( dt, selfTbl )
     self:RotorsThink()
 end
 
+local IsValid = IsValid
+
 function ENT:RotorsThink()
     local power = self:GetPower()
 
