@@ -40,7 +40,7 @@ function ENT:Repair()
         self.mainRotor:SetBaseAngles( self.MainRotorAngle )
     end
 
-    -- Create tail rotor, if it doesn't exist and we have a model for it 
+    -- Create tail rotor, if it doesn't exist and we have a model for it
     if not IsValid( self.tailRotor ) then
         self.tailRotor = self:CreateRotor( self.TailRotorOffset, self.TailRotorRadius, self.TailRotorModel, self.TailRotorFastModel )
         self.tailRotor:SetBaseAngles( self.TailRotorAngle )
@@ -246,4 +246,15 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
         local effectiveness = Clamp( power, 0, self:GetOutOfControl() and 0.5 or 1 )
         self:SimulateHelicopter( phys, params, effectiveness, outLin, outAng )
     end
+end
+
+
+function ENT:RotorStartSpinningFast( rotor )
+    BaseClass.RotorStartSpinningFast( self, rotor )
+    self:CreateRotorWash()
+end
+
+function ENT:RotorStopSpinningFast( rotor )
+    BaseClass.RotorStopSpinningFast( self, rotor )
+    self:RemoveRotorWash()
 end

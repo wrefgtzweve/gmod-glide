@@ -541,3 +541,6 @@ function ENT:GetSpawnColor()
     local color = colors[math.random( #colors )]
     return Color( color.r, color.g, color.b )
 end
+
+function ENT:RotorStartSpinningFast( _rotor ) end
+function ENT:RotorStopSpinningFast( _rotor ) end
