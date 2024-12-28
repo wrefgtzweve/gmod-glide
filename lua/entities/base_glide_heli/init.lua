@@ -249,10 +249,12 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
 end
 
 
-function ENT:RotorStartSpinningFast( _rotor )
+function ENT:RotorStartSpinningFast( rotor )
+    BaseClass.RotorStartSpinningFast( self, rotor )
     self:CreateRotorWash()
 end
 
-function ENT:RotorStopSpinningFast( _rotor )
+function ENT:RotorStopSpinningFast( rotor )
+    BaseClass.RotorStopSpinningFast( self, rotor )
     self:RemoveRotorWash()
 end
