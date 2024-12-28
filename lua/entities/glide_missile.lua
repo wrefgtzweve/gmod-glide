@@ -280,6 +280,12 @@ function ENT:PhysicsCollide()
     self:Explode()
 end
 
-function ENT:OnTakeDamage()
+function ENT:OnTakeDamage( dmginfo )
+    if dmginfo:IsExplosionDamage() then
+        local inflictor = dmginfo:GetInflictor()
+        if IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" then
+            return
+        end
+    end
     if not self.hasExploded then self:Explode() end
 end
