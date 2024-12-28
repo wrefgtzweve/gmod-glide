@@ -162,7 +162,7 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
         Attacker = attacker,
         Damage = self.BulletDamage,
         Force = 100,
-        Distance = distance,
+        Distance = distance + 1,
         Dir = dir,
         Src = pos,
         HullSize = 2,
