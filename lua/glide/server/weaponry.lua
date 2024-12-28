@@ -91,6 +91,24 @@ do
 
         if tr.Hit then
             length = length * tr.Fraction
+
+            local waterTrace = TraceLine( {
+                start = traceData.start,
+                endpos = traceData.endpos,
+                mask = MASK_WATER
+            } )
+
+            if waterTrace.Hit then
+                local eff = EffectData()
+                eff:SetOrigin( waterTrace.HitPos )
+                eff:SetScale( 13 )
+
+                if bit.band( waterTrace.Contents, CONTENTS_SLIME ) == 0 then
+                    eff:SetFlags( 0 )
+                end
+
+                Effect( "watersplash", eff )
+            end
         end
 
         if params.isExplosive then
