@@ -227,12 +227,13 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     end
 end
 
-
+--- Override this base class function.
 function ENT:RotorStartSpinningFast( rotor )
     BaseClass.RotorStartSpinningFast( self, rotor )
     self:CreateRotorWash()
 end
 
+--- Override this base class function.
 function ENT:RotorStopSpinningFast( rotor )
     BaseClass.RotorStopSpinningFast( self, rotor )
     self:RemoveRotorWash()
