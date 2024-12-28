@@ -34,20 +34,6 @@ function ENT:Repair()
         self.mainProp = self:CreatePropeller( self.PropOffset, self.PropRadius, self.PropModel, self.PropFastModel )
         self.mainProp:SetSpinAngle( math.random( 0, 180 ) )
     end
-
-    local validPropellers = {}
-    local validCount = 0
-
-    for _, prop in ipairs( self.rotors ) do
-        if IsValid( prop ) then
-            prop:Repair()
-
-            validCount = validCount + 1
-            validPropellers[validCount] = prop
-        end
-    end
-
-    self.rotors = validPropellers
 end
 
 --- Creates and stores a new propeller entity.

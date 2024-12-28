@@ -62,6 +62,26 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     outputs[#outputs + 1] = { "WeaponCount", "NORMAL", "Number of weapon slots this vehicle has" }
 end
 
+--- Override this base class function.
+function ENT:Repair()
+    BaseClass.Repair( self )
+
+    -- Only repair and keep valid rotor entities
+    local validRotors = {}
+    local validCount = 0
+
+    for _, rotor in ipairs( self.rotors ) do
+        if IsValid( rotor ) then
+            rotor:Repair()
+
+            validCount = validCount + 1
+            validRotors[validCount] = rotor
+        end
+    end
+
+    self.rotors = validRotors
+end
+
 function ENT:SetLandingGearState( state )
     self.landingGearState = state
 

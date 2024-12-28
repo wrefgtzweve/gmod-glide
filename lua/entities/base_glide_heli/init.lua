@@ -46,20 +46,6 @@ function ENT:Repair()
         self.tailRotor:SetBaseAngles( self.TailRotorAngle )
         self.tailRotor:SetSpinAxis( "Right" )
     end
-
-    local validRotors = {}
-    local validCount = 0
-
-    for _, rotor in ipairs( self.rotors ) do
-        if IsValid( rotor ) then
-            rotor:Repair()
-
-            validCount = validCount + 1
-            validRotors[validCount] = rotor
-        end
-    end
-
-    self.rotors = validRotors
 end
 
 --- Creates and stores a new rotor entity.
