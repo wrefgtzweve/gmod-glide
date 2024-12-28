@@ -78,7 +78,7 @@ if SERVER then
     end
 
     function ENT:RotorStartSpinningFast( rotor )
-        rotor:SetModel( rotor.modelFast or rotor.modelSlow )
+        rotor:SetModel( rotor.modelFast == "" and rotor.modelSlow or rotor.modelFast )
     end
 
     function ENT:RotorStopSpinningFast( rotor )

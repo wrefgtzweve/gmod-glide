@@ -76,11 +76,11 @@ if SERVER then
 
     -- Slow and fast models for the main rotor
     ENT.MainRotorModel = "models/gta5/vehicles/frogger/frogger_rmain_slow.mdl"
-    ENT.MainRotorFastModel = "models/gta5/vehicles/frogger/frogger_rmain_fast.mdl"
+    ENT.MainRotorFastModel = "models/gta5/vehicles/frogger/frogger_rmain_fast.mdl" -- Can be "" to use the slow model
 
     -- Slow and fast models for the tail rotor
     ENT.TailRotorModel = "models/gta5/vehicles/frogger/frogger_rrear_slow.mdl"
-    ENT.TailRotorFastModel = "models/gta5/vehicles/frogger/frogger_rrear_fast.mdl"
+    ENT.TailRotorFastModel = "models/gta5/vehicles/frogger/frogger_rrear_fast.mdl" -- Can be "" to use the slow model
 
     -- Helicopter drag & force constants.
     -- On children classes, you don't have to override

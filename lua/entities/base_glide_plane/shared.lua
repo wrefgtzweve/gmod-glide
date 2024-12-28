@@ -91,7 +91,7 @@ if SERVER then
     -- Slow and fast models for the propeller.
     -- Leave empty to not create the default propeller.
     ENT.PropModel = ""
-    ENT.PropFastModel = ""
+    ENT.PropFastModel = ""  -- Can be "" to use the slow model
 
     -- Ground steering variables
     ENT.MaxSteerAngle = 40
