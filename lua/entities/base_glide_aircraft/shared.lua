@@ -70,8 +70,12 @@ if SERVER then
         [3] = { "glide/aircraft/gear_down.wav", 0.65, 90 }
     }
 
-    -- You can override this on your child classes.
+    -- You can override these on your child classes.
     function ENT:OnLandingGearStateChange( _state ) end
+
+    function ENT:ShouldRotorsSpinFast()
+        return self:GetPower() > 0.65
+    end
 
     function ENT:RotorStartSpinningFast( rotor )
         rotor:SetModel( rotor.modelFast or rotor.modelSlow )

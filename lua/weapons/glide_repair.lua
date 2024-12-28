@@ -96,7 +96,7 @@ function SWEP:PrimaryAttack()
     local chassisHealth = ent:GetChassisHealth()
 
     if chassisHealth >= ent.MaxChassisHealth and engineHealth >= 1 then
-        local rotors = ent.rotors or ent.propellers
+        local rotors = ent.rotors
         if not rotors then return end
 
         for i = 1, #rotors do

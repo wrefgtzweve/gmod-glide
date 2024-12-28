@@ -39,9 +39,7 @@ function ENT:Initialize()
     self.baseAngles = Angle()
     self.spinAngle = 0
     self.spinAxis = "Up"
-
     self.spinMultiplier = 0
-    self.isSpinningFast = false
 
     -- Prepare damage & trace variables
     self.rotorHealth = 400
@@ -68,7 +66,7 @@ function ENT:SetupRotor( offset, radius, modelSlow, modelFast )
     self.radius = radius
     self.modelSlow = modelSlow
     self.modelFast = modelFast
-    self:SetModel( self.isSpinningFast and modelFast or modelSlow )
+    self:SetModel( modelSlow )
 end
 
 function ENT:SetBaseAngles( angles )
@@ -129,18 +127,6 @@ function ENT:Think()
     if self:WaterLevel() > 0 then
         self:Destroy()
         return
-    end
-
-    -- Switch between fast/slow models depending on the spinMultiplier
-    local isSpinningFast = self.spinMultiplier > 0.65
-
-    if self.isSpinningFast ~= isSpinningFast then
-        self.isSpinningFast = isSpinningFast
-        if isSpinningFast then
-            self:GetParent():RotorStartSpinningFast( self )
-        else
-            self:GetParent():RotorStopSpinningFast( self )
-        end
     end
 
     local dt = FrameTime()

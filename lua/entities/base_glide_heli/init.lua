@@ -208,13 +208,6 @@ function ENT:OnPostThink( dt, selfTbl )
         self:SetPower( power )
     end
 
-    -- Spin the rotors
-    for _, rotor in ipairs( selfTbl.rotors ) do
-        if IsValid( rotor ) then
-            rotor.spinMultiplier = power
-        end
-    end
-
     -- Handle out-of-control state
     if self:IsEngineOn() then
         local isOutOfControl = self:GetOutOfControl()

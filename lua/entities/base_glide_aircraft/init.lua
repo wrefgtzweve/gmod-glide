@@ -15,6 +15,9 @@ function ENT:OnPostInitialize()
     self.inputRoll = 0
     self.inputYaw = 0
 
+    self.rotors = {}
+    self.areRotorsSpinningFast = false
+
     -- Setup damage variables
     self.engineDamageCD = -1
     self.engineDamageSoundCD = -1
@@ -220,6 +223,38 @@ function ENT:OnPostThink( dt, selfTbl )
     -- Update landing gear
     if selfTbl.HasLandingGear then
         self:LandingGearThink( dt )
+    end
+
+    -- Update rotors
+    self:RotorsThink()
+end
+
+function ENT:RotorsThink()
+    local power = self:GetPower()
+
+    -- Spin the rotors
+    for _, rotor in ipairs( self.rotors ) do
+        if IsValid( rotor ) then
+            rotor.spinMultiplier = power
+        end
+    end
+
+    -- Call `RotorStartSpinningFast` or `RotorStopSpinningFast`
+    -- when the result from `ShouldRotorsSpinFast` changes.
+    local areRotorsSpinningFast = self:ShouldRotorsSpinFast()
+
+    if self.areRotorsSpinningFast ~= areRotorsSpinningFast then
+        self.areRotorsSpinningFast = areRotorsSpinningFast
+
+        for _, rotor in ipairs( self.rotors ) do
+            if IsValid( rotor ) then
+                if areRotorsSpinningFast then
+                    self:RotorStartSpinningFast( rotor )
+                else
+                    self:RotorStopSpinningFast( rotor )
+                end
+            end
+        end
     end
 end
 

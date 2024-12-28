@@ -10,7 +10,6 @@ function ENT:OnPostInitialize()
     BaseClass.OnPostInitialize( self )
 
     -- Setup variables used on all planes
-    self.propellers = {}
     self.powerResponse = 0.15
 
     self.isGrounded = false
@@ -39,7 +38,7 @@ function ENT:Repair()
     local validPropellers = {}
     local validCount = 0
 
-    for _, prop in ipairs( self.propellers ) do
+    for _, prop in ipairs( self.rotors ) do
         if IsValid( prop ) then
             prop:Repair()
 
@@ -48,7 +47,7 @@ function ENT:Repair()
         end
     end
 
-    self.propellers = validPropellers
+    self.rotors = validPropellers
 end
 
 --- Creates and stores a new propeller entity.
@@ -74,7 +73,7 @@ function ENT:CreatePropeller( offset, radius, slowModel, fastModel )
     prop:SetSpinAxis( "Forward" )
     prop.maxSpinSpeed = 5000
 
-    self.propellers[#self.propellers + 1] = prop
+    self.rotors[#self.rotors + 1] = prop
 
     return prop
 end
@@ -203,13 +202,6 @@ function ENT:OnPostThink( dt, selfTbl )
 
         if throttle > 0 then
             self:TurnOn()
-        end
-    end
-
-    -- Spin the propellers
-    for _, prop in ipairs( selfTbl.propellers ) do
-        if IsValid( prop ) then
-            prop.spinMultiplier = power
         end
     end
 
