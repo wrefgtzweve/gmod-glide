@@ -66,14 +66,6 @@ if CLIENT then
     -- Play this sound as the engine health gets depleted
     ENT.EngineRattleSound = "glide/aircraft/rattle.wav"
 
-    ENT.StrobeLights = {}
-
-    ENT.StrobeLightColors = {
-        Color( 255, 255, 255 ),
-        Color( 255, 0, 0 ),
-        Color( 0, 255, 0 )
-    }
-
     -- Children classes should override this function
     -- to update animations (the control surfaces for example).
     function ENT:OnUpdateAnimations() end

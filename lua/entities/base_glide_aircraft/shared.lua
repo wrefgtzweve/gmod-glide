@@ -28,6 +28,22 @@ if CLIENT then
     -- Set exhaust positions relative to the chassis
     ENT.ExhaustPositions = {}
 
+    -- Offsets and timings for strobe lights.
+    -- This should countain a table of tables, where each looks like this:
+    --
+    -- { offset = Vector( 0, 0, 0 ), blinkTime = 0 },   -- Blinks at the start of the cycle
+    -- { offset = Vector( 0, 0, 0 ), blinkTime = 0.5 }, -- Blinks in the middle of the cycle
+    --
+    -- Also note that the table count here should be less than or equal to
+    -- the color count on `ENT.StrobeLightColors`.
+    ENT.StrobeLights = {}
+
+    ENT.StrobeLightColors = {
+        Color( 255, 255, 255 ),
+        Color( 255, 0, 0 ),
+        Color( 0, 255, 0 )
+    }
+
     --- Override this base class function.
     function ENT:GetCameraType( _seatIndex )
         return 2 -- Glide.CAMERA_TYPE.AIRCRAFT
