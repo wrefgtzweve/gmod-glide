@@ -115,11 +115,13 @@ function ENT:StopFire()
 end
 
 function ENT:Think()
-    local t = RealTime()
+    if self.lifeTime ~= 0 then
+        local t = RealTime()
 
-    if t > self.lifeTime and self.lifeTime ~= 0 then
-        self:Remove()
-        return
+        if t > self.lifeTime then
+            self:Remove()
+            return
+        end
     end
 
     if IsValid( self.fire ) then
