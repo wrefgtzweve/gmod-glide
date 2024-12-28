@@ -17,6 +17,15 @@ local function DrawPlayerTag( ply, health, pos )
     local nick = ply:Nick()
     local screenH = ScrH()
 
+    local color = TEXT_COLOR
+    local returnedColor, returnedName = hook.Run( "Glide_PlayerTagColor", ply, nick, health )
+    if returnedColor and IsColor( returnedColor ) then
+        color = returnedColor
+    end
+    if returnedName and isstring( returnedName ) then
+        nick = returnedName
+    end
+
     surface.SetFont( "GlideSelectedWeapon" )
 
     local w, h = GetTextSize( nick )
@@ -30,7 +39,7 @@ local function DrawPlayerTag( ply, health, pos )
     local y = pos.y - h * 1.5
 
     DrawRoundedBox( screenH * 0.005, x, y, w, h, BG_COLOR, true, true, false, false )
-    DrawSimpleText( nick, "GlideSelectedWeapon", x + w * 0.5, y + h * 0.5, TEXT_COLOR, 1, 1 )
+    DrawSimpleText( nick, "GlideSelectedWeapon", x + w * 0.5, y + h * 0.5, color, 1, 1 )
 
     if health < 0 then return x, y + h, w end
 
