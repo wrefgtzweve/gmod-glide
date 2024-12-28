@@ -177,8 +177,9 @@ function ENT:CheckRotorClearance( dt, parent )
 
     local tr = TraceHull( data )
 
-    if tr.Hit and not tr.HitSky and not tr.HitNoDraw then
+    if tr.Hit and not tr.HitSky and not tr.HitNoDraw and tr.HitTexture ~= "**empty**" then
         self:OnRotorHit( tr.Entity, tr.HitPos, origin )
+        return
     end
 
     -- Another trace on the opposite direction
@@ -186,8 +187,9 @@ function ENT:CheckRotorClearance( dt, parent )
 
     tr = TraceHull( data )
 
-    if tr.Hit and not tr.HitSky and not tr.HitNoDraw then
+    if tr.Hit and not tr.HitSky and not tr.HitNoDraw and tr.HitTexture ~= "**empty**" then
         self:OnRotorHit( tr.Entity, tr.HitPos, origin )
+        return
     end
 end
 
