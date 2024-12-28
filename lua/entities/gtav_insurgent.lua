@@ -171,7 +171,7 @@ end
 
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 45 )
-    ENT.ChassisMass = 1000
+    ENT.ChassisMass = 2000
     ENT.FallOnCollision = true
 
     ENT.LightBodygroups = {
@@ -189,16 +189,20 @@ if SERVER then
         self:SetBrakePower( 3800 )
         self:SetDifferentialRatio( 3.3 )
         self:SetPowerDistribution( -0.4 )
+        self:SetMinRPMTorque( 2000 )
+        self:SetMaxRPMTorque( 2500 )
 
         self:SetMaxSteerAngle( 30 )
         self:SetSteerConeMaxSpeed( 1100 )
 
         self:SetSuspensionLength( 14 )
-        self:SetSpringStrength( 500 )
-        self:SetSpringDamper( 2500 )
+        self:SetSpringStrength( 900 )
+        self:SetSpringDamper( 3500 )
 
-        self:SetForwardTractionMax( 3000 )
-        self:SetSideTractionMin( 1000 )
+        self:SetSideTractionMultiplier( 38 )
+        self:SetForwardTractionMax( 4700 )
+        self:SetSideTractionMax( 4500 )
+        self:SetSideTractionMin( 2000 )
 
         self:CreateSeat( Vector( -2, 21.5, 9 ), Angle( 0, 270, -5 ), Vector( 40, 100, 0 ), true )
         self:CreateSeat( Vector( 15, -21.5, 7 ), Angle( 0, 270, 5 ), Vector( 40, -100, 0 ), true )
