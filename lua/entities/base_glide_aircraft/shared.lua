@@ -72,4 +72,12 @@ if SERVER then
 
     -- You can override this on your child classes.
     function ENT:OnLandingGearStateChange( _state ) end
+
+    function ENT:RotorStartSpinningFast( rotor )
+        rotor:SetModel( rotor.modelFast or rotor.modelSlow )
+    end
+
+    function ENT:RotorStopSpinningFast( rotor )
+        rotor:SetModel( rotor.modelSlow )
+    end
 end

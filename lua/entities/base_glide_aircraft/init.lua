@@ -502,11 +502,3 @@ function ENT:TriggerInput( name, value )
         self:SelectWeaponIndex( Clamp( value, 1, self.weaponCount ) )
     end
 end
-
-function ENT:RotorStartSpinningFast( rotor )
-    rotor:SetModel( rotor.modelFast or rotor.modelSlow )
-end
-
-function ENT:RotorStopSpinningFast( rotor )
-    rotor:SetModel( rotor.modelSlow )
-end
