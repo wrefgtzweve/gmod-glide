@@ -63,7 +63,7 @@ hook.Add( "CalcMainActivity", "Glide.OverridePlayerActivity", function( ply )
     if anim == "sit" and ply:GetAllowWeaponsInVehicle() then
         local activeWep = ply:GetActiveWeapon()
 
-        if not IsValid( activeWep ) or activeWep == NULL then
+        if not IsValid( activeWep ) then
             return plyTbl.CalcIdeal, plyTbl.CalcSeqOverride
         end
 
