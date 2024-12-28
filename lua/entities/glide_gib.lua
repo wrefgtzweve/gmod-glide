@@ -66,7 +66,12 @@ function ENT:Initialize()
         phys:SetDragCoefficient( 1 )
     end
 
-    self.lifeTime = RealTime() + lifetimeCvar:GetFloat()
+    local lifetime = lifetimeCvar:GetFloat()
+    if lifetime == 0 then
+        self.lifeTime = 0
+    else
+        self.lifeTime = RealTime() + lifetime
+    end
 end
 
 function ENT:OnRemove()
@@ -110,11 +115,13 @@ function ENT:StopFire()
 end
 
 function ENT:Think()
-    local t = RealTime()
+    if self.lifeTime ~= 0 then
+        local t = RealTime()
 
-    if t > self.lifeTime and self.lifeTime ~= 0 then
-        self:Remove()
-        return
+        if t > self.lifeTime then
+            self:Remove()
+            return
+        end
     end
 
     if IsValid( self.fire ) then
