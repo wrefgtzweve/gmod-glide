@@ -183,6 +183,7 @@ if CLIENT then
     -- to update animations (the steering wheel for example).
     function ENT:OnUpdateAnimations()
         self:SetPoseParameter( "vehicle_steer", self:GetSteering() )
+        self:InvalidateBoneCache()
     end
 end
 

@@ -54,6 +54,7 @@ if CLIENT then
 
         self:SetPoseParameter( "suspension_front", 1 - ( Abs( self:GetWheelOffset( 1 ) ) / 7 ) )
         self:SetPoseParameter( "suspension_rear", 1 - ( Abs( self:GetWheelOffset( 2 ) ) / 7 ) )
+        self:InvalidateBoneCache()
 
         if not self.frontBoneId then return end
 
