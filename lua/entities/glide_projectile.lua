@@ -158,6 +158,11 @@ function ENT:Think()
 
     local tr = TraceLine( traceData )
 
+    if tr.HitSky then
+        self:Remove()
+        return
+    end
+
     if tr.Hit then
         self:Explode()
         return
@@ -170,7 +175,11 @@ function ENT:Think()
     return true
 end
 
-function ENT:PhysicsCollide()
+function ENT:PhysicsCollide( data )
+    if data.TheirSurfaceProps == 76 then
+        self:Remove()
+        return
+    end
     self:Explode()
 end
 
