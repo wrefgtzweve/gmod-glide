@@ -5,6 +5,7 @@ ENT.PrintName = "Glide Aircraft"
 ENT.Author = "StyledStrike"
 ENT.AdminOnly = false
 ENT.AutomaticFrameAdvance = true
+ENT.VJTag_ID_Aircraft = true
 
 -- Increase default max. chassis health
 ENT.MaxChassisHealth = 1200
