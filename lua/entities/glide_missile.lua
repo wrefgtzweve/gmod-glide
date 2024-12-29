@@ -277,7 +277,11 @@ function ENT:Think()
     return true
 end
 
-function ENT:PhysicsCollide()
+function ENT:PhysicsCollide( data )
+    if data.TheirSurfaceProps == 76 then
+        self:Remove()
+        return
+    end
     self:Explode()
 end
 
