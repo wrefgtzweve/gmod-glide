@@ -284,10 +284,7 @@ function Glide.UnRagdollPlayer( ply, restoreCallback )
         restoredPly:SetEyeAngles( ang )
         restoredPly:SetVelocity( velocity )
 
-        -- Custom Loadout workaround
-        restoredPly.GlideBlockLoadout = nil
-
-        -- Spawn Beds workaround
+        -- Reset Spawn Beds workaround
         if IsValid( bed ) then
             restoredPly.SpawnBed = bed
         end
@@ -301,6 +298,9 @@ function Glide.UnRagdollPlayer( ply, restoreCallback )
     -- after the callback on `RestoreSpawnInfo` runs.
     ply:SetPos( pos )
     ply:SetEyeAngles( ang )
+
+    -- Reset Custom Loadout workaround
+    ply.GlideBlockLoadout = nil
 end
 
 hook.Add( "CanTool", "Glide.BlockPlayerRagdolls", function( _, tr )
