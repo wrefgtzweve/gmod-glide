@@ -6,6 +6,8 @@ ENT.Author = "StyledStrike"
 ENT.Purpose = "Move around"
 ENT.Instructions = "Aim at it, then press USE to enter"
 ENT.AdminOnly = false
+ENT.VJTag_IsDamageable = true
+ENT.VJTag_ID_Vehicle = true
 
 -- Let Glide know it should handle this entity differently
 ENT.IsGlideVehicle = true
