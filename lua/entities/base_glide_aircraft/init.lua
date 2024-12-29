@@ -522,6 +522,30 @@ function ENT:SimulatePlane( phys, dt, params, effective, outLin, outAng )
     outAng[3] = outAng[3] - self.inputYaw * params.yawForce * mass * controllability * effective
 end
 
+do
+    local function VectorProjectOntoPlane( vector, planeNormal )
+        return vector - vector:Dot( planeNormal ) * planeNormal
+    end
+
+    function ENT:PhysicsCollide( data )
+        BaseClass.PhysicsCollide( self, data )
+
+        if data.TheirSurfaceProps ~= 76 then -- default_silent
+            return
+        end
+
+        local phys = self:GetPhysicsObject()
+        if not IsValid( phys ) then return end
+
+        -- Bounce away from the skybox
+        local normal = data.HitNormal
+        local newVel = VectorProjectOntoPlane( data.OurOldVelocity, normal ) - normal * 250
+
+        phys:SetVelocityInstantaneous( newVel )
+        phys:SetAngleVelocityInstantaneous( data.OurOldAngularVelocity )
+    end
+end
+
 --- Override this base class function.
 function ENT:TriggerInput( name, value )
     BaseClass.TriggerInput( self, name, value )
