@@ -176,7 +176,6 @@ function ENT:Think()
 end
 
 function ENT:PhysicsCollide( data )
-    print( "PhysicsCollide", data.HitEntity, data.HitEntity:GetClass() )
     if data.TheirSurfaceProps == 76 then
         self:Remove()
         return
