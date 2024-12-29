@@ -188,6 +188,8 @@ CreateConVar( "glide_projectile_launcher_max_damage", "200", FCVAR_ARCHIVE + FCV
 CreateConVar( "glide_gib_lifetime", "8", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Lifetime of Glide Gibs, 0 for no despawning.", 0 )
 CreateConVar( "glide_gib_enable_collisions", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "When set to 0, gibs wont collide with players/props.", 0, 1 )
 
+list.Set( "ContentCategoryIcons", "Glide", "materials/glide/icons/car.png" )
+
 function Glide.Print( str, ... )
     MsgC( Color( 0, 0, 255 ), "[Glide] ", color_white, string.format( str, ... ), "\n" )
 end
