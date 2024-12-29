@@ -70,6 +70,15 @@ local function DetectSkybox( isDrawingDepth, isDrawSkybox, isDraw3DSkybox )
     -- Check one direction per frame
     dirIndex = dirIndex + 1
 
+    if dirIndex == 5 then
+        local vehicle = Glide.currentVehicle
+
+        -- Skip checking the up direction while in a car
+        if IsValid( vehicle ) and vehicle.VehicleType == Glide.VEHICLE_TYPE.CAR then
+            dirIndex = 1
+        end
+    end
+
     if dirIndex > #CHECK_DIRECTIONS then
         dirIndex = 1
     end
@@ -88,6 +97,10 @@ end
 
 function Glide.EnableSkyboxIndicator()
     Glide.DisableSkyboxIndicator()
+
+    for _, plane in ipairs( skyboxPlanes ) do
+        plane.alpha = 0
+    end
 
     if not Glide.Config.showSkybox then return end
     if not Glide.currentSeatIndex then return end
