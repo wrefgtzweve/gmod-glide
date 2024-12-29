@@ -43,7 +43,7 @@ local function DrawLight( id, pos, color, size )
         dl.b = color.b
         dl.brightness = 5
         dl.decay = 1000
-        dl.size = size or 70
+        dl.size = size
         dl.dietime = CurTime() + 0.05
     end
 end
@@ -62,14 +62,17 @@ function ENT:OnUpdateMisc()
     t = t % 1
 
     for i, v in ipairs( self.StrobeLights ) do
-        on = t > v.blinkTime and t < v.blinkTime + 0.05
+        on = t > v.blinkTime and t < v.blinkTime + ( v.blinkDuration or 0.05 )
 
         if on then
             pos = self:LocalToWorld( v.offset )
             color = self.StrobeLightColors[i]
 
-            DrawLight( self:EntIndex() + i, pos, color, 80 )
-            DrawLightSprite( pos, nil, 30, color )
+            if self.StrobeLightRadius > 0 then
+                DrawLight( self:EntIndex() + i, pos, color, self.StrobeLightRadius )
+            end
+
+            DrawLightSprite( pos, nil, self.StrobeLightSpriteSize, color )
         end
     end
 end

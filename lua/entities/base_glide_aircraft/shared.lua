@@ -33,11 +33,14 @@ if CLIENT then
     -- This should countain a table of tables, where each looks like this:
     --
     -- { offset = Vector( 0, 0, 0 ), blinkTime = 0 },   -- Blinks at the start of the cycle
-    -- { offset = Vector( 0, 0, 0 ), blinkTime = 0.5 }, -- Blinks in the middle of the cycle
+    -- { offset = Vector( 0, 0, 0 ), blinkTime = 0.5, blinkDuration = 0.5 }, -- Blinks in the middle of the cycle, for half of the cycle
     --
     -- Also note that the table count here should be less than or equal to
     -- the color count on `ENT.StrobeLightColors`.
     ENT.StrobeLights = {}
+
+    ENT.StrobeLightRadius = 80
+    ENT.StrobeLightSpriteSize = 30
 
     ENT.StrobeLightColors = {
         Color( 255, 255, 255 ),
