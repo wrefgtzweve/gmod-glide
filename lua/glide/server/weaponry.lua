@@ -265,7 +265,7 @@ local function isLockableEntity( ent, skipParentCheck )
     local class = getClass( ent )
     if class == "prop_vehicle_prisoner_pod" and not skipParentCheck then -- Checks for parent vehicles like for example glide
         local parent = getParent( ent )
-        if parent ~= NULL then
+        if parent ~= NULL then -- Check directly against NULL as getParent returns a clean NULL object and it's faster than IsValid
             if isLockableEntity( parent, true ) then
                 return false
             end
