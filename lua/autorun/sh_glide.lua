@@ -51,12 +51,12 @@ Glide.MOUSE_FLY_MODE = {
 if SERVER then
     -- Surface grip multipliers for wheels
     Glide.SURFACE_GRIP = {
-        [MAT_DIRT] = 0.8,
-        [MAT_SNOW] = 0.75,
-        [MAT_SAND] = 0.8,
-        [MAT_FOLIAGE] = 0.8,
-        [MAT_SLOSH] = 0.7,
-        [MAT_GRASS] = 0.8,
+        [MAT_DIRT] = 0.9,
+        [MAT_SNOW] = 0.8,
+        [MAT_SAND] = 0.9,
+        [MAT_FOLIAGE] = 0.9,
+        [MAT_SLOSH] = 0.8,
+        [MAT_GRASS] = 0.9,
         [MAT_GLASS] = 0.9
     }
 
