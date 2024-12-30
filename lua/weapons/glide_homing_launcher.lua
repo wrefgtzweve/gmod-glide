@@ -142,6 +142,10 @@ function SWEP:CanAttack()
         return false
     end
 
+    if self:GetNextPrimaryFire() > CurTime() then
+        return false
+    end
+
     return true
 end
 
