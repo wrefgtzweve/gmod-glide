@@ -142,6 +142,10 @@ function SWEP:CanAttack()
         return false
     end
 
+    if self:GetNextPrimaryFire() > CurTime() then
+        return false
+    end
+
     return true
 end
 
@@ -266,6 +270,7 @@ if CLIENT then
     local AIM_ICON = "glide/aim_square.png"
 
     local LOCKON_STATE_COLORS = {
+        [-1] = Color( 220, 220, 220, 100 ),
         [0] = Color( 255, 255, 255 ),
         [1] = Color( 255, 255, 255 ),
         [2] = Color( 100, 255, 100 ),
@@ -345,6 +350,12 @@ function SWEP:UpdateTarget()
     if user:IsBot() then return end
 
     local t = CurTime()
+
+    if not self:CanAttack() then
+        self:SetLockTarget( NULL )
+        self:SetLockState( -1 )
+        return
+    end
 
     if not user:KeyDown( IN_ATTACK2 ) then
         self:SetLockTarget( NULL )
