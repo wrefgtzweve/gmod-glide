@@ -14,6 +14,7 @@ ENT.DisableDuplicator = true
 
 ENT.BulletDamage = 10
 ENT.BulletMaxDistance = 15000
+ENT.BulletExplosionRadius = 0
 
 function ENT:SetupDataTables()
     self:NetworkVar( "String", "SingleShotSound" )
@@ -158,19 +159,25 @@ function ENT:FireBullet( pos, ang, attacker, shellDir )
         end
     end
 
-    self:FireBullets( {
-        Attacker = attacker,
-        Damage = self.BulletDamage,
-        Force = 100,
-        Distance = distance + 1,
-        Dir = dir,
-        Src = pos,
-        HullSize = 2,
-        Spread = Vector(),
-        IgnoreEntity = self:GetParent(),
-        TracerName = "MuzzleFlash",
-        AmmoType = "SMG1"
-    } )
+    if self.BulletExplosionRadius > 0 then
+        if SERVER and not tr.HitSky then
+            Glide.CreateExplosion( self, attacker, tr.HitPos, self.BulletExplosionRadius, self.BulletDamage, tr.HitNormal, Glide.EXPLOSION_TYPE.TURRET )
+        end
+    else
+        self:FireBullets( {
+            Attacker = attacker,
+            Damage = self.BulletDamage,
+            Force = 100,
+            Distance = distance + 1,
+            Dir = dir,
+            Src = pos,
+            HullSize = 2,
+            Spread = Vector(),
+            IgnoreEntity = self:GetParent(),
+            TracerName = "MuzzleFlash",
+            AmmoType = "SMG1"
+        } )
+    end
 
     -- Muzzle flash & trace
     local eff = EffectData()
