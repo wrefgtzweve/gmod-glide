@@ -173,6 +173,8 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 45 )
     ENT.ChassisMass = 2000
     ENT.FallOnCollision = true
+    ENT.BurnoutForce = 30
+    ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 14, subModelId = 1 }, -- Tail lights

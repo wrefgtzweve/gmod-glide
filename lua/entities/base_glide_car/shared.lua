@@ -203,7 +203,7 @@ if SERVER then
     ENT.LightBodygroups = {}
 
     -- How much force to apply when trying to turn while doing a burnout?
-    ENT.BurnoutForce = 70
+    ENT.BurnoutForce = 60
 
     -- How much force to apply when the driver tries to unflip the vehicle?
     ENT.UnflipForce = 6
