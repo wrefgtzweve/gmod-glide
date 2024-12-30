@@ -570,6 +570,8 @@ function Config:OpenFrame()
     CreateBinderButton( panelKeyboard, L"input.horn", "horn", landBinds.horn, OnChangeLandBind )
     CreateBinderButton( panelKeyboard, L"input.headlights", "headlights", landBinds.headlights, OnChangeLandBind )
     CreateBinderButton( panelKeyboard, L"input.reduce_throttle", "reduce_throttle", landBinds.reduce_throttle, OnChangeLandBind )
+    CreateBinderButton( panelKeyboard, L"input.toggle_engine", "toggle_engine", landBinds.toggle_engine, OnChangeLandBind )
+
     CreateBinderButton( panelKeyboard, L"input.lean_forward", "lean_forward", landBinds.lean_forward, OnChangeLandBind )
     CreateBinderButton( panelKeyboard, L"input.lean_back", "lean_back", landBinds.lean_back, OnChangeLandBind )
 
