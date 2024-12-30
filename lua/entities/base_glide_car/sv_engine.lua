@@ -173,7 +173,7 @@ function ENT:AutoGearSwitch( throttle )
     end
 
     if self.forwardSpeed < 0 and throttle < 0.1 then return end
-    if Abs( self.avgForwardSlip ) > 1 then return end
+    if Abs( self.avgForwardSlip ) > 10 then return end
 
     local minRPM, maxRPM = self:GetMinRPM(), self:GetMaxRPM()
 
