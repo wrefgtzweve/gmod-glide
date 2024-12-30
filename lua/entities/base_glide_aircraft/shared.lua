@@ -30,7 +30,7 @@ if CLIENT then
     ENT.ExhaustPositions = {}
 
     -- Offsets and timings for strobe lights.
-    -- This should countain a table of tables, where each looks like this:
+    -- This should contain a table of tables, where each looks like this:
     --
     -- { offset = Vector( 0, 0, 0 ), blinkTime = 0 },   -- Blinks at the start of the cycle
     -- { offset = Vector( 0, 0, 0 ), blinkTime = 0.5, blinkDuration = 0.5 }, -- Blinks in the middle of the cycle, for half of the cycle
