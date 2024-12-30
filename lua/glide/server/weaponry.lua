@@ -263,11 +263,14 @@ local WHITELIST = Glide.LOCKON_WHITELIST
 --- then returns which one has the largest dot product between `normal` and the direction towards them.
 local function isLockableEntity( ent, skipParentCheck )
     local class = getClass( ent )
-    if not skipParentCheck and class == "prop_vehicle_prisoner_pod" then
-        if isLockableEntity( getParent( ent ), true ) then -- Checks for parent vehicles like for example glide
-            return false
+    if class == "prop_vehicle_prisoner_pod" and not skipParentCheck then -- Checks for parent vehicles like for example glide
+        local parent = getParent( ent )
+        if IsValid( parent ) then
+            if isLockableEntity( parent, true ) then
+                return false
+            end
+            return true
         end
-        return true
     end
 
     if WHITELIST[class] then
