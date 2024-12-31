@@ -1,9 +1,5 @@
 local IsValid = IsValid
 
-local EntityMeta = FindMetaTable( "Entity" )
-local getClass = EntityMeta.GetClass
-local isVehicle = EntityMeta.IsVehicle
-
 function Glide.CreateTurret( vehicle, offset, angles )
     local turret = ents.Create( "glide_vehicle_turret" )
 
@@ -253,10 +249,45 @@ do
     end
 end
 
+local EntityMeta = FindMetaTable( "Entity" )
+local getClass = EntityMeta.GetClass
+local isVehicle = EntityMeta.IsVehicle
+local getParent = EntityMeta.GetParent
+
 local AllEnts = ents.Iterator
 local CanLockOnEntity = Glide.CanLockOnEntity
-
 local WHITELIST = Glide.LOCKON_WHITELIST
+
+local function IsLockableEntity( ent, skipParentCheck )
+    local class = getClass( ent )
+
+    -- Checks for parent vehicles, like for example glide
+    if class == "prop_vehicle_prisoner_pod" and not skipParentCheck then
+        local parent = getParent( ent )
+
+        -- Check directly against NULL as getParent returns a clean NULL object and it's faster than IsValid
+        if parent ~= NULL then
+            if IsLockableEntity( parent, true ) then
+                return false
+            end
+            return true
+        end
+    end
+
+    if WHITELIST[class] then
+        return true
+    end
+
+    if isVehicle( ent ) then
+        return true
+    end
+
+    if ent.BaseClass and WHITELIST[ent.BaseClass.ClassName] then
+        return true
+    end
+
+    return false
+end
 
 --- Finds all entities that we can lock on with `Glide.CanLockOnEntity`,
 --- then returns which one has the largest dot product between `normal` and the direction towards them.
@@ -274,9 +305,7 @@ function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, attacke
     end
 
     for _, e in AllEnts() do
-        if
-            e ~= attacker and not ignore[e] and ( WHITELIST[getClass( e )] or isVehicle( e ) or ( e.BaseClass and WHITELIST[e.BaseClass.ClassName] ) )
-        then
+        if e ~= attacker and not ignore[e] and IsLockableEntity( e ) then
             canLock, dot = CanLockOnEntity( e, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
 
             if canLock and dot > largestDot then

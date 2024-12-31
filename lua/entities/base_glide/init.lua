@@ -65,10 +65,30 @@ function ENT:Initialize()
 
     -- Setup the chassis model and physics
     self:SetModel( self.ChassisModel )
-    self:SetSolid( SOLID_VPHYSICS )
-    self:SetMoveType( MOVETYPE_VPHYSICS )
-    self:PhysicsInit( SOLID_VPHYSICS )
+    self:InitializePhysics()
     self:SetUseType( SIMPLE_USE )
+
+    local phys = self:GetPhysicsObject()
+
+    if not IsValid( phys ) then
+        self:Remove()
+        error( "Failed to setup physics! Vehicle removed!" )
+        return
+    end
+
+    phys:SetMaterial( "metalvehicle" )
+    phys:SetMass( self.ChassisMass )
+    phys:EnableDrag( false )
+    phys:SetDamping( 0, 0 )
+    phys:SetDragCoefficient( 0 )
+    phys:SetAngleDragCoefficient( 0 )
+    phys:SetBuoyancyRatio( 0.05 )
+    phys:EnableMotion( true )
+    phys:Wake()
+
+    self:StartMotionController()
+
+    debugoverlay.Cross( self:LocalToWorld( phys:GetMassCenter() ), 20, 5, Color( 0, 200, 0 ), true )
 
     -- Let NPCs see through this vehicle
     self:AddEFlags( EFL_DONTBLOCKLOS )
@@ -79,29 +99,6 @@ function ENT:Initialize()
 
     -- Setup wheel systems
     self:WheelInit()
-
-    local phys = self:GetPhysicsObject()
-
-    if IsValid( phys ) then
-        phys:SetMaterial( "metalvehicle" )
-        phys:SetMass( self.ChassisMass )
-        phys:EnableDrag( false )
-        phys:SetDamping( 0, 0 )
-        phys:SetDragCoefficient( 0 )
-        phys:SetAngleDragCoefficient( 0 )
-        phys:SetBuoyancyRatio( 0.05 )
-
-        phys:EnableMotion( true )
-        phys:Wake()
-
-        self:StartMotionController()
-
-        debugoverlay.Cross( self:LocalToWorld( phys:GetMassCenter() ), 20, 5, Color( 0, 200, 0 ), true )
-    else
-        self:Remove()
-        error( "Failed to setup physics! Vehicle removed!" )
-        return
-    end
 
     local data = { Color = self:GetSpawnColor() }
 
@@ -147,6 +144,12 @@ function ENT:Initialize()
     self:CreateFeatures()
 end
 
+function ENT:InitializePhysics()
+    self:SetSolid( SOLID_VPHYSICS )
+    self:SetMoveType( MOVETYPE_VPHYSICS )
+    self:PhysicsInit( SOLID_VPHYSICS )
+end
+
 function ENT:OnRemove()
     -- Stop physics processing
     local phys = self:GetPhysicsObject()
@@ -169,6 +172,16 @@ function ENT:Use( activator )
         activator:SetAllowWeaponsInVehicle( false )
         activator:EnterVehicle( freeSeat )
     end
+end
+
+function ENT:CanTool( _ply, _trace, mode, _tool, button )
+    -- Block collide with world only
+    if mode == "nocollide" and button == 2 then return false end
+
+    -- Block Fading Door
+    if mode == "fading_door" then return false end
+
+    return true
 end
 
 --- Sets the "EngineState" network variable to `1` and calls `ENT:OnTurnOn`.

@@ -73,8 +73,8 @@ local function DetectSkybox( isDrawingDepth, isDrawSkybox, isDraw3DSkybox )
     if dirIndex == 5 then
         local vehicle = Glide.currentVehicle
 
-        -- Skip checking the up direction while in a car
-        if IsValid( vehicle ) and vehicle.VehicleType == Glide.VEHICLE_TYPE.CAR then
+        -- Skip checking the up direction while not piloting an aircraft
+        if IsValid( vehicle ) and not Glide.IsAircraft( vehicle ) then
             dirIndex = 1
         end
     end

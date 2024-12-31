@@ -27,6 +27,8 @@ InputCategories["land_controls"] = {
     ["horn"] = KEY_R,
     ["headlights"] = KEY_H,
     ["reduce_throttle"] = KEY_LSHIFT,
+    ["toggle_engine"] = KEY_I,
+
     ["lean_forward"] = KEY_UP,
     ["lean_back"] = KEY_DOWN,
 

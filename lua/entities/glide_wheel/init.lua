@@ -174,7 +174,7 @@ local TractionRamp = Glide.TractionRamp
 -- Temporary variables
 local pos, ang, fw, rt, up, radius, maxLen
 local ray, fraction, contactPos, surfaceId, vel, velF, velR, absVelR
-local offset, springForce, damperForce, upDotNormal
+local offset, springForce, damperForce
 local brake, surfaceGrip, maxTraction, brakeForce, forwardForce, signForwardForce
 local tractionCycle, gripLoss, groundAngularVelocity, angularVelocity = Vector()
 local slipAngle, sideForce
@@ -247,9 +247,7 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     damperForce = ( selfTbl.lastSpringOffset - offset ) * params.springDamper
 
     selfTbl.lastSpringOffset = offset
-
-    upDotNormal = up:Dot( ray.HitNormal )
-    force = ( springForce - damperForce ) * upDotNormal * ray.HitNormal
+    force = ( springForce - damperForce ) * up:Dot( ray.HitNormal ) * ray.HitNormal
 
     -- Rolling resistance
     force:Add( ( SURFACE_RESISTANCE[surfaceId] or 0.05 ) * fw * -velF )
