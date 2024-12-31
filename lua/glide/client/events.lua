@@ -57,9 +57,10 @@ end
 
 local ScrW, ScrH = ScrW, ScrH
 local activeVehicle, activeSeatIndex = NULL, 0
+local cvarDrawHud = GetConVar( "cl_drawhud" )
 
 local function DrawVehicleHUD()
-    if IsValid( activeVehicle ) then
+    if IsValid( activeVehicle ) and cvarDrawHud:GetBool() then
         activeVehicle:DrawVehicleHUD( ScrW(), ScrH() )
     end
 end
