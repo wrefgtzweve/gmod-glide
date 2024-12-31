@@ -174,14 +174,14 @@ function ENT:Use( activator )
     end
 end
 
-function ENT:CanTool( ply, trace, mode, tool, button )
+function ENT:CanTool( _ply, _trace, mode, _tool, button )
     -- Block collide with world only
     if mode == "nocollide" and button == 2 then return false end
 
     -- Block Fading Door
     if mode == "fading_door" then return false end
 
-    return BaseClass.CanTool( self, ply, trace, mode, tool, button )
+    return true
 end
 
 --- Sets the "EngineState" network variable to `1` and calls `ENT:OnTurnOn`.
