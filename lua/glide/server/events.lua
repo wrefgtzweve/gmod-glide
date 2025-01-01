@@ -122,6 +122,18 @@ hook.Add( "CanProperty", "Glide.BlockCollisionProperty", function( ply, property
     end
 end )
 
+hook.Add( "CanTool", "Glide.BlockSomeTools", function( _ply, tr, toolname, _tool, button )
+    local ent = tr.Entity
+    if not IsValid( ent ) then return end
+    if not ent.IsGlideVehicle then return end
+
+    -- Block collide with world only
+    if toolname == "nocollide" and button == 2 then return false end
+
+    -- Block Fading Door
+    if toolname == "fading_door" then return false end
+end )
+
 hook.Add( "EntityTakeDamage", "Glide.OverrideDamage", function( target, dmginfo )
     -- Don't let missiles deal crush damage
     local inflictor = dmginfo:GetInflictor()
