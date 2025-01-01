@@ -116,7 +116,7 @@ hook.Add( "CanEditVariable", "Glide.ValidateEditVariables", function( ent, _, _,
 end )
 
 -- Block "Disable Collisions" option on tanks
-hook.Add( "CanProperty", "block_remover_property", function( ply, property, ent )
+hook.Add( "CanProperty", "Glide.BlockCollisionProperty", function( ply, property, ent )
     if not ply:IsAdmin() and property == "collision" and ent.VehicleType == Glide.VEHICLE_TYPE.TANK then
         return false
     end
