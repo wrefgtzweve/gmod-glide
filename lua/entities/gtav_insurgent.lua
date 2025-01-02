@@ -7,7 +7,7 @@ ENT.PrintName = "Insurgent Pick-up"
 
 ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/insurgent/chassis.mdl"
-ENT.MaxChassisHealth = 1500
+ENT.MaxChassisHealth = 2000
 
 DEFINE_BASECLASS( "base_glide_car" )
 
@@ -172,6 +172,8 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 45 )
     ENT.ChassisMass = 2000
+    ENT.EngineDamageMultiplier = 0.0006
+
     ENT.FallOnCollision = true
     ENT.BurnoutForce = 30
     ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )

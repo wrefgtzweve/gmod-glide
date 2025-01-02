@@ -9,9 +9,6 @@ ENT.Editable = true
 -- Change vehicle type
 ENT.VehicleType = Glide.VEHICLE_TYPE.CAR
 
--- Decrease default max. chassis health
-ENT.MaxChassisHealth = 900
-
 -- Should we prevent players from editing these NW variables?
 ENT.UneditableNWVars = {}
 
@@ -188,9 +185,7 @@ if CLIENT then
 end
 
 if SERVER then
-    ENT.EngineDamageMultiplier = 0.0016
     ENT.CollisionParticleSize = 0.9
-    ENT.CollisionDamageMultiplier = 0.5
     ENT.AngularDrag = Vector( -0.5, -0.5, -4 ) -- Roll, pitch, yaw
 
     -- How long does it take for the vehicle to start up?
