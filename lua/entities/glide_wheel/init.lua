@@ -41,6 +41,9 @@ function ENT:Initialize()
         -- Suspension length multiplier
         suspensionLengthMult = 1,
 
+        -- Forward traction multiplier
+        forwardTractionMult = 1,
+
         isOnGround = false,
         lastFraction = 1,
         lastSpringOffset = 0,
@@ -309,7 +312,7 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
 
     -- Brake and torque forces
     surfaceGrip = SURFACE_GRIP[surfaceId] or 1
-    maxTraction = params.forwardTractionMax * surfaceGrip
+    maxTraction = params.forwardTractionMax * surfaceGrip * state.forwardTractionMult
 
     -- Grip loss logic
     brakeForce = Clamp( -velF, -state.brake, state.brake ) * params.brakePower * surfaceGrip
@@ -348,7 +351,7 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
 
     -- Sideways traction ramp
     slipAngle = Abs( slipAngle * slipAngle )
-    maxTraction = TractionRamp( slipAngle, params.sideTractionMax, params.sideTractionMaxAng, params.sideTractionMin ) * surfaceGrip
+    maxTraction = TractionRamp( slipAngle, params.sideTractionMaxAng, params.sideTractionMax, params.sideTractionMin ) * surfaceGrip
     sideForce = -rt:Dot( vel * params.sideTractionMultiplier )
 
     -- Reduce sideways traction force as the wheel slips forward

@@ -37,7 +37,24 @@ function ENT:OnPostInitialize()
     self:SetWheelRadius( 15 )
 
     -- Setup default NW wheel params
-    local params = self.wheelParams
+    local params = {
+        -- Suspension
+        suspensionLength = 10,
+        springStrength = 800,
+        springDamper = 3000,
+
+        -- Brake force
+        brakePower = 3000,
+
+        -- Forward traction
+        forwardTractionMax = 2600,
+
+        -- Side traction
+        sideTractionMultiplier = 20,
+        sideTractionMaxAng = 25,
+        sideTractionMax = 2400,
+        sideTractionMin = 800
+    }
 
     -- Maximum length of the suspension
     self:SetSuspensionLength( params.suspensionLength )
@@ -91,22 +108,36 @@ function ENT:OnPostInitialize()
     end
 end
 
---- Update the `wheelParams` table using values from our network variables.
+--- Update the `params` table for each wheel,
+--- using values from our network variables.
 function ENT:UpdateWheelParameters()
     self.shouldUpdateWheelParams = false
 
-    local p = self.wheelParams
+    local suspensionLength = self:GetSuspensionLength()
+    local springStrength = self:GetSpringStrength()
+    local springDamper = self:GetSpringDamper()
+    local brakePower = self:GetBrakePower()
+    local forwardTractionMax = self:GetForwardTractionMax()
 
-    p.suspensionLength = self:GetSuspensionLength()
-    p.springStrength = self:GetSpringStrength()
-    p.springDamper = self:GetSpringDamper()
-    p.brakePower = self:GetBrakePower()
+    local sideTractionMultiplier = self:GetSideTractionMultiplier()
+    local sideTractionMaxAng = self:GetSideTractionMaxAng()
+    local sideTractionMax = self:GetSideTractionMax()
+    local sideTractionMin = self:GetSideTractionMin()
 
-    p.forwardTractionMax = self:GetForwardTractionMax()
-    p.sideTractionMultiplier = self:GetSideTractionMultiplier()
-    p.sideTractionMaxAng = self:GetSideTractionMaxAng()
-    p.sideTractionMin = self:GetSideTractionMin()
-    p.sideTractionMax = self:GetSideTractionMax()
+    for _, w in ipairs( self.wheels ) do
+        local p = w.params
+
+        p.suspensionLength = suspensionLength
+        p.springStrength = springStrength
+        p.springDamper = springDamper
+        p.brakePower = brakePower
+        p.forwardTractionMax = forwardTractionMax
+
+        p.sideTractionMultiplier = sideTractionMultiplier
+        p.sideTractionMaxAng = sideTractionMaxAng
+        p.sideTractionMax = sideTractionMax
+        p.sideTractionMin = sideTractionMin
+    end
 end
 
 --- Implement this base class function.
@@ -522,7 +553,7 @@ end
 
 local traction, tractionFront, tractionRear
 local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake
-local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip
+local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip, state
 
 --- Implement this base class function.
 function ENT:WheelThink( dt )
@@ -553,19 +584,20 @@ function ENT:WheelThink( dt )
         rpm = w:GetRPM()
         avgRPM = avgRPM + rpm * w.distributionFactor
 
-        w.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
-        w.brake = w.isFrontWheel and frontBrake or rearBrake
-        w.forwardTractionMult = w.isFrontWheel and tractionFront or tractionRear
+        state = w.state
+        state.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
+        state.brake = w.isFrontWheel and frontBrake or rearBrake
+        state.forwardTractionMult = w.isFrontWheel and tractionFront or tractionRear
 
         if inputHandbrake and not w.isFrontWheel then
-            w.angularVelocity = 0
+            state.angularVelocity = 0
         end
 
         if rpm > maxRPM then
             w:SetRPM( maxRPM )
         end
 
-        if w.isOnGround then
+        if state.isOnGround then
             groundedCount = groundedCount + 1
         end
     end

@@ -101,7 +101,7 @@ do
     -- Sideways traction logic
     local x
 
-    function Glide.TractionRamp( slipAngle, sideTractionMax, sideTractionMaxAng, sideTractionMin )
+    function Glide.TractionRamp( slipAngle, sideTractionMaxAng, sideTractionMax, sideTractionMin )
         sideTractionMaxAng = sideTractionMaxAng / 90 -- Convert max slip angle to the 0-1 range
         x = ( slipAngle - sideTractionMaxAng ) / ( 1 - sideTractionMaxAng )
 
