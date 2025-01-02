@@ -165,9 +165,6 @@ if SERVER then
     -- How much of the blast damage force should be applied to the vehicle?
     ENT.BlastForceMultiplier = 0.01
 
-    -- If the chassis health drops below this, set the engine on fire
-    ENT.ChassisMinHealth = 150
-
     -- How much damage per tick does engine fire deal to the chassis?
     ENT.ChassisFireDamage = 5
 

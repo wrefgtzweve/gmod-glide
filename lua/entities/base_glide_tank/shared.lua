@@ -110,13 +110,11 @@ end
 if SERVER then
     ENT.IsHeavyVehicle = true
     ENT.ChassisMass = 20000
-    ENT.ChassisMinHealth = 600
     ENT.ChassisFireDamage = 50
 
     ENT.BlastDamageMultiplier = 3
     ENT.BlastForceMultiplier = 0.005
     ENT.CollisionDamageMultiplier = 3
-    ENT.EngineDamageMultiplier = 0.0002
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"
