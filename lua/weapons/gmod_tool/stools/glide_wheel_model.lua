@@ -78,8 +78,8 @@ if SERVER then
 
         for _, w in ipairs( wheels ) do
             if not w.GlideIsHidden then
-                w.model = model
-                w.modelScale = scale
+                w.params.model = model
+                w.params.modelScale = scale
                 w:SetModel( model )
                 w:ChangeRadius()
 
