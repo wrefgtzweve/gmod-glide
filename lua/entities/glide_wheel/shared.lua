@@ -23,4 +23,5 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "SideSlip" )
     self:NetworkVar( "Float", "ForwardSlip" )
     self:NetworkVar( "Int", "ContactSurface" )
+    self:NetworkVar( "Bool", "SoundsEnabled" )
 end

@@ -30,13 +30,6 @@ function ENT:OnPostInitialize()
     -- Countermeasure system
     self.countermeasureCD = 0
 
-    -- Update default wheel params
-    local params = self.wheelParams
-
-    params.forwardTractionMax = 50000
-    params.sideTractionMultiplier = 200
-    params.sideTractionMinAng = 70
-
     -- Trigger wire outputs
     if WireLib then
         WireLib.TriggerOutput( self, "Power", 0 )
@@ -82,13 +75,38 @@ function ENT:Repair()
     self.rotors = validRotors
 end
 
+--- Override this base class function.
+function ENT:CreateWheel( offset, params )
+    -- Tweak default wheel params
+    params = params or {}
+
+    params.forwardTractionMax = params.forwardTractionMax or 50000
+    params.sideTractionMultiplier = params.sideTractionMultiplier or 200
+    params.sideTractionMinAng = params.sideTractionMinAng or 70
+
+    -- Let the base class create the wheel
+    local wheel = BaseClass.CreateWheel( self, offset, params )
+
+    -- Apply a bit of brake by default
+    wheel.state.brake = 0.5
+
+    return wheel
+end
+
+function ENT:ChangeSuspensionLengthMultiplier( multiplier )
+    for _, w in ipairs( self.wheels ) do
+        w.state.suspensionLengthMult = multiplier
+    end
+
+    local phys = self:GetPhysicsObject()
+
+    if IsValid( phys ) then
+        phys:Wake()
+    end
+end
+
 function ENT:SetLandingGearState( state )
     self.landingGearState = state
-
-    -- Remember the original suspension spring length
-    if not self.landingGearLength then
-        self.landingGearLength = self.wheelParams.suspensionLength
-    end
 
     local anim = self.LandingGearAnims[state]
 
@@ -107,7 +125,7 @@ function ENT:SetLandingGearState( state )
         -- Set the gear up now
         self.landingGearExtend = 0
         self.wheelsEnabled = false
-        self.wheelParams.suspensionLength = 0
+        self:ChangeSuspensionLengthMultiplier( 0 )
 
     elseif state == 3 then
         -- Move the gear down
@@ -118,7 +136,7 @@ function ENT:SetLandingGearState( state )
         -- Set the gear down now
         self.landingGearExtend = 1
         self.wheelsEnabled = true
-        self.wheelParams.suspensionLength = self.landingGearLength
+        self:ChangeSuspensionLengthMultiplier( 1 )
     end
 
     local soundParams = self.LandingGearSounds[state]
@@ -135,6 +153,7 @@ function ENT:LandingGearThink( dt )
 
     if state == 1 then -- Is it moving up?
         self.landingGearExtend = self.landingGearExtend - dt / self.landingGearAnimLen
+        self:ChangeSuspensionLengthMultiplier( self.landingGearExtend )
 
         if self.landingGearExtend < 0 then
             self:SetLandingGearState( 2 ) -- Set fully up
@@ -143,20 +162,11 @@ function ENT:LandingGearThink( dt )
 
     elseif state == 3 then -- Is it moving down?
         self.landingGearExtend = self.landingGearExtend + dt / self.landingGearAnimLen
+        self:ChangeSuspensionLengthMultiplier( self.landingGearExtend )
 
         if self.landingGearExtend > 1 then
             self:SetLandingGearState( 0 ) -- Set fully down
             return
-        end
-    end
-
-    if state == 1 or state == 3 then
-        self.wheelParams.suspensionLength = self.landingGearLength * self.landingGearExtend
-
-        local phys = self:GetPhysicsObject()
-
-        if IsValid( phys ) then
-            phys:Wake()
         end
     end
 end

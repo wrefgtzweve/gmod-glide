@@ -206,20 +206,22 @@ if SERVER then
     function ENT:CreateFeatures()
         self:CreateSeat( Vector( 157, 0, 4 ), Angle( 0, 270, 10 ), Vector( -160, 120, 0 ), true )
 
-        -- Update default wheel params
-        self.wheelParams.suspensionLength = 38
-        self.wheelParams.springStrength = 1500
-        self.wheelParams.springDamper = 6000
-        self.wheelParams.brakePower = 2000
-        self.wheelParams.sideTractionMultiplier = 250
+        local wheelParams = {
+            suspensionLength = 38,
+            springStrength = 1500,
+            springDamper = 6000,
+            brakePower = 2000,
+            sideTractionMultiplier = 250
+        }
 
         -- Front
-        self:CreateWheel( Vector( 180, -12, -25 ), {
-            steerMultiplier = 1
-        } )
+        wheelParams.steerMultiplier = 1
+        self:CreateWheel( Vector( 180, -12, -25 ), wheelParams )
 
-        self:CreateWheel( Vector( -13, 85, -25 ) ) -- Rear left
-        self:CreateWheel( Vector( -13, -85, -25 ) ) -- Rear right
+        -- Rear
+        wheelParams.steerMultiplier = 0
+        self:CreateWheel( Vector( -13, 85, -25 ), wheelParams ) -- left
+        self:CreateWheel( Vector( -13, -85, -25 ), wheelParams ) -- right
 
         self:ChangeWheelRadius( 12 )
 

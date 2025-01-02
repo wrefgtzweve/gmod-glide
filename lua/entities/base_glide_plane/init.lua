@@ -15,14 +15,6 @@ function ENT:OnPostInitialize()
     self.isGrounded = false
     self.brake = 0
     self.divePitch = 0
-
-    -- Update default wheel params
-    local params = self.wheelParams
-
-    params.brakePower = 800
-    params.suspensionLength = 10
-    params.springStrength = 1000
-    params.springDamper = 4000
 end
 
 --- Override this base class function.
@@ -34,6 +26,20 @@ function ENT:Repair()
         self.mainProp = self:CreatePropeller( self.PropOffset, self.PropRadius, self.PropModel, self.PropFastModel )
         self.mainProp:SetSpinAngle( math.random( 0, 180 ) )
     end
+end
+
+--- Override this base class function.
+function ENT:CreateWheel( offset, params )
+    -- Tweak default wheel params
+    params = params or {}
+
+    params.brakePower = params.brakePower or 800
+    params.suspensionLength = params.suspensionLength or 10
+    params.springStrength = params.springStrength or 1000
+    params.springDamper = params.springDamper or 4000
+
+    -- Let the base class create the wheel
+    return BaseClass.CreateWheel( self, offset, params )
 end
 
 --- Creates and stores a new propeller entity.
@@ -214,12 +220,15 @@ function ENT:OnPostThink( dt, selfTbl )
 
     local isGrounded = false
     local totalSideSlip = 0
+    local state
 
     for _, w in ipairs( self.wheels ) do
-        w.brake = self.brake
-        w.torque = torque
+        state = w.state
 
-        if w.isOnGround then
+        state.brake = self.brake
+        state.torque = torque
+
+        if state.isOnGround then
             isGrounded = true
             totalSideSlip = totalSideSlip + w:GetSideSlip()
         end

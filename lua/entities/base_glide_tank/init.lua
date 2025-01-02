@@ -19,20 +19,6 @@ function ENT:OnPostInitialize()
     self.isCannonInsideWall = false
     self.brake = 0.5
 
-    -- Update default wheel params
-    local params = self.wheelParams
-
-    params.brakePower = 15000
-    params.suspensionLength = 15
-    params.springStrength = 6000
-    params.springDamper = 30000
-
-    params.forwardTractionMax = 50000
-    params.sideTractionMultiplier = 800
-    params.sideTractionMinAng = 70
-    params.sideTractionMax = 12000
-    params.sideTractionMin = 10000
-
     self:SetEngineThrottle( 0 )
     self:SetEnginePower( 0 )
     self:SetTrackSpeed( 0 )
@@ -159,21 +145,41 @@ end
 
 --- Override this base class function.
 function ENT:CreateWheel( offset, params )
+    -- Tweak default wheel params
+    params = params or {}
+
+    params.brakePower = params.brakePower or 15000
+    params.suspensionLength = params.suspensionLength or 15
+    params.springStrength = params.springStrength or 6000
+    params.springDamper = params.springDamper or 30000
+
+    params.forwardTractionMax = params.forwardTractionMax or 50000
+    params.sideTractionMultiplier = params.sideTractionMultiplier or 800
+    params.sideTractionMinAng = params.sideTractionMinAng or 70
+    params.sideTractionMax = params.sideTractionMax or 12000
+    params.sideTractionMin = params.sideTractionMin or 10000
+
+    -- Let the base class create the wheel
     local wheel = BaseClass.CreateWheel( self, offset, params )
 
+    -- Check if the wheel is on the left side
     wheel.isLeftTrack = offset[2] > 0
 
     if wheel.isLeftTrack then
+        -- Count left side wheels
         self.wheelCountL = self.wheelCountL + 1
 
+        -- Don't play sounds for the second wheel on this side
         if self.wheelCountL == 2 then
-            wheel.enableSounds = false
+            wheel:SetSoundsEnabled( false )
         end
     else
+        -- Count right side wheels
         self.wheelCountR = self.wheelCountR + 1
 
+        -- Don't play sounds for the second wheel on this side
         if self.wheelCountR == 2 then
-            wheel.enableSounds = false
+            wheel:SetSoundsEnabled( false )
         end
     end
 
@@ -237,25 +243,28 @@ function ENT:OnPostThink( dt, selfTbl )
         end
     end
 
+    -- Update wheel state
     local torqueL = selfTbl.availableTorqueL / selfTbl.wheelCountL
     local torqueR = selfTbl.availableTorqueR / selfTbl.wheelCountR
 
     local isGrounded = false
     local totalSideSlip = 0
     local totalAngVel = 0
+    local s
 
     for _, w in ipairs( self.wheels ) do
-        totalAngVel = totalAngVel + Abs( w.angularVelocity )
+        s = w.state
+        totalAngVel = totalAngVel + Abs( s.angularVelocity )
 
-        if w.isOnGround then
-            w.brake = selfTbl.brake
-            w.torque = w.isLeftTrack and torqueL or torqueR
+        if s.isOnGround then
+            s.brake = selfTbl.brake
+            s.torque = w.isLeftTrack and torqueL or torqueR
 
             isGrounded = true
             totalSideSlip = totalSideSlip + w:GetSideSlip()
         else
-            w.brake = 1
-            w.torque = 0
+            s.brake = 1
+            s.torque = 0
         end
     end
 
