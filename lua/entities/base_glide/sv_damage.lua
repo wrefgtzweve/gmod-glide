@@ -122,7 +122,7 @@ function ENT:OnTakeDamage( dmginfo )
     self.lastDamageAttacker = dmginfo:GetAttacker()
     self.lastDamageInflictor = dmginfo:GetInflictor()
 
-    if health < 250 and self:WaterLevel() < 3 then
+    if health < self.ChassisMinHealth and self:WaterLevel() < 3 then
         self:SetIsEngineOnFire( true )
     end
 

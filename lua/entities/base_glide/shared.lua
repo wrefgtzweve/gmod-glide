@@ -155,15 +155,21 @@ if SERVER then
     ENT.SpawnAngleOffset = Angle( 0, 90, 0 )
 
     -- Multiply damage taken by these values
-    ENT.BulletDamageMultiplier = 0.75
-    ENT.BlastDamageMultiplier = 1
-    ENT.CollisionDamageMultiplier = 1
+    ENT.BulletDamageMultiplier = 1.5
+    ENT.BlastDamageMultiplier = 5
+    ENT.CollisionDamageMultiplier = 0.5
 
     -- How much of the chassis damage is also applied to the engine?
-    ENT.EngineDamageMultiplier = 0.001
+    ENT.EngineDamageMultiplier = 0.0013
 
     -- How much of the blast damage force should be applied to the vehicle?
     ENT.BlastForceMultiplier = 0.01
+
+    -- If the chassis health drops below this, set the engine on fire
+    ENT.ChassisMinHealth = 150
+
+    -- How much damage per tick does engine fire deal to the chassis?
+    ENT.ChassisFireDamage = 5
 
     -- Given a dot product between the vehicle's forward direction
     -- and the direction to a lock-on target, how large must that dot product be
