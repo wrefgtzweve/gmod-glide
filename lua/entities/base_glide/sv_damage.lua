@@ -88,8 +88,8 @@ end
 
 local IsValid = IsValid
 
-local cvarBullet = GetConVar( "glide_damage_multiplier_bullet" )
-local cvarBlast = GetConVar( "glide_damage_multiplier_blast" )
+local cvarBullet = GetConVar( "glide_bullet_damage_multiplier" )
+local cvarBlast = GetConVar( "glide_blast_damage_multiplier" )
 
 function ENT:OnTakeDamage( dmginfo )
     if self.hasExploded then return end
@@ -138,7 +138,7 @@ local Clamp = math.Clamp
 local RandomInt = math.random
 local PlaySoundSet = Glide.PlaySoundSet
 
-local cvarCollision = GetConVar( "glide_damage_multiplier_collision" )
+local cvarCollision = GetConVar( "glide_physics_damage_multiplier" )
 
 function ENT:PhysicsCollide( data )
     if data.TheirSurfaceProps == 76 then -- default_silent
