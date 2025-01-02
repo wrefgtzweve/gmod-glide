@@ -7,9 +7,6 @@ ENT.AdminOnly = false
 ENT.AutomaticFrameAdvance = true
 ENT.VJTag_ID_Aircraft = true
 
--- Increase default max. chassis health
-ENT.MaxChassisHealth = 1200
-
 DEFINE_BASECLASS( "base_glide" )
 
 --- Override this base class function.
@@ -58,6 +55,8 @@ if SERVER then
     ENT.IsHeavyVehicle = true
     ENT.ExplosionRadius = 700
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
+
+    ENT.CollisionDamageMultiplier = 4
 
     -- Damaged engine sound
     ENT.DamagedEngineSound = "Glide.Damaged.GearGrind"

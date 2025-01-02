@@ -67,7 +67,7 @@ if CLIENT then
 end
 
 if SERVER then
-    ENT.CollisionDamageMultiplier = 2
+    ENT.CollisionDamageMultiplier = 3
     ENT.AngularDrag = Vector( -10, -18, -10 ) -- Roll, pitch, yaw
 
     -- How far can the rotor's blades hit things
