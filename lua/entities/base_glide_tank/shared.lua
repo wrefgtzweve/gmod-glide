@@ -9,8 +9,8 @@ ENT.AutomaticFrameAdvance = true
 -- Change vehicle type
 ENT.VehicleType = Glide.VEHICLE_TYPE.TANK
 
--- Increase default max. chassis health
-ENT.MaxChassisHealth = 3000
+-- Tweak max. chassis health
+ENT.MaxChassisHealth = 6000
 
 -- Turrets are predictable, so their properties
 -- should be set both on SERVER and CLIENT.
@@ -110,12 +110,13 @@ end
 if SERVER then
     ENT.IsHeavyVehicle = true
     ENT.ChassisMass = 20000
+    ENT.ChassisMinHealth = 600
+    ENT.ChassisFireDamage = 50
 
-    ENT.BulletDamageMultiplier = 0.25
-    ENT.BlastDamageMultiplier = 1
-    ENT.CollisionDamageMultiplier = 0.8
-    ENT.EngineDamageMultiplier = 0.00035
+    ENT.BlastDamageMultiplier = 3
     ENT.BlastForceMultiplier = 0.005
+    ENT.CollisionDamageMultiplier = 3
+    ENT.EngineDamageMultiplier = 0.0002
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"
@@ -131,6 +132,7 @@ if SERVER then
     ENT.TurretFireSound = ")glide/tanks/acf_fire4.mp3"
     ENT.TurretFireVolume = 0.8
     ENT.TurretRecoilForce = 50
+    ENT.TurretDamage = 550
 
     -- How much torque to distribute among all wheels?
     ENT.EngineTorque = 40000

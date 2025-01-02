@@ -121,7 +121,9 @@ function ENT:OnWeaponFire( weapon )
     local dir = aimPos - projectilePos
     dir:Normalize()
 
-    Glide.FireProjectile( projectilePos, dir:Angle(), self:GetDriver(), self )
+    local projectile = Glide.FireProjectile( projectilePos, dir:Angle(), self:GetDriver(), self )
+    projectile.damage = self.TurretDamage
+
     self:EmitSound( self.TurretFireSound, 100, math.random( 95, 105 ), self.TurretFireVolume )
 
     local eff = EffectData()
