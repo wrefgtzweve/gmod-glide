@@ -90,21 +90,6 @@ function ENT:OnTurnOff()
 end
 
 --- Override this base class function.
-function ENT:ActivateMisc()
-    BaseClass.ActivateMisc( self )
-
-    local wheels = self.wheels
-    if not wheels then return end
-
-    -- Reduce the number of wheels playing sounds
-    for i, w in ipairs( wheels ) do
-        if i == 2 or i == 5 then
-            w.enableSounds = false
-        end
-    end
-end
-
---- Override this base class function.
 function ENT:DeactivateMisc()
     BaseClass.DeactivateMisc( self )
 

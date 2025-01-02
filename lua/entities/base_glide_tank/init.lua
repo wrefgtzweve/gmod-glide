@@ -167,13 +167,13 @@ function ENT:CreateWheel( offset, params )
         self.wheelCountL = self.wheelCountL + 1
 
         if self.wheelCountL == 2 then
-            wheel.enableSounds = false
+            wheel:SetSoundsEnabled( false )
         end
     else
         self.wheelCountR = self.wheelCountR + 1
 
         if self.wheelCountR == 2 then
-            wheel.enableSounds = false
+            wheel:SetSoundsEnabled( false )
         end
     end
 

@@ -52,7 +52,6 @@ function ENT:Initialize()
 
     self.downSoundCD = 0
     self.upSoundCD = 0
-    self.enableSounds = true
 
     self:SetupWheel()
 end
@@ -86,6 +85,9 @@ function ENT:SetupWheel( t )
     -- Should forces be applied at the axle position?
     -- (Recommended for small vehicles like the Blazer)
     params.enableAxleForces = t.enableAxleForces or false
+
+    -- Should this wheel play sounds?
+    self:SetSoundsEnabled( t.disableSounds ~= true )
 
     -- Repair to update the model and radius
     self:Repair()
@@ -188,7 +190,7 @@ do
     local PlaySoundSet = Glide.PlaySoundSet
 
     function ENT:DoSuspensionSounds( change, vehicle )
-        if not self.enableSounds then return end
+        if not self:GetSoundsEnabled() then return end
 
         local t = CurTime()
 
