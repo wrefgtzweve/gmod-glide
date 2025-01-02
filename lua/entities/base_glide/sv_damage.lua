@@ -116,13 +116,13 @@ function ENT:OnTakeDamage( dmginfo )
     health = health - amount
 
     self:SetChassisHealth( health )
-    self:TakeEngineDamage( amount * self.EngineDamageMultiplier )
+    self:TakeEngineDamage( ( amount / self.MaxChassisHealth ) * self.EngineDamageMultiplier )
     self:UpdateHealthOutputs()
 
     self.lastDamageAttacker = dmginfo:GetAttacker()
     self.lastDamageInflictor = dmginfo:GetInflictor()
 
-    if health / self.MaxChassisHealth < 0.2 and self:WaterLevel() < 3 then
+    if health / self.MaxChassisHealth < 0.18 and self:WaterLevel() < 3 then
         self:SetIsEngineOnFire( true )
     end
 

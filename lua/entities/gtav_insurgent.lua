@@ -172,7 +172,6 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 45 )
     ENT.ChassisMass = 2000
-    ENT.EngineDamageMultiplier = 0.0006
 
     ENT.FallOnCollision = true
     ENT.BurnoutForce = 30
