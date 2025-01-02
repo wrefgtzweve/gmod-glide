@@ -3,6 +3,11 @@ function ENT:WheelInit()
     self.wheelCount = 0
     self.wheelsEnabled = true
     self.steerAngle = Angle()
+
+    -- This was deprecated. Putting values here does nothing.
+    -- Wheel parameters are stored on each wheel now.
+    -- This will be removed in the future.
+    self.wheelParams = {}
 end
 
 function ENT:CreateWheel( offset, params )
