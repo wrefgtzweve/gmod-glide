@@ -71,7 +71,7 @@ if SERVER then
     ENT.CountermeasureCount = 3
 
     -- Delay between deployment of countermeasures
-    ENT.CountermeasureCooldown = 5
+    ENT.CountermeasureCooldown = 8
 
     -- Animations to play when the landing gear state changes
     ENT.LandingGearAnims = {
