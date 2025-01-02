@@ -78,12 +78,12 @@ if SERVER then
 
         for _, w in ipairs( wheels ) do
             if not w.GlideIsHidden then
-                w.modelOverride = model
+                w.model = model
                 w.modelScale = scale
                 w:SetModel( model )
                 w:ChangeRadius()
 
-                if w.isOnRight then
+                if w.params.basePos[2] < 0 then
                     w:SetModelOffset( -offset )
                     w:SetModelAngle( angle + Angle( 0, 180, 0 ) )
                 else

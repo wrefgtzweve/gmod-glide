@@ -3,29 +3,6 @@ function ENT:WheelInit()
     self.wheelCount = 0
     self.wheelsEnabled = true
     self.steerAngle = Angle()
-
-    -- Store these values on a table that wheels can access.
-    self.wheelParams = self.wheelParams or {
-        -- Suspension
-        suspensionLength = 10,
-        springStrength = 800,
-        springDamper = 3000,
-
-        -- Wheel mass
-        inertia = 10,
-
-        -- Brake force
-        brakePower = 3000,
-
-        -- Forward traction
-        forwardTractionMax = 2600,
-
-        -- Side traction
-        sideTractionMultiplier = 20,
-        sideTractionMaxAng = 25,
-        sideTractionMax = 2400,
-        sideTractionMin = 800
-    }
 end
 
 function ENT:CreateWheel( offset, params )
@@ -74,7 +51,6 @@ end
 
 local Clamp = math.Clamp
 local ClampForce = Glide.ClampForce
-local SetupTraction = Glide.SetupTraction
 
 local linForce, angForce = Vector(), Vector()
 
@@ -95,12 +71,9 @@ function ENT:PhysicsSimulate( phys, dt )
     -- Do wheel physics
     if self.wheelCount > 0 and self.wheelsEnabled then
         local traceData = self.traceData
-        local params = self.wheelParams
-
-        SetupTraction( params )
 
         for _, w in ipairs( self.wheels ) do
-            w:DoPhysics( self, phys, params, traceData, linForce, angForce, dt )
+            w:DoPhysics( self, phys, traceData, linForce, angForce, dt )
         end
     end
 

@@ -3,25 +3,52 @@ AddCSLuaFile( "cl_init.lua" )
 
 include( "shared.lua" )
 
-local EntityMeta = FindMetaTable( "Entity" )
-local getTable = EntityMeta.GetTable
-
 function ENT:Initialize()
     self:SetModel( "models/editor/axis_helper.mdl" )
     self:SetSolid( SOLID_NONE )
     self:SetMoveType( MOVETYPE_VPHYSICS )
 
-    self.torque = 0     -- Amount of torque to apply to the wheel
-    self.brake = 0      -- Amount of brake torque to apply to the wheel
-    self.spin = 0       -- Wheel spin angle around it's axle axis
+    self.params = {
+        -- Suspension
+        suspensionLength = 10,
+        springStrength = 800,
+        springDamper = 3000,
 
-    -- Traction multiplier, used for forward traction bias on cars
-    self.forwardTractionMult = 1
+        -- Brake force
+        brakePower = 3000,
 
-    self.isOnGround = false
-    self.lastFraction = 1
-    self.lastSpringOffset = 0
-    self.angularVelocity = 0
+        -- Forward traction
+        forwardTractionMax = 2600,
+
+        -- Side traction
+        sideTractionMultiplier = 20,
+        sideTractionMaxAng = 25,
+        sideTractionMax = 2400,
+        sideTractionMin = 800,
+
+        -- Other parameters
+        radius = 15,
+        basePos = Vector(),
+        steerMultiplier = 0,
+        enableAxleForces = false
+    }
+
+    self.state = {
+        torque = 0, -- Amount of torque to apply to the wheel
+        brake = 0,  -- Amount of brake torque to apply to the wheel
+        spin = 0,   -- Wheel spin angle around it's axle axis
+
+        isOnGround = false,
+        lastFraction = 1,
+        lastSpringOffset = 0,
+        angularVelocity = 0,
+
+        -- Used for raycasting, updates with wheel radius
+        traceMins = Vector(),
+        traceMaxs = Vector( 1, 1, 1 ),
+
+        isDebugging = GetConVar( "developer" ):GetBool()
+    }
 
     self.downSoundCD = 0
     self.upSoundCD = 0
@@ -31,56 +58,73 @@ function ENT:Initialize()
 end
 
 --- Set the size, models and steering properties to use on this wheel.
-function ENT:SetupWheel( params )
-    params = params or {}
+function ENT:SetupWheel( t )
+    t = t or {}
+
+    local params = self.params
+
+    -- Physical wheel radius, also affects the model scale
+    params.radius = t.radius or 15
 
     -- Wheel offset relative to the parent
-    self.basePos = params.basePos or self:GetLocalPos()
-    self.isOnRight = self.basePos[2] < 0
+    params.basePos = t.basePos or self:GetLocalPos()
 
     -- How much the parent's steering angle affects this wheel
-    self.steerMultiplier = params.steerMultiplier or 0
+    params.steerMultiplier = t.steerMultiplier or 0
 
-    -- Regular model
-    if params.model then
-        self.model = params.model
-        Glide.HideEntity( self, false )
+    -- Wheel model
+    if type( t.model ) == "string" then
+        params.model = t.model
     end
 
     -- Model rotation and scale
-    self.modelScale = params.modelScale or Vector( 0.3, 1, 1 )
-    self:SetModelAngle( params.modelAngle or Angle( 0, 0, 0 ) )
-    self:SetModelOffset( params.modelOffset or Vector( 0, 0, 0 ) )
+    params.modelScale = t.modelScale or Vector( 0.3, 1, 1 )
 
-    -- Default (not blown) radius of the wheel
-    self.defaultRadius = params.radius or 15
+    self:SetModelAngle( t.modelAngle or Angle( 0, 0, 0 ) )
+    self:SetModelOffset( t.modelOffset or Vector( 0, 0, 0 ) )
 
-    -- Should we apply forces at the axle position?
-    self.enableAxleForces = params.enableAxleForces or false
+    -- Should forces be applied at the axle position?
+    -- (Recommended for small vehicles like the Blazer)
+    params.enableAxleForces = t.enableAxleForces or false
 
+    -- Repair to update the model and radius
     self:Repair()
+
+    -- Suspension
+    params.suspensionLength = t.suspensionLength or params.suspensionLength
+    params.springStrength = t.springStrength or params.springStrength
+    params.springDamper = t.springDamper or params.springDamper
+
+    -- Brake force
+    params.brakePower = t.brakePower or params.brakePower
+
+    -- Forward traction
+    params.forwardTractionMax = t.forwardTractionMax or params.forwardTractionMax
+
+    -- Side traction
+    params.sideTractionMultiplier = t.sideTractionMultiplier or params.sideTractionMultiplier
+    params.sideTractionMaxAng = t.sideTractionMaxAng or params.sideTractionMaxAng
+    params.sideTractionMax = t.sideTractionMax or params.sideTractionMax
+    params.sideTractionMin = t.sideTractionMin or params.sideTractionMin
 end
 
 function ENT:Repair()
-    if self.modelOverride then
-        self:SetModel( self.modelOverride )
-
-    elseif self.model then
-        self:SetModel( self.model )
+    if self.params.model then
+        self:SetModel( self.params.model )
     end
 
     self:ChangeRadius()
 end
 
 function ENT:Blow()
-    self:ChangeRadius( self.defaultRadius * 0.8 )
+    self:ChangeRadius( self.params.radius * 0.8 )
     self:EmitSound( "glide/wheels/blowout.wav", 80, math.random( 95, 105 ), 1 )
 end
 
 function ENT:ChangeRadius( radius )
-    radius = radius or self.defaultRadius
+    radius = radius or self.params.radius
 
-    local size = self.modelScale * radius * 2
+    local size = self.params.modelScale * radius * 2
     local bounds = self:OBBMaxs() - self:OBBMins()
     local scale = Vector( size[1] / bounds[1], size[2] / bounds[2], size[3] / bounds[3] )
 
@@ -88,8 +132,8 @@ function ENT:ChangeRadius( radius )
     self:SetModelScale2( scale )
 
     -- Used on util.TraceHull
-    self.traceMins = Vector( radius * -0.2, radius * -0.2, 0 )
-    self.traceMaxs = Vector( radius * 0.2, radius * 0.2, 1 )
+    self.state.traceMins = Vector( radius * -0.2, radius * -0.2, 0 )
+    self.state.traceMaxs = Vector( radius * 0.2, radius * 0.2, 1 )
 end
 
 do
@@ -97,37 +141,42 @@ do
     local Approach = math.Approach
 
     function ENT:Update( vehicle, steerAngle, isAsleep, dt )
-        local selfTbl = getTable( self )
+        local state, params = self.state, self.params
+
         -- Get the wheel rotation relative to the vehicle, while applying the steering angle
-        local ang = vehicle:LocalToWorldAngles( steerAngle * selfTbl.steerMultiplier )
+        local ang = vehicle:LocalToWorldAngles( steerAngle * params.steerMultiplier )
 
         -- Rotate the wheel around the axle axis
-        selfTbl.spin = ( selfTbl.spin - Deg( selfTbl.angularVelocity ) * dt ) % 360
-        ang:RotateAroundAxis( ang:Right(), selfTbl.spin )
+        state.spin = ( state.spin - Deg( state.angularVelocity ) * dt ) % 360
+
+        ang:RotateAroundAxis( ang:Right(), state.spin )
         self:SetAngles( ang )
 
         if isAsleep then
             self:SetForwardSlip( 0 )
             self:SetSideSlip( 0 )
         else
-            self:SetLastSpin( selfTbl.spin )
-            self:SetLastOffset( self:GetLocalPos()[3] - selfTbl.basePos[3] )
+            self:SetLastSpin( state.spin )
+            self:SetLastOffset( self:GetLocalPos()[3] - params.basePos[3] )
         end
 
-        if isAsleep or not selfTbl.isOnGround then
-            selfTbl.angularVelocity = selfTbl.angularVelocity + ( selfTbl.torque / 20 ) * dt
-            selfTbl.angularVelocity = Approach( selfTbl.angularVelocity, 0, dt * 5 )
+        if isAsleep or not state.isOnGround then
+            -- Let the torque spin the wheel's fake mass
+            state.angularVelocity = state.angularVelocity + ( state.torque / 20 ) * dt
+
+            -- Slow down eventually
+            state.angularVelocity = Approach( state.angularVelocity, 0, dt * 4 )
         end
     end
 
     local TAU = math.pi * 2
 
     function ENT:GetRPM()
-        return self.angularVelocity * 60 / TAU
+        return self.state.angularVelocity * 60 / TAU
     end
 
     function ENT:SetRPM( rpm )
-        self.angularVelocity = rpm / ( 60 / TAU )
+        self.state.angularVelocity = rpm / ( 60 / TAU )
     end
 end
 
@@ -175,18 +224,20 @@ local TractionRamp = Glide.TractionRamp
 local pos, ang, fw, rt, up, radius, maxLen
 local ray, fraction, contactPos, surfaceId, vel, velF, velR, absVelR
 local offset, springForce, damperForce
-local brake, surfaceGrip, maxTraction, brakeForce, forwardForce, signForwardForce
+local surfaceGrip, maxTraction, brakeForce, forwardForce, signForwardForce
 local tractionCycle, gripLoss, groundAngularVelocity, angularVelocity = Vector()
 local slipAngle, sideForce
 local force, linearImp, angularImp
+local state, params
 
-function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
-    local selfTbl = getTable( self )
+function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
+    state, params = self.state, self.params
+
     -- Get the starting point of the raycast, where the suspension connects to the chassis
-    pos = phys:LocalToWorld( selfTbl.basePos )
+    pos = phys:LocalToWorld( params.basePos )
 
     -- Get the wheel rotation relative to the chassis, applying the steering angle if necessary
-    ang = vehicle:LocalToWorldAngles( vehicle.steerAngle * selfTbl.steerMultiplier )
+    ang = vehicle:LocalToWorldAngles( vehicle.steerAngle * params.steerMultiplier )
 
     -- Store some directions
     fw = ang:Forward()
@@ -199,8 +250,8 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
 
     traceData.start = pos
     traceData.endpos = pos - up * maxLen
-    traceData.mins = selfTbl.traceMins
-    traceData.maxs = selfTbl.traceMaxs
+    traceData.mins = state.traceMins
+    traceData.maxs = state.traceMaxs
 
     ray = TraceHull( traceData )
     fraction = Clamp( ray.Fraction, radius / maxLen, 1 )
@@ -210,28 +261,27 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     surfaceId = ray.MatType or 0
     surfaceId = MAP_SURFACE_OVERRIDES[surfaceId] or surfaceId
 
-    --debugoverlay.Cross( pos, 10, 0.05, Color( 100, 100, 100 ), true )
-    --debugoverlay.Box( contactPos, self.traceMins, self.traceMaxs, 0.05, Color( 0, 200, 0 ) )
-
-    selfTbl.isOnGround = ray.Hit
+    state.isOnGround = ray.Hit
     self:SetContactSurface( surfaceId )
+
+    if state.isDebugging then
+        debugoverlay.Cross( pos, 10, 0.05, Color( 100, 100, 100 ), true )
+        debugoverlay.Box( contactPos, state.traceMins, state.traceMaxs, 0.05, Color( 0, 200, 0 ) )
+    end
 
     -- Update the wheel position and sounds
     self:SetLocalPos( phys:WorldToLocal( contactPos + up * radius ) )
-    self:DoSuspensionSounds( fraction - selfTbl.lastFraction, vehicle )
-    selfTbl.lastFraction = fraction
+    self:DoSuspensionSounds( fraction - state.lastFraction, vehicle )
+    state.lastFraction = fraction
 
     if not ray.Hit then
         self:SetForwardSlip( 0 )
         self:SetSideSlip( 0 )
 
-        -- Let the torque spin the wheel's fake mass
-        selfTbl.angularVelocity = selfTbl.angularVelocity + ( selfTbl.torque / 20 ) * dt
-
         return
     end
 
-    pos = self.enableAxleForces and pos or contactPos
+    pos = params.enableAxleForces and pos or contactPos
 
     -- Get the velocity at the wheel position
     vel = phys:GetVelocityAtPoint( pos )
@@ -244,22 +294,21 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     -- Suspension spring force & damping
     offset = maxLen - ( fraction * maxLen )
     springForce = ( offset * params.springStrength )
-    damperForce = ( selfTbl.lastSpringOffset - offset ) * params.springDamper
+    damperForce = ( state.lastSpringOffset - offset ) * params.springDamper
+    state.lastSpringOffset = offset
 
-    selfTbl.lastSpringOffset = offset
     force = ( springForce - damperForce ) * up:Dot( ray.HitNormal ) * ray.HitNormal
 
     -- Rolling resistance
-    force:Add( ( SURFACE_RESISTANCE[surfaceId] or 0.05 ) * fw * -velF )
+    force:Add( ( SURFACE_RESISTANCE[surfaceId] or 0.05 ) * -velF * fw )
 
     -- Brake and torque forces
-    brake = selfTbl.brake
     surfaceGrip = SURFACE_GRIP[surfaceId] or 1
-    maxTraction = params.forwardTractionMax * surfaceGrip * selfTbl.forwardTractionMult
+    maxTraction = params.forwardTractionMax * surfaceGrip
 
-    -- This grip loss logic was inspired by simfphys
-    brakeForce = Clamp( -velF, -brake, brake ) * params.brakePower * surfaceGrip
-    forwardForce = selfTbl.torque + brakeForce
+    -- Grip loss logic
+    brakeForce = Clamp( -velF, -state.brake, state.brake ) * params.brakePower * surfaceGrip
+    forwardForce = state.torque + brakeForce
     signForwardForce = forwardForce > 0 and 1 or ( forwardForce < 0 and -1 or 0 )
 
     -- Given an amount of sideways slippage (up to the max. traction)
@@ -277,24 +326,24 @@ function ENT:DoPhysics( vehicle, phys, params, traceData, outLin, outAng, dt )
     groundAngularVelocity = TAU * ( velF / ( radius * TAU ) )
 
     -- Add our grip loss to our spin velocity
-    angularVelocity = groundAngularVelocity + gripLoss * ( selfTbl.torque > 0 and 1 or ( selfTbl.torque < 0 and -1 or 0 ) )
+    angularVelocity = groundAngularVelocity + gripLoss * ( state.torque > 0 and 1 or ( state.torque < 0 and -1 or 0 ) )
 
     -- Smoothly match our current angular velocity to the angular velocity affected by grip loss
-    selfTbl.angularVelocity = Approach( selfTbl.angularVelocity, angularVelocity, dt * 200 )
+    state.angularVelocity = Approach( state.angularVelocity, angularVelocity, dt * 200 )
 
-    gripLoss = groundAngularVelocity - selfTbl.angularVelocity
+    gripLoss = groundAngularVelocity - state.angularVelocity
     self:SetForwardSlip( gripLoss )
 
     -- Calculate side slip angle
     slipAngle = ( Atan2( velR, Abs( velF ) ) / PI ) * 2
     self:SetSideSlip( slipAngle * Clamp( vehicle.totalSpeed * 0.005, 0, 1 ) * 2 )
-    slipAngle = Abs( slipAngle * slipAngle )
 
     -- Reduce sideways traction as the suspension spring applies less force
     surfaceGrip = surfaceGrip * Clamp( ( springForce * 0.5 ) / params.springStrength, 0, 1 )
 
     -- Sideways traction ramp
-    maxTraction = TractionRamp( slipAngle ) * surfaceGrip
+    slipAngle = Abs( slipAngle * slipAngle )
+    maxTraction = TractionRamp( slipAngle, params.sideTractionMax, params.sideTractionMaxAng, params.sideTractionMin ) * surfaceGrip
     sideForce = -rt:Dot( vel * params.sideTractionMultiplier )
 
     -- Reduce sideways traction force as the wheel slips forward

@@ -98,16 +98,14 @@ do
 end
 
 do
-    -- Traction logic
-    local ay, bx, by, xx = 0, 0, 0, 0
+    -- Sideways traction logic
+    local x
 
-    function Glide.SetupTraction( t )
-        ay, bx, by = t.sideTractionMax, t.sideTractionMaxAng / 90, t.sideTractionMin
-    end
+    function Glide.TractionRamp( slipAngle, sideTractionMax, sideTractionMaxAng, sideTractionMin )
+        sideTractionMaxAng = sideTractionMaxAng / 90 -- Convert max slip angle to the 0-1 range
+        x = ( slipAngle - sideTractionMaxAng ) / ( 1 - sideTractionMaxAng )
 
-    function Glide.TractionRamp( x )
-        xx = ( x - bx ) / ( 1 - bx )
-        return x < bx and ay or ( ay * ( 1 - xx ) ) + ( by * xx )
+        return slipAngle < sideTractionMaxAng and sideTractionMax or ( sideTractionMax * ( 1 - x ) ) + ( sideTractionMin * x )
     end
 end
 
