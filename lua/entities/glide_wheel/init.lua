@@ -38,6 +38,9 @@ function ENT:Initialize()
         brake = 0,  -- Amount of brake torque to apply to the wheel
         spin = 0,   -- Wheel spin angle around it's axle axis
 
+        -- Suspension length multiplier
+        suspensionLengthMult = 1,
+
         isOnGround = false,
         lastFraction = 1,
         lastSpringOffset = 0,
@@ -248,7 +251,7 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
 
     -- Do the raycast
     radius = self:GetRadius()
-    maxLen = params.suspensionLength + radius
+    maxLen = state.suspensionLengthMult * params.suspensionLength + radius
 
     traceData.start = pos
     traceData.endpos = pos - up * maxLen
