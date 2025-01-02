@@ -2,6 +2,7 @@ local active
 
 local function SetupNotification()
     active.fade = 0
+    active.flash = 1
     active.iconMat = Glide.GetCachedIcon( active.icon )
     active.iconSize = math.floor( ScrH() * 0.035 )
     active.margin = math.floor( ScrH() * 0.03 )
@@ -9,7 +10,7 @@ local function SetupNotification()
 
     active.body = markup.Parse(
         string.format( "<font=%s>%s</font>", "GlideNotification", active.text ),
-        math.floor( ScrH() * 0.3 )
+        math.floor( ScrH() * 0.4 )
     )
 
     local w, h = active.body:Size()
@@ -45,7 +46,7 @@ local function RenderNotification()
             return
         end
     else
-        active.fade = Lerp( dt * 10, active.fade, 1 )
+        active.fade = Lerp( dt * 20, active.fade, 1 )
     end
 
     local alpha = 255 * active.fade
@@ -56,6 +57,12 @@ local function RenderNotification()
     COLORS.background.a = alpha * COLORS.bgAlpha
     surface.SetDrawColor( COLORS.background:Unpack() )
     surface.DrawRect( x, y, active.w, active.h )
+
+    if active.flash > 0 then
+        active.flash = active.flash - dt * 3
+        surface.SetDrawColor( 146, 184, 255, 255 * active.flash )
+        surface.DrawRect( x, y, active.w, active.h )
+    end
 
     surface.SetMaterial( active.iconMat )
     surface.SetDrawColor( 255, 255, 255, alpha )

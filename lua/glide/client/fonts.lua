@@ -13,7 +13,7 @@ local fontList = {
         antialias = true
     },
     ["GlideNotification"] = {
-        sizeMultiplier = 0.02,
+        sizeMultiplier = 0.022,
         font = "Roboto",
         extended = false,
         weight = 500,

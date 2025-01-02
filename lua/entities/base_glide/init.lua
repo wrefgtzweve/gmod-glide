@@ -227,6 +227,7 @@ function ENT:SetLocked( isLocked, doNotNotify )
     Glide.SendNotification( self:GetAllPlayers(), {
         text = "#glide.notify." .. ( isLocked and "vehicle_locked" or "vehicle_unlocked" ),
         icon = "materials/glide/icons/" .. ( isLocked and "locked" or "unlocked" ) .. ".png",
+        sound = isLocked and "doors/latchlocked2.wav" or "doors/latchunlocked1.wav",
         immediate = true
     } )
 end
