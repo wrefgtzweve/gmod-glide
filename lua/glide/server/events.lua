@@ -135,11 +135,22 @@ hook.Add( "CanTool", "Glide.BlockSomeTools", function( _ply, tr, toolname, _tool
 end )
 
 hook.Add( "EntityTakeDamage", "Glide.OverrideDamage", function( target, dmginfo )
-    -- Don't let missiles deal crush damage
     local inflictor = dmginfo:GetInflictor()
 
-    if IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" and dmginfo:IsDamageType( 1 ) then
-        return true
+    if IsValid( inflictor ) and inflictor:GetClass() == "glide_missile" then
+        -- Don't let missiles deal crush damage
+        if dmginfo:IsDamageType( 1 ) then
+            return true
+        end
+
+        if target.VehicleType == 5 then -- Glide.VEHICLE_TYPE.TANK
+            -- Let missiles deal more damage to tanks
+            dmginfo:SetDamage( dmginfo:GetDamage() * 5 )
+
+        elseif target.IsArmored then
+            -- Let missiles deal more damage to armored Simfphys vehicles
+            dmginfo:SetDamage( dmginfo:GetDamage() * 50 )
+        end
     end
 
     if IsValid( inflictor ) and inflictor.IsGlideVehicle and dmginfo:IsDamageType( 1 ) then -- DMG_CRUSH
