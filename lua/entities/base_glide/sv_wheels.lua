@@ -39,7 +39,7 @@ function ENT:ChangeWheelRadius( radius )
 
     for _, w in ipairs( self.wheels ) do
         if IsValid( w ) then
-            w.defaultRadius = radius
+            w.params.radius = radius
             w:ChangeRadius( radius )
         end
     end

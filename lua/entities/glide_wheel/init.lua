@@ -68,7 +68,7 @@ function ENT:SetupWheel( t )
 
     local params = self.params
 
-    -- Physical wheel radius, also affects the model scale
+    -- Physical wheel radius, also affects the model size
     params.radius = t.radius or 15
 
     -- Wheel offset relative to the parent
