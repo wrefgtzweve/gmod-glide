@@ -110,7 +110,6 @@ end
 if SERVER then
     ENT.IsHeavyVehicle = true
     ENT.ChassisMass = 20000
-    ENT.ChassisFireDamage = 50
 
     ENT.BlastDamageMultiplier = 3
     ENT.BlastForceMultiplier = 0.005

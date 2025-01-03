@@ -483,7 +483,7 @@ function ENT:Think()
             local inflictor = IsValid( self.lastDamageInflictor ) and self.lastDamageInflictor or self
 
             local dmg = DamageInfo()
-            dmg:SetDamage( self.ChassisFireDamage * dt )
+            dmg:SetDamage( self.MaxChassisHealth * self.ChassisFireDamageMultiplier * dt )
             dmg:SetAttacker( attacker )
             dmg:SetInflictor( inflictor )
             dmg:SetDamageType( 0 )
