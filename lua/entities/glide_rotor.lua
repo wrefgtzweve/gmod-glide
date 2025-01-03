@@ -54,6 +54,8 @@ function ENT:Initialize()
         maxs = TRACE_MAXS
     }
 
+    self.isDebugging = GetConVar( "developer" ):GetBool()
+
     self:SetModel( self.modelSlow )
     self:SetSolid( SOLID_NONE )
     self:SetMoveType( MOVETYPE_VPHYSICS )
@@ -173,7 +175,9 @@ function ENT:CheckRotorClearance( dt, parent )
     data.start = origin
     data.endpos = origin + dir * self.radius
 
-    --debugoverlay.Line( data.start, data.endpos, 0.05, Color(255,0,0), true )
+    if self.isDebugging then
+        debugoverlay.Line( data.start, data.endpos, 0.05, Color( 255, 0, 0 ), true )
+    end
 
     local tr = TraceHull( data )
 
