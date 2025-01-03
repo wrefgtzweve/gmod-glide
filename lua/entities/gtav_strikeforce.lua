@@ -7,7 +7,7 @@ ENT.PrintName = "B-11 Strikeforce"
 
 ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/strikeforce/chassis.mdl"
-ENT.MaxChassisHealth = 1500
+ENT.MaxChassisHealth = 1800
 
 ENT.PropOffset = Vector( 114, 0, 3 )
 
@@ -166,7 +166,6 @@ end
 if SERVER then
     ENT.ChassisMass = 1500
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
-    ENT.CollisionDamageMultiplier = 5
 
     ENT.ExplosionGibs = {
         "models/gta5/vehicles/strikeforce/gibs/chassis.mdl",

@@ -88,8 +88,8 @@ end
 
 local IsValid = IsValid
 
-local cvarBullet = GetConVar( "glide_damage_multiplier_bullet" )
-local cvarBlast = GetConVar( "glide_damage_multiplier_blast" )
+local cvarBullet = GetConVar( "glide_bullet_damage_multiplier" )
+local cvarBlast = GetConVar( "glide_blast_damage_multiplier" )
 
 function ENT:OnTakeDamage( dmginfo )
     if self.hasExploded then return end
@@ -116,13 +116,13 @@ function ENT:OnTakeDamage( dmginfo )
     health = health - amount
 
     self:SetChassisHealth( health )
-    self:TakeEngineDamage( amount * self.EngineDamageMultiplier )
+    self:TakeEngineDamage( ( amount / self.MaxChassisHealth ) * self.EngineDamageMultiplier )
     self:UpdateHealthOutputs()
 
     self.lastDamageAttacker = dmginfo:GetAttacker()
     self.lastDamageInflictor = dmginfo:GetInflictor()
 
-    if health < 250 and self:WaterLevel() < 3 then
+    if health / self.MaxChassisHealth < 0.18 and self:WaterLevel() < 3 then
         self:SetIsEngineOnFire( true )
     end
 
@@ -138,7 +138,7 @@ local Clamp = math.Clamp
 local RandomInt = math.random
 local PlaySoundSet = Glide.PlaySoundSet
 
-local cvarCollision = GetConVar( "glide_damage_multiplier_collision" )
+local cvarCollision = GetConVar( "glide_physics_damage_multiplier" )
 
 function ENT:PhysicsCollide( data )
     if data.TheirSurfaceProps == 76 then -- default_silent
