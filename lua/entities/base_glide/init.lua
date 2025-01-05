@@ -380,6 +380,10 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     seat:DrawShadow( false )
     seat:PhysicsDestroy()
 
+    seat.PhysgunDisabled = true
+    seat.DoNotDuplicate = true
+    seat.DisableDuplicator = true
+
     if isHidden then
         Glide.HideEntity( seat, true )
     end
