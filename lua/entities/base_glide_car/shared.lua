@@ -40,7 +40,8 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "EngineRPM" )
     self:NetworkVar( "Float", "EngineThrottle" )
 
-    -- Wheel and suspension properties, allow editing with the C menu.
+    -- All DT variables below are editable properties
+    self:NetworkVar( "Vector", "HeadlightColor", { KeyName = "HeadlightColor", Edit = { type = "VectorColor", order = 0, category = "#glide.settings" } } )
     self:NetworkVar( "Vector", "TireSmokeColor", { KeyName = "TireSmokeColor", Edit = { type = "VectorColor", order = 0, category = "#glide.editvar.wheels" } } )
 
     local order = 0
@@ -113,6 +114,9 @@ function ENT:SetupDataTables()
     if CLIENT then
         -- Callback used to play gear change sounds
         self:NetworkVarNotify( "Gear", self.OnGearChange )
+
+        -- Callback used to update the light color
+        self:NetworkVarNotify( "HeadlightColor", self.OnHeadlightColorChange )
     end
 end
 

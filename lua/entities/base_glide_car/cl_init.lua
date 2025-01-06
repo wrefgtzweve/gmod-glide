@@ -26,6 +26,10 @@ function ENT:OnGearChange( _, _, gear )
     end
 end
 
+function ENT:OnHeadlightColorChange()
+    self.headlightState = 0 -- Let OnUpdateMisc recreate the lights
+end
+
 --- Override this base class function.
 function ENT:OnEngineStateChange( _, lastState, state )
     if state == 1 then
@@ -250,6 +254,7 @@ local DrawLightSprite = Glide.DrawLightSprite
 
 local COLOR_BRAKE = Color( 255, 0, 0, 255 )
 local COLOR_REV = Color( 255, 255, 255, 200 )
+local COLOR_HEADLIGHT = Color( 255, 255, 255 )
 
 --- Implement this base class function.
 function ENT:OnUpdateMisc()
@@ -265,6 +270,13 @@ function ENT:OnUpdateMisc()
     local headlightState = self:GetHeadlightState()
     local isHeadlightOn = headlightState > 0
 
+    if isHeadlightOn then
+        local colorVec = self:GetHeadlightColor()
+        COLOR_HEADLIGHT.r = colorVec[1] * 255
+        COLOR_HEADLIGHT.g = colorVec[2] * 255
+        COLOR_HEADLIGHT.b = colorVec[3] * 255
+    end
+
     -- Render lights and sprites
     local myPos = self:GetPos()
     local pos, dir
@@ -274,7 +286,7 @@ function ENT:OnUpdateMisc()
         dir = self:LocalToWorld( l.dir ) - myPos
 
         if isHeadlightOn and l.type == "headlight" then
-            DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_REV, true )
+            DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, true )
 
         elseif isBraking and l.type == "brake" then
             DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE, true )
@@ -311,7 +323,7 @@ function ENT:OnUpdateMisc()
 
         for _, v in ipairs( self.Headlights ) do
             v.angles = v.angles or Angle( 10, 0, 0 )
-            self:CreateHeadlight( v.offset, v.angles, v.color )
+            self:CreateHeadlight( v.offset, v.angles, COLOR_HEADLIGHT )
         end
     end
 

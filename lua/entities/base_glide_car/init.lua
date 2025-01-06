@@ -29,6 +29,9 @@ function ENT:OnPostInitialize()
     self:SetHeadlightState( 0 )
     self:SetGear( 0 )
 
+    local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
+    self:SetHeadlightColor( Vector( headlightColor.r / 255, headlightColor.g / 255, headlightColor.b / 255 ) )
+
     self:SetSteering( 0 )
     self:SetEngineRPM( 0 )
     self:SetEngineThrottle( 0 )
