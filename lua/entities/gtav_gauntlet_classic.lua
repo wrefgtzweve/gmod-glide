@@ -37,15 +37,15 @@ if CLIENT then
     }
 
     ENT.Headlights = {
-        { offset = Vector( 102, 25, 14 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
-        { offset = Vector( 102, -25, 14 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+        { offset = Vector( 102, 25, 14 ) },
+        { offset = Vector( 102, -25, 14 ) }
     }
 
     ENT.LightSprites = {
-        { type = "headlight", offset = Vector( 104, 33, 13.5 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
-        { type = "headlight", offset = Vector( 104, 25.5, 13.5 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
-        { type = "headlight", offset = Vector( 104, -33, 13.5 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
-        { type = "headlight", offset = Vector( 104, -25.5, 13.5 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
+        { type = "headlight", offset = Vector( 104, 33, 13.5 ), dir = Vector( 1, 0, 0 ) },
+        { type = "headlight", offset = Vector( 104, 25.5, 13.5 ), dir = Vector( 1, 0, 0 ) },
+        { type = "headlight", offset = Vector( 104, -33, 13.5 ), dir = Vector( 1, 0, 0 ) },
+        { type = "headlight", offset = Vector( 104, -25.5, 13.5 ), dir = Vector( 1, 0, 0 ) },
         { type = "brake", offset = Vector( -100, 19, 18 ), dir = Vector( -1, 0, 0 ) },
         { type = "brake", offset = Vector( -100, -19, 18 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -99, 27, 6 ), dir = Vector( -1, 0, 0 ) },

@@ -37,11 +37,11 @@ if CLIENT then
 
     ENT.LightSprites = {
         { type = "brake", offset = Vector( -33, 0, 9 ), dir = Vector( -1, 0, 0 ), lightRadius = 50 },
-        { type = "headlight", offset = Vector( 20, 0, 9 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+        { type = "headlight", offset = Vector( 20, 0, 9 ), dir = Vector( 1, 0, 0 ) }
     }
 
     ENT.Headlights = {
-        { offset = Vector( 19, 0, 18 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+        { offset = Vector( 19, 0, 18 ) }
     }
 
     ENT.StartSound = "Glide.Engine.BikeStart1"

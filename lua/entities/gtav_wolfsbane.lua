@@ -34,11 +34,11 @@ if CLIENT then
 
     ENT.LightSprites = {
         { type = "brake", offset = Vector( -45, 0, 5 ), dir = Vector( -1, 0, 0 ), lightRadius = 50 },
-        { type = "headlight", offset = Vector( 27, 0, 17 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+        { type = "headlight", offset = Vector( 27, 0, 17 ), dir = Vector( 1, 0, 0 ) }
     }
 
     ENT.Headlights = {
-        { offset = Vector( 28, 0, 27 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+        { offset = Vector( 28, 0, 27 ) }
     }
 
     function ENT:OnCreateEngineStream( stream )

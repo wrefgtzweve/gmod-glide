@@ -27,8 +27,8 @@ if CLIENT then
     }
 
     ENT.Headlights = {
-        { offset = Vector( 105, 32, 6.2 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
-        { offset = Vector( 105, -32, 6.2 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
+        { offset = Vector( 105, 32, 6.2 ) },
+        { offset = Vector( 105, -32, 6.2 ) },
     }
 
     ENT.LightSprites = {
@@ -36,8 +36,8 @@ if CLIENT then
         { type = "brake", offset = Vector( -118, -37, 20 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -118, 38, 15 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -118, -38, 15 ), dir = Vector( -1, 0, 0 ) },
-        { type = "headlight", offset = Vector( 105, 32, 6.2 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR },
-        { type = "headlight", offset = Vector( 105, -32, 6.2 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_HEADLIGHT_COLOR }
+        { type = "headlight", offset = Vector( 105, 32, 6.2 ), dir = Vector( 1, 0, 0 ) },
+        { type = "headlight", offset = Vector( 105, -32, 6.2 ), dir = Vector( 1, 0, 0 ) }
     }
 
     function ENT:OnCreateEngineStream( stream )

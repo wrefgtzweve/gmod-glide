@@ -48,6 +48,9 @@ Glide.MOUSE_FLY_MODE = {
     CAMERA = 2      -- Free camera
 }
 
+-- Default color for headlights
+Glide.DEFAULT_HEADLIGHT_COLOR = Color( 255, 231, 176 )
+
 if SERVER then
     -- Surface grip multipliers for wheels
     Glide.SURFACE_GRIP = {
@@ -71,9 +74,6 @@ if SERVER then
 end
 
 if CLIENT then
-    -- Default color for headlights
-    Glide.DEFAULT_HEADLIGHT_COLOR = Color( 255, 221, 141 )
-
     -- Vehicle camera types
     Glide.CAMERA_TYPE = {
         CAR = 0,
