@@ -7,6 +7,7 @@ function ENT:EngineInit()
 
     self.flywheelFriction = -7000
     self.flywheelTorque = 20000
+    self.engineBrakeTorque = 500
 
     -- Fake engine variables
     self.reducedThrottle = false
@@ -133,11 +134,11 @@ end
 
 local Remap = math.Remap
 
-function ENT:GetTransmissionTorque( gear )
-    local torque = Remap( self:GetFlywheelRPM(), self:GetMinRPM(), self:GetMaxRPM(), self:GetMinRPMTorque(), self:GetMaxRPMTorque() )
+function ENT:GetTransmissionTorque( gear, minTorque, maxTorque )
+    local torque = Remap( self:GetFlywheelRPM(), self:GetMinRPM(), self:GetMaxRPM(), minTorque, maxTorque )
 
     -- Validation
-    torque = Clamp( torque, self:GetMinRPMTorque(), self:GetMaxRPMTorque() )
+    torque = Clamp( torque, minTorque, maxTorque )
 
     -- Clutch
     torque = torque * ( 1 - self.clutch )
@@ -360,7 +361,7 @@ function ENT:EngineThink( dt )
     end
 
     throttle = self:GetEngineThrottle()
-    gearTorque = self:GetTransmissionTorque( gear )
+    gearTorque = self:GetTransmissionTorque( gear, self:GetMinRPMTorque(), self:GetMaxRPMTorque() )
     availableTorque = gearTorque * throttle
 
     -- Simulate engine braking
@@ -368,7 +369,9 @@ function ENT:EngineThink( dt )
         -- The vehicle is moving against the current gear, do some hard engine braking.
         availableTorque = availableTorque + gearTorque * 2
     else
-        availableTorque = availableTorque - gearTorque * ( 1 - throttle ) * 0.5
+        -- The vehicle is coasting, apply a custom engine brake torque.
+        local engineBrakeTorque = self:GetTransmissionTorque( gear, self.engineBrakeTorque, self.engineBrakeTorque )
+        availableTorque = availableTorque - engineBrakeTorque * ( 1 - throttle ) * 0.5
     end
 
     -- Limit the engine RPM, check if it's redlining
