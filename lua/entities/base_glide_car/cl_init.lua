@@ -517,6 +517,19 @@ function ENT:DrawVehicleHUD( screenW, screenH )
     DrawInfo( "#glide.hud.rpm", Floor( rpm ), rpm / self:GetMaxRPM() )
     y = y - infoH - spacing
 
+    -- Speed
+    local velocity = self:GetVelocity()
+    local speed = velocity:Length()  -- Obtenir la magnitude de la vitesse
+    speed = speed * 0.0568182  -- Conversion unités Source vers MPH
+    
+    if Config.useKMH then
+        speed = speed * 1.60934  -- Conversion MPH vers km/h
+        DrawInfo( "#glide.hud.speed", Floor(speed) .. " km/h" )
+    else
+        DrawInfo( "#glide.hud.speed", Floor(speed) .. " mph" )
+    end
+    y = y - infoH - spacing
+
     -- Throttle
     DrawInfo( "#glide.hud.throttle" )
 
