@@ -45,6 +45,7 @@ function Config:Reset()
     self.showPassengerList = true
     self.showEmptyVehicleHealth = false
     self.showSkybox = true
+    self.useKMH = false  -- Option pour afficher la vitesse en KM/H au lieu de RPM
 
     self.maxSkidMarkPieces = 500
     self.maxTireRollPieces = 400
@@ -130,6 +131,7 @@ function Config:Save( immediate )
         showPassengerList = self.showPassengerList,
         showEmptyVehicleHealth = self.showEmptyVehicleHealth,
         showSkybox = self.showSkybox,
+        useKMH = self.useKMH,
 
         manualGearShifting = self.manualGearShifting,
         autoHeadlightOn = self.autoHeadlightOn,
@@ -217,6 +219,7 @@ function Config:Load()
     LoadBool( "showPassengerList", true )
     LoadBool( "showEmptyVehicleHealth", false )
     LoadBool( "showSkybox", true )
+    LoadBool( "useKMH", false )
 
     LoadBool( "manualGearShifting", false )
     LoadBool( "autoHeadlightOn", true )
@@ -714,6 +717,11 @@ function Config:OpenFrame()
 
     theme:CreateToggleButton( panelMisc, L"misc.tips", self.enableTips, function( value )
         self.enableTips = value
+        self:Save()
+    end )
+
+    theme:CreateToggleButton( panelMisc, L"misc.use_kmh", self.useKMH, function( value )
+        self.useKMH = value
         self:Save()
     end )
 
