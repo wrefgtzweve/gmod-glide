@@ -45,7 +45,7 @@ function Config:Reset()
     self.showPassengerList = true
     self.showEmptyVehicleHealth = false
     self.showSkybox = true
-    self.useKMH = false  -- Option pour afficher la vitesse en KM/H au lieu de RPM
+    self.useKMH = false  -- Option to display speed in KM/H instead of MPH
 
     self.maxSkidMarkPieces = 500
     self.maxTireRollPieces = 400
