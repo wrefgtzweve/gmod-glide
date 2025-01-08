@@ -241,4 +241,5 @@ if SERVER then
 
     function ENT:OnPostThink( _dt, _selfTbl ) end
     function ENT:OnSimulatePhysics( _phys, _dt, _outLin, _outAng ) end
+    function ENT:OnUpdateFeatures( _dt ) end
 end

@@ -268,15 +268,11 @@ if SERVER then
         self:ChangeWheelRadius( 24 )
     end
 
-    function ENT:Think()
-        BaseClass.Think( self )
-
+    function ENT:OnUpdateFeatures()
         local turret = self:GetTurret()
 
         if IsValid( turret ) then
             turret:UpdateUser( self:GetSeatDriver( 5 ) )
         end
-
-        return true
     end
 end

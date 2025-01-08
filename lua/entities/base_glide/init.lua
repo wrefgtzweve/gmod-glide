@@ -505,6 +505,9 @@ function ENT:Think()
     -- Let children classes do their own stuff
     self:OnPostThink( dt, selfTbl )
 
+    -- Let children classes update their features
+    self:OnUpdateFeatures( dt )
+
     return true
 end
 
