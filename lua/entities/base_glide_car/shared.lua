@@ -237,6 +237,7 @@ if SERVER then
 
     -- Save these network variables when using the duplicator
     ENT.DuplicatorNetworkVariables = {
+        HeadlightColor = true,
         TireSmokeColor = true,
         WheelRadius = true,
 
