@@ -140,6 +140,9 @@ function ENT:Initialize()
 
     -- Let child classes create things like seats, turrets, etc.
     self:CreateFeatures()
+
+    -- Allow players to shoot fast-moving vehicles when their ping is high
+    self:SetLagCompensated( true )
 end
 
 function ENT:InitializePhysics()
