@@ -53,7 +53,7 @@ function ENT:Initialize()
         traceMins = Vector(),
         traceMaxs = Vector( 1, 1, 1 ),
 
-        isDebugging = GetConVar( "developer" ):GetBool()
+        isDebugging = Glide.GetDevMode()
     }
 
     self.downSoundCD = 0

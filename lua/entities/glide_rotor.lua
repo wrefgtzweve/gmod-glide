@@ -54,8 +54,6 @@ function ENT:Initialize()
         maxs = TRACE_MAXS
     }
 
-    self.isDebugging = GetConVar( "developer" ):GetBool()
-
     self:SetModel( self.modelSlow )
     self:SetSolid( SOLID_NONE )
     self:SetMoveType( MOVETYPE_VPHYSICS )
@@ -159,6 +157,8 @@ function ENT:Think()
     return true
 end
 
+local GetDevMode = Glide.GetDevMode
+
 --- Check if the rotor blades are hitting things.
 function ENT:CheckRotorClearance( dt, parent )
     -- The trace will use a spinning angle separate from the model
@@ -175,7 +175,7 @@ function ENT:CheckRotorClearance( dt, parent )
     data.start = origin
     data.endpos = origin + dir * self.radius
 
-    if self.isDebugging then
+    if GetDevMode() then
         debugoverlay.Line( data.start, data.endpos, 0.05, Color( 255, 0, 0 ), true )
     end
 
