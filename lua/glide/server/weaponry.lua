@@ -23,12 +23,12 @@ function Glide.CreateTurret( vehicle, offset, angles )
     return turret
 end
 
-function Glide.FireMissile( pos, ang, attacker, inflictor, target )
+function Glide.FireMissile( pos, ang, attacker, parent, target )
     local missile = ents.Create( "glide_missile" )
     missile:SetPos( pos )
     missile:SetAngles( ang )
     missile:Spawn()
-    missile:SetupMissile( attacker, inflictor )
+    missile:SetupMissile( attacker, parent )
 
     if IsValid( target ) then
         missile:SetTarget( target )

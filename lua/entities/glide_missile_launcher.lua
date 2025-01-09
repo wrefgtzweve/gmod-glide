@@ -107,7 +107,13 @@ function ENT:Think()
         local pos = self:GetPos() + dir * 10
         local ang = dir:Angle()
 
-        local missile = FireMissile( pos, ang, self:GetCreator(), self, self.homingTarget )
+        local parent = self:GetParent()
+
+        if not IsValid( parent ) then
+            parent = self
+        end
+
+        local missile = FireMissile( pos, ang, self:GetCreator(), parent, self.homingTarget )
         missile.radius = self.explosionRadius
         missile.damage = self.explosionDamage
         missile.lifeTime = t + self.missileLifetime
