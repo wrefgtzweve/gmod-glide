@@ -168,7 +168,7 @@ do
     local BlastDamage = util.BlastDamage
     local GetNearbyPlayers = Glide.GetNearbyPlayers
 
-    --- Utility function to create explosion sounds, particles and deal damage.
+    --- Utility function to deal damage and send a explosion event to nearby players.
     function Glide.CreateExplosion( inflictor, attacker, origin, radius, damage, normal, explosionType )
         if not IsValid( inflictor ) then return end
 
@@ -209,7 +209,7 @@ do
     --- the direction towards the target entity is larger than `threshold`.
     --- `attacker` is the player who is trying to lock-on.
     --- Set `includeEmpty` to true to include vehicles without a driver.
-    --- `traceData` is a optional, to make use of it's filtering options.
+    --- `traceData` is optional, to make use of it's filtering options.
     function Glide.CanLockOnEntity( ent, origin, normal, threshold, maxDistance, attacker, includeEmpty, traceData )
         if not includeEmpty and ent.GetDriver and ent:GetDriver() == NULL then
             return false -- Don't lock on empty seats
@@ -290,7 +290,7 @@ local function IsLockableEntity( ent, skipParentCheck )
 end
 
 --- Finds all entities that we can lock on with `Glide.CanLockOnEntity`,
---- then returns which one has the largest dot product between `normal` and the direction towards them.
+--- then returns which one has the largest dot product between `normal` and the direction towards it.
 function Glide.FindLockOnTarget( origin, normal, threshold, maxDistance, attacker, traceData, filter )
     local largestDot = 0
     local canLock, dot, target
