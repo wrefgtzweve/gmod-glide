@@ -37,12 +37,12 @@ function Glide.FireMissile( pos, ang, attacker, parent, target )
     return missile
 end
 
-function Glide.FireProjectile( pos, ang, attacker, inflictor )
+function Glide.FireProjectile( pos, ang, attacker, parent )
     local projectile = ents.Create( "glide_projectile" )
     projectile:SetPos( pos )
     projectile:SetAngles( ang )
     projectile:Spawn()
-    projectile:SetupProjectile( attacker, inflictor )
+    projectile:SetupProjectile( attacker, parent )
 
     return projectile
 end

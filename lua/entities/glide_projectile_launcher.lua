@@ -115,7 +115,13 @@ function ENT:Think()
         local pos = self:GetPos() + dir * 10
         local ang = dir:Angle()
 
-        local projectile = FireProjectile( pos, ang, self:GetCreator(), self )
+        local parent = self:GetParent()
+
+        if not IsValid( parent ) then
+            parent = self
+        end
+
+        local projectile = FireProjectile( pos, ang, self:GetCreator(), parent )
         projectile.radius = self.explosionRadius
         projectile.damage = self.explosionDamage
         projectile.lifeTime = t + self.projectileLifetime
