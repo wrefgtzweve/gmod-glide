@@ -456,41 +456,12 @@ end
 
 DEFINE_BASECLASS( "base_glide" )
 
-local SetColor = surface.SetDrawColor
-local RoundedBoxEx = draw.RoundedBoxEx
-local DrawSimpleText = draw.SimpleText
-
-local function DrawRotatedBox( x, y, w, h, ang, color )
-    draw.NoTexture()
-    SetColor( color )
-    surface.DrawTexturedRectRotated( x, y, w, h, ang )
-end
-
-local COLORS = {
-    accent = Glide.THEME_COLOR,
-    bg = Color( 20, 20, 20, 220 ),
-    white = Color( 255, 255, 255, 255 )
-}
-
-local infoW, infoH, padding, x, y
-local cornerRadius
-
-local function DrawInfo( label, value, progress )
-    RoundedBoxEx( cornerRadius, x, y, infoW, infoH, COLORS.bg, true, false, true, false )
-
-    if progress then
-        RoundedBoxEx( cornerRadius, x + 1, y + 1, infoW * progress - 2, infoH - 2, COLORS.accent, true, false, true, false )
-    end
-
-    DrawSimpleText( label, "GlideHUD", x + padding, y + infoH * 0.5, COLORS.white, 0, 1 )
-
-    if value then
-        DrawSimpleText( value, "GlideHUD", x + infoW - padding, y + infoH * 0.5, COLORS.white, 2, 1 )
-    end
-end
-
 local Floor = math.floor
 local DrawRect = surface.DrawRect
+local SetColor = surface.SetDrawColor
+
+local Config = Glide.Config
+local DrawStatus = Glide.DrawVehicleStatusItem
 
 local GEAR_LABELS = {
     [-1] = "R",
@@ -498,7 +469,7 @@ local GEAR_LABELS = {
 }
 
 local throttle = 0
-local Config = Glide.Config
+local w, h, x, y
 
 --- Override this base class function.
 function ENT:DrawVehicleHUD( screenW, screenH )
@@ -506,16 +477,16 @@ function ENT:DrawVehicleHUD( screenW, screenH )
 
     if not Config.showHUD then return end
 
-    infoW = Floor( screenH * 0.23 )
-    infoH = Floor( screenH * 0.035 )
-    padding = Floor( screenH * 0.008 )
-    cornerRadius = Floor( infoH * 0.15 )
+    w = Floor( screenH * 0.23 )
+    h = Floor( screenH * 0.035 )
 
+    local padding = Floor( screenH * 0.008 )
+    local radius = Floor( h * 0.15 )
     local margin = Floor( screenH * 0.03 )
     local spacing = Floor( screenH * 0.005 )
 
-    x = screenW - infoW
-    y = screenH - margin - infoH
+    x = screenW - w
+    y = screenH - margin - h
 
     -- RPM
     local rpm = self:GetEngineRPM()
@@ -526,8 +497,31 @@ function ENT:DrawVehicleHUD( screenW, screenH )
         rpm = rpm - math.abs( wave ) * 500
     end
 
-    DrawInfo( "#glide.hud.rpm", Floor( rpm ), rpm / self:GetMaxRPM() )
-    y = y - infoH - spacing
+    DrawStatus( x, y, w, h, radius, padding, "#glide.hud.rpm", Floor( rpm ), rpm / self:GetMaxRPM() )
+    y = y - h - spacing
+
+    -- Throttle
+    DrawStatus( x, y, w, h, radius, padding, "#glide.hud.throttle" )
+
+    throttle = ExpDecay( throttle, self:GetEngineThrottle(), 20, FrameTime() )
+
+    local barSize = Floor( h * 0.65 )
+    local barX = x + w - barSize - padding * 1.3
+    local barY = y + ( h * 0.5 ) - barSize * 0.5
+
+    SetColor( 255, 255, 255, 255 )
+    DrawRect( barX - 2, barY, 2, barSize )
+    DrawRect( barX + barSize, barY, 2, barSize )
+
+    surface.DrawCircle( barX + barSize * 0.5, barY + barSize * 0.5, barSize * 0.1, 255, 255, 255, 255 )
+    Glide.DrawRotatedBox( barX + barSize * 0.5, barY + barSize * 0.5, barSize * 0.9, 2, -10 - throttle * 80 )
+
+    y = y - h - spacing
+
+    -- Gear
+    DrawStatus( x, y, w, h, radius, padding, "#glide.hud.gear", GEAR_LABELS[self:GetGear()] or self:GetGear() )
+
+    y = y - h - spacing
 
     -- Speed
     local velocity = self:GetVelocity()
@@ -536,31 +530,8 @@ function ENT:DrawVehicleHUD( screenW, screenH )
 
     if Config.useKMH then
         speed = speed * 1.60934  -- Convert MPH to km/h
-        DrawInfo( "#glide.hud.speed", Floor( speed ) .. " km/h" )
+        DrawStatus( x, y, w, h, radius, padding, "#glide.hud.speed", Floor( speed ) .. " km/h" )
     else
-        DrawInfo( "#glide.hud.speed", Floor( speed ) .. " mph" )
+        DrawStatus( x, y, w, h, radius, padding, "#glide.hud.speed", Floor( speed ) .. " mph" )
     end
-
-    y = y - infoH - spacing
-
-    -- Throttle
-    DrawInfo( "#glide.hud.throttle" )
-
-    throttle = ExpDecay( throttle, self:GetEngineThrottle(), 20, FrameTime() )
-
-    local barSize = Floor( infoH * 0.65 )
-    local barX = x + infoW - barSize - padding * 1.3
-    local barY = y + ( infoH * 0.5 ) - barSize * 0.5
-
-    SetColor( 255, 255, 255, 255 )
-    DrawRect( barX - 2, barY, 2, barSize )
-    DrawRect( barX + barSize, barY, 2, barSize )
-
-    surface.DrawCircle( barX + barSize * 0.5, barY + barSize * 0.5, barSize * 0.1, 255, 255, 255, 255 )
-    DrawRotatedBox( barX + barSize * 0.5, barY + barSize * 0.5, barSize * 0.9, 2, -10 - throttle * 80, COLORS.white )
-
-    y = y - infoH - spacing
-
-    -- Gear
-    DrawInfo( "#glide.hud.gear", GEAR_LABELS[self:GetGear()] or self:GetGear() )
 end

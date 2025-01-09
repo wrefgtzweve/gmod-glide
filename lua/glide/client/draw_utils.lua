@@ -99,3 +99,32 @@ function Glide.DrawVehicleHealth( x, y, w, h, vehicleType, chassisHealth, engine
     DrawHealthBar( x, y, colW, h, chassisHealth, VEHICLE_ICONS[vehicleType] or VEHICLE_ICONS[1] )
     DrawHealthBar( x + w - colW, y, colW, h, engineHealth )
 end
+
+local COLOR_WHITE = Color( 255, 255, 255, 255 )
+
+function Glide.DrawRotatedBox( x, y, w, h, ang, color )
+    color = color or COLOR_WHITE
+
+    draw.NoTexture()
+    SetColor( color:Unpack() )
+    surface.DrawTexturedRectRotated( x, y, w, h, ang )
+end
+
+local RoundedBoxEx = draw.RoundedBoxEx
+local DrawSimpleText = draw.SimpleText
+
+local COLOR_STATUS_BG = Color( 20, 20, 20, 220 )
+
+function Glide.DrawVehicleStatusItem( x, y, w, h, radius, padding, label, value, progress )
+    RoundedBoxEx( radius, x, y, w, h, COLOR_STATUS_BG, true, false, true, false )
+
+    if progress then
+        RoundedBoxEx( radius, x + 1, y + 1, w * progress - 2, h - 2, THEME_COLOR, true, false, true, false )
+    end
+
+    DrawSimpleText( label, "GlideHUD", x + padding, y + h * 0.5, COLOR_WHITE, 0, 1 )
+
+    if value then
+        DrawSimpleText( value, "GlideHUD", x + w - padding, y + h * 0.5, COLOR_WHITE, 2, 1 )
+    end
+end

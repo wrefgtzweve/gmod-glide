@@ -142,3 +142,40 @@ function ENT:OnUpdateSounds()
         sounds.rattle = nil
     end
 end
+
+DEFINE_BASECLASS( "base_glide_aircraft" )
+
+local Floor = math.floor
+local Config = Glide.Config
+local DrawStatus = Glide.DrawVehicleStatusItem
+
+local w, h, x, y
+
+--- Override this base class function.
+function ENT:DrawVehicleHUD( screenW, screenH )
+    BaseClass.DrawVehicleHUD( self, screenW, screenH )
+
+    if not Config.showHUD then return end
+
+    w = Floor( screenH * 0.23 )
+    h = Floor( screenH * 0.035 )
+
+    local padding = Floor( screenH * 0.008 )
+    local radius = Floor( h * 0.15 )
+    local margin = Floor( screenH * 0.03 )
+
+    x = screenW - w
+    y = screenH - margin - h
+
+    -- Speed
+    local velocity = self:GetVelocity()
+    local speed = velocity:Length() -- Obtain the magnitude from the velocity
+    speed = speed * 0.0568182  -- Convert Source units to MPH
+
+    if Config.useKMH then
+        speed = speed * 1.60934  -- Convert MPH to km/h
+        DrawStatus( x, y, w, h, radius, padding, "#glide.hud.speed", Floor( speed ) .. " km/h" )
+    else
+        DrawStatus( x, y, w, h, radius, padding, "#glide.hud.speed", Floor( speed ) .. " mph" )
+    end
+end
