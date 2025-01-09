@@ -110,6 +110,7 @@ end
 
 local FrameTime = FrameTime
 local TraceLine = util.TraceLine
+local GetDevMode = Glide.GetDevMode
 
 local traceData = {
     filter = { NULL },
@@ -155,6 +156,10 @@ function ENT:Think()
     traceData.endpos = nextPos
     traceData.filter[1] = self
     traceData.filter[2] = self:GetOwner()
+
+    if GetDevMode() then
+        debugoverlay.Line( traceData.start, traceData.endpos, 0.75, Color( 255, 0, 0 ), true )
+    end
 
     local tr = TraceLine( traceData )
 

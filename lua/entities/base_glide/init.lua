@@ -88,8 +88,6 @@ function ENT:Initialize()
 
     self:StartMotionController()
 
-    debugoverlay.Cross( self:LocalToWorld( phys:GetMassCenter() ), 20, 5, Color( 0, 200, 0 ), true )
-
     -- Let NPCs see through this vehicle
     self:AddEFlags( EFL_DONTBLOCKLOS )
     self:AddFlags( FL_OBJECT )
