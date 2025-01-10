@@ -155,6 +155,23 @@ end
 function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     if ply.GlideRagdoll then return end
 
+    local bones = GetAllBones( ply )
+
+    -- Let RagMod Reworked deal with this, if it is installed
+    if ragmod then
+        if not ragmod:IsRagdoll( ply ) then
+            local ragdoll = ragmod:TryToRagdoll( ply )
+
+            if IsValid( ragdoll ) then
+                PoseRagdollBones( ragdoll, bones, velocity )
+            end
+        end
+
+        return
+    end
+
+    if ply.GlideRagdoll then return end
+
     -- Create ragdoll
     local ragdoll = ents.Create( "prop_ragdoll" )
     if not IsValid( ragdoll ) then return end
@@ -175,7 +192,6 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     ragdoll.GlideRagdollPlayer = ply
 
     -- Get current player pose
-    local bones = GetAllBones( ply )
     local bodygroups = {}
 
     for _, v in ipairs( ply:GetBodyGroups() ) do
