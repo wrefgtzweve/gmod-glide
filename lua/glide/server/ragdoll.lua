@@ -225,7 +225,7 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
     ply.GlideRagdollTimeout = CurTime() + 1
 
     -- Automatically unragdoll after some time
-    if unragdollTime then
+    if unragdollTime and unragdollTime > 0 then
         timer.Create( "Glide_Ragdoll_" .. ply:EntIndex(), unragdollTime, 1, function()
             Glide.UnRagdollPlayer( ply )
         end )

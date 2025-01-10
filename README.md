@@ -63,7 +63,7 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 ### Vehicle damage multipliers
 
 | Command | Description
-| --------------------------------- | ------
+| ------- | -----------
 | `glide_bullet_damage_multiplier` `<number>` | Damage multiplier for bullets hitting Glide vehicles
 | `glide_blast_damage_multiplier` `<number>` | Damage multiplier for explosions hitting Glide vehicles
 | `glide_physics_damage_multiplier` `<number>` | Damage multiplier taken by Glide vehicles after colliding against other things
@@ -71,7 +71,7 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 ### Sandbox limits
 
 | Command | Description
-| --------------------------------- | ------
+| ------- | -----------
 | `sbox_maxglide_vehicles` `<number>` | Max. number of Glide vehicles that one player can have
 | `sbox_maxglide_standalone_turrets` `<number>` | Max. number of Glide Turrets that one player can have
 | `sbox_maxglide_missile_launchers` `<number>` | Max. number of Glide Missile Launchers that one player can have
@@ -80,14 +80,14 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 ### Turret tool limits
 
 | Command | Description
-| --------------------------------- | ------
+| ------- | -----------
 | `glide_turret_max_damage` `<number>` | Maximum damage dealt per bullet for Glide Turrets
 | `glide_turret_min_delay` `<number>` | Minimum delay allowed for Glide Turrets
 
 ### Missile Launcher tool limits
 
 | Command | Description
-| --------------------------------- | ------
+| ------- | -----------
 | `glide_missile_launcher_min_delay` `<number>` | Minimum delay allowed for Glide Missile Launchers
 | `glide_missile_launcher_max_lifetime` `<number>` | Maximum missile flight time allowed for Glide Missile Launchers
 | `glide_missile_launcher_max_radius` `<number>` | Maximum radius from explosions created by Glide Missile Launchers
@@ -96,11 +96,17 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 ### Projectile Launcher tool limits
 
 | Command | Description
-| --------------------------------- | ------
+| ------- | -----------
 | `glide_projectile_launcher_min_delay` `<number>` | Minimum delay allowed for Glide Projectile Launchers
 | `glide_projectile_launcher_max_lifetime` `<number>` | Maximum projectile flight time allowed for Glide Projectile Launchers
 | `glide_projectile_launcher_max_radius` `<number>` | Maximum radius from explosions created by Glide Projectile Launchers
 | `glide_projectile_launcher_max_damage` `<number>` | Maximum damage dealt by explosions from Glide Projectile Launchers
+
+### Ragdolls
+
+| Command | Description
+| ------- | -----------
+| `glide_ragdoll_max_time` `<number>` | The max. amount of time a player can stay ragdolled. Set to 0 for infinite
 
 ## Contributing
 

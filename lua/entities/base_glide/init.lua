@@ -200,22 +200,26 @@ function ENT:GetTraceData( startPos, endPos )
     return data
 end
 
---- Kicks out all passengers, then ragdoll them.
-function ENT:RagdollPlayers( time, vel )
-    time = time or 8
-    vel = vel or self:GetVelocity()
+do
+    local maxRagdollTimeCvar = GetConVar( "glide_ragdoll_max_time" )
 
-    local ply
+    --- Kicks out all passengers, then ragdoll them.
+    function ENT:RagdollPlayers( time, vel )
+        time = time or maxRagdollTimeCvar:GetFloat()
+        vel = vel or self:GetVelocity()
 
-    for seatIndex, seat in ipairs( self.seats ) do
-        ply = seat:GetDriver()
+        local ply
 
-        if IsValid( ply ) and self:CanFallOnCollision( seatIndex ) then
-            Glide.RagdollPlayer( ply, vel, time )
+        for seatIndex, seat in ipairs( self.seats ) do
+            ply = seat:GetDriver()
+
+            if IsValid( ply ) and self:CanFallOnCollision( seatIndex ) then
+                Glide.RagdollPlayer( ply, vel, time )
+            end
         end
-    end
 
-    self.hasRagdolledAllPlayers = true
+        self.hasRagdolledAllPlayers = true
+    end
 end
 
 --- Makes so only the vehicle creator and prop
