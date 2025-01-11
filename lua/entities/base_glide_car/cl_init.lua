@@ -286,14 +286,17 @@ function ENT:OnUpdateMisc()
         dir = self:LocalToWorld( l.dir ) - myPos
 
         if isHeadlightOn and l.type == "headlight" then
-            DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, true )
+            DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT )
+
+        elseif isHeadlightOn and l.type == "taillight" then
+            DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
 
         elseif isBraking and l.type == "brake" then
-            DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE, true )
+            DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
             DrawLight( self:EntIndex(), pos + dir * 10, COLOR_BRAKE, l.lightRadius )
 
         elseif isReversing and l.type == "reverse" then
-            DrawLightSprite( pos, dir, l.size or 20, COLOR_REV, true )
+            DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
             DrawLight( self:EntIndex(), pos + dir * 10, COLOR_REV, l.lightRadius )
         end
     end

@@ -34,10 +34,13 @@ if CLIENT then
         { type = "brake", offset = Vector( -125, -13, 5 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -125, 21, 5 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -125, -21, 5 ), dir = Vector( -1, 0, 0 ) },
+        { type = "taillight", offset = Vector( -125, 27, 5 ), dir = Vector( -1, 0, 0 ) },
+        { type = "taillight", offset = Vector( -125, -27, 5 ), dir = Vector( -1, 0, 0 ) },
+
         { type = "headlight", offset = Vector( 106, 29, -1 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 106, 22, -1 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 106, -29, -1 ), dir = Vector( 1, 0, 0 ) },
-        { type = "headlight", offset = Vector( 106, -22, -1 ), dir = Vector( 1, 0, 0 ) }
+        { type = "headlight", offset = Vector( 106, -22, -1 ), dir = Vector( 1, 0, 0 ) },
     }
 
     function ENT:OnCreateEngineStream( stream )
