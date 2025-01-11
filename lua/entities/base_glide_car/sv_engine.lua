@@ -287,6 +287,8 @@ function ENT:EngineThink( dt )
         self:AutoGearSwitch( inputThrottle )
     end
 
+    rpm = self:GetFlywheelRPM()
+
     -- Handle auto-clutch
     clutch = self:EngineClutch( dt )
 
@@ -333,9 +335,9 @@ function ENT:EngineThink( dt )
         clutch = 1
 
     else
-        -- Apply braking when going very slow and the clutch is not engaged
-        if inputThrottle < 0.1 and inputBrake < 0.1 and gear < 2 then
-            inputBrake = 0.2 * self.clutch
+        -- Automatically apply brakes when not accelerating, on first gear, with low engine RPM
+        if inputThrottle < 0.05 and inputBrake < 0.1 and gear < 2 and rpm < self:GetMinRPM() * 1.2 then
+            inputBrake = 0.2
         end
 
         self.frontBrake = inputBrake * 0.3
@@ -345,7 +347,6 @@ function ENT:EngineThink( dt )
         self.rearTractionMult = 1
     end
 
-    rpm = self:GetFlywheelRPM()
     clutch = Approach( self.clutch, clutch, dt * ( ( gear < 2 and inputThrottle > 0.1 ) and 6 or 2 ) )
 
     self.clutch = clutch
