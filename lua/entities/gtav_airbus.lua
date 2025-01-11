@@ -43,6 +43,9 @@ if CLIENT then
         { type = "brake", offset = Vector( -293, -41, 10.5 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -293, 36, 10.5 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -293, -36, 10.5 ), dir = Vector( -1, 0, 0 ) },
+        { type = "taillight", offset = Vector( -293, 47, 10.5 ), dir = Vector( -1, 0, 0 ) },
+        { type = "taillight", offset = Vector( -293, -47, 10.5 ), dir = Vector( -1, 0, 0 ) },
+
         { type = "headlight", offset = Vector( 290, 41.5, -11 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 290, -41.5, -11 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 290, 31, -11 ), dir = Vector( 1, 0, 0 ) },
