@@ -37,6 +37,7 @@ if CLIENT then
 
     ENT.LightSprites = {
         { type = "brake", offset = Vector( -33, 0, 9 ), dir = Vector( -1, 0, 0 ), lightRadius = 50 },
+        { type = "taillight", offset = Vector( -33, 0, 9 ), dir = Vector( -1, 0, 0 ), size = 15 },
         { type = "headlight", offset = Vector( 20, 0, 9 ), dir = Vector( 1, 0, 0 ) }
     }
 
