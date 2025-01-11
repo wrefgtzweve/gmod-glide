@@ -34,8 +34,12 @@ if CLIENT then
     ENT.LightSprites = {
         { type = "brake", offset = Vector( -118, 37, 20 ), dir = Vector( -1, 0, 0 ) },
         { type = "brake", offset = Vector( -118, -37, 20 ), dir = Vector( -1, 0, 0 ) },
+        { type = "taillight", offset = Vector( -118, 38, 20 ), dir = Vector( -1, 0, 0 ), size = 15 },
+        { type = "taillight", offset = Vector( -118, -38, 20 ), dir = Vector( -1, 0, 0 ), size = 15 },
+
         { type = "reverse", offset = Vector( -118, 38, 15 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -118, -38, 15 ), dir = Vector( -1, 0, 0 ) },
+
         { type = "headlight", offset = Vector( 105, 32, 6.2 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 105, -32, 6.2 ), dir = Vector( 1, 0, 0 ) }
     }
