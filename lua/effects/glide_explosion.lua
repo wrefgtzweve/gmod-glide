@@ -61,6 +61,7 @@ function EFFECT:Explosion( emitter, origin, normal, scale )
             p:SetColor( 255, 255 * col, 255 * col )
             p:SetLighting( false )
             p:SetDieTime( 0.4 )
+            p:SetCollide( true )
         end
     end
 
@@ -80,6 +81,7 @@ function EFFECT:Explosion( emitter, origin, normal, scale )
 
             p:SetColor( 255, 255, 200 )
             p:SetDieTime( 0.2 )
+            p:SetCollide( true )
         end
     end
 end
