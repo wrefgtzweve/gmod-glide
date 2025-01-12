@@ -42,6 +42,7 @@ function EFFECT:Init( data )
             p:SetVelocity( velocity + forward * RandomInt( 20, 40 ) * scale )
             p:SetColor( color, color, color )
             p:SetLighting( true )
+            p:SetCollide( true )
         end
     end
 

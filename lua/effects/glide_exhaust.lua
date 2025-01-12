@@ -34,6 +34,7 @@ function EFFECT:Init( data )
             p:SetGravity( EXHAUST_SMOKE_GRAVITY )
             p:SetVelocity( velocity + normal * RandomInt( 10, 70 ) * scale * power )
             p:SetColor( 10, 10, 10 )
+            p:SetCollide( true )
         end
     end
 

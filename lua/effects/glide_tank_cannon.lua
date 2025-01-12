@@ -95,6 +95,7 @@ function EFFECT:Smoke( emitter, origin, normal, scale )
 
             p:SetColor( 70, 70, 70 )
             p:SetDieTime( RandomFloat( 0.75, 2 ) * scale )
+            p:SetCollide( true )
         end
     end
 end

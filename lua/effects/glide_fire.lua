@@ -29,6 +29,7 @@ function EFFECT:Init( data )
         p:SetGravity( SMOKE_GRAVITY + velocity )
         p:SetVelocity( velocity + normal * RandomInt( 20, 50 ) * scale )
         p:SetColor( 20, 20, 20 )
+        p:SetCollide( true )
     end
 
     p = emitter:Add( "particles/fire1", origin + normal * scale * 5 )
@@ -45,6 +46,7 @@ function EFFECT:Init( data )
         p:SetGravity( FLAME_GRAVITY + velocity )
         p:SetVelocity( velocity + normal * RandomInt( 50, 70 ) * scale )
         p:SetColor( 255, 255, 255 )
+        p:SetCollide( true )
     end
 
     for _ = 0, 3 do
@@ -62,6 +64,7 @@ function EFFECT:Init( data )
             p:SetGravity( FLAME_GRAVITY + velocity )
             p:SetVelocity( velocity + normal * RandomInt( 35, 45 ) * scale )
             p:SetColor( 255, 255, 255 )
+            p:SetCollide( true )
         end
     end
 

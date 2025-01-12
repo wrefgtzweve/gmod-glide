@@ -38,6 +38,7 @@ function EFFECT:Flare( emitter, origin, scale )
         p:SetRoll( RandomFloat( -1, 1 ) )
         p:SetColor( 255, 100, 100 )
         p:SetLighting( false )
+        p:SetCollide( true )
     end
 
     p = emitter:Add( FLARE2_MATERIAL, origin )
@@ -53,6 +54,7 @@ function EFFECT:Flare( emitter, origin, scale )
         p:SetRoll( RandomFloat( -1, 1 ) )
         p:SetColor( 255, 255, 255 )
         p:SetLighting( false )
+        p:SetCollide( true )
     end
 end
 
@@ -77,6 +79,7 @@ function EFFECT:Smoke( emitter, origin, scale )
             p:SetGravity( SMOKE_GRAVITY )
             p:SetVelocity( VectorRand() * RandomFloat( -100, 100 ) * scale )
             p:SetColor( 200, 30, 20 )
+            p:SetCollide( true )
         end
     end
 
@@ -94,5 +97,6 @@ function EFFECT:Smoke( emitter, origin, scale )
         p:SetGravity( SMOKE_GRAVITY )
         p:SetVelocity( VectorRand() * RandomFloat( -100, 100 ) * scale )
         p:SetColor( 20, 20, 20 )
+        p:SetCollide( true )
     end
 end

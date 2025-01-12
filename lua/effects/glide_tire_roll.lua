@@ -49,6 +49,7 @@ function EFFECT:DoSurface( emitter, origin, velocity, scale, fx )
             p:SetVelocity( velocity * RandomFloat( 0.2, 0.4 ) )
             p:SetColor( fx.r, fx.g, fx.b )
             p:SetLighting( false )
+            p:SetCollide( true )
         end
     end
 end
@@ -84,6 +85,7 @@ function EFFECT:DoSmoke( emitter, origin, velocity, scale, vehicle )
             p:SetVelocity( velocity * RandomFloat( 0.4, 0.8 ) )
             p:SetColor( r, g, b )
             p:SetLighting( false )
+            p:SetCollide( true )
         end
     end
 end
