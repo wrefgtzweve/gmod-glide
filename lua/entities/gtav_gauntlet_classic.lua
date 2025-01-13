@@ -55,7 +55,10 @@ if CLIENT then
         { type = "taillight", offset = Vector( -100, 24.5, 18 ), dir = Vector( -1, 0, 0 ), size = 15 },
         { type = "taillight", offset = Vector( -100, 29.4, 18 ), dir = Vector( -1, 0, 0 ), size = 15 },
         { type = "taillight", offset = Vector( -100, -24.5, 18 ), dir = Vector( -1, 0, 0 ), size = 15 },
-        { type = "taillight", offset = Vector( -100, -29.4, 18 ), dir = Vector( -1, 0, 0 ), size = 15 }
+        { type = "taillight", offset = Vector( -100, -29.4, 18 ), dir = Vector( -1, 0, 0 ), size = 15 },
+
+        { type = "signal_left", offset = Vector( -100, 34.2, 18 ), dir = Vector( -1, 0, 0 ) },
+        { type = "signal_right", offset = Vector( -100, -34.2, 18 ), dir = Vector( -1, 0, 0 ) }
     }
 
     function ENT:OnCreateEngineStream( stream )
@@ -83,7 +86,9 @@ if SERVER then
         { type = "brake", bodyGroupId = 16, subModelId = 1 },
         { type = "reverse", bodyGroupId = 18, subModelId = 1 },
         { type = "headlight", bodyGroupId = 19, subModelId = 1 }, -- Tail lights
-        { type = "headlight", bodyGroupId = 17, subModelId = 1 }  -- Headlights
+        { type = "headlight", bodyGroupId = 17, subModelId = 1 },  -- Headlights
+        { type = "signal_left", bodyGroupId = 20, subModelId = 1 },
+        { type = "signal_right", bodyGroupId = 21, subModelId = 1 },
     }
 
     function ENT:CreateFeatures()

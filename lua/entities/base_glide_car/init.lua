@@ -27,6 +27,7 @@ function ENT:OnPostInitialize()
     self:SetIsHonking( false )
     self:SetIsBraking( false )
     self:SetHeadlightState( 0 )
+    self:SetTurnSignalState( 0 )
     self:SetGear( 0 )
 
     local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
@@ -233,6 +234,14 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "headlights" then
         self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
 
+    elseif action == "signal_left" then
+        local state = self:GetTurnSignalState()
+        self:SetTurnSignalState( state == 1 and 0 or 1 )
+
+    elseif action == "signal_right" then
+        local state = self:GetTurnSignalState()
+        self:SetTurnSignalState( state == 2 and 0 or 2 )
+
     elseif action == "reduce_throttle" then
         self.reducedThrottle = not self.reducedThrottle
 
@@ -282,22 +291,50 @@ function ENT:ChangeHeadlightState( state, dontPlaySound )
     soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 100, 1.0 )
 end
 
---- Update out model's bodygroups depending on which lights are on.
-function ENT:UpdateBodygroups()
-    local isBraking = self:GetIsBraking()
-    local isReversing = self:GetGear() == -1
-    local isHeadlightOn = self:GetHeadlightState() > 0
+do
+    local lightState = {
+        brake = false,
+        reverse = false,
+        headlight = false,
+        signal_left = false,
+        signal_right = false
+    }
 
-    for _, l in ipairs( self.LightBodygroups ) do
-        if l.type == "headlight" then
-            self:SetBodygroup( l.bodyGroupId, isHeadlightOn and l.subModelId or 0 )
+    local CurTime = CurTime
 
-        elseif l.type == "brake" then
-            self:SetBodygroup( l.bodyGroupId, isBraking and l.subModelId or 0 )
+    --- Update out model's bodygroups depending on which lights are on.
+    function ENT:UpdateBodygroups()
+        lightState.brake = self:GetIsBraking()
+        lightState.reverse = self:GetGear() == -1
+        lightState.headlight = self:GetHeadlightState() > 0
 
-        elseif l.type == "reverse" then
-            self:SetBodygroup( l.bodyGroupId, isReversing and l.subModelId or 0 )
+        local signal = self:GetTurnSignalState()
+        local signalBlink = ( CurTime() % self.TurnSignalSpeed ) > self.TurnSignalSpeed * 0.5
 
+        lightState.signal_left = signal == 1
+        lightState.signal_right = signal == 2
+
+        local enable
+
+        for _, l in ipairs( self.LightBodygroups ) do
+            enable = lightState[l.type]
+
+            -- Blink "signal_*" light types
+            if l.type == "signal_left" or l.type == "signal_right" then
+                enable = enable and signalBlink
+            end
+
+            -- Allow other types of light to blink with turn signals, if "signal" is set.
+            if l.signal and signal > 0 then
+                if l.signal == "left" and signal == 1 then
+                    enable = signalBlink
+
+                elseif l.signal == "right" and signal == 2 then
+                    enable = signalBlink
+                end
+            end
+
+            self:SetBodygroup( l.bodyGroupId, enable and l.subModelId or 0 )
         end
     end
 end

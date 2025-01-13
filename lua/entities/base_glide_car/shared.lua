@@ -12,6 +12,9 @@ ENT.VehicleType = Glide.VEHICLE_TYPE.CAR
 -- Should we prevent players from editing these NW variables?
 ENT.UneditableNWVars = {}
 
+-- How long is the on/off cycle for turn signals?
+ENT.TurnSignalSpeed = 0.8
+
 DEFINE_BASECLASS( "base_glide" )
 
 --[[
@@ -34,6 +37,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Bool", "IsBraking" )
 
     self:NetworkVar( "Int", "HeadlightState" )
+    self:NetworkVar( "Int", "TurnSignalState" )
     self:NetworkVar( "Int", "Gear" )
 
     self:NetworkVar( "Float", "Steering" )
