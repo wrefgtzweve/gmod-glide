@@ -62,6 +62,15 @@ end
 
 --- Override this base class function.
 function ENT:OnTakeDamage( dmginfo )
+    if dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
+        local inflictor = dmginfo:GetInflictor()
+
+        -- Increase damage taken by Half-life 2 RPGs
+        if IsValid( inflictor ) and inflictor:GetClass() == "rpg_missile" then
+            dmginfo:SetDamage( dmginfo:GetDamage() * 2.5 )
+        end
+    end
+
     BaseClass.OnTakeDamage( self, dmginfo )
 
     if self:GetEngineHealth() <= 0 and self:GetEngineState() == 2 then
