@@ -149,7 +149,7 @@ function ENT:OnUpdateSounds()
     local signal = self:GetTurnSignalState()
 
     if signal > 0 then
-        local signalBlink = ( CurTime() % self.TurnSignalSpeed ) > self.TurnSignalSpeed * 0.5
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
         if self.lastSignalBlink ~= signalBlink then
             self.lastSignalBlink = signalBlink
@@ -289,7 +289,7 @@ do
         lightState.taillight = lightState.headlight
 
         local signal = self:GetTurnSignalState()
-        local signalBlink = ( CurTime() % self.TurnSignalSpeed ) > self.TurnSignalSpeed * 0.5
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
         lightState.signal_left = signal == 1
         lightState.signal_right = signal == 2

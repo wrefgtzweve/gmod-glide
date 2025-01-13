@@ -13,7 +13,7 @@ ENT.VehicleType = Glide.VEHICLE_TYPE.CAR
 ENT.UneditableNWVars = {}
 
 -- How long is the on/off cycle for turn signals?
-ENT.TurnSignalSpeed = 0.8
+ENT.TurnSignalCycle = 0.8
 
 DEFINE_BASECLASS( "base_glide" )
 

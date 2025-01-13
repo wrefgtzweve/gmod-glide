@@ -321,7 +321,7 @@ do
         lightState.headlight = self:GetHeadlightState() > 0
 
         local signal = self:GetTurnSignalState()
-        local signalBlink = ( CurTime() % self.TurnSignalSpeed ) > self.TurnSignalSpeed * 0.5
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
         lightState.signal_left = signal == 1
         lightState.signal_right = signal == 2
