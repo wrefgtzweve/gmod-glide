@@ -180,10 +180,10 @@ if SERVER then
     ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )
 
     ENT.LightBodygroups = {
-        { type = "headlight", bodyGroupId = 14, subModelId = 1 }, -- Tail lights
-        { type = "headlight", bodyGroupId = 12, subModelId = 1 },  -- Headlights
-        { type = "headlight", bodyGroupId = 15, subModelId = 1 },  -- Extra lights
-        { type = "reverse", bodyGroupId = 13, subModelId = 1 }
+        { type = "headlight", bodyGroupId = 10, subModelId = 1 },  -- Headlights
+        { type = "headlight", bodyGroupId = 12, subModelId = 1 }, -- Tail lights
+        { type = "headlight", bodyGroupId = 13, subModelId = 1 },  -- Extra lights
+        { type = "reverse", bodyGroupId = 11, subModelId = 1 }
     }
 
     function ENT:CanFallOnCollision( seatIndex )

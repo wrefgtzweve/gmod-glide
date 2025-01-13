@@ -83,10 +83,10 @@ if SERVER then
     end
 
     ENT.LightBodygroups = {
-        { type = "brake", bodyGroupId = 13, subModelId = 1 },
-        { type = "reverse", bodyGroupId = 15, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 16, subModelId = 1 }, -- Tail lights
-        { type = "headlight", bodyGroupId = 14, subModelId = 1 }  -- Headlights
+        { type = "brake", bodyGroupId = 11, subModelId = 1 },
+        { type = "reverse", bodyGroupId = 13, subModelId = 1 },
+        { type = "headlight", bodyGroupId = 14, subModelId = 1 }, -- Tail lights
+        { type = "headlight", bodyGroupId = 12, subModelId = 1 }  -- Headlights
     }
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
