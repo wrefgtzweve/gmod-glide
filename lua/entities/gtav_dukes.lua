@@ -34,8 +34,8 @@ if CLIENT then
         { type = "brake", offset = Vector( -125, -13, 5 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -125, 21, 5 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -125, -21, 5 ), dir = Vector( -1, 0, 0 ) },
-        { type = "taillight", offset = Vector( -125, 27, 5 ), dir = Vector( -1, 0, 0 ) },
-        { type = "taillight", offset = Vector( -125, -27, 5 ), dir = Vector( -1, 0, 0 ) },
+        { type = "taillight", offset = Vector( -125, 27, 5 ), dir = Vector( -1, 0, 0 ), signal = "left" },
+        { type = "taillight", offset = Vector( -125, -27, 5 ), dir = Vector( -1, 0, 0 ), signal = "right" },
 
         { type = "headlight", offset = Vector( 106, 29, -1 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 106, 22, -1 ), dir = Vector( 1, 0, 0 ) },
@@ -52,10 +52,12 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
 
     ENT.LightBodygroups = {
-        { type = "brake", bodyGroupId = 19, subModelId = 1 },
-        { type = "reverse", bodyGroupId = 20, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 21, subModelId = 1 }, -- Tail lights
-        { type = "headlight", bodyGroupId = 22, subModelId = 1 }  -- Headlights
+        { type = "headlight", bodyGroupId = 19, subModelId = 1 }, -- Headlights
+        { type = "brake", bodyGroupId = 20, subModelId = 1 },
+        { type = "reverse", bodyGroupId = 21, subModelId = 1 },
+
+        { type = "headlight", bodyGroupId = 22, subModelId = 1, signal = "left" }, -- Left signal/taillight combo
+        { type = "headlight", bodyGroupId = 23, subModelId = 1, signal = "right" } -- Right signal/taillight combo
     }
 
     function ENT:CreateFeatures()

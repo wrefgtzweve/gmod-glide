@@ -27,6 +27,7 @@ function ENT:OnPostInitialize()
     self:SetIsHonking( false )
     self:SetIsBraking( false )
     self:SetHeadlightState( 0 )
+    self:SetTurnSignalState( 0 )
     self:SetGear( 0 )
 
     local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
@@ -233,6 +234,12 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "headlights" then
         self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
 
+    elseif action == "signal_left" then
+        self:ChangeTurnSignalState( self:GetTurnSignalState() == 1 and 0 or 1 )
+
+    elseif action == "signal_right" then
+        self:ChangeTurnSignalState( self:GetTurnSignalState() == 2 and 0 or 2 )
+
     elseif action == "reduce_throttle" then
         self.reducedThrottle = not self.reducedThrottle
 
@@ -269,6 +276,8 @@ end
 function ENT:ChangeHeadlightState( state, dontPlaySound )
     if not self.CanSwitchHeadlights then return end
 
+    state = math.floor( state )
+
     if state < 0 then state = 2 end
     if state > 2 then state = 0 end
 
@@ -282,22 +291,62 @@ function ENT:ChangeHeadlightState( state, dontPlaySound )
     soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 100, 1.0 )
 end
 
---- Update out model's bodygroups depending on which lights are on.
-function ENT:UpdateBodygroups()
-    local isBraking = self:GetIsBraking()
-    local isReversing = self:GetGear() == -1
-    local isHeadlightOn = self:GetHeadlightState() > 0
+function ENT:ChangeTurnSignalState( state, dontPlaySound )
+    state = math.Clamp( math.floor( state ), 0, 2 )
+    self:SetTurnSignalState( state )
 
-    for _, l in ipairs( self.LightBodygroups ) do
-        if l.type == "headlight" then
-            self:SetBodygroup( l.bodyGroupId, isHeadlightOn and l.subModelId or 0 )
+    if dontPlaySound then return end
 
-        elseif l.type == "brake" then
-            self:SetBodygroup( l.bodyGroupId, isBraking and l.subModelId or 0 )
+    local driver = self:GetDriver()
+    local soundEnt = IsValid( driver ) and driver or self
 
-        elseif l.type == "reverse" then
-            self:SetBodygroup( l.bodyGroupId, isReversing and l.subModelId or 0 )
+    soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 60, 0.5 )
+end
 
+do
+    local lightState = {
+        brake = false,
+        reverse = false,
+        headlight = false,
+        signal_left = false,
+        signal_right = false
+    }
+
+    local CurTime = CurTime
+
+    --- Update out model's bodygroups depending on which lights are on.
+    function ENT:UpdateBodygroups()
+        lightState.brake = self:GetIsBraking()
+        lightState.reverse = self:GetGear() == -1
+        lightState.headlight = self:GetHeadlightState() > 0
+
+        local signal = self:GetTurnSignalState()
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
+
+        lightState.signal_left = signal == 1
+        lightState.signal_right = signal == 2
+
+        local enable
+
+        for _, l in ipairs( self.LightBodygroups ) do
+            enable = lightState[l.type]
+
+            -- Blink "signal_*" light types
+            if l.type == "signal_left" or l.type == "signal_right" then
+                enable = enable and signalBlink
+            end
+
+            -- Allow other types of light to blink with turn signals, if "signal" is set.
+            if l.signal and signal > 0 then
+                if l.signal == "left" and signal == 1 then
+                    enable = signalBlink
+
+                elseif l.signal == "right" and signal == 2 then
+                    enable = signalBlink
+                end
+            end
+
+            self:SetBodygroup( l.bodyGroupId, enable and l.subModelId or 0 )
         end
     end
 end
@@ -313,6 +362,7 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
     inputs[#inputs + 1] = { "Headlights", "NORMAL", "0: Off\n1: Low beams\n2: High beams" }
     inputs[#inputs + 1] = { "Horn", "NORMAL", "Set to 1 to sound the horn" }
+    inputs[#inputs + 1] = { "TurnSignal", "NORMAL", "0: Off\n1: Left-turn signal\n2: Right-turn signal" }
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
@@ -648,9 +698,12 @@ function ENT:TriggerInput( name, value )
         end
 
     elseif name == "Headlights" then
-        self:ChangeHeadlightState( Clamp( Floor( value ), 0, 2 ), true )
+        self:ChangeHeadlightState( Floor( value ), true )
 
     elseif name == "Horn" then
         self:SetIsHonking( value > 0 )
+
+    elseif name == "TurnSignal" then
+        self:ChangeTurnSignalState( value, true )
     end
 end

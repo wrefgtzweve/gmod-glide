@@ -41,7 +41,13 @@ if CLIENT then
         { type = "reverse", offset = Vector( -118, -38, 15 ), dir = Vector( -1, 0, 0 ) },
 
         { type = "headlight", offset = Vector( 105, 32, 6.2 ), dir = Vector( 1, 0, 0 ) },
-        { type = "headlight", offset = Vector( 105, -32, 6.2 ), dir = Vector( 1, 0, 0 ) }
+        { type = "headlight", offset = Vector( 105, -32, 6.2 ), dir = Vector( 1, 0, 0 ) },
+
+        { type = "signal_left", offset = Vector( -116, 37.3, 26.8 ), dir = Vector( -0.7, 0.5, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+        { type = "signal_right", offset = Vector( -116, -37.3, 26.8 ), dir = Vector( -0.7, -0.5, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+
+        { type = "signal_left", offset = Vector( 104, 38.5, 0 ), dir = Vector( 0.7, 0.5, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+        { type = "signal_right", offset = Vector( 104, -38.5, 0 ), dir = Vector( 0.7, -0.5, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR }
     }
 
     function ENT:OnCreateEngineStream( stream )
@@ -59,9 +65,11 @@ if SERVER then
     ENT.AirMaxAngularVelocity = Vector( 200, 200, 150 ) -- Roll, pitch, yaw
 
     ENT.LightBodygroups = {
-        { type = "reverse", bodyGroupId = 12, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 11, subModelId = 1 }, -- Headlights
-        { type = "headlight", bodyGroupId = 13, subModelId = 1 }  -- Tail lighs
+        { type = "reverse", bodyGroupId = 10, subModelId = 1 },
+        { type = "headlight", bodyGroupId = 9, subModelId = 1 }, -- Headlights
+        { type = "headlight", bodyGroupId = 11, subModelId = 1 },  -- Tail lighs
+        { type = "signal_left", bodyGroupId = 12, subModelId = 1 },
+        { type = "signal_right", bodyGroupId = 13, subModelId = 1 }
     }
 
     function ENT:CreateFeatures()

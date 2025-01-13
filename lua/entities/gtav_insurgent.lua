@@ -56,6 +56,9 @@ if CLIENT then
 
         { type = "headlight", offset = Vector( 115, 34, 17.5 ), dir = Vector( 1, 0, 0 ), color = color_white },
         { type = "headlight", offset = Vector( 115, -34, 17.5 ), dir = Vector( 1, 0, 0 ), color = color_white },
+
+        { type = "signal_left", offset = Vector( -132, 38.3, 11 ), dir = Vector( -1, 0, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+        { type = "signal_right", offset = Vector( -132, -38.3, 11 ), dir = Vector( -1, 0, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR }
     }
 
     function ENT:OnCreateEngineStream( stream )
@@ -180,10 +183,12 @@ if SERVER then
     ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )
 
     ENT.LightBodygroups = {
-        { type = "headlight", bodyGroupId = 14, subModelId = 1 }, -- Tail lights
-        { type = "headlight", bodyGroupId = 12, subModelId = 1 },  -- Headlights
-        { type = "headlight", bodyGroupId = 15, subModelId = 1 },  -- Extra lights
-        { type = "reverse", bodyGroupId = 13, subModelId = 1 }
+        { type = "headlight", bodyGroupId = 10, subModelId = 1 },  -- Headlights
+        { type = "headlight", bodyGroupId = 12, subModelId = 1 }, -- Tail lights
+        { type = "headlight", bodyGroupId = 13, subModelId = 1 },  -- Extra lights
+        { type = "reverse", bodyGroupId = 11, subModelId = 1 },
+        { type = "signal_left", bodyGroupId = 14, subModelId = 1 },
+        { type = "signal_right", bodyGroupId = 15, subModelId = 1 }
     }
 
     function ENT:CanFallOnCollision( seatIndex )

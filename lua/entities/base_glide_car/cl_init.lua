@@ -146,6 +146,23 @@ function ENT:OnUpdateSounds()
         end
     end
 
+    local signal = self:GetTurnSignalState()
+
+    if signal > 0 then
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
+
+        if self.lastSignalBlink ~= signalBlink then
+            self.lastSignalBlink = signalBlink
+
+            if signalBlink and self.TurnSignalTickOnSound ~= "" then
+                self:EmitSound( self.TurnSignalTickOnSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+
+            elseif not signalBlink and self.TurnSignalTickOffSound ~= "" then
+                self:EmitSound( self.TurnSignalTickOffSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+            end
+        end
+    end
+
     if not self:IsEngineOn() then return end
 
     if self:GetGear() == -1 and self.ReverseSound ~= "" then
@@ -230,31 +247,97 @@ function ENT:OnUpdateSounds()
     end
 end
 
-local RealTime = RealTime
 local CurTime = CurTime
-local DynamicLight = DynamicLight
 
-local function DrawLight( id, pos, color, size )
-    local dl = DynamicLight( id )
-    if dl then
-        dl.pos = pos
-        dl.r = color.r
-        dl.g = color.g
-        dl.b = color.b
-        dl.brightness = 5
-        dl.decay = 1000
-        dl.size = size or 70
-        dl.dietime = CurTime() + 0.5
+local COLOR_HEADLIGHT = Color( 255, 255, 255 )
+
+do
+    local DrawLightSprite = Glide.DrawLightSprite
+    local DynamicLight = DynamicLight
+
+    local function DrawLight( id, pos, color, size )
+        local dl = DynamicLight( id )
+        if dl then
+            dl.pos = pos
+            dl.r = color.r
+            dl.g = color.g
+            dl.b = color.b
+            dl.brightness = 5
+            dl.decay = 1000
+            dl.size = size or 70
+            dl.dietime = CurTime() + 0.5
+        end
+    end
+
+    local lightState = {
+        brake = false,
+        reverse = false,
+        headlight = false,
+        taillight = false,
+        signal_left = false,
+        signal_right = false
+    }
+
+    local COLOR_BRAKE = Color( 255, 0, 0, 255 )
+    local COLOR_REV = Color( 255, 255, 255, 200 )
+
+    --- Update out model's bodygroups depending on which lights are on.
+    function ENT:DrawLights()
+        lightState.brake = self:GetIsBraking()
+        lightState.reverse = self:GetGear() == -1
+        lightState.headlight = self:GetHeadlightState() > 0
+        lightState.taillight = lightState.headlight
+
+        local signal = self:GetTurnSignalState()
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
+
+        lightState.signal_left = signal == 1
+        lightState.signal_right = signal == 2
+
+        local myPos = self:GetPos()
+        local pos, dir, ltype, enable
+
+        for _, l in ipairs( self.LightSprites ) do
+            pos = self:LocalToWorld( l.offset )
+            dir = self:LocalToWorld( l.dir ) - myPos
+            ltype = l.type
+            enable = lightState[ltype]
+
+            -- Blink "signal_*" light types
+            if ltype == "signal_left" or ltype == "signal_right" then
+                enable = enable and signalBlink
+            end
+
+            -- Allow other types of light to blink with turn signals, if "signal" is set.
+            if l.signal and signal > 0 then
+                if l.signal == "left" and signal == 1 then
+                    enable = signalBlink
+
+                elseif l.signal == "right" and signal == 2 then
+                    enable = signalBlink
+                end
+            end
+
+            if enable and ltype == "headlight" then
+                DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT )
+
+            elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
+                DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
+
+            elseif enable and ltype == "brake" then
+                DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
+                DrawLight( self:EntIndex(), pos + dir * 10, COLOR_BRAKE, l.lightRadius )
+
+            elseif enable and ltype == "reverse" then
+                DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
+                DrawLight( self:EntIndex(), pos + dir * 10, COLOR_REV, l.lightRadius )
+            end
+        end
     end
 end
 
 local IsValid = IsValid
 local ExpDecay = Glide.ExpDecay
-local DrawLightSprite = Glide.DrawLightSprite
-
-local COLOR_BRAKE = Color( 255, 0, 0, 255 )
-local COLOR_REV = Color( 255, 255, 255, 200 )
-local COLOR_HEADLIGHT = Color( 255, 255, 255 )
 
 --- Implement this base class function.
 function ENT:OnUpdateMisc()
@@ -265,8 +348,6 @@ function ENT:OnUpdateMisc()
 
     self.rpmFraction = ExpDecay( self.rpmFraction, rpmFraction, 7, dt )
 
-    local isBraking = self:GetIsBraking()
-    local isReversing = self:GetGear() == -1
     local headlightState = self:GetHeadlightState()
     local isHeadlightOn = headlightState > 0
 
@@ -278,31 +359,10 @@ function ENT:OnUpdateMisc()
     end
 
     -- Render lights and sprites
-    local myPos = self:GetPos()
-    local pos, dir
-
-    for _, l in ipairs( self.LightSprites ) do
-        pos = self:LocalToWorld( l.offset )
-        dir = self:LocalToWorld( l.dir ) - myPos
-
-        if isHeadlightOn and l.type == "headlight" then
-            DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT )
-
-        elseif isHeadlightOn and l.type == "taillight" then
-            DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
-
-        elseif isBraking and l.type == "brake" then
-            DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
-            DrawLight( self:EntIndex(), pos + dir * 10, COLOR_BRAKE, l.lightRadius )
-
-        elseif isReversing and l.type == "reverse" then
-            DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
-            DrawLight( self:EntIndex(), pos + dir * 10, COLOR_REV, l.lightRadius )
-        end
-    end
+    self:DrawLights()
 
     -- Brake release sounds
-    if isBraking and self.BrakeSqueakSound ~= "" then
+    if self:GetIsBraking() and self.BrakeSqueakSound ~= "" then
         if self.brakePressure < 1 then
             self.brakePressure = self.brakePressure + dt
         end
@@ -459,6 +519,7 @@ end
 
 DEFINE_BASECLASS( "base_glide" )
 
+local RealTime = RealTime
 local Floor = math.floor
 local DrawRect = surface.DrawRect
 local SetColor = surface.SetDrawColor

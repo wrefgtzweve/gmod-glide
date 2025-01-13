@@ -49,7 +49,12 @@ if CLIENT then
         { type = "headlight", offset = Vector( 290, 41.5, -11 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 290, -41.5, -11 ), dir = Vector( 1, 0, 0 ) },
         { type = "headlight", offset = Vector( 290, 31, -11 ), dir = Vector( 1, 0, 0 ) },
-        { type = "headlight", offset = Vector( 290, -31, -11 ), dir = Vector( 1, 0, 0 ) }
+        { type = "headlight", offset = Vector( 290, -31, -11 ), dir = Vector( 1, 0, 0 ) },
+
+        { type = "signal_left", offset = Vector( -293, 52, 10.5 ), dir = Vector( -1, 0, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+        { type = "signal_right", offset = Vector( -293, -52, 10.5 ), dir = Vector( -1, 0, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+        { type = "signal_left", offset = Vector( 290, 51.2, -10.5 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR },
+        { type = "signal_right", offset = Vector( 290, -51.2, -10.5 ), dir = Vector( 1, 0, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR }
     }
 
     function ENT:OnCreateEngineStream( stream )
@@ -83,10 +88,12 @@ if SERVER then
     end
 
     ENT.LightBodygroups = {
-        { type = "brake", bodyGroupId = 13, subModelId = 1 },
-        { type = "reverse", bodyGroupId = 15, subModelId = 1 },
-        { type = "headlight", bodyGroupId = 16, subModelId = 1 }, -- Tail lights
-        { type = "headlight", bodyGroupId = 14, subModelId = 1 }  -- Headlights
+        { type = "brake", bodyGroupId = 11, subModelId = 1 },
+        { type = "reverse", bodyGroupId = 13, subModelId = 1 },
+        { type = "headlight", bodyGroupId = 14, subModelId = 1 }, -- Tail lights
+        { type = "headlight", bodyGroupId = 12, subModelId = 1 },  -- Headlights
+        { type = "signal_left", bodyGroupId = 15, subModelId = 1 },
+        { type = "signal_right", bodyGroupId = 16, subModelId = 1 }
     }
 
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
