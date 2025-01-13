@@ -350,6 +350,7 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
     inputs[#inputs + 1] = { "Headlights", "NORMAL", "0: Off\n1: Low beams\n2: High beams" }
     inputs[#inputs + 1] = { "Horn", "NORMAL", "Set to 1 to sound the horn" }
+    inputs[#inputs + 1] = { "TurnSignal", "NORMAL", "0: Off\n1: Left-turn signal\n2: Right-turn signal" }
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
@@ -689,5 +690,8 @@ function ENT:TriggerInput( name, value )
 
     elseif name == "Horn" then
         self:SetIsHonking( value > 0 )
+
+    elseif name == "TurnSignal" then
+        self:SetTurnSignalState( Clamp( Floor( value ), 0, 2 ) )
     end
 end
