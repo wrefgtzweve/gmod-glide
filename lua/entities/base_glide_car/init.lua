@@ -235,12 +235,10 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
         self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
 
     elseif action == "signal_left" then
-        local state = self:GetTurnSignalState()
-        self:SetTurnSignalState( state == 1 and 0 or 1 )
+        self:ChangeTurnSignalState( self:GetTurnSignalState() == 1 and 0 or 1 )
 
     elseif action == "signal_right" then
-        local state = self:GetTurnSignalState()
-        self:SetTurnSignalState( state == 2 and 0 or 2 )
+        self:ChangeTurnSignalState( self:GetTurnSignalState() == 2 and 0 or 2 )
 
     elseif action == "reduce_throttle" then
         self.reducedThrottle = not self.reducedThrottle
@@ -278,6 +276,8 @@ end
 function ENT:ChangeHeadlightState( state, dontPlaySound )
     if not self.CanSwitchHeadlights then return end
 
+    state = math.floor( state )
+
     if state < 0 then state = 2 end
     if state > 2 then state = 0 end
 
@@ -289,6 +289,18 @@ function ENT:ChangeHeadlightState( state, dontPlaySound )
     local soundEnt = IsValid( driver ) and driver or self
 
     soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 100, 1.0 )
+end
+
+function ENT:ChangeTurnSignalState( state, dontPlaySound )
+    state = math.Clamp( math.floor( state ), 0, 2 )
+    self:SetTurnSignalState( state )
+
+    if dontPlaySound then return end
+
+    local driver = self:GetDriver()
+    local soundEnt = IsValid( driver ) and driver or self
+
+    soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 60, 0.5 )
 end
 
 do
@@ -686,12 +698,12 @@ function ENT:TriggerInput( name, value )
         end
 
     elseif name == "Headlights" then
-        self:ChangeHeadlightState( Clamp( Floor( value ), 0, 2 ), true )
+        self:ChangeHeadlightState( Floor( value ), true )
 
     elseif name == "Horn" then
         self:SetIsHonking( value > 0 )
 
     elseif name == "TurnSignal" then
-        self:SetTurnSignalState( Clamp( Floor( value ), 0, 2 ) )
+        self:ChangeTurnSignalState( value, true )
     end
 end

@@ -146,6 +146,23 @@ function ENT:OnUpdateSounds()
         end
     end
 
+    local signal = self:GetTurnSignalState()
+
+    if signal > 0 then
+        local signalBlink = ( CurTime() % self.TurnSignalSpeed ) > self.TurnSignalSpeed * 0.5
+
+        if self.lastSignalBlink ~= signalBlink then
+            self.lastSignalBlink = signalBlink
+
+            if signalBlink and self.TurnSignalTickOnSound ~= "" then
+                self:EmitSound( self.TurnSignalTickOnSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+
+            elseif not signalBlink and self.TurnSignalTickOffSound ~= "" then
+                self:EmitSound( self.TurnSignalTickOffSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+            end
+        end
+    end
+
     if not self:IsEngineOn() then return end
 
     if self:GetGear() == -1 and self.ReverseSound ~= "" then

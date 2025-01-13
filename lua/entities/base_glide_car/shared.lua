@@ -160,6 +160,11 @@ if CLIENT then
     ENT.InternalGearSwitchSound = "Glide.GearSwitch.Internal"
     ENT.HornSound = "glide/horns/car_horn_med_2.wav"
 
+    ENT.TurnSignalPitch = 90
+    ENT.TurnSignalVolume = 0.75
+    ENT.TurnSignalTickOnSound = "glide/headlights_on.wav"
+    ENT.TurnSignalTickOffSound = "glide/headlights_off.wav"
+
     ENT.ReverseSound = ""
     ENT.BrakeReleaseSound = ""
     ENT.BrakeSqueakSound = ""
