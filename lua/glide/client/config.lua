@@ -578,6 +578,9 @@ function Config:OpenFrame()
     CreateBinderButton( panelKeyboard, L"input.lean_forward", "lean_forward", landBinds.lean_forward, OnChangeLandBind )
     CreateBinderButton( panelKeyboard, L"input.lean_back", "lean_back", landBinds.lean_back, OnChangeLandBind )
 
+    CreateBinderButton( panelKeyboard, L"input.signal_left", "signal_left", landBinds.signal_left, OnChangeLandBind )
+    CreateBinderButton( panelKeyboard, L"input.signal_right", "signal_right", landBinds.signal_right, OnChangeLandBind )
+
     theme:CreateHeader( panelKeyboard, L"input.manual_shift" )
     theme:CreateToggleButton( panelKeyboard, L"input.manual_shift", self.manualGearShifting, function( value )
         self.manualGearShifting = value

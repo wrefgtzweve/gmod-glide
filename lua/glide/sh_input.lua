@@ -32,6 +32,9 @@ InputCategories["land_controls"] = {
     ["lean_forward"] = KEY_UP,
     ["lean_back"] = KEY_DOWN,
 
+    ["signal_left"] = KEY_LEFT,
+    ["signal_right"] = KEY_RIGHT,
+
     ["shift_up"] = KEY_F,
     ["shift_down"] = KEY_G,
     ["shift_neutral"] = KEY_N
