@@ -195,6 +195,7 @@ function SWEP:PrimaryAttack()
         missile:SetupMissile( user, user )
         missile.lifeTime = CurTime() + 10
         missile.turnRate = 200
+        missile.damage = 115
 
         local target = self:GetLockTarget()
 
