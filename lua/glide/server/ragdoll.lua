@@ -170,8 +170,6 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
         return
     end
 
-    if ply.GlideRagdoll then return end
-
     -- Create ragdoll
     local ragdoll = ents.Create( "prop_ragdoll" )
     if not IsValid( ragdoll ) then return end
@@ -391,8 +389,8 @@ hook.Add( "CLoadoutCanGiveWeapons", "Glide.BlockRagdollLoadout", function( ply )
     if ply.GlideBlockLoadout then return false end
 end )
 
-hook.Add( "KeyPress", "Glide.LeaveRagdoll", function( ply )
-    if ply.GlideRagdoll and CurTime() > ply.GlideRagdollTimeout then
+hook.Add( "KeyPress", "Glide.LeaveRagdoll", function( ply, key )
+    if ply.GlideRagdoll and CurTime() > ply.GlideRagdollTimeout and key ~= IN_USE then
         Glide.UnRagdollPlayer( ply )
     end
 end )

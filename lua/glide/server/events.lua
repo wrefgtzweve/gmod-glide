@@ -2,6 +2,7 @@ local IsValid = IsValid
 
 hook.Add( "CanPlayerEnterVehicle", "Glide.CheckVehicleLock", function( ply, seat )
     if not IsValid( seat ) then return end
+    if ply.GlideRagdoll then return false end
 
     -- Make sure this seat was created by Glide
     local seatIndex = seat.GlideSeatIndex
