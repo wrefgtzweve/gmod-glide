@@ -59,7 +59,7 @@ local IsValid = IsValid
 function ENT:GetWheelSpin( index )
     local wheel = self.wheels and self.wheels[index]
 
-    if IsValid( wheel ) then
+    if IsValid( wheel ) and wheel.GetLastSpin then
         return wheel:GetLastSpin()
     end
 
