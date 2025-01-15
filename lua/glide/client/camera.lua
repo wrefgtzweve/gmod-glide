@@ -122,15 +122,27 @@ function Camera:IsFixed()
 end
 
 function Camera:SetFirstPerson( enable )
+    local angles = self.angles
+    local wasFixed = self:IsFixed()
+
     self.isInFirstPerson = enable
     self.centerStrength = 0
     self.lastMouseMoveTime = 0
 
     local muffleSound = self.isInFirstPerson
+    local vehicle = self.vehicle
 
-    if IsValid( self.vehicle ) then
-        self.vehicle.isLocalPlayerInFirstPerson = enable
-        muffleSound = muffleSound and self.vehicle:AllowFirstPersonMuffledSound( self.seatIndex )
+    if IsValid( vehicle ) then
+        vehicle.isLocalPlayerInFirstPerson = enable
+        muffleSound = muffleSound and vehicle:AllowFirstPersonMuffledSound( self.seatIndex )
+
+        if self:IsFixed() ~= wasFixed then
+            if wasFixed then
+                self.angles = vehicle:LocalToWorldAngles( angles )
+            else
+                self.angles = vehicle:WorldToLocalAngles( angles )
+            end
+        end
     end
 
     if IsValid( self.user ) then
