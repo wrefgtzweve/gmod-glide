@@ -291,8 +291,8 @@ do
         local signal = self:GetTurnSignalState()
         local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
-        lightState.signal_left = signal == 1
-        lightState.signal_right = signal == 2
+        lightState.signal_left = signal == 1 or signal == 3
+        lightState.signal_right = signal == 2 or signal == 3
 
         local myPos = self:GetPos()
         local pos, dir, ltype, enable
@@ -310,10 +310,10 @@ do
 
             -- Allow other types of light to blink with turn signals, if "signal" is set.
             if l.signal and signal > 0 then
-                if l.signal == "left" and signal == 1 then
+                if l.signal == "left" and lightState.signal_left then
                     enable = signalBlink
 
-                elseif l.signal == "right" and signal == 2 then
+                elseif l.signal == "right" and lightState.signal_right then
                     enable = signalBlink
                 end
             end

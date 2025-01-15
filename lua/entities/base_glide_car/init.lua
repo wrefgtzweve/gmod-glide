@@ -235,10 +235,24 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
         self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
 
     elseif action == "signal_left" then
-        self:ChangeTurnSignalState( self:GetTurnSignalState() == 1 and 0 or 1 )
+        -- If the driver is also holding "signal_right"
+        if self:GetInputBool( 1, "signal_right" ) then
+            -- Toggle hazard lights
+            self:ChangeTurnSignalState( self:GetTurnSignalState() == 3 and 0 or 3 )
+        else
+            -- Toggle left turn signal
+            self:ChangeTurnSignalState( self:GetTurnSignalState() == 1 and 0 or 1 )
+        end
 
     elseif action == "signal_right" then
-        self:ChangeTurnSignalState( self:GetTurnSignalState() == 2 and 0 or 2 )
+        -- If the driver is also holding "signal_left"
+        if self:GetInputBool( 1, "signal_left" ) then
+            -- Toggle hazard lights
+            self:ChangeTurnSignalState( self:GetTurnSignalState() == 3 and 0 or 3 )
+        else
+            -- Toggle right turn signal
+            self:ChangeTurnSignalState( self:GetTurnSignalState() == 2 and 0 or 2 )
+        end
 
     elseif action == "reduce_throttle" then
         self.reducedThrottle = not self.reducedThrottle
@@ -292,7 +306,7 @@ function ENT:ChangeHeadlightState( state, dontPlaySound )
 end
 
 function ENT:ChangeTurnSignalState( state, dontPlaySound )
-    state = math.Clamp( math.floor( state ), 0, 2 )
+    state = math.Clamp( math.floor( state ), 0, 3 )
     self:SetTurnSignalState( state )
 
     if dontPlaySound then return end
@@ -323,8 +337,8 @@ do
         local signal = self:GetTurnSignalState()
         local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
-        lightState.signal_left = signal == 1
-        lightState.signal_right = signal == 2
+        lightState.signal_left = signal == 1 or signal == 3
+        lightState.signal_right = signal == 2 or signal == 3
 
         local enable
 
@@ -338,10 +352,10 @@ do
 
             -- Allow other types of light to blink with turn signals, if "signal" is set.
             if l.signal and signal > 0 then
-                if l.signal == "left" and signal == 1 then
+                if l.signal == "left" and lightState.signal_left then
                     enable = signalBlink
 
-                elseif l.signal == "right" and signal == 2 then
+                elseif l.signal == "right" and lightState.signal_right then
                     enable = signalBlink
                 end
             end
@@ -362,7 +376,7 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
     inputs[#inputs + 1] = { "Headlights", "NORMAL", "0: Off\n1: Low beams\n2: High beams" }
     inputs[#inputs + 1] = { "Horn", "NORMAL", "Set to 1 to sound the horn" }
-    inputs[#inputs + 1] = { "TurnSignal", "NORMAL", "0: Off\n1: Left-turn signal\n2: Right-turn signal" }
+    inputs[#inputs + 1] = { "TurnSignal", "NORMAL", "0: Off\n1: Left-turn signal\n2: Right-turn signal\n3: Hazard lights" }
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
