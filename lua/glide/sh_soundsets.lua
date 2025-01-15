@@ -308,6 +308,18 @@ Glide.AddSoundSet( "Glide.Collision.GibHard", 70, 80, 120, {
     "vehicles/v8/vehicle_impact_heavy4.wav"
 } )
 
+----- Siren sounds
+
+-- These stereo sounds are spatialized with the ")" flag.
+-- https://developer.valvesoftware.com/wiki/Soundscripts#Spatial_Stereo
+Glide.AddSoundSet( "Glide.Wail.Interrupt", 90, 95, 105, {
+    ")glide/alarms/wail_interrupt_1.wav",
+    ")glide/alarms/wail_interrupt_2.wav",
+    ")glide/alarms/wail_interrupt_3.wav",
+    ")glide/alarms/wail_interrupt_4.wav",
+    ")glide/alarms/wail_interrupt_5.wav"
+} )
+
 ----- Helicopter rotor sounds
 
 Glide.AddSoundSet( "Glide.Rotor.Collision", 80, 90, 95, {
