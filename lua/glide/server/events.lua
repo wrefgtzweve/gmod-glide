@@ -214,6 +214,30 @@ hook.Add( "PreCleanupMap", "Glide.ClearEntityPersistFlag", function()
     end
 end )
 
+do
+    -- Make sure some physics performance settings are
+    -- at least equal to or higher than defaults, listed here:
+    -- https://wiki.facepunch.com/gmod/Structures/PhysEnvPerformanceSettings
+    local minimumValues = {
+        MaxVelocity = 4000,
+        MaxAngularVelocity = 7200,
+        MinFrictionMass = 10,
+        MaxFrictionMass = 2500
+    }
+
+    hook.Add( "InitPostEntity", "Glide.CheckPhysicsSettings", function()
+        local settings = physenv.GetPerformanceSettings()
+
+        for k, min in pairs( minimumValues ) do
+            if settings[k] < min then
+                settings[k] = min
+            end
+        end
+
+        physenv.SetPerformanceSettings( settings )
+    end )
+end
+
 if not game.SinglePlayer() then return end
 
 local function ResetVehicle( vehicle )

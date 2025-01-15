@@ -1,11 +1,18 @@
 do
     -- Code provided by Wiremod.
-    local minForce, maxForce = -100000, 100000
+    local minForce, maxForce = -400000000, 400000000
 
     -- Timer resolves issue with table not existing until next tick on Linux.
     hook.Add( "InitPostEntity", "Glide.GetForceLimit", function()
         timer.Simple( 0, function()
-            maxForce = 100000 * physenv.GetPerformanceSettings().MaxVelocity
+            local maxVelocity = physenv.GetPerformanceSettings().MaxVelocity
+
+            -- Ensure at least the default MaxVelocity value
+            if maxVelocity < 4000 then
+                maxVelocity = 4000
+            end
+
+            maxForce = 100000 * maxVelocity
             minForce = -maxForce
         end )
     end )
