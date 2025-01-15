@@ -50,6 +50,7 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     inputs[#inputs + 1] = { "Fire", "NORMAL", "When greater than 0, fires the current weapon,\nif this helicopter has one" }
     inputs[#inputs + 1] = { "WeaponIndex", "NORMAL", "If this vehicle has weapons, this will set which one to use.\nStarts at index 1. Check the 'WeaponCount' output to see the max. value." }
 
+    outputs[#outputs + 1] = { "EngineState", "NORMAL", "0: Off\n1: Running" }
     outputs[#outputs + 1] = { "Power", "NORMAL", "Current engine power (between 0.0 and 2.0)" }
     outputs[#outputs + 1] = { "Altitude", "NORMAL", "Current vehicle altitude" }
     outputs[#outputs + 1] = { "WeaponCount", "NORMAL", "Number of weapon slots this vehicle has" }
@@ -245,6 +246,8 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     end
 end
 
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
+
 --- Implement this base class function.
 function ENT:OnPostThink( dt, selfTbl )
     -- Find the altitude
@@ -257,6 +260,10 @@ function ENT:OnPostThink( dt, selfTbl )
 
     -- Update rotors
     self:RotorsThink()
+
+    if TriggerOutput then
+        TriggerOutput( self, "EngineState", self:GetEngineState() )
+    end
 end
 
 local IsValid = IsValid
@@ -339,7 +346,6 @@ end
 
 local WORLD_UP = Vector( 0, 0, 1 )
 local TraceLine = util.TraceLine
-local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 function ENT:UpdateAltitude()
     local mins = self:OBBMins()
