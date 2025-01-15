@@ -162,8 +162,8 @@ if CLIENT then
 
     ENT.TurnSignalPitch = 90
     ENT.TurnSignalVolume = 0.75
-    ENT.TurnSignalTickOnSound = "glide/headlights_on.wav"
-    ENT.TurnSignalTickOffSound = "glide/headlights_off.wav"
+    ENT.TurnSignalTickOnSound = ")glide/headlights_on.wav"
+    ENT.TurnSignalTickOffSound = ")glide/headlights_off.wav"
 
     ENT.ReverseSound = ""
     ENT.BrakeReleaseSound = ""
