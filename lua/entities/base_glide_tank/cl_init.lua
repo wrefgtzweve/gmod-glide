@@ -238,7 +238,6 @@ end
 
 do
     local Camera = Glide.Camera
-    local Config = Glide.Config
     local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
 
     local SetColor = surface.SetDrawColor
@@ -263,7 +262,7 @@ do
 
         local ang = 0
 
-        if Config.relativeToVehicle then
+        if Camera:IsFixed() then
             ang = -Camera.angles[2]
         else
             ang = -self:WorldToLocalAngles( Camera.angles )[2]

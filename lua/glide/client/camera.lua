@@ -107,6 +107,20 @@ function Camera:Deactivate()
     self.seat = nil
 end
 
+function Camera:IsFixed()
+    local fixedMode = Config.fixedCameraMode
+    if fixedMode < 1 then return false end
+
+    -- Fixed on first person only
+    if fixedMode == 1 and self.isInFirstPerson then return true end
+
+    -- Fixed on third person only
+    if fixedMode == 2 and not self.isInFirstPerson then return true end
+
+    -- Fixed on both first and third person
+    return fixedMode > 2
+end
+
 function Camera:SetFirstPerson( enable )
     self.isInFirstPerson = enable
     self.centerStrength = 0
@@ -236,7 +250,7 @@ function Camera:Think()
     self.mode = mode
     self:DoEffects( t, dt, speed )
 
-    if Config.relativeToVehicle then
+    if self:IsFixed() then
         return
     end
 
@@ -308,7 +322,7 @@ function Camera:CalcView()
     local user = self.user
     local angles = self.angles
 
-    if Config.relativeToVehicle then
+    if self:IsFixed() then
         angles[3] = 0
         angles = vehicle:LocalToWorldAngles( angles )
     end

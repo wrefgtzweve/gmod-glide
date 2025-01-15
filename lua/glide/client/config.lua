@@ -23,7 +23,7 @@ function Config:Reset()
     self.cameraFOVInternal = GetConVar( "fov_desired" ):GetFloat()
     self.cameraFOVExternal = GetConVar( "fov_desired" ):GetFloat()
 
-    self.relativeToVehicle = false
+    self.fixedCameraMode = 0
     self.enableAutoCenter = true
     self.autoCenterDelay = 1.5
 
@@ -106,7 +106,7 @@ function Config:Save( immediate )
         cameraFOVInternal = self.cameraFOVInternal,
         cameraFOVExternal = self.cameraFOVExternal,
 
-        relativeToVehicle = self.relativeToVehicle,
+        fixedCameraMode = self.fixedCameraMode,
         enableAutoCenter = self.enableAutoCenter,
         autoCenterDelay = self.autoCenterDelay,
 
@@ -192,8 +192,8 @@ function Config:Load()
     SetNumber( self, "cameraHeight", data.cameraHeight, 0.25, 2, self.cameraHeight )
     SetNumber( self, "cameraFOVInternal", data.cameraFOVInternal, 30, 120, self.cameraFOVInternal )
     SetNumber( self, "cameraFOVExternal", data.cameraFOVExternal, 30, 120, self.cameraFOVExternal )
+    SetNumber( self, "fixedCameraMode", data.fixedCameraMode, 0, 3, self.fixedCameraMode )
 
-    LoadBool( "relativeToVehicle", false )
     LoadBool( "enableAutoCenter", true )
     SetNumber( self, "autoCenterDelay", data.autoCenterDelay, 0.1, 5, self.autoCenterDelay )
 
@@ -400,7 +400,7 @@ function Config:OpenFrame()
     local SetupAutoCenterSettings = function()
         if autoCenterButton then autoCenterButton:Remove() end
         if autoCenterSlider then autoCenterSlider:Remove() end
-        if self.relativeToVehicle then return end
+        if self.fixedCameraMode > 2 then return end
 
         autoCenterButton = theme:CreateToggleButton( panelCamera, L"camera.autocenter", self.enableAutoCenter, function( value )
             self.enableAutoCenter = value
@@ -413,8 +413,15 @@ function Config:OpenFrame()
         end )
     end
 
-    theme:CreateToggleButton( panelCamera, L"camera.relative", self.relativeToVehicle, function( value )
-        self.relativeToVehicle = value
+    local fixedCameraOptions = {
+        L"camera.fixed.disabled",
+        L"camera.fixed.firstperson",
+        L"camera.fixed.thirdperson",
+        L"camera.fixed.both"
+    }
+
+    theme:CreateComboBox( panelCamera, L"camera.fixed", fixedCameraOptions, self.fixedCameraMode + 1, function( value )
+        self.fixedCameraMode = value - 1
         self:Save()
         SetupAutoCenterSettings()
     end )
