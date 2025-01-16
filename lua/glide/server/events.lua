@@ -216,11 +216,10 @@ end )
 
 do
     -- Make sure some physics performance settings are
-    -- at least equal to or higher than defaults, listed here:
-    -- https://wiki.facepunch.com/gmod/Structures/PhysEnvPerformanceSettings
+    -- at least equal to or higher than these values.
     local minimumValues = {
-        MaxVelocity = 4000,
-        MaxAngularVelocity = 7200,
+        MaxVelocity = 2000,
+        MaxAngularVelocity = 3636,
         MinFrictionMass = 10,
         MaxFrictionMass = 2500
     }
