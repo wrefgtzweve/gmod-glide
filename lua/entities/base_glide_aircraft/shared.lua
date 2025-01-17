@@ -5,7 +5,7 @@ ENT.PrintName = "Glide Aircraft"
 ENT.Author = "StyledStrike"
 ENT.AdminOnly = false
 ENT.AutomaticFrameAdvance = true
-ENT.VJTag_ID_Aircraft = true
+ENT.VJ_ID_Aircraft = true
 
 DEFINE_BASECLASS( "base_glide" )
 

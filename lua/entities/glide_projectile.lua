@@ -6,7 +6,7 @@ ENT.PrintName = "Projectile"
 
 ENT.Spawnable = false
 ENT.AdminOnly = false
-ENT.VJTag_ID_Danger = true
+ENT.VJ_ID_Danger = true
 
 ENT.PhysgunDisabled = true
 ENT.DoNotDuplicate = true
