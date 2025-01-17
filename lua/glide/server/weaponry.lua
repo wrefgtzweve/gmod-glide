@@ -282,6 +282,10 @@ local function IsLockableEntity( ent, skipParentCheck )
         return true
     end
 
+    if ent.IsVJBaseSNPC_TankChassis then
+        return true
+    end
+
     if ent.BaseClass and WHITELIST[ent.BaseClass.ClassName] then
         return true
     end
