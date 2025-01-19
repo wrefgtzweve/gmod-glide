@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/policenew_sign_1"
+	"$allowdiffusemodulation" "false"
+}

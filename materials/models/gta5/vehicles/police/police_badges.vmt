@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta5/vehicles/police/police_badges"
+	"$bumpmap" "models/gta5/vehicles/police/police_badges_n"
+	"$nodecal" "1"
+	"$translucent" "1"
+	"$allowdiffusemodulation" "false"
+}
