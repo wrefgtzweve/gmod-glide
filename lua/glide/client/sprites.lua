@@ -1,3 +1,39 @@
+local lights = {}
+local lightCount = 0
+
+function Glide.DrawLight( pos, color, size )
+    lightCount = lightCount + 1
+    lights[lightCount] = { pos, color.r, color.g, color.b, size or 70 }
+end
+
+local CurTime = CurTime
+local DynamicLight = DynamicLight
+
+hook.Add( "Think", "Glide.DrawLights", function()
+    if lightCount < 1 then return end
+
+    local t = CurTime()
+    local data, light
+
+    for i = 1, lightCount do
+        data = lights[i]
+        light = DynamicLight( i )
+
+        if light then
+            light.pos = data[1]
+            light.r = data[2]
+            light.g = data[3]
+            light.b = data[4]
+            light.brightness = 5
+            light.decay = 5000
+            light.size = data[5]
+            light.dietime = t + 0.5
+        end
+    end
+
+    lightCount = 0
+end )
+
 local sprites = {}
 local spriteCount = 0
 

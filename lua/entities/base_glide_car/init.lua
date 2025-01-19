@@ -234,6 +234,9 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "headlights" then
         self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
 
+    elseif action == "siren" then
+        self:ChangeSirenState( self:GetSirenState() + 1 )
+
     elseif action == "signal_left" then
         -- If the driver is also holding "signal_right"
         if self:GetInputBool( 1, "signal_right" ) then
@@ -303,6 +306,17 @@ function ENT:ChangeHeadlightState( state, dontPlaySound )
     local soundEnt = IsValid( driver ) and driver or self
 
     soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 100, 1.0 )
+end
+
+function ENT:ChangeSirenState( state )
+    if not self.CanSwitchSiren then return end
+
+    state = math.floor( state )
+
+    if state < 0 then state = 2 end
+    if state > 2 then state = 0 end
+
+    self:SetSirenState( state )
 end
 
 function ENT:ChangeTurnSignalState( state, dontPlaySound )

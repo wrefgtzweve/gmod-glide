@@ -51,6 +51,8 @@ Glide.MOUSE_FLY_MODE = {
 -- Default color for vehicle lights
 Glide.DEFAULT_HEADLIGHT_COLOR = Color( 255, 231, 176 )
 Glide.DEFAULT_TURN_SIGNAL_COLOR = Color( 255, 164, 45 )
+Glide.DEFAULT_SIREN_COLOR_A = Color( 255, 0, 0 )
+Glide.DEFAULT_SIREN_COLOR_B = Color( 0, 0, 255 )
 
 if SERVER then
     -- Surface grip multipliers for wheels

@@ -6,6 +6,7 @@ ENT.PrintName = "Police Cruiser"
 
 ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/police/chassis.mdl"
+ENT.CanSwitchSiren = true
 
 if CLIENT then
     ENT.CameraOffset = Vector( -270, 0, 58 )
@@ -51,6 +52,40 @@ if CLIENT then
         { type = "signal_right", offset = Vector( 108, -38, 3.5 ), dir = Vector( 0.7, -0.5, 0 ), color = color_white }
     }
 
+    ENT.SirenLights = {
+        -- Top-right (blue) lights
+        { offset = Vector( -6, -21, 41 ), time = 0, color = Glide.DEFAULT_SIREN_COLOR_B },
+        { offset = Vector( -6, -21, 41 ), time = 0.25, color = Glide.DEFAULT_SIREN_COLOR_B },
+        { offset = Vector( -6, -11, 41 ), time = 0, color = Glide.DEFAULT_SIREN_COLOR_B },
+        { offset = Vector( -6, -11, 41 ), time = 0.25, color = Glide.DEFAULT_SIREN_COLOR_B },
+
+        -- Top-left (red) lights
+        { offset = Vector( -6, 21, 41 ), time = 0.5, color = Glide.DEFAULT_SIREN_COLOR_A },
+        { offset = Vector( -6, 21, 41 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A },
+        { offset = Vector( -6, 11, 41 ), time = 0.5, color = Glide.DEFAULT_SIREN_COLOR_A },
+        { offset = Vector( -6, 11, 41 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A },
+
+        -- Top bodygroups
+        { bodygroup = 30, time = 0, duration = 0.5 },
+        { bodygroup = 31, time = 0.5, duration = 0.5 },
+        { bodygroup = 32, time = 0, duration = 0.5 },
+        { bodygroup = 27, time = 0.5, duration = 0.5 },
+        { bodygroup = 28, time = 0, duration = 0.5 },
+        { bodygroup = 29, time = 0.5, duration = 0.5 },
+
+        -- Front bodygroups
+        { bodygroup = 26, time = 0, duration = 0.5 },
+        { bodygroup = 25, time = 0.5, duration = 0.5 },
+
+        -- Front-right sprites
+        { offset = Vector( 114, -10, 5 ), dir = Vector( 1, 0, 0 ), time = 0, color = Glide.DEFAULT_SIREN_COLOR_B, lightRadius = 0 },
+        { offset = Vector( 114, -10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.25, color = Glide.DEFAULT_SIREN_COLOR_B, lightRadius = 0 },
+
+        -- Front-left sprites
+        { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.5, color = Glide.DEFAULT_SIREN_COLOR_A, lightRadius = 0 },
+        { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A, lightRadius = 0 }
+    }
+
     function ENT:OnCreateEngineStream( stream )
         stream:LoadPreset( "police_cruiser" )
     end
@@ -79,6 +114,9 @@ if SERVER then
     end
 
     function ENT:CreateFeatures()
+        self:SetTransmissionEfficiency( 0.75 )
+        self:SetBrakePower( 2500 )
+
         self:CreateSeat( Vector( -7, 20, -13 ), Angle( 0, 270, -5 ), Vector( 40, 80, 0 ), true )
         self:CreateSeat( Vector( 12, -20, -12 ), Angle( 0, 270, 15 ), Vector( -40, -80, 0 ), true )
         self:CreateSeat( Vector( -32, 20, -12 ), Angle( 0, 270, 15 ), Vector( -40, -80, 0 ), true )

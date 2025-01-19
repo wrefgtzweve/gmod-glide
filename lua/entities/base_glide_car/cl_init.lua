@@ -163,6 +163,17 @@ function ENT:OnUpdateSounds()
         end
     end
 
+    if self.lastSirenEnableTime and CurTime() - self.lastSirenEnableTime > 0.25 then
+        if not sounds.siren then
+            local snd = self:CreateLoopingSound( "siren", self.SirenLoopSound, 90, self )
+            snd:PlayEx( self.SirenVolume, 100 )
+        end
+
+    elseif sounds.siren then
+        sounds.siren:Stop()
+        sounds.siren = nil
+    end
+
     if not self:IsEngineOn() then return end
 
     if self:GetGear() == -1 and self.ReverseSound ~= "" then
@@ -248,27 +259,11 @@ function ENT:OnUpdateSounds()
 end
 
 local CurTime = CurTime
-
+local DrawLight = Glide.DrawLight
+local DrawLightSprite = Glide.DrawLightSprite
 local COLOR_HEADLIGHT = Color( 255, 255, 255 )
 
 do
-    local DrawLightSprite = Glide.DrawLightSprite
-    local DynamicLight = DynamicLight
-
-    local function DrawLight( id, pos, color, size )
-        local dl = DynamicLight( id )
-        if dl then
-            dl.pos = pos
-            dl.r = color.r
-            dl.g = color.g
-            dl.b = color.b
-            dl.brightness = 5
-            dl.decay = 1000
-            dl.size = size or 70
-            dl.dietime = CurTime() + 0.5
-        end
-    end
-
     local lightState = {
         brake = false,
         reverse = false,
@@ -323,14 +318,15 @@ do
 
             elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
                 DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
+                DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius )
 
             elseif enable and ltype == "brake" then
                 DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
-                DrawLight( self:EntIndex(), pos + dir * 10, COLOR_BRAKE, l.lightRadius )
+                DrawLight( pos + dir * 10, COLOR_BRAKE, l.lightRadius )
 
             elseif enable and ltype == "reverse" then
                 DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
-                DrawLight( self:EntIndex(), pos + dir * 10, COLOR_REV, l.lightRadius )
+                DrawLight( pos + dir * 10, COLOR_REV, l.lightRadius )
             end
         end
     end
@@ -398,6 +394,64 @@ function ENT:OnUpdateMisc()
             l:Update()
         end
     end
+
+    -- Siren lights/bodygroups
+    local siren = self:GetSirenState()
+
+    if self.lastSirenState ~= siren then
+        self.lastSirenState = siren
+
+        if siren > 1 then
+            self.lastSirenEnableTime = CurTime()
+
+        elseif self.lastSirenEnableTime then
+            if CurTime() - self.lastSirenEnableTime < 0.25 then
+                Glide.PlaySoundSet( self.SirenInterruptSound, self, self.SirenVolume )
+            end
+
+            self.lastSirenEnableTime = nil
+        end
+
+        -- Set bodygroups to default
+        for _, v in ipairs( self.SirenLights ) do
+            if v.bodygroup then
+                self:SetBodygroup( v.bodygroup, 0 )
+            end
+        end
+    end
+
+    if siren < 1 then return end
+
+    local myPos = self:GetPos()
+    local t = ( CurTime() % self.SirenCycle ) / self.SirenCycle
+    local on, pos, dir, radius
+
+    local bodygroupState = {}
+
+    for _, v in ipairs( self.SirenLights ) do
+        on = t > v.time and t < v.time + ( v.duration or 0.125 )
+
+        if on and v.offset then
+            pos = self:LocalToWorld( v.offset )
+            radius = v.lightRadius or 150
+
+            if radius > 0 then
+                DrawLight( pos, v.color or color_white, radius )
+            end
+
+            dir = v.dir and self:LocalToWorld( v.dir ) - myPos or nil
+            DrawLightSprite( pos, dir, v.size or 30, v.color or color_white )
+        end
+
+        -- Merge multiple bodygroup entries so that any one of them can "enable" a bodygroup
+        if v.bodygroup then
+            bodygroupState[v.bodygroup] = bodygroupState[v.bodygroup] or on
+        end
+    end
+
+    for id, state in pairs( bodygroupState ) do
+        self:SetBodygroup( id, state and 1 or 0 )
+    end
 end
 
 function ENT:CreateHeadlight( offset, angles, color )
@@ -438,6 +492,7 @@ function ENT:RemoveHeadlights()
 end
 
 local DEFAULT_EXHAUST_ANG = Angle()
+local EXHAUST_COLOR = Color( 255, 190, 100 )
 
 function ENT:DoExhaustPop()
     if self:GetEngineHealth() < 0.3 then
@@ -450,7 +505,7 @@ function ENT:DoExhaustPop()
     local eff = EffectData()
     eff:SetEntity( self )
 
-    for i, v in ipairs( self.ExhaustOffsets ) do
+    for _, v in ipairs( self.ExhaustOffsets ) do
         local pos = self:LocalToWorld( v.pos )
         local dir = -self:LocalToWorldAngles( v.ang or DEFAULT_EXHAUST_ANG ):Forward()
 
@@ -461,17 +516,7 @@ function ENT:DoExhaustPop()
         eff:SetColor( 0 )
         util.Effect( "glide_tracer", eff )
 
-        local dlight = DynamicLight( self:EntIndex() + i )
-        if dlight then
-            dlight.pos = pos + dir * 50
-            dlight.r = 255
-            dlight.g = 190
-            dlight.b = 100
-            dlight.brightness = 5
-            dlight.decay = 1000
-            dlight.size = 80
-            dlight.dietime = CurTime() + 0.5
-        end
+        DrawLight( pos + dir * 50, EXHAUST_COLOR, 80 )
     end
 end
 
