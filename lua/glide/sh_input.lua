@@ -25,6 +25,7 @@ InputCategories["land_controls"] = {
     ["handbrake"] = KEY_SPACE,
 
     ["horn"] = KEY_R,
+    ["siren"] = KEY_L,
     ["headlights"] = KEY_H,
     ["reduce_throttle"] = KEY_LSHIFT,
     ["toggle_engine"] = KEY_I,
