@@ -113,7 +113,16 @@ if SERVER then
         return Color( 0, 0, 0, 255 )
     end
 
+    function ENT:InitializePhysics()
+        self:SetSolid( SOLID_VPHYSICS )
+        self:SetMoveType( MOVETYPE_VPHYSICS )
+        self:PhysicsInit( SOLID_VPHYSICS, Vector( 5, 0, -15 ) )
+    end
+
     function ENT:CreateFeatures()
+        self:SetCounterSteer( 0.4 )
+        self:SetDifferentialRatio( 2 )
+        self:SetPowerDistribution( -0.7 )
         self:SetTransmissionEfficiency( 0.75 )
         self:SetBrakePower( 2500 )
 
