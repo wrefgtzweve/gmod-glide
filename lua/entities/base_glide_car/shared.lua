@@ -15,6 +15,9 @@ ENT.UneditableNWVars = {}
 -- How long is the on/off cycle for turn signals?
 ENT.TurnSignalCycle = 0.8
 
+-- Should this vehicle use the siren system?
+ENT.CanSwitchSiren = false
+
 DEFINE_BASECLASS( "base_glide" )
 
 --[[
@@ -38,6 +41,7 @@ function ENT:SetupDataTables()
 
     self:NetworkVar( "Int", "HeadlightState" )
     self:NetworkVar( "Int", "TurnSignalState" )
+    self:NetworkVar( "Int", "SirenState" )
     self:NetworkVar( "Int", "Gear" )
 
     self:NetworkVar( "Float", "Steering" )
@@ -146,8 +150,8 @@ if CLIENT then
     ENT.CameraAngleOffset = Angle( 4, 0, 0 )
 
     -- Setup how far away players can hear sounds and update misc. features
-    ENT.MaxSoundDistance = 3000
-    ENT.MaxMiscDistance = 4000
+    ENT.MaxSoundDistance = 4000
+    ENT.MaxMiscDistance = 5000
 
     -- Sounds
     ENT.StartSound = "Glide.Engine.CarStart"
@@ -164,6 +168,10 @@ if CLIENT then
     ENT.TurnSignalVolume = 0.75
     ENT.TurnSignalTickOnSound = ")glide/headlights_on.wav"
     ENT.TurnSignalTickOffSound = ")glide/headlights_off.wav"
+
+    ENT.SirenLoopSound = ")glide/alarms/police_siren_3.wav"
+    ENT.SirenInterruptSound = "Glide.Wail.Interrupt"
+    ENT.SirenVolume = 0.8
 
     ENT.ReverseSound = ""
     ENT.BrakeReleaseSound = ""
@@ -184,6 +192,17 @@ if CLIENT then
 
     -- Positions and colors for headlights
     ENT.Headlights = {}
+
+    -- How long is the on/off cycle for sirens?
+    ENT.SirenCycle = 0.8
+
+    -- Offsets and timings for strobe lights.
+    -- This should contain a table of tables, where each looks like this:
+    --
+    -- { offset = Vector( 0, 0, 0 ), time = 0 }, -- Blinks at the start of the cycle
+    -- { offset = Vector( 0, 0, 0 ), time = 0.5, duration = 0.5 }, -- Blinks in the middle of the cycle, for half of the cycle's duration
+    -- { bodygroup = 123 = time = 0 } -- If given a `bodygroup` ID, toggle that too. You can also omit `offset` to not draw a sprite.
+    ENT.SirenLights = {}
 
     -- Children classes should override this
     -- function to add engine sounds to the stream.

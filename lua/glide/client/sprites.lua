@@ -25,7 +25,7 @@ hook.Add( "Think", "Glide.DrawLights", function()
             light.g = data[3]
             light.b = data[4]
             light.brightness = 5
-            light.decay = 1000
+            light.decay = 5000
             light.size = data[5]
             light.dietime = t + 0.5
         end

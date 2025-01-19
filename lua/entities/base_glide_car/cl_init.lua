@@ -163,6 +163,17 @@ function ENT:OnUpdateSounds()
         end
     end
 
+    if self.lastSirenEnableTime and CurTime() - self.lastSirenEnableTime > 0.25 then
+        if not sounds.siren then
+            local snd = self:CreateLoopingSound( "siren", self.SirenLoopSound, 90, self )
+            snd:PlayEx( self.SirenVolume, 100 )
+        end
+
+    elseif sounds.siren then
+        sounds.siren:Stop()
+        sounds.siren = nil
+    end
+
     if not self:IsEngineOn() then return end
 
     if self:GetGear() == -1 and self.ReverseSound ~= "" then
@@ -249,11 +260,10 @@ end
 
 local CurTime = CurTime
 local DrawLight = Glide.DrawLight
+local DrawLightSprite = Glide.DrawLightSprite
 local COLOR_HEADLIGHT = Color( 255, 255, 255 )
 
 do
-    local DrawLightSprite = Glide.DrawLightSprite
-
     local lightState = {
         brake = false,
         reverse = false,
@@ -383,6 +393,57 @@ function ENT:OnUpdateMisc()
             l:SetAngles( self:LocalToWorldAngles( data.angles ) )
             l:Update()
         end
+    end
+
+    -- Siren lights/bodygroups
+    local siren = self:GetSirenState()
+
+    if self.lastSirenState ~= siren then
+        self.lastSirenState = siren
+
+        if siren > 1 then
+            self.lastSirenEnableTime = CurTime()
+
+        elseif self.lastSirenEnableTime then
+            if CurTime() - self.lastSirenEnableTime < 0.25 then
+                Glide.PlaySoundSet( self.SirenInterruptSound, self, self.SirenVolume )
+            end
+
+            self.lastSirenEnableTime = nil
+        end
+    end
+
+    if siren < 1 then return end
+
+    local myPos = self:GetPos()
+    local t = ( CurTime() % self.SirenCycle ) / self.SirenCycle
+    local on, pos, dir, radius
+
+    local bodygroupState = {}
+
+    for _, v in ipairs( self.SirenLights ) do
+        on = t > v.time and t < v.time + ( v.duration or 0.125 )
+
+        if on and v.offset then
+            pos = self:LocalToWorld( v.offset )
+            radius = v.lightRadius or 150
+
+            if radius > 0 then
+                DrawLight( pos, v.color or color_white, radius )
+            end
+
+            dir = v.dir and self:LocalToWorld( v.dir ) - myPos or nil
+            DrawLightSprite( pos, dir, v.size or 30, v.color or color_white )
+        end
+
+        -- Merge multiple bodygroup entries so that any one of them can "enable" a bodygroup
+        if v.bodygroup then
+            bodygroupState[v.bodygroup] = bodygroupState[v.bodygroup] or on
+        end
+    end
+
+    for id, state in pairs( bodygroupState ) do
+        self:SetBodygroup( id, state and 1 or 0 )
     end
 end
 
