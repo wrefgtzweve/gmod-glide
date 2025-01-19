@@ -52,28 +52,25 @@ if CLIENT then
         { type = "signal_right", offset = Vector( 108, -38, 3.5 ), dir = Vector( 0.7, -0.5, 0 ), color = color_white }
     }
 
-    local COLOR_RED = Color( 255, 0, 0, 255 )
-    local COLOR_BLUE = Color( 0, 0, 255, 255 )
-
     ENT.SirenLights = {
         -- Top-right (blue) lights
-        { offset = Vector( -6, -21, 41 ), time = 0, color = COLOR_BLUE },
-        { offset = Vector( -6, -21, 41 ), time = 0.25, color = COLOR_BLUE },
-        { offset = Vector( -6, -11, 41 ), time = 0, color = COLOR_BLUE },
-        { offset = Vector( -6, -11, 41 ), time = 0.25, color = COLOR_BLUE },
+        { offset = Vector( -6, -21, 41 ), time = 0, color = Glide.DEFAULT_SIREN_COLOR_B },
+        { offset = Vector( -6, -21, 41 ), time = 0.25, color = Glide.DEFAULT_SIREN_COLOR_B },
+        { offset = Vector( -6, -11, 41 ), time = 0, color = Glide.DEFAULT_SIREN_COLOR_B },
+        { offset = Vector( -6, -11, 41 ), time = 0.25, color = Glide.DEFAULT_SIREN_COLOR_B },
 
         -- Top-left (red) lights
-        { offset = Vector( -6, 21, 41 ), time = 0.5, color = COLOR_RED },
-        { offset = Vector( -6, 21, 41 ), time = 0.75, color = COLOR_RED },
-        { offset = Vector( -6, 11, 41 ), time = 0.5, color = COLOR_RED },
-        { offset = Vector( -6, 11, 41 ), time = 0.75, color = COLOR_RED },
+        { offset = Vector( -6, 21, 41 ), time = 0.5, color = Glide.DEFAULT_SIREN_COLOR_A },
+        { offset = Vector( -6, 21, 41 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A },
+        { offset = Vector( -6, 11, 41 ), time = 0.5, color = Glide.DEFAULT_SIREN_COLOR_A },
+        { offset = Vector( -6, 11, 41 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A },
 
         -- Top bodygroups
         { bodygroup = 30, time = 0, duration = 0.5 },
-        { bodygroup = 31, time = 0, duration = 0.5 },
+        { bodygroup = 31, time = 0.5, duration = 0.5 },
         { bodygroup = 32, time = 0, duration = 0.5 },
         { bodygroup = 27, time = 0.5, duration = 0.5 },
-        { bodygroup = 28, time = 0.5, duration = 0.5 },
+        { bodygroup = 28, time = 0, duration = 0.5 },
         { bodygroup = 29, time = 0.5, duration = 0.5 },
 
         -- Front bodygroups
@@ -81,12 +78,12 @@ if CLIENT then
         { bodygroup = 25, time = 0.5, duration = 0.5 },
 
         -- Front-right sprites
-        { offset = Vector( 114, -10, 5 ), dir = Vector( 1, 0, 0 ), time = 0, color = COLOR_BLUE, lightRadius = 0 },
-        { offset = Vector( 114, -10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.25, color = COLOR_BLUE, lightRadius = 0 },
+        { offset = Vector( 114, -10, 5 ), dir = Vector( 1, 0, 0 ), time = 0, color = Glide.DEFAULT_SIREN_COLOR_B, lightRadius = 0 },
+        { offset = Vector( 114, -10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.25, color = Glide.DEFAULT_SIREN_COLOR_B, lightRadius = 0 },
 
         -- Front-left sprites
-        { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.5, color = COLOR_RED, lightRadius = 0 },
-        { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.75, color = COLOR_RED, lightRadius = 0 }
+        { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.5, color = Glide.DEFAULT_SIREN_COLOR_A, lightRadius = 0 },
+        { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A, lightRadius = 0 }
     }
 
     function ENT:OnCreateEngineStream( stream )
