@@ -411,6 +411,13 @@ function ENT:OnUpdateMisc()
 
             self.lastSirenEnableTime = nil
         end
+
+        -- Set bodygroups to default
+        for _, v in ipairs( self.SirenLights ) do
+            if v.bodygroup then
+                self:SetBodygroup( v.bodygroup, 0 )
+            end
+        end
     end
 
     if siren < 1 then return end
