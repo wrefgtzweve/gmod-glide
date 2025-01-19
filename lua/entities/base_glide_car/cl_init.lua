@@ -248,26 +248,11 @@ function ENT:OnUpdateSounds()
 end
 
 local CurTime = CurTime
-
+local DrawLight = Glide.DrawLight
 local COLOR_HEADLIGHT = Color( 255, 255, 255 )
 
 do
     local DrawLightSprite = Glide.DrawLightSprite
-    local DynamicLight = DynamicLight
-
-    local function DrawLight( id, pos, color, size )
-        local dl = DynamicLight( id )
-        if dl then
-            dl.pos = pos
-            dl.r = color.r
-            dl.g = color.g
-            dl.b = color.b
-            dl.brightness = 5
-            dl.decay = 1000
-            dl.size = size or 70
-            dl.dietime = CurTime() + 0.5
-        end
-    end
 
     local lightState = {
         brake = false,
@@ -323,14 +308,15 @@ do
 
             elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
                 DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
+                DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius )
 
             elseif enable and ltype == "brake" then
                 DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
-                DrawLight( self:EntIndex(), pos + dir * 10, COLOR_BRAKE, l.lightRadius )
+                DrawLight( pos + dir * 10, COLOR_BRAKE, l.lightRadius )
 
             elseif enable and ltype == "reverse" then
                 DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
-                DrawLight( self:EntIndex(), pos + dir * 10, COLOR_REV, l.lightRadius )
+                DrawLight( pos + dir * 10, COLOR_REV, l.lightRadius )
             end
         end
     end
@@ -438,6 +424,7 @@ function ENT:RemoveHeadlights()
 end
 
 local DEFAULT_EXHAUST_ANG = Angle()
+local EXHAUST_COLOR = Color( 255, 190, 100 )
 
 function ENT:DoExhaustPop()
     if self:GetEngineHealth() < 0.3 then
@@ -450,7 +437,7 @@ function ENT:DoExhaustPop()
     local eff = EffectData()
     eff:SetEntity( self )
 
-    for i, v in ipairs( self.ExhaustOffsets ) do
+    for _, v in ipairs( self.ExhaustOffsets ) do
         local pos = self:LocalToWorld( v.pos )
         local dir = -self:LocalToWorldAngles( v.ang or DEFAULT_EXHAUST_ANG ):Forward()
 
@@ -461,17 +448,7 @@ function ENT:DoExhaustPop()
         eff:SetColor( 0 )
         util.Effect( "glide_tracer", eff )
 
-        local dlight = DynamicLight( self:EntIndex() + i )
-        if dlight then
-            dlight.pos = pos + dir * 50
-            dlight.r = 255
-            dlight.g = 190
-            dlight.b = 100
-            dlight.brightness = 5
-            dlight.decay = 1000
-            dlight.size = 80
-            dlight.dietime = CurTime() + 0.5
-        end
+        DrawLight( pos + dir * 50, EXHAUST_COLOR, 80 )
     end
 end
 

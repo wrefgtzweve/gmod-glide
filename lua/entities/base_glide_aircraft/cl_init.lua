@@ -32,23 +32,8 @@ function ENT:OnUpdateParticles()
     end
 end
 
-local DynamicLight = DynamicLight
-
-local function DrawLight( id, pos, color, size )
-    local dl = DynamicLight( id )
-    if dl then
-        dl.pos = pos
-        dl.r = color.r
-        dl.g = color.g
-        dl.b = color.b
-        dl.brightness = 5
-        dl.decay = 1000
-        dl.size = size
-        dl.dietime = CurTime() + 0.05
-    end
-end
-
 local RealTime = RealTime
+local DrawLight = Glide.DrawLight
 local DrawLightSprite = Glide.DrawLightSprite
 
 --- Implement this base class function.
@@ -69,7 +54,7 @@ function ENT:OnUpdateMisc()
             color = self.StrobeLightColors[i]
 
             if self.StrobeLightRadius > 0 then
-                DrawLight( self:EntIndex() + i, pos, color, self.StrobeLightRadius )
+                DrawLight( pos, color, self.StrobeLightRadius )
             end
 
             DrawLightSprite( pos, nil, self.StrobeLightSpriteSize, color )
