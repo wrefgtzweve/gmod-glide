@@ -136,6 +136,8 @@ end
 
 if SERVER then
     ENT.ChassisMass = 400
+    ENT.MaxChassisHealth = 700
+
     ENT.FallOnCollision = true
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
 
