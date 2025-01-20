@@ -224,7 +224,7 @@ end
 
 --- Implement this base class function.
 function ENT:OnSeatInput( seatIndex, action, pressed )
-    if not pressed then return end
+    if not pressed or seatIndex > 1 then return end
 
     -- Toggle landing gear
     if action == "landing_gear" and self.HasLandingGear and seatIndex < 2 then
