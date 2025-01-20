@@ -155,7 +155,7 @@ if SERVER then
     ENT.SpawnAngleOffset = Angle( 0, 90, 0 )
 
     -- Multiply damage taken by these values
-    ENT.BulletDamageMultiplier = 1.5
+    ENT.BulletDamageMultiplier = 1.0
     ENT.BlastDamageMultiplier = 5
     ENT.CollisionDamageMultiplier = 0.5
 

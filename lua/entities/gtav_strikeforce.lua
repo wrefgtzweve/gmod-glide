@@ -166,6 +166,7 @@ end
 if SERVER then
     ENT.ChassisMass = 1500
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
+    ENT.BulletDamageMultiplier = 0.5
 
     ENT.ExplosionGibs = {
         "models/gta5/vehicles/strikeforce/gibs/chassis.mdl",
