@@ -11,7 +11,8 @@ Glide.InputCategories = InputCategories
 
 -- Inputs that apply to all vehicle types
 InputCategories["general_controls"] = {
-    ["switch_weapon"] = KEY_R
+    ["switch_weapon"] = KEY_R,
+    ["toggle_engine"] = KEY_I
 }
 
 -- Inputs that only apply to land vehicle types
@@ -28,7 +29,6 @@ InputCategories["land_controls"] = {
     ["siren"] = KEY_L,
     ["headlights"] = KEY_H,
     ["reduce_throttle"] = KEY_LSHIFT,
-    ["toggle_engine"] = KEY_I,
 
     ["lean_forward"] = KEY_UP,
     ["lean_back"] = KEY_DOWN,

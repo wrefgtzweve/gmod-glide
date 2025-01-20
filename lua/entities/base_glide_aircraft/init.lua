@@ -243,6 +243,13 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "countermeasures" then
         self:FireCountermeasures()
         return true
+
+    elseif action == "toggle_engine" then
+        if self:GetEngineState() == 0 then
+            self:TurnOn()
+        else
+            self:TurnOff()
+        end
     end
 end
 

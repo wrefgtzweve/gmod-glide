@@ -60,6 +60,19 @@ function ENT:TurnOff()
     self.brake = 0.5
 end
 
+--- Implement this base class function.
+function ENT:OnSeatInput( seatIndex, action, pressed )
+    if not pressed or seatIndex > 1 then return end
+
+    if action == "toggle_engine" then
+        if self:GetEngineState() == 0 then
+            self:TurnOn()
+        else
+            self:TurnOff()
+        end
+    end
+end
+
 --- Override this base class function.
 function ENT:OnTakeDamage( dmginfo )
     if dmginfo:IsDamageType( 64 ) then -- DMG_BLAST
