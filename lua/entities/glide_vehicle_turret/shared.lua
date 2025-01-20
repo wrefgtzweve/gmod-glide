@@ -13,7 +13,7 @@ ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
 ENT.BulletDamage = 10
-ENT.BulletMaxDistance = 15000
+ENT.BulletMaxDistance = 50000
 ENT.BulletExplosionRadius = 0
 
 function ENT:SetupDataTables()

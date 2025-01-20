@@ -66,11 +66,11 @@ do
         spread = params.spread or 0.3
 
         if params.isExplosive then
-            length = params.length or 5000
+            length = params.length or 8000
             damage = params.damage or 25
             explosionRadius = params.explosionRadius or 180
         else
-            length = params.length or 10000
+            length = params.length or 30000
             damage = params.damage or 20
         end
 

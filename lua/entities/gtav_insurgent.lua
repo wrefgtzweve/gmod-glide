@@ -237,7 +237,6 @@ if SERVER then
         turret:SetShootStopSound( "" )
 
         turret.BulletDamage = 40
-        turret.BulletMaxDistance = 30000
 
         self:SetTurret( turret )
         self:SetTurretSeat( turretSeat )
