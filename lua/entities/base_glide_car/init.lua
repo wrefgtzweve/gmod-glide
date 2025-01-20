@@ -399,6 +399,18 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     outputs[#outputs + 1] = { "MaxRPM", "NORMAL", "Max. engine RPM" }
 end
 
+function ENT:CheckWaterLevel()
+    if self:WaterLevel() > 2 then
+        if self:GetEngineState() == 2 then
+            self:TurnOff()
+        end
+
+        self:SetEngineHealth( 0 )
+        self:SetFlywheelRPM( 0 )
+        self:UpdateHealthOutputs()
+    end
+end
+
 local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
@@ -440,15 +452,7 @@ function ENT:OnPostThink( dt, selfTbl )
     end
 
     -- Damage the engine when underwater
-    if self:WaterLevel() > 2 then
-        if state == 2 then
-            self:TurnOff()
-        end
-
-        self:SetEngineHealth( 0 )
-        self:SetFlywheelRPM( 0 )
-        self:UpdateHealthOutputs()
-    end
+    self:CheckWaterLevel()
 
     local health = self:GetEngineHealth()
 
