@@ -168,7 +168,18 @@ function ENT:Use( activator )
     if not IsValid( activator ) then return end
     if not activator:IsPlayer() then return end
 
+    if not IsValid( self:GetDriver() ) then
+        local seat = self:GetFreeSeat()
+
+        if seat then
+            activator:SetAllowWeaponsInVehicle( false )
+            activator:EnterVehicle( seat )
+            return
+        end
+    end
+
     local freeSeat = self:GetClosestAvailableSeat( activator:GetShootPos() )
+
     if freeSeat then
         activator:SetAllowWeaponsInVehicle( false )
         activator:EnterVehicle( freeSeat )
