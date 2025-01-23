@@ -402,6 +402,8 @@ do
         local seats = self.seats
         if not seats then return end
 
+        if hook.Run( "Glide_CanDrawHUDSeats", self ) == false then return end
+
         local t = RealTime()
         local localPly = LocalPlayer()
 

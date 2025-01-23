@@ -140,6 +140,8 @@ end )
 local IsValid = IsValid
 
 function Glide.CanSpawnVehicle( ply )
+    if hook.Run( "Glide_CanSpawnVehicle", ply ) == false then return false end
+
     if not IsValid( ply ) then return false end
     if not ply:CheckLimit( "glide_vehicles" ) then return false end
 
@@ -182,17 +184,21 @@ function Glide.CanLockVehicle( ply, vehicle )
         end
     end
 
-    return false
+    return hook.Run( "Glide_CanLockVehicle", ply, vehicle) or false
 end
 
 --- Check if a player can enter a locked vehicle.
 function Glide.CanEnterLockedVehicle( ply, vehicle )
-    return Glide.CanLockVehicle( ply, vehicle )
+    return hook.Run( "Glide_CanEnterLockedVehicle", ply, vehicle ) or Glide.CanLockVehicle( ply, vehicle )
 end
 
 --- Make a player switch to another seat
 --- while inside a Glide vehicle.
 function Glide.SwitchSeat( ply, seatIndex )
+    if hook.Run( "Glide_CanSwitchSeat", ply, seatIndex ) == false then return end
+
+    hook.Run( "Glide_PreSwitchSeat", ply, seatIndex )
+
     local vehicle = ply:GlideGetVehicle()
     if not IsValid( vehicle ) then return end
 
@@ -210,9 +216,9 @@ function Glide.SwitchSeat( ply, seatIndex )
     ply:ExitVehicle()
     ply:SetAllowWeaponsInVehicle( false )
     ply:EnterVehicle( seat )
-end
 
-local GetHumans = player.GetHumans
+    hook.Run( "Glide_PostSwitchSeat", ply, seatIndex )
+end
 
 --- Finds and returns all human players near a certain position.
 function Glide.GetNearbyPlayers( pos, radius )

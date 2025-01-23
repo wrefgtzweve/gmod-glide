@@ -582,6 +582,7 @@ local w, h, x, y
 
 --- Override this base class function.
 function ENT:DrawVehicleHUD( screenW, screenH )
+    if hook.Run( "Glide_CanDrawHUD", self ) == false then return end
     BaseClass.DrawVehicleHUD( self, screenW, screenH )
 
     if not Config.showHUD then return end
