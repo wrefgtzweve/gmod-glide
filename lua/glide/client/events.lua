@@ -42,7 +42,8 @@ local DONT_BLOCK = {
     ["+reload"] = true,
     ["+attack"] = true,
     ["+attack2"] = true,
-    ["+attack3"] = true
+    ["+attack3"] = true,
+    ["+walk"] = true
 }
 
 local function BlockBinds( _, bind, _, code )
