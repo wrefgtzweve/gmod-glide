@@ -97,22 +97,22 @@ function ENT:UpdateTurboSound( sounds )
             sounds.turbo = nil
 
             if self.rpmFraction > 0.5 then
-                self:EmitSound( "glide/engines/turbo_blowoff.wav", 80, math.random( 100, 110 ), 0.3 )
+                self:EmitSound( self.TurboBlowoffSound, 80, math.random( 100, 110 ), self.TurboBlowoffVolume )
             end
         end
 
         return
     end
 
-    local pitch = 50 + self.rpmFraction * 50
-
-    volume = volume * self.rpmFraction * GetVolume( "carVolume" )
+    local pitch = self.TurboPitch * 0.5
+    pitch = pitch + self.rpmFraction * pitch
+    volume = volume * self.TurboVolume * self.rpmFraction * GetVolume( "carVolume" )
 
     if sounds.turbo then
         sounds.turbo:ChangeVolume( volume )
         sounds.turbo:ChangePitch( pitch )
     else
-        local snd = self:CreateLoopingSound( "turbo", "glide/engines/turbo_spin.wav", 80, self )
+        local snd = self:CreateLoopingSound( "turbo", self.TurboLoopSound, 80, self )
         snd:PlayEx( volume, pitch )
     end
 end

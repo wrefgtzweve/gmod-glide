@@ -173,6 +173,12 @@ if CLIENT then
     ENT.SirenInterruptSound = "Glide.Wail.Interrupt"
     ENT.SirenVolume = 0.8
 
+    ENT.TurboLoopSound = "glide/engines/turbo_spin.wav"
+    ENT.TurboBlowoffSound = "glide/engines/turbo_blowoff.wav"
+    ENT.TurboVolume = 0.95
+    ENT.TurboBlowoffVolume = 0.3
+    ENT.TurboPitch = 100
+
     ENT.ReverseSound = ""
     ENT.BrakeReleaseSound = ""
     ENT.BrakeSqueakSound = ""
