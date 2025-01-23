@@ -153,7 +153,11 @@ local function PoseRagdollBones( ragdoll, bones, velocity )
 end
 
 function Glide.RagdollPlayer( ply, velocity, unragdollTime )
-    if hook.Run( "Glide_CanRagdollPlayer", ply, velocity, unragdollTime) == false then return end
+    local success, velocity_override, unragdollTimeOverride = hook.Run( "Glide_CanRagdollPlayer", ply, velocity, unragdollTime )
+    if success == false then return end
+
+    velocity = velocity_override or velocity
+    unragdollTime = unragdollTimeOverride or unragdollTime
 
     if ply.GlideRagdoll then return end
 
@@ -172,7 +176,7 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
         return
     end
 
-    hook.Run( "Glide_PrePlayerRagdoll", ply)
+    hook.Run( "Glide_PrePlayerRagdoll", ply )
     -- Create ragdoll
     local ragdoll = ents.Create( "prop_ragdoll" )
     if not IsValid( ragdoll ) then return end
@@ -232,7 +236,7 @@ function Glide.RagdollPlayer( ply, velocity, unragdollTime )
         end )
     end
 
-    hook.Run( "Glide_PostPlayerRagdoll", ply)
+    hook.Run( "Glide_PostPlayerRagdoll", ply )
 end
 
 local traceData = {
@@ -266,7 +270,7 @@ end
 function Glide.UnRagdollPlayer( ply, restoreCallback )
     if not IsValid( ply ) then return end
 
-    hook.Run( "Glide_PrePlayerUnRagdoll", ply)
+    hook.Run( "Glide_PrePlayerUnRagdoll", ply )
 
     timer.Remove( "Glide_Ragdoll_" .. ply:EntIndex() )
 
@@ -323,7 +327,7 @@ function Glide.UnRagdollPlayer( ply, restoreCallback )
     -- Reset Custom Loadout workaround
     ply.GlideBlockLoadout = nil
 
-    hook.Run( "Glide_PostPlayerUnRagdoll", ply)
+    hook.Run( "Glide_PostPlayerUnRagdoll", ply )
 end
 
 hook.Add( "CanTool", "Glide.BlockPlayerRagdolls", function( _, tr )
