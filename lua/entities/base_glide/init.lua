@@ -354,7 +354,7 @@ function ENT:GetClosestAvailableSeat( pos )
     local closestDistance = math.huge
     for _, seat in ipairs( self.seats ) do
         if IsValid( seat:GetDriver() ) then continue end
-        local distance = seat:GetPos():Distance( pos )
+        local distance = seat:GetPos():DistToSqr( pos )
         if distance < closestDistance then
             closestSeat = seat
             closestDistance = distance
