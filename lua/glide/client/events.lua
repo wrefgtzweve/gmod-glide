@@ -56,7 +56,11 @@ local activeVehicle, activeSeatIndex = NULL, 0
 local cvarDrawHud = GetConVar( "cl_drawhud" )
 
 local function DrawVehicleHUD()
-    if IsValid( activeVehicle ) and cvarDrawHud:GetBool() then
+    if
+        IsValid( activeVehicle ) and
+        cvarDrawHud:GetBool() and
+        hook.Run( "Glide_CanDrawHUD", activeVehicle ) ~= false
+    then
         activeVehicle:DrawVehicleHUD( ScrW(), ScrH() )
     end
 end
