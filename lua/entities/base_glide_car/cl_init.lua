@@ -131,10 +131,10 @@ function ENT:OnUpdateSounds()
 
     if self:GetIsHonking() and self.HornSound then
         if sounds.horn then
-            sounds.horn:ChangeVolume( 1 )
+            sounds.horn:ChangeVolume( GetVolume( "hornVolume" ) )
         else
             local snd = self:CreateLoopingSound( "horn", self.HornSound, 85, self )
-            snd:PlayEx( 0.9, 100 )
+            snd:PlayEx( GetVolume( "hornVolume" ), 100 )
         end
 
     elseif sounds.horn then
@@ -164,9 +164,11 @@ function ENT:OnUpdateSounds()
     end
 
     if self.lastSirenEnableTime and CurTime() - self.lastSirenEnableTime > 0.25 then
-        if not sounds.siren then
+        if sounds.siren then
+            sounds.siren:ChangeVolume( self.SirenVolume * GetVolume( "hornVolume" ) )
+        else
             local snd = self:CreateLoopingSound( "siren", self.SirenLoopSound, 90, self )
-            snd:PlayEx( self.SirenVolume, 100 )
+            snd:PlayEx( self.SirenVolume * GetVolume( "hornVolume" ), 100 )
         end
 
     elseif sounds.siren then
@@ -179,7 +181,7 @@ function ENT:OnUpdateSounds()
     if self:GetGear() == -1 and self.ReverseSound ~= "" then
         if not sounds.reverse then
             local snd = self:CreateLoopingSound( "reverse", self.ReverseSound, 85, self )
-            snd:PlayEx( 0.9, 100 )
+            snd:PlayEx( GetVolume( "hornVolume" ) * 0.9, 100 )
         end
 
     elseif sounds.reverse then
