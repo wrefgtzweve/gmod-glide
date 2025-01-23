@@ -500,9 +500,11 @@ function ENT:DoExhaustPop()
     if self:GetEngineHealth() < 0.3 then
         Glide.PlaySoundSet( "Glide.Damaged.ExhaustPop", self )
 
-    elseif self.ExhaustPopSound ~= "" then
-        Glide.PlaySoundSet( self.ExhaustPopSound, self )
+    elseif self.ExhaustPopSound == "" then
+        return
     end
+
+    Glide.PlaySoundSet( self.ExhaustPopSound, self )
 
     local eff = EffectData()
     eff:SetEntity( self )

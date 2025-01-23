@@ -50,6 +50,8 @@ if CLIENT then
         { type = "signal_right", offset = Vector( 104, -38.5, 0 ), dir = Vector( 0.7, -0.5, 0 ), color = Glide.DEFAULT_TURN_SIGNAL_COLOR }
     }
 
+    ENT.ExhaustPopSound = ""
+
     function ENT:OnCreateEngineStream( stream )
         stream.offset = Vector( 60, 0, 0 )
         stream:LoadPreset( "speedo" )

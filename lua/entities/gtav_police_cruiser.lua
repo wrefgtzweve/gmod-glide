@@ -86,6 +86,8 @@ if CLIENT then
         { offset = Vector( 114, 10, 5 ), dir = Vector( 1, 0, 0 ), time = 0.75, color = Glide.DEFAULT_SIREN_COLOR_A, lightRadius = 0 }
     }
 
+    ENT.ExhaustPopSound = ""
+
     function ENT:OnCreateEngineStream( stream )
         stream:LoadPreset( "police_cruiser" )
     end
