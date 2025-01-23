@@ -168,7 +168,7 @@ function ENT:Use( activator )
     if not IsValid( activator ) then return end
     if not activator:IsPlayer() then return end
 
-    local freeSeat = self:GetFreeSeat()
+    local freeSeat = self:GetClosestAvailableSeat( activator:GetShootPos() )
     if freeSeat then
         activator:SetAllowWeaponsInVehicle( false )
         activator:EnterVehicle( freeSeat )
@@ -346,6 +346,22 @@ function ENT:GetFreeSeat()
             return seat, i
         end
     end
+end
+
+--- Gets the closest available seat to a position.
+function ENT:GetClosestAvailableSeat( pos )
+    local closestSeat = nil
+    local closestDistance = math.huge
+    for _, seat in ipairs( self.seats ) do
+        if IsValid( seat:GetDriver() ) then continue end
+        local distance = seat:GetPos():Distance( pos )
+        if distance < closestDistance then
+            closestSeat = seat
+            closestDistance = distance
+        end
+    end
+
+    return closestSeat
 end
 
 --- Create a new seat.
