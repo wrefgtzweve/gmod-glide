@@ -184,7 +184,7 @@ function Glide.CanLockVehicle( ply, vehicle )
         end
     end
 
-    return hook.Run( "Glide_CanLockVehicle", ply, vehicle) or false
+    return hook.Run( "Glide_CanLockVehicle", ply, vehicle ) or false
 end
 
 --- Check if a player can enter a locked vehicle.
@@ -227,13 +227,13 @@ function Glide.GetNearbyPlayers( pos, radius )
     local found, count = {}, 0
 
     for _, ply in player.Iterator() do
-        if ply:IsBot() then continue end
+        if not ply:IsBot() then
+            local dist = pos:DistToSqr( ply:GetPos() )
 
-        local dist = pos:DistToSqr( ply:GetPos() )
-
-        if dist < radius then
-            count = count + 1
-            found[count] = ply
+            if dist < radius then
+                count = count + 1
+                found[count] = ply
+            end
         end
     end
 

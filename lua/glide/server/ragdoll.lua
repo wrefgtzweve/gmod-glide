@@ -153,10 +153,10 @@ local function PoseRagdollBones( ragdoll, bones, velocity )
 end
 
 function Glide.RagdollPlayer( ply, velocity, unragdollTime )
-    local success, velocity_override, unragdollTimeOverride = hook.Run( "Glide_CanRagdollPlayer", ply, velocity, unragdollTime )
+    local success, velocityOverride, unragdollTimeOverride = hook.Run( "Glide_CanRagdollPlayer", ply, velocity, unragdollTime )
     if success == false then return end
 
-    velocity = velocity_override or velocity
+    velocity = velocityOverride or velocity
     unragdollTime = unragdollTimeOverride or unragdollTime
 
     if ply.GlideRagdoll then return end

@@ -337,12 +337,8 @@ end
 
 --- Gets the first free seat entity, or returns `nil` if none are available.
 function ENT:GetFreeSeat()
-    local driver
-
     for i, seat in ipairs( self.seats ) do
-        driver = seat:GetDriver()
-
-        if not IsValid( driver ) then
+        if not IsValid( seat:GetDriver() ) then
             return seat, i
         end
     end
@@ -352,10 +348,11 @@ end
 function ENT:GetClosestAvailableSeat( pos )
     local closestSeat = nil
     local closestDistance = math.huge
+
     for _, seat in ipairs( self.seats ) do
-        if IsValid( seat:GetDriver() ) then continue end
-        local distance = seat:GetPos():DistToSqr( pos )
-        if distance < closestDistance then
+        local distance = pos:DistToSqr( seat:GetPos() )
+
+        if distance < closestDistance and not IsValid( seat:GetDriver() ) then
             closestSeat = seat
             closestDistance = distance
         end
