@@ -37,8 +37,16 @@ hook.Add( "Glide_OnConfigChange", "Glide.BlockBindConflicts", function()
     end
 end )
 
+local DONT_BLOCK = {
+    ["+use"] = true,
+    ["+reload"] = true,
+    ["+attack"] = true,
+    ["+attack2"] = true,
+    ["+attack3"] = true
+}
+
 local function BlockBinds( _, bind, _, code )
-    if usedButtons[code] and bind ~= "+reload" and bind ~= "+use" then
+    if usedButtons[code] and not DONT_BLOCK[bind] then
         return true
     end
 end
