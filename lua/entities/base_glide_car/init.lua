@@ -212,15 +212,6 @@ function ENT:OnPowerDistributionChange()
     self.shouldUpdatePowerDistribution = true
 end
 
---- Override this base class function.
-function ENT:OnTakeDamage( dmginfo )
-    BaseClass.OnTakeDamage( self, dmginfo )
-
-    if self:GetEngineHealth() <= 0 and self:GetEngineState() == 2 then
-        self:TurnOff()
-    end
-end
-
 --- Implement this base class function.
 function ENT:OnSeatInput( seatIndex, action, pressed )
     if seatIndex > 1 then return end
@@ -476,8 +467,11 @@ function ENT:OnPostThink( dt, selfTbl )
         end
 
     elseif state == 2 then
-        -- Stop rising the throttle at random intervals
-        if health < 0.25 then
+        if health <= 0 then
+            self:TurnOff()
+
+        elseif health < 0.25 then
+            -- Stop the throttle at random intervals
             if selfTbl.damageThrottleCooldown and selfTbl.damageThrottleCooldown > 0 then
                 selfTbl.damageThrottleCooldown = selfTbl.damageThrottleCooldown - dt
             else
