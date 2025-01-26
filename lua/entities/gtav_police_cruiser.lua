@@ -112,7 +112,7 @@ if SERVER then
     }
 
     function ENT:GetSpawnColor()
-        return Color( 0, 0, 0, 255 )
+        return Color( 255, 255, 255, 255 )
     end
 
     function ENT:InitializePhysics()
