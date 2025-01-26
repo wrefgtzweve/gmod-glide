@@ -259,6 +259,8 @@ local CanLockOnEntity = Glide.CanLockOnEntity
 local WHITELIST = Glide.LOCKON_WHITELIST
 
 local function IsLockableEntity( ent, skipParentCheck )
+    if ent == NULL then return false end
+
     local class = getClass( ent )
 
     -- Checks for parent vehicles, like for example glide
