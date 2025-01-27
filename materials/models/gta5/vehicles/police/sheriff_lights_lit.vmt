@@ -2,6 +2,7 @@
 {
 	"$basetexture" "models/gta5/vehicles/police/sheriff_lights"
 	"$allowdiffusemodulation" "false"
+	"$translucent" "1"
 
 	$emissiveBlendEnabled "1"
 	$emissiveBlendStrength "1"
