@@ -13,7 +13,7 @@ hook.Add( "CanPlayerEnterVehicle", "Glide.CheckVehicleLock", function( ply, seat
     if not IsValid( parent ) then return end
     if not parent.IsGlideVehicle then return end
 
-    if hook.Run( "Glide_CanEnterVehicle", ply, parent, seatIndex ) == false then return end
+    if hook.Run( "Glide_CanEnterVehicle", ply, parent, seatIndex ) == false then return false end
 
     -- Check if this vehicle is locked
     if not parent:GetIsLocked() then return end
