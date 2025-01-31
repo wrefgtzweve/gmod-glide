@@ -94,6 +94,10 @@ local IsValid = IsValid
 function ENT:FireMissile( pos, ang, attacker, target )
     Glide.PlaySoundSet( "Glide.MissileLaunch", self, 1.0 )
 
+    if not IsValid( attacker ) then
+        attacker = self:GetCreator()
+    end
+
     local missile = Glide.FireMissile( pos, ang, attacker, self, target )
 
     if IsValid( missile ) then
@@ -113,6 +117,10 @@ local FireBullet = Glide.FireBullet
 function ENT:FireBullet( params )
     params = params or {}
     params.inflictor = self
+
+    if not IsValid( params.attacker ) then
+        params.attacker = self:GetCreator()
+    end
 
     if not params.shellDirection then
         params.shellDirection = params.pos - self:GetPos()
