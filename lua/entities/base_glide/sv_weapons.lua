@@ -94,10 +94,6 @@ local IsValid = IsValid
 function ENT:FireMissile( pos, ang, attacker, target )
     Glide.PlaySoundSet( "Glide.MissileLaunch", self, 1.0 )
 
-    if not IsValid( attacker ) then
-        attacker = self:GetCreator()
-    end
-
     local missile = Glide.FireMissile( pos, ang, attacker, self, target )
 
     if IsValid( missile ) then
