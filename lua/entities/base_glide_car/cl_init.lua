@@ -384,7 +384,7 @@ function ENT:OnUpdateMisc()
 
         for _, v in ipairs( self.Headlights ) do
             v.angles = v.angles or Angle( 10, 0, 0 )
-            self:CreateHeadlight( v.offset, v.angles, COLOR_HEADLIGHT )
+            self:CreateHeadlight( v.offset, v.angles, COLOR_HEADLIGHT, v.texture )
         end
     end
 
@@ -456,11 +456,11 @@ function ENT:OnUpdateMisc()
     end
 end
 
-function ENT:CreateHeadlight( offset, angles, color )
+function ENT:CreateHeadlight( offset, angles, color, texture )
     color = color or Color( 255, 255, 255 )
 
     local state = self.headlightState
-    local fov = state > 1 and 80 or 70
+    local fov = state > 1 and 85 or 75
 
     local index = #self.headlights + 1
     local light = ProjectedTexture()
@@ -469,11 +469,11 @@ function ENT:CreateHeadlight( offset, angles, color )
 
     light:SetConstantAttenuation( 0 )
     light:SetLinearAttenuation( 50 )
-    light:SetTexture( "effects/flashlight001" )
-    light:SetBrightness( state > 1 and 6 or 4 )
+    light:SetTexture( texture or "glide/effects/headlight_rect" )
+    light:SetBrightness( state > 1 and 8 or 5 )
     light:SetEnableShadows( Glide.Config.headlightShadows )
     light:SetColor( color )
-    light:SetNearZ( 10 )
+    light:SetNearZ( 20 )
     light:SetFarZ( state > 1 and 3000 or 1500 )
     light:SetFOV( fov )
     light:SetPos( self:LocalToWorld( offset ) )
