@@ -278,6 +278,12 @@ do
     local COLOR_BRAKE = Color( 255, 0, 0, 255 )
     local COLOR_REV = Color( 255, 255, 255, 200 )
 
+    local DEFAULT_BRIGHTNESS = {
+        ["signal_left"] = 6,
+        ["signal_right"] = 6,
+        ["taillight"] = 1
+    }
+
     --- Update out model's bodygroups depending on which lights are on.
     function ENT:DrawLights()
         lightState.brake = self:GetIsBraking()
@@ -320,15 +326,15 @@ do
 
             elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
                 DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
-                DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius )
+                DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius, l.lightBrightness or DEFAULT_BRIGHTNESS[ltype] )
 
             elseif enable and ltype == "brake" then
                 DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
-                DrawLight( pos + dir * 10, COLOR_BRAKE, l.lightRadius )
+                DrawLight( pos + dir * 10, COLOR_BRAKE, l.lightRadius, l.lightBrightness )
 
             elseif enable and ltype == "reverse" then
                 DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
-                DrawLight( pos + dir * 10, COLOR_REV, l.lightRadius )
+                DrawLight( pos + dir * 10, COLOR_REV, l.lightRadius, l.lightBrightness )
             end
         end
     end
