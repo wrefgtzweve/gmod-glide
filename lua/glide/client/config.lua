@@ -796,7 +796,7 @@ hook.Add( "Tick", "Glide.CheckVoiceActivity", function()
     for i = 1, #players do
         ply = players[i]
 
-        if ply:IsVoiceAudible() and ply:VoiceVolume() > 0.01 then
+        if ply:IsVoiceAudible() and ply:VoiceVolume() > 0.05 then
             isAnyoneTalking = true
             break
         end
