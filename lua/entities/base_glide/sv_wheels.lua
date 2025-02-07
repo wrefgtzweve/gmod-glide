@@ -99,9 +99,7 @@ function ENT:PhysicsSimulate( phys, dt )
     if factor > 0.1 then
         local vel = phys:GetVelocity()
         local rt = self:GetRight()
-        local force = rt:Dot( vel ) / dt
-
-        force = force * mass * factor * rt
+        local force = ( rt:Dot( vel ) / dt ) * mass * factor * rt
 
         linForce[1] = linForce[1] - force[1]
         linForce[2] = linForce[2] - force[2]
