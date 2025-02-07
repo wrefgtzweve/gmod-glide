@@ -207,4 +207,23 @@ function ENT:DrawVehicleHUD( screenW, screenH )
 
     -- Engine state
     DrawIcon( x + size * 0.5, y + size * 0.65, "glide/icons/engine.png", size * 0.2, self:IsEngineOn() and colors.icon or colors.iconDisabled )
+
+    -- Wing stall warning
+    if self:GetIsStalling() then
+        surface.SetFont( "GlideHUD" )
+
+        local text = Glide.GetLanguageText( "hud.stall" )
+        w, h = surface.GetTextSize( text )
+
+        w = w + screenW * 0.01
+        h = h + screenW * 0.01
+
+        x = x + ( size * 0.5 ) - ( w * 0.5 )
+        y = y - h - size * 0.1
+
+        surface.SetDrawColor( 255, 100, 100, 200 )
+        surface.DrawRect( x, y, w, h )
+
+        SimpleText( text, "GlideHUD", x + w * 0.5, y + h * 0.5, colors.icon, 1, 1 )
+    end
 end

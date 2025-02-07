@@ -12,6 +12,7 @@ function Config:Reset()
     self.explosionVolume = 1.0
     self.hornVolume = 1.0
     self.windVolume = 0.7
+    self.warningVolume = 0.8
     self.vcVolume = 0.4
 
     -- Camera settings
@@ -97,6 +98,7 @@ function Config:Save( immediate )
         explosionVolume = self.explosionVolume,
         hornVolume = self.hornVolume,
         windVolume = self.windVolume,
+        warningVolume = self.warningVolume,
         vcVolume = self.vcVolume,
 
         -- Camera settings
@@ -186,6 +188,7 @@ function Config:Load()
     SetNumber( self, "explosionVolume", data.explosionVolume, 0, 1, self.explosionVolume )
     SetNumber( self, "hornVolume", data.hornVolume, 0, 1, self.hornVolume )
     SetNumber( self, "windVolume", data.windVolume, 0, 1, self.windVolume )
+    SetNumber( self, "warningVolume", data.warningVolume, 0, 1, self.warningVolume )
     SetNumber( self, "vcVolume", data.vcVolume, 0, 1, self.vcVolume )
 
     -- Camera settings
@@ -662,6 +665,11 @@ function Config:OpenFrame()
         self:Save()
     end )
 
+    theme:CreateSlider( panelAudio, L"audio.warning_volume", self.warningVolume, 0, 1, 1, function( value )
+        self.warningVolume = value
+        self:Save()
+    end )
+
     theme:CreateSlider( panelAudio, L"audio.voice_chat_reduction", self.vcVolume, 0, 1, 1, function( value )
         self.vcVolume = value
         self:Save()
@@ -813,7 +821,7 @@ end )
 -- depending on settings and how loud the voice chat is.
 --
 -- audioType must be one of these:
--- "carVolume", "aircraftVolume", "explosionVolume", "hornVolume", "windVolume"
+-- "carVolume", "aircraftVolume", "explosionVolume", "hornVolume", "windVolume", "warningVolume"
 function Config.GetVolume( audioType )
     return Config[audioType] * glideVolume
 end
