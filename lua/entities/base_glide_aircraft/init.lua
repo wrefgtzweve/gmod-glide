@@ -86,6 +86,10 @@ function ENT:CreateWheel( offset, params )
     params.sideTractionMinAng = params.sideTractionMinAng or 70
     params.brakePower = params.brakePower or 1000
 
+    if params.enableAxleForces == nil then
+        params.enableAxleForces = true
+    end
+
     -- Let the base class create the wheel
     local wheel = BaseClass.CreateWheel( self, offset, params )
 
