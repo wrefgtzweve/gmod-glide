@@ -46,17 +46,19 @@ function ENT:OnEngineStateChange( _, lastState, state )
     end
 end
 
+local GetVolume = Glide.Config.GetVolume
+
 --- Implement this base class function.
 function ENT:OnTurnOn()
     if self.StartedSound ~= "" then
-        self:EmitSound( self.StartedSound, 85, 100, 1.0 )
+        Glide.PlaySoundSet( self.StartedSound, self, GetVolume( "carVolume" ), nil, 85 )
     end
 end
 
 --- Implement this base class function.
 function ENT:OnTurnOff()
     if self.StoppedSound ~= "" then
-        self:EmitSound( self.StoppedSound, 75, 100, 1.0 )
+        Glide.PlaySoundSet( self.StoppedSound, self, GetVolume( "carVolume" ), nil, 85 )
     end
 
     self:DeactivateSounds()
@@ -86,7 +88,6 @@ end
 
 local Clamp = math.Clamp
 local FrameTime = FrameTime
-local GetVolume = Glide.Config.GetVolume
 
 function ENT:UpdateTurboSound( sounds )
     local volume = self:GetEngineThrottle() * 0.5

@@ -65,17 +65,19 @@ function ENT:OnDeactivateSounds()
     end
 end
 
+local GetVolume = Glide.Config.GetVolume
+
 --- Implement this base class function.
 function ENT:OnTurnOn()
     if self.StartedSound ~= "" then
-        self:EmitSound( self.StartedSound, 85, 100, 1.0 )
+        Glide.PlaySoundSet( self.StartedSound, self, GetVolume( "carVolume" ), nil, 85 )
     end
 end
 
 --- Implement this base class function.
 function ENT:OnTurnOff()
     if self.StoppedSound ~= "" then
-        self:EmitSound( self.StoppedSound, 75, 100, 1.0 )
+        Glide.PlaySoundSet( self.StoppedSound, self, GetVolume( "carVolume" ), nil, 85 )
     end
 
     if self.stream then
@@ -121,7 +123,6 @@ end
 local Abs = math.abs
 local Clamp = math.Clamp
 local FrameTime = FrameTime
-local GetVolume = Glide.Config.GetVolume
 local ExpDecayAngle = Glide.ExpDecayAngle
 
 --- Implement this base class function.
