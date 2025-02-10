@@ -36,7 +36,7 @@ if SERVER then
     ENT.ChassisMass = 300
     ENT.MaxChassisHealth = 600
 
-    ENT.AngularDrag = Vector( 0, -0.5, -0.5 ) -- Roll, pitch, yaw
+    ENT.AngularDrag = Vector( 0, -2, -0.5 ) -- Roll, pitch, yaw
     ENT.FallOnCollision = true
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressBike"
 
