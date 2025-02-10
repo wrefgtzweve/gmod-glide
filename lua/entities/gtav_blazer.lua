@@ -46,6 +46,7 @@ if CLIENT then
     }
 
     ENT.StartSound = "Glide.Engine.BikeStart1"
+    ENT.StoppedSound = "Glide.Sanchez.EngineStop"
     ENT.HornSound = "glide/horns/car_horn_light_1.wav"
     ENT.ExternalGearSwitchSound = ""
     ENT.InternalGearSwitchSound = ""
