@@ -56,8 +56,8 @@ function ENT:Initialize()
         isDebugging = Glide.GetDevMode()
     }
 
-    self.downSoundCD = 0
-    self.upSoundCD = 0
+    self.contractSoundCD = 0
+    self.expandSoundCD = 0
 
     self:SetupWheel()
 end
@@ -200,15 +200,15 @@ do
 
         local t = CurTime()
 
-        if change > 0.01 and t > self.upSoundCD then
-            self.upSoundCD = t + 0.3
+        if change > 0.01 and t > self.expandSoundCD then
+            self.expandSoundCD = t + 0.3
             PlaySoundSet( vehicle.SuspensionUpSound, self, Clamp( Abs( change ) * 15, 0, 0.5 ) )
         end
 
-        if change < -0.01 and t > self.downSoundCD then
+        if change < -0.01 and t > self.contractSoundCD then
             change = Abs( change )
 
-            self.downSoundCD = t + 0.3
+            self.contractSoundCD = t + 0.3
             PlaySoundSet( change > 0.03 and vehicle.SuspensionHeavySound or vehicle.SuspensionDownSound, self, Clamp( change * 20, 0, 1 ) )
         end
     end
