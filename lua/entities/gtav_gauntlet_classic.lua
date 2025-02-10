@@ -85,7 +85,7 @@ if SERVER then
     function ENT:InitializePhysics()
         self:SetSolid( SOLID_VPHYSICS )
         self:SetMoveType( MOVETYPE_VPHYSICS )
-        self:PhysicsInit( SOLID_VPHYSICS, Vector( 5, 0, -5 ) )
+        self:PhysicsInit( SOLID_VPHYSICS, Vector( 5, 0, -8 ) )
     end
 
     ENT.LightBodygroups = {
