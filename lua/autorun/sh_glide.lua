@@ -77,6 +77,8 @@ if SERVER then
 end
 
 if CLIENT then
+    Glide.THEME_COLOR = Color( 56, 113, 179 )
+
     -- Vehicle camera types
     Glide.CAMERA_TYPE = {
         CAR = 0,
@@ -390,6 +392,7 @@ if SERVER then
     AddCSLuaFile( "styledstrike/theme.lua" )
 
     IncludeDir( "glide/client/", false, true )
+    IncludeDir( "glide/client/vgui/", false, true )
 end
 
 if CLIENT then
@@ -399,14 +402,7 @@ if CLIENT then
     -- Setup UI theme
     include( "styledstrike/theme.lua" )
 
-    Glide.THEME_COLOR = Color( 56, 113, 179 )
-
-    Glide.Theme = StyledTheme.Create( {
-        frameTitleBar = Glide.THEME_COLOR,
-        buttonPress = Glide.THEME_COLOR,
-        entryHighlight = Glide.THEME_COLOR
-    } )
-
     -- Client-only files
     IncludeDir( "glide/client/", true, false )
+    IncludeDir( "glide/client/vgui/", true, false )
 end
