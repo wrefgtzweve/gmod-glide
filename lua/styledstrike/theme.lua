@@ -39,12 +39,13 @@ end
 --[[
     Setup fonts
 ]]
-StyledTheme.BASE_FONT_NAME = "Roboto"
+do
+    StyledTheme.BASE_FONT_NAME = "Roboto"
+    StyledTheme.fonts = StyledTheme.fonts or {}
 
-hook.Add( "StyledTheme_OnResolutionChange", "StyledTheme.UpdateFonts", function( _, screenH )
-    local fontData = {}
+    local fonts = StyledTheme.fonts
 
-    fontData["StyledTheme_Small"] = {
+    fonts["StyledTheme_Small"] = {
         font = StyledTheme.BASE_FONT_NAME,
         screenSize = 0.018,
         weight = 500,
@@ -54,7 +55,7 @@ hook.Add( "StyledTheme_OnResolutionChange", "StyledTheme.UpdateFonts", function(
         antialias = true
     }
 
-    fontData["StyledTheme_Tiny"] = {
+    fonts["StyledTheme_Tiny"] = {
         font = StyledTheme.BASE_FONT_NAME,
         screenSize = 0.013,
         weight = 500,
@@ -63,8 +64,10 @@ hook.Add( "StyledTheme_OnResolutionChange", "StyledTheme.UpdateFonts", function(
         extended = false,
         antialias = true
     }
+end
 
-    for name, data in pairs( fontData ) do
+hook.Add( "StyledTheme_OnResolutionChange", "StyledTheme.UpdateFonts", function( _, screenH )
+    for name, data in pairs( StyledTheme.fonts ) do
         data.size = math.floor( screenH * data.screenSize )
         surface.CreateFont( name, data )
     end
@@ -108,7 +111,9 @@ do
         return Floor( ( size / 1080 ) * screenH )
     end
 
-    hook.Run( "StyledTheme_OnResolutionChange", screenW, screenH )
+    hook.Add( "Initialize", "StyledTheme.CreateFonts", function()
+        hook.Run( "StyledTheme_OnResolutionChange", screenW, screenH )
+    end )
 
     -- Detect resolution changes
     local ScrW, ScrH = ScrW, ScrH

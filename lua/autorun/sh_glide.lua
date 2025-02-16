@@ -402,6 +402,38 @@ if CLIENT then
     -- Setup UI theme
     include( "styledstrike/theme.lua" )
 
+    local fonts = StyledTheme.fonts
+
+    fonts["GlideSelectedWeapon"] = {
+        screenSize = 0.018,
+        font = "Roboto",
+        extended = false,
+        weight = 500,
+        blursize = 0,
+        scanlines = 0,
+        antialias = true
+    }
+
+    fonts["GlideNotification"] = {
+        screenSize = 0.022,
+        font = "Roboto",
+        extended = false,
+        weight = 500,
+        blursize = 0,
+        scanlines = 0,
+        antialias = true
+    }
+
+    fonts["GlideHUD"] = {
+        screenSize = 0.022,
+        font = "Roboto",
+        extended = false,
+        weight = 400,
+        blursize = 0,
+        scanlines = 0,
+        antialias = true
+    }
+
     -- Client-only files
     IncludeDir( "glide/client/", true, false )
     IncludeDir( "glide/client/vgui/", true, false )
