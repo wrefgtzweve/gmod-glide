@@ -95,6 +95,7 @@ hook.Add( "StyledTheme_OnResolutionChange", "StyledTheme.UpdateDimensions", func
     dimensions.formSeparator = ScaleSize( 6 )
     dimensions.formLabelWidth = ScaleSize( 300 )
 
+    dimensions.menuPadding = ScaleSize( 6 )
     dimensions.indicatorSize = ScaleSize( 20 )
 end )
 
@@ -103,7 +104,7 @@ end )
 ]]
 do
     local Floor = math.floor
-    local screenW, screenH = ScrW(), ScrH()
+    local screenW, screenH = 0, 0
 
     --- Scales the given size (in pixels) from a 1080p resolution to 
     --- the resolution currently being used by the game.
@@ -112,6 +113,7 @@ do
     end
 
     hook.Add( "Initialize", "StyledTheme.CreateFonts", function()
+        screenW, screenH = ScrW(), ScrH()
         hook.Run( "StyledTheme_OnResolutionChange", screenW, screenH )
     end )
 
@@ -229,6 +231,38 @@ do
     ClassFunctions["DPanel"] = {
         Paint = function( self, w, h )
             DrawRect( 0, 0, w, h, self:GetBackgroundColor() or colors.panelBackground )
+        end
+    }
+
+    local function CustomMenuAdd( self, class )
+        local pnl = self:OriginalAdd( class )
+
+        if class == "DButton" then
+            StyledTheme.Apply( pnl )
+
+            timer.Simple( 0, function()
+                if not IsValid( pnl ) then return end
+
+                pnl:SetPaintBackground( true )
+                pnl:SizeToContentsX( StyledTheme.ScaleSize( 20 ) )
+                pnl:DockMargin( 0, 0, dimensions.menuPadding, 0 )
+            end )
+        end
+
+        return pnl
+    end
+
+    ClassFunctions["DMenuBar"] = {
+        Prepare = function( self )
+            self:SetTall( dimensions.buttonHeight )
+            self:DockMargin( 0, 0, 0, 0 )
+            self:DockPadding( dimensions.menuPadding, dimensions.menuPadding, dimensions.menuPadding, dimensions.menuPadding )
+
+            self.OriginalAdd = self.Add
+            self.Add = CustomMenuAdd
+        end,
+        Paint = function( self, w, h )
+            DrawRect( 0, 0, w, h, self:GetBackgroundColor() or colors.accent )
         end
     }
 
