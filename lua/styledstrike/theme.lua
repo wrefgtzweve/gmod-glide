@@ -909,7 +909,7 @@ do
 
         self:SetBasePath( "/" )
         self:NavigateTo( "/" )
-        self:SetExtensionFilter( "" )
+        self:SetExtensionFilter( nil )
 
         self.OnConfirmPath = function( _path ) end
 
@@ -952,7 +952,18 @@ do
     end
 
     function BROWSER:SetExtensionFilter( extensionFilter )
-        self.extensionFilter = extensionFilter
+        if extensionFilter then
+            local filter = {}
+
+            for _, ext in ipairs( extensionFilter ) do
+                filter[ext] = true
+            end
+
+            self.extensionFilter = filter
+        else
+            self.extensionFilter = nil
+        end
+
         self.updateFiles = true
     end
 
@@ -1071,7 +1082,7 @@ do
             for _, name in ipairs( files ) do
                 local ext = string.GetExtensionFromFilename( name )
 
-                if filter == "" or ext == filter then
+                if filter == nil or filter[ext] then
                     local item = self.scrollFiles:Add( "Styled_FileBrowserItem" )
                     item:SetItemName( name )
                     item:SetIconPath( FILE_ICONS[ext] or FILE_ICONS.default )
