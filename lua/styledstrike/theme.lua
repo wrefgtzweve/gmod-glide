@@ -587,10 +587,15 @@ do
 
         StyledTheme.Apply( button )
 
+        button.SetChecked = function( s, value )
+            value = value == true
+            s.isChecked = value
+            button:SetIcon( value and "icon16/accept.png" or "icon16/cancel.png" )
+            callback( value )
+        end
+
         button.DoClick = function( s )
-            s.isChecked = not s.isChecked
-            button:SetIcon( s.isChecked and "icon16/accept.png" or "icon16/cancel.png" )
-            callback( s.isChecked )
+            s:SetChecked( not s.isChecked )
         end
 
         return button
