@@ -363,10 +363,13 @@ do
 
             local padding = dimensions.scrollPadding
             self.pnlCanvas:DockPadding( padding, padding, padding, padding )
+            self:SetPaintBackground( true )
         end,
 
-        Paint = function( _, w, h )
-            DrawRect( 0, 0, w, h, colors.scrollBackground )
+        Paint = function( self, w, h )
+            if self:GetPaintBackground() then
+                DrawRect( 0, 0, w, h, colors.scrollBackground )
+            end
         end
     }
 
