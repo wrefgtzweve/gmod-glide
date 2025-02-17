@@ -132,6 +132,12 @@ end
     Misc. utility functions
 ]]
 do
+    --- Gets a localized language string, with the first character being in uppercase.
+    function StyledTheme.GetUpperLanguagePhrase( text )
+        text = language.GetPhrase( text )
+        return text:sub( 1, 1 ):upper() .. text:sub( 2 )
+    end
+
     local SetDrawColor = surface.SetDrawColor
     local DrawRect = surface.DrawRect
 
@@ -851,11 +857,7 @@ do
         ["properties"] = "icon16/page_white_gear.png",
     }
 
-    local function L( text )
-        text = language.GetPhrase( text )
-        return text:sub( 1, 1 ):upper() .. text:sub( 2 )
-    end
-
+    local L = StyledTheme.GetUpperLanguagePhrase
     local ScaleSize = StyledTheme.ScaleSize
     local BROWSER = {}
 
