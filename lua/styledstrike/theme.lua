@@ -887,6 +887,14 @@ do
         self.panelHeader:DockPadding( separator, separator, separator, separator )
         self.panelHeader:SetBackgroundColor( StyledTheme.colors.accent )
 
+        self.panelHeader.PerformLayout = function( s )
+            local extraNavWidth = ScaleSize( 10 )
+
+            for _, child in ipairs( s:GetChildren() ) do
+                child:SizeToContentsX( extraNavWidth )
+            end
+        end
+
         self.scrollFiles = vgui.Create( "DScrollPanel", self )
         self.scrollFiles:Dock( FILL )
 
@@ -1010,7 +1018,6 @@ do
 
         local pathSoFar = ""
         local separator = ScaleSize( 4 )
-        local extraNavWidth = ScaleSize( 30 )
 
         for i, piece in ipairs( self.currentNavigation ) do
             pathSoFar = pathSoFar .. "/" .. piece
@@ -1021,7 +1028,6 @@ do
 
             local item = vgui.Create( "DButton", self.panelHeader )
             item:SetText( piece )
-            item:SizeToContentsX( extraNavWidth )
             item:Dock( LEFT )
             item:DockMargin( 0, 0, separator, 0 )
             item.DoClick = OnClickNav
