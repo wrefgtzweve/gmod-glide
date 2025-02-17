@@ -904,7 +904,6 @@ do
             self:Close()
         end
 
-        self:SetGamePathType( "DATA" )
         self:SetBasePath( "/" )
         self:NavigateTo( "/" )
         self:SetExtensionFilter( "" )
@@ -942,11 +941,6 @@ do
         self.buttonSave.DoClick = DoSave
 
         StyledTheme.Apply( self.buttonSave )
-    end
-
-    function BROWSER:SetGamePathType( gamePathType )
-        self.gamePathType = gamePathType
-        self.updateFiles = true
     end
 
     function BROWSER:SetBasePath( path )
@@ -1004,8 +998,12 @@ do
         local separator = ScaleSize( 4 )
         local extraNavWidth = ScaleSize( 30 )
 
-        for _, piece in ipairs( self.currentNavigation ) do
+        for i, piece in ipairs( self.currentNavigation ) do
             pathSoFar = pathSoFar .. "/" .. piece
+
+            if i == 1 then
+                piece = self.basePath
+            end
 
             local item = vgui.Create( "DButton", self.panelHeader )
             item:SetText( piece )
@@ -1023,7 +1021,7 @@ do
 
         local currentDir = self:NormalizePath( table.concat( self.currentNavigation, "/" ) .. "/" )
         local normalizedDir = self:NormalizePath( self.basePath .. currentDir .. "*" )
-        local files, dirs = file.Find( normalizedDir, self.gamePathType, "nameasc" )
+        local files, dirs = file.Find( normalizedDir, "GAME", "nameasc" )
 
         if #self.currentNavigation > 1 then
             local itemUpDir = self.scrollFiles:Add( "Styled_FileBrowserItem" )
