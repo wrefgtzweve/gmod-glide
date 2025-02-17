@@ -925,8 +925,8 @@ do
         self.entryName:Dock( FILL )
 
         local DoSave = function()
-            local path = self:NormalizePath( table.concat( self.currentNavigation, "/" ) .. "/" .. self.entryName:GetValue() )
-            self.OnConfirmPath( path )
+            local path = self.basePath .. table.concat( self.currentNavigation, "/" ) .. "/" .. self.entryName:GetValue()
+            self.OnConfirmPath( self:NormalizePath( path ) )
             self:Close()
         end
 
@@ -1058,7 +1058,7 @@ do
             local path = self:NormalizePath( s._path )
 
             self:Close()
-            self.OnConfirmPath( path )
+            self.OnConfirmPath( self:NormalizePath( self.basePath .. path ) )
         end
 
         if files then
