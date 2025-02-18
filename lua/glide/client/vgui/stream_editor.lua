@@ -199,6 +199,23 @@ function PANEL:Init()
     self:LoadTabs()
 end
 
+function PANEL:OnShortcut( code )
+    if code == KEY_S then
+        self:OnClickSave()
+
+    elseif code == KEY_O then
+        self:OnClickOpen()
+
+    elseif code == KEY_N then
+        self:OnClickNew()
+
+    elseif code == KEY_W then
+        if self.activeTabId then
+            self:CloseTabById( self.activeTabId )
+        end
+    end
+end
+
 function PANEL:SaveTabs()
     local data = { tabs = {} }
     local tabs = data.tabs
@@ -642,6 +659,14 @@ end
 function PANEL:PaintOver( w, h )
     if self.activeTabId == nil then
         draw.SimpleText( "#glide.stream_editor.no_open_files", "StyledTheme_Small", w * 0.5, h * 0.5, colors.buttonText, 1, 1 )
+    end
+end
+
+function PANEL:OnKeyCodePressed( code )
+    local control = input.IsKeyDown( KEY_LCONTROL ) or input.IsKeyDown( KEY_RCONTROL )
+
+    if control and code ~= KEY_LCONTROL and code ~= KEY_RCONTROL then
+        self:OnShortcut( code )
     end
 end
 
