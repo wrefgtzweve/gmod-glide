@@ -136,11 +136,8 @@ function PANEL:Init()
         self.manualInput = true
     end
 
-    timer.Simple( 0, function()
-        if IsValid( engineControls ) then
-            engineControls:SizeToChildren( false, true )
-        end
-    end )
+    self.engineControls = engineControls
+    self:RecaulculateEngineSimPanel()
 
     -- Layers list panel
     self.scrollLayers = vgui.Create( "DScrollPanel", self )
@@ -203,6 +200,16 @@ function PANEL:UpdateStats()
 
     self.reachedResourceLimits = dataSize >= Glide.MAX_JSON_SIZE or layerCount >= Glide.MAX_STREAM_LAYERS
     self.mainEditor:UpdateStats( dataSize, layerCount )
+end
+
+function PANEL:RecaulculateEngineSimPanel()
+    local panel = self.engineControls
+
+    timer.Simple( 0, function()
+        if IsValid( panel ) then
+            panel:SizeToChildren( false, true )
+        end
+    end )
 end
 
 function PANEL:LoadPath( path )
