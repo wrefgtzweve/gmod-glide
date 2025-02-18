@@ -28,7 +28,10 @@ commands[Glide.CMD_UPLOAD_STREAM_PRESET] = function( ply )
     if not veh.IsGlideVehicle then return end
 
     -- Make sure this player can tool this vehicle
-    if hook.Run( "CanTool", ply, ply:GetEyeTrace(), "glide_engine_stream", {}, 1 ) == false then return end
+    local tr = ply:GetEyeTrace()
+    tr.Entity = veh
+
+    if hook.Run( "CanTool", ply, tr, "glide_engine_stream", {}, 1 ) == false then return end
 
     local size = net.ReadUInt( 16 )
 
