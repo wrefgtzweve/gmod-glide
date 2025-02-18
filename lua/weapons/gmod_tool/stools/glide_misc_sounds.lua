@@ -152,10 +152,12 @@ local function OnClickPickPath( s )
     browser:SetTitle( string.format( title, key ) )
     browser:SetExtensionFilter( { "mp3", "wav" } )
     browser:SetBasePath( "sound/" )
-    browser:NavigateTo( "/" )
+    browser:NavigateTo( Glide.miscSoundsToolLastDir or "/" )
 
     browser.OnConfirmPath = function( path )
         path = path:sub( 7 ) -- Remove "sound/"
+        Glide.miscSoundsToolLastDir = string.GetPathFromFilename( path )
+
         SetPresetData( key, path )
         refresh()
     end
