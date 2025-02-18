@@ -54,9 +54,11 @@ commands[Glide.CMD_SYNC_SOUND_ENTITY_MODIFIER] = function()
     modData = util.Decompress( modData )
     if not modData then return end
 
+    local shouldClear = Glide.FromJSON( modData ).clear == true
+
     -- Entity modifier: Engine Stream preset
     if modType == 1 then
-        if Glide.FromJSON( modData ).clear then
+        if shouldClear then
             modEntity.streamJSONOverride = nil
         else
             modEntity.streamJSONOverride = modData
@@ -65,6 +67,25 @@ commands[Glide.CMD_SYNC_SOUND_ENTITY_MODIFIER] = function()
         if modEntity.stream then
             modEntity.stream:Destroy()
             modEntity.stream = nil
+        end
+
+    -- Entity modifier: Misc. Sounds
+    elseif modType == 2 then
+        local data = Glide.FromJSON( modData )
+        local originalSounds = modEntity._originalSounds or {}
+        modEntity._originalSounds = originalSounds
+
+        -- Restore original sounds
+        for k, path in pairs( originalSounds ) do
+            modEntity[k] = path
+        end
+
+        if shouldClear then return end
+
+        -- Apply custom sounds
+        for k, path in pairs( data ) do
+            originalSounds[k] = modEntity[k]
+            modEntity[k] = path
         end
     end
 end

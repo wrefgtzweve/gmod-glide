@@ -13,7 +13,7 @@ local function TrackVehicle( vehicle, modType, modData )
 
     -- Check if the vehicle is on the mods list already
     for i, mod in ipairs( active ) do
-        if mod.vehicle == vehicle then
+        if mod.vehicle == vehicle and mod.type == modType then
             index = i
             break
         end
@@ -94,8 +94,14 @@ hook.Add( "ClientSignOnStateChanged", "Glide.MarkPlayerAsLoaded", function( user
     end )
 end )
 
+local SUPPORTED_VEHICLE_TYPES = {
+    [Glide.VEHICLE_TYPE.CAR] = true,
+    [Glide.VEHICLE_TYPE.MOTORCYCLE] = true,
+    [Glide.VEHICLE_TYPE.TANK] = true
+}
+
 local function IsGlideVehicle( ent )
-    return IsValid( ent ) and ent.IsGlideVehicle
+    return IsValid( ent ) and ent.IsGlideVehicle and SUPPORTED_VEHICLE_TYPES[ent.VehicleType]
 end
 
 --[[
@@ -135,7 +141,37 @@ function Glide.RemoveEngineStreamModifier( ent )
 end
 
 --[[
-    TODO: Register a entity modifier to apply misc. sounds
+    Register a entity modifier to apply misc. sounds
 ]]
 
--- TrackVehicle( vehicle, 2, data )
+function Glide.ApplyMiscSoundsModifier( ply, ent, data )
+    if not IsGlideVehicle( ent ) then return false end
+
+    data = data.json
+    if type( data ) ~= "string" then return end
+    if #data > Glide.MAX_JSON_SIZE then return end
+
+    data = Glide.FromJSON( data )
+    if not data then return end
+
+    local success, message = Glide.ValidateMiscSoundData( data )
+
+    if not success then
+        Glide.Print( "Failed to apply misc. sounds entity modifier from %s <%s>: %s", ply:Nick(), ply:SteamID(), message )
+        return false
+    end
+
+    data = Glide.ToJSON( data )
+    TrackVehicle( ent, 2, data )
+
+    duplicator.StoreEntityModifier( ent, "glide_misc_sounds", { json = data } )
+end
+
+duplicator.RegisterEntityModifier( "glide_misc_sounds", Glide.ApplyMiscSoundsModifier )
+
+function Glide.RemoveMiscSoundsModifier( ent )
+    if not IsGlideVehicle( ent ) then return end
+
+    duplicator.ClearEntityModifier( ent, "glide_misc_sounds" )
+    TrackVehicle( ent, 2, Glide.ToJSON( { clear = true } ) )
+end
