@@ -190,14 +190,50 @@ function PANEL:Init()
             self.fileBrowser:Remove()
         end
 
-        -- TODO: save tabs to disk
+        self:SaveTabs()
     end
 
     self.tabs = {}
     self.lastTabId = 0
     self.activeTabId = nil
+    self:LoadTabs()
+end
 
-    -- TODO: load tabs list from disk
+function PANEL:SaveTabs()
+    local data = { tabs = {} }
+    local tabs = data.tabs
+
+    for id, tab in SortedPairs( self.tabs ) do
+        local panel = tab.panel
+
+        if IsValid( panel ) then
+            tabs[#tabs + 1] = panel.filePath
+
+            if id == self.activeTabId then
+                data.activePath = tab.panel.filePath
+            end
+        end
+    end
+
+    data = Glide.ToJSON( data )
+    Glide.SaveDataFile( "glide_stream_editor_tabs.json", data )
+end
+
+function PANEL:LoadTabs()
+    local data = Glide.LoadDataFile( "glide_stream_editor_tabs.json" )
+
+    data = Glide.FromJSON( data )
+
+    for _, path in ipairs( data.tabs ) do
+        if file.Exists( path, "GAME" ) then
+            local panel, id = self:AddTab()
+            panel:LoadPath( path )
+
+            if path == data.activePath then
+                self:SetActiveTabById( id )
+            end
+        end
+    end
 end
 
 function PANEL:CopyActiveStreamPresetData()
@@ -221,7 +257,7 @@ end
 function PANEL:OnClickNew()
     local panel, id = self:AddTab()
     self:SetActiveTabById( id )
-    panel:Load( nil )
+    panel:LoadJSON( nil )
 end
 
 function PANEL:OnClickOpen()
@@ -240,7 +276,7 @@ function PANEL:OnClickOpen()
     self.fileBrowser.OnConfirmPath = function( path )
         local panel, id = self:AddTab()
         self:SetActiveTabById( id )
-        panel:Load( path )
+        panel:LoadPath( path )
     end
 end
 
@@ -329,7 +365,7 @@ function PANEL:OnClickImportJSON()
     self.fileBrowser.OnConfirmPath = function( path )
         local panel, id = self:AddTab()
         self:SetActiveTabById( id )
-        panel:Load( path )
+        panel:LoadPath( path )
     end
 end
 

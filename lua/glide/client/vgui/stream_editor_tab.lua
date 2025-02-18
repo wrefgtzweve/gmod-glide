@@ -205,12 +205,31 @@ function PANEL:UpdateStats()
     self.mainEditor:UpdateStats( dataSize, layerCount )
 end
 
-function PANEL:Load( path )
+function PANEL:LoadPath( path )
+    self.filePath = nil
+
+    if not path then
+        self:LoadJSON( nil )
+        return
+    end
+
+    local data = file.Read( path, "GAME" )
+
+    if not data or string.len( path ) == 0 then
+        self:Close( L"stream_editor.err_no_data" )
+        return
+    end
+
+    self.filePath = path
+    self:LoadJSON( data )
+end
+
+function PANEL:LoadJSON( data )
     self.stream = Glide.CreateEngineStream( LocalPlayer() )
     self.stream.errorCallback = OnStreamError
     self.stream.firstPerson = true
 
-    if not path then
+    if not data then
         self.filePath = "data/" .. Glide.PRESET_DATA_DIR .. "untitled.json"
         self:MarkAsUnsaved()
         self:UpdateStreamParamSliders()
@@ -219,13 +238,6 @@ function PANEL:Load( path )
     end
 
     self.isLoadingData = true
-
-    local data = file.Read( path, "GAME" )
-
-    if not data or string.len( path ) == 0 then
-        self:Close( L"stream_editor.err_no_data" )
-        return
-    end
 
     data = Glide.FromJSON( data )
     local keyValues = data.kv or {}
@@ -273,7 +285,7 @@ function PANEL:Load( path )
         end
     end
 
-    self.filePath = path
+    self.filePath = self.filePath or "data/" .. Glide.PRESET_DATA_DIR .. "untitled.json"
     self.isUnsaved = false
 
     self:UpdateTabButton()
