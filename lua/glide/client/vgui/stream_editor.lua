@@ -237,9 +237,8 @@ function PANEL:SaveTabs()
 end
 
 function PANEL:LoadTabs()
-    local data = Glide.LoadDataFile( "glide_stream_editor_tabs.json" )
-
-    data = Glide.FromJSON( data )
+    local data = Glide.FromJSON( Glide.LoadDataFile( "glide_stream_editor_tabs.json" ) )
+    if type( data.tabs ) ~= "table" then return end
 
     for _, path in ipairs( data.tabs ) do
         if file.Exists( path, "GAME" ) then
