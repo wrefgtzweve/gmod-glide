@@ -337,12 +337,12 @@ do
                 DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius, l.lightBrightness or DEFAULT_BRIGHTNESS[ltype] )
 
             elseif enable and ltype == "brake" then
-                DrawLightSprite( pos, dir, l.size or 30, COLOR_BRAKE )
-                DrawLight( pos + dir * 10, COLOR_BRAKE, l.lightRadius, l.lightBrightness )
+                DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
+                DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius, l.lightBrightness )
 
             elseif enable and ltype == "reverse" then
-                DrawLightSprite( pos, dir, l.size or 20, COLOR_REV )
-                DrawLight( pos + dir * 10, COLOR_REV, l.lightRadius, l.lightBrightness )
+                DrawLightSprite( pos, dir, l.size or 20, l.color or COLOR_REV )
+                DrawLight( pos + dir * 10, l.color or COLOR_REV, l.lightRadius, l.lightBrightness )
             end
         end
     end
