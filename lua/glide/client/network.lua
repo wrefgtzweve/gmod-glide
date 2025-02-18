@@ -71,6 +71,17 @@ commands[Glide.CMD_SYNC_SOUND_ENTITY_MODIFIER] = function()
 
     -- Entity modifier: Misc. Sounds
     elseif modType == 2 then
+
+        -- Stop existing sounds
+        local sounds = modEntity.sounds
+
+        if sounds then
+            for k, snd in pairs( sounds ) do
+                snd:Stop()
+                sounds[k] = nil
+            end
+        end
+
         local data = Glide.FromJSON( modData )
         local originalSounds = modEntity._originalSounds or {}
         modEntity._originalSounds = originalSounds
