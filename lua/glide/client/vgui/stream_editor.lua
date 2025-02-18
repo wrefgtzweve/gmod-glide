@@ -1,5 +1,4 @@
 Glide.PRESET_DATA_DIR = "glide_presets/"
-Glide.MAX_STREAM_LAYERS = 8
 
 function Glide.EnsurePresetDataDir()
     if not file.Exists( Glide.PRESET_DATA_DIR, "DATA" ) then
@@ -175,9 +174,13 @@ function PANEL:Init()
             local query = string.format( L"stream_editor.unsaved_query", unsavedTabs )
 
             Derma_Query( query, L"stream_editor.close", L"yes", function()
-                if IsValid( s ) then s:OriginalClose() end
+                if IsValid( s ) then
+                    s:CopyActiveStreamPresetData()
+                    s:OriginalClose()
+                end
             end, L"no" )
         else
+            s:CopyActiveStreamPresetData()
             s:OriginalClose()
         end
     end
@@ -195,6 +198,13 @@ function PANEL:Init()
     self.activeTabId = nil
 
     -- TODO: load tabs list from disk
+end
+
+function PANEL:CopyActiveStreamPresetData()
+    local panel = self:GetActiveTab()
+    if not panel then return end
+
+    Glide.lastStreamPresetData = panel:GetJSONData()
 end
 
 function PANEL:IsAnyTabOpen()
