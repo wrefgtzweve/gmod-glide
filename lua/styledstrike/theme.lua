@@ -863,6 +863,10 @@ do
         ["conf"] = "icon16/page_white_gear.png",
         ["ini"] = "icon16/page_white_gear.png",
         ["properties"] = "icon16/page_white_gear.png",
+
+        ["wav"] = "icon16/sound.png",
+        ["ogg"] = "icon16/sound.png",
+        ["mp3"] = "icon16/sound.png",
     }
 
     local L = StyledTheme.GetUpperLanguagePhrase
