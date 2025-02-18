@@ -42,6 +42,10 @@ function TOOL:LeftClick( trace )
     if not veh then return false end
     if not self:CanSendData( veh ) then return end
 
+    if SERVER and game.SinglePlayer() then
+        self:GetOwner():SendLua( "LocalPlayer():GetTool():LeftClick( LocalPlayer():GetEyeTrace() )" )
+    end
+
     if CLIENT then
         local data = Glide.lastStreamPresetData
 
@@ -76,6 +80,10 @@ function TOOL:LeftClick( trace )
 end
 
 function TOOL:RightClick( _trace )
+    if SERVER and game.SinglePlayer() then
+        self:GetOwner():SendLua( "LocalPlayer():GetTool():RightClick()" )
+    end
+
     if CLIENT then
         Glide:OpenSoundEditor()
     end

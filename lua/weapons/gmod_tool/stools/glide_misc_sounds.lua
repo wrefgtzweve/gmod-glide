@@ -72,6 +72,10 @@ function TOOL:LeftClick( trace )
     if not veh then return false end
     if not self:CanSendData( veh ) then return end
 
+    if SERVER and game.SinglePlayer() then
+        self:GetOwner():SendLua( "LocalPlayer():GetTool():LeftClick( LocalPlayer():GetEyeTrace() )" )
+    end
+
     if CLIENT then
         local data = util.Compress( Glide.ToJSON( presetData ) )
         local size = #data
@@ -95,6 +99,10 @@ function TOOL:RightClick( trace )
     local veh = GetGlideVehicle( trace )
     if not veh then return false end
     if not SUPPORTED_VEHICLE_TYPES[veh.VehicleType] then return false end
+
+    if SERVER and game.SinglePlayer() then
+        self:GetOwner():SendLua( "LocalPlayer():GetTool():RightClick( LocalPlayer():GetEyeTrace() )" )
+    end
 
     if CLIENT then
         for _, key in ipairs( Glide.GetAllMiscSoundKeys() ) do
