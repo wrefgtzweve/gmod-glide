@@ -40,7 +40,6 @@ end
 function TOOL:LeftClick( trace )
     local veh = GetGlideVehicle( trace )
     if not veh then return false end
-    if not veh then return false end
     if not self:CanSendData( veh ) then return end
 
     if CLIENT then
