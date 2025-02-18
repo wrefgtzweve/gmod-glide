@@ -80,7 +80,7 @@ end )
 
 -- Since `PlayerInitialSpawn` is called before the player is ready
 -- to receive net events, we have to use `ClientSignOnStateChanged` instead.
-hook.Add( "ClientSignOnStateChanged", "ZScoreboard.SyncCards", function( user, _, new )
+hook.Add( "ClientSignOnStateChanged", "Glide.MarkPlayerAsLoaded", function( user, _, new )
     if new ~= SIGNONSTATE_FULL then return end
 
     -- We can only retrieve the player entity after this hook runs, so lets use a timer.
