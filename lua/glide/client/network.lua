@@ -56,7 +56,11 @@ commands[Glide.CMD_SYNC_SOUND_ENTITY_MODIFIER] = function()
 
     -- Entity modifier: Engine Stream preset
     if modType == 1 then
-        modEntity.streamJSONOverride = modData
+        if Glide.FromJSON( modData ).clear then
+            modEntity.streamJSONOverride = nil
+        else
+            modEntity.streamJSONOverride = modData
+        end
 
         if modEntity.stream then
             modEntity.stream:Destroy()

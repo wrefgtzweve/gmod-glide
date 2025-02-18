@@ -127,6 +127,13 @@ end
 
 duplicator.RegisterEntityModifier( "glide_engine_stream", Glide.ApplyEngineStreamModifier )
 
+function Glide.RemoveEngineStreamModifier( ent )
+    if not IsGlideVehicle( ent ) then return end
+
+    duplicator.ClearEntityModifier( ent, "glide_engine_stream" )
+    TrackVehicle( ent, 1, Glide.ToJSON( { clear = true } ) )
+end
+
 --[[
     TODO: Register a entity modifier to apply misc. sounds
 ]]

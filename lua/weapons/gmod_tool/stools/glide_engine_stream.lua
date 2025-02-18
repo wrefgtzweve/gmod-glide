@@ -22,7 +22,7 @@ local function GetGlideVehicle( trace )
 end
 
 function TOOL:CanSendData( veh )
-    if not veh.OnCreateEngineStream then
+    if CLIENT and not veh.OnCreateEngineStream then
         return false
     end
 
@@ -77,7 +77,7 @@ end
 function TOOL:Reload( trace )
     local veh = GetGlideVehicle( trace )
     if not veh then return false end
-    if not self:CanSendData( veh ) then return end
+    if not self:CanSendData( veh ) then return false end
 
     if SERVER then
         Glide.RemoveEngineStreamModifier( veh )
