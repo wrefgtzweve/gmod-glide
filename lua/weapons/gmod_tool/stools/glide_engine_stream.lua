@@ -45,7 +45,17 @@ function TOOL:LeftClick( trace )
 
     if CLIENT then
         local data = Glide.lastStreamPresetData
-        if not data then return false end
+
+        if not data then
+            Glide.Notify( {
+                text = "#tool.glide_engine_stream.no_data",
+                icon = "materials/icon16/cancel.png",
+                sound = "glide/ui/radar_alert.wav",
+                immediate = true
+            } )
+
+            return false
+        end
 
         data = util.Compress( data )
 
