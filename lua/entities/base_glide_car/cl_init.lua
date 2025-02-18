@@ -7,6 +7,7 @@ ENT.AutomaticFrameAdvance = true
 function ENT:OnPostInitialize()
     self.brakePressure = 0
     self.rpmFraction = 0
+    self.streamJSONOverride = nil
 end
 
 function ENT:OnGearChange( _, _, gear )
@@ -203,7 +204,13 @@ function ENT:OnUpdateSounds()
 
     if not stream then
         self.stream = Glide.CreateEngineStream( self )
-        self:OnCreateEngineStream( self.stream )
+
+        if self.streamJSONOverride then
+            self.stream:LoadJSON( self.streamJSONOverride )
+        else
+            self:OnCreateEngineStream( self.stream )
+        end
+
         self.stream:Play()
 
         return

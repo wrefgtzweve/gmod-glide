@@ -27,6 +27,7 @@ end
 function ENT:OnPostInitialize()
     self.currentTurretAng = Angle()
     self.targetTurretAng = Angle()
+    self.streamJSONOverride = nil
 end
 
 --- Override this base class function.
@@ -206,7 +207,13 @@ function ENT:OnUpdateSounds()
 
     if not stream then
         self.stream = Glide.CreateEngineStream( self )
-        self:OnCreateEngineStream( self.stream )
+
+        if self.streamJSONOverride then
+            self.stream:LoadJSON( self.streamJSONOverride )
+        else
+            self:OnCreateEngineStream( self.stream )
+        end
+
         self.stream:Play()
 
         return

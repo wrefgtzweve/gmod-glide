@@ -41,6 +41,34 @@ commands[Glide.CMD_NOTIFY] = function()
     Glide.Notify( data )
 end
 
+commands[Glide.CMD_SYNC_SOUND_ENTITY_MODIFIER] = function()
+    local modEntity = net.ReadEntity()
+    if not IsValid( modEntity ) then return end
+
+    local modType = net.ReadUInt( 3 )
+    local modSize = net.ReadUInt( 16 )
+    local modData = net.ReadData( modSize )
+
+    if not modData then return end
+
+    modData = util.Decompress( modData )
+    if not modData then return end
+
+    -- Entity modifier: Engine Stream preset
+    if modType == 1 then
+        if Glide.FromJSON( modData ).clear then
+            modEntity.streamJSONOverride = nil
+        else
+            modEntity.streamJSONOverride = modData
+        end
+
+        if modEntity.stream then
+            modEntity.stream:Destroy()
+            modEntity.stream = nil
+        end
+    end
+end
+
 net.Receive( "glide.command", function()
     local cmd = net.ReadUInt( Glide.CMD_SIZE )
 
