@@ -635,7 +635,7 @@ function ENT:DrawVehicleHUD( screenW, screenH )
     DrawOutlinedCircle( r, x + r, y + r, size * 0.04, colors.bg, 90, 270 )
 
     -- Throttle
-    throttle = ExpDecay( throttle, self:GetEngineThrottle(), 20, dt )
+    throttle = ExpDecay( throttle, Clamp( self:GetEngineThrottle(), 0, 1 ), 20, dt )
     colors.throttleBar.a = 255
 
     DrawOutlinedCircle( r * 0.985, x + r, y + r, size * 0.025, colors.throttleBar, 90 * throttle, 361 )
