@@ -38,4 +38,24 @@ if SERVER then
             filter = { self, self:GlideGetVehicle() }
         } ).HitPos
     end
+
+    --- Utility function to copy the entity creator
+    --- or CPPI owner from one entity to another.
+    function Glide.CopyEntityCreator( source, target )
+        local ply
+
+        if source.CPPIGetOwner then
+            ply = source:CPPIGetOwner()
+        end
+
+        if not IsValid( ply ) then
+            ply = source:GetCreator()
+        end
+
+        target:SetCreator( ply or NULL )
+
+        if target.CPPISetOwner then
+            target:CPPISetOwner( ply )
+        end
+    end
 end

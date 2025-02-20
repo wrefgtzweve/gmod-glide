@@ -400,9 +400,10 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     seat:SetAngles( self:LocalToWorldAngles( angle or Angle( 0, 270, 10 ) ) )
     seat:SetMoveType( MOVETYPE_NONE )
     seat:SetOwner( self )
-    seat:SetCreator( self:GetCreator() )
     seat:Spawn()
     seat:Activate()
+
+    Glide.CopyEntityCreator( self, seat )
 
     seat:SetKeyValue( "limitview", 0 )
     seat:SetNotSolid( true )
