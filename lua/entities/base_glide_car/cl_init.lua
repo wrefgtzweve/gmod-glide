@@ -358,7 +358,7 @@ function ENT:OnUpdateMisc()
     local dt = FrameTime()
     local rpmFraction = ( self:GetEngineRPM() - self:GetMinRPM() ) / ( self:GetMaxRPM() - self:GetMinRPM() )
 
-    self.rpmFraction = ExpDecay( self.rpmFraction, rpmFraction, 7, dt )
+    self.rpmFraction = ExpDecay( self.rpmFraction, rpmFraction, rpmFraction > self.rpmFraction and 7 or 4, dt )
 
     local headlightState = self:GetHeadlightState()
     local isHeadlightOn = headlightState > 0
