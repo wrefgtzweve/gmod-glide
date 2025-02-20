@@ -63,6 +63,17 @@ function PANEL:Init()
     checkRevLimiter:Dock( LEFT )
     checkRevLimiter:DockMargin( 0, 0, 0, 0 )
     self.checkRevLimiter = checkRevLimiter
+
+    local checkMute = StyledTheme.CreateFormToggle( panelFooter, L"stream_editor.mute", false, function( value )
+        if self.layerData then
+            self.layerData.isMuted = value
+        end
+    end )
+
+    checkMute:SetFont( "StyledTheme_Tiny" )
+    checkMute:Dock( LEFT )
+    checkMute:DockMargin( self.padding, 0, 0, 0 )
+    self.checkMute = checkMute
 end
 
 function PANEL:OnChanged()
