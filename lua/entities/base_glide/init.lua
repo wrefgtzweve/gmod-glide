@@ -46,8 +46,9 @@ function ENT:Initialize()
 
     self.inputBools = {}        -- Per-seat bool inputs
     self.inputFloats = {}       -- Per-seat float inputs
-    self.inputFlyMode = 0           -- Current mouse flying mode
-    self.inputManualShift = false   -- Current manual gear shifting setting
+    self.inputFlyMode = 0           -- User mouse flying mode
+    self.inputManualShift = false   -- User manual gear shifting setting
+    self.autoTurnOffLights = false  -- User "turn off headlights" setting
 
     -- Setup collision variables
     self.collisionShakeCooldown = 0

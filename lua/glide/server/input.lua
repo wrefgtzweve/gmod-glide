@@ -47,6 +47,7 @@ do
         playerSettings[ply] = {
             binds = binds,
             manualGearShifting = data.manualGearShifting == true,
+            autoTurnOffLights = data.autoTurnOffLights == true,
             mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) )
         }
 
@@ -109,6 +110,7 @@ do
         if seatIndex == 1 then
             vehicle.inputFlyMode = settings.mouseFlyMode
             vehicle.inputManualShift = settings.manualGearShifting
+            vehicle.autoTurnOffLights = settings.autoTurnOffLights
             vehicle:ResetInputs( 1 )
         end
 

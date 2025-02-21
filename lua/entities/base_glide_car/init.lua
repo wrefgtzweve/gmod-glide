@@ -192,6 +192,10 @@ function ENT:TurnOff()
     self.frontBrake = 0.2
     self.rearBrake = 0.2
     self.reducedThrottle = false
+
+    if self.autoTurnOffLights then
+        self:ChangeHeadlightState( 0, true )
+    end
 end
 
 --- Override this base class function.
@@ -522,6 +526,7 @@ function ENT:OnPostThink( dt, selfTbl )
 
     -- Update driver inputs
     self:UpdateSteering( dt )
+    self:SetIsBraking( self:GetInputBool( 1, "handbrake" ) or self:GetInputFloat( 1, "brake" ) > 0.1 )
 
     local phys = self:GetPhysicsObject()
 
