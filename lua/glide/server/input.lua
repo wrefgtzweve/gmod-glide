@@ -109,6 +109,7 @@ do
         if seatIndex == 1 then
             vehicle.inputFlyMode = settings.mouseFlyMode
             vehicle.inputManualShift = settings.manualGearShifting
+            vehicle:ResetInputs( 1 )
         end
 
         -- Separate actions for each button, and filter only the
@@ -135,7 +136,14 @@ function Glide.DeactivateInput( ply )
     local active = activeData[ply]
 
     if active and IsValid( active.vehicle ) then
+        local inputSteer = active.vehicle:GetInputFloat( 1, "steer" )
+
         active.vehicle:ResetInputs( active.seatIndex )
+
+        -- Keep steering input for now
+        if active.seatIndex == 1 then
+            active.vehicle:SetInputFloat( 1, "steer", inputSteer )
+        end
     end
 
     activeData[ply] = nil
