@@ -387,15 +387,7 @@ function Camera:CalcView()
     -- Make the player's EyeAngles look at the same spot as the camera
     local aimDir = self.lastAimPos - user:EyePos()
     aimDir:Normalize()
-
-    local viewAngles = aimDir:Angle()
-    --[[local seat = user:GetVehicle()
-
-    if IsValid( seat ) then
-        viewAngles = seat:WorldToLocalAngles( viewAngles )
-    end]]
-
-    self.viewAngles = viewAngles
+    self.viewAngles = aimDir:Angle()
 
     return {
         origin = origin,
