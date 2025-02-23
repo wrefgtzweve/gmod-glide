@@ -1,5 +1,6 @@
 local IsValid = IsValid
 local LocalPlayer = LocalPlayer
+local NormalizeAngle = math.NormalizeAngle
 
 local EntityMeta = FindMetaTable( "Entity" )
 local getTable = EntityMeta.GetTable
@@ -22,7 +23,7 @@ hook.Add( "UpdateAnimation", "Glide.OverridePlayerAnim", function( ply )
                 ang = parent:WorldToLocalAngles( ang )
             end
 
-            ang[2] = ang[2] - 90
+            ang[2] = NormalizeAngle( ang[2] - 90 )
 
             ply:SetPoseParameter( "head_pitch", ang[1] )
             ply:SetPoseParameter( "head_yaw", ang[2] )
