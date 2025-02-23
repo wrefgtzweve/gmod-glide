@@ -10,6 +10,9 @@ function ENT:Initialize()
 
     self.sounds = {}
     self.soundSurface = {}
+
+    self.enableParticles = true
+    self.enableSkidmarks = true
 end
 
 function ENT:OnRemove()
@@ -175,7 +178,7 @@ function ENT:Think()
         rollFactor = rollFactor + fastFactor
     end
 
-    if rollFactor > 0.1 then
+    if rollFactor > 0.1 and selfTbl.enableParticles then
         rollFactor = Clamp( rollFactor, 0, 0.5 )
 
         local eff = EffectData()
@@ -187,7 +190,7 @@ function ENT:Think()
         Effect( "glide_tire_roll", eff )
     end
 
-    if forwardSlipFactor > 0.2 then
+    if forwardSlipFactor > 0.2 and selfTbl.enableParticles then
         forwardSlipFactor = Clamp( forwardSlipFactor, 0, 1 )
 
         local eff = EffectData()
@@ -204,6 +207,8 @@ function ENT:Think()
         selfTbl.lastRollId = nil
         return true
     end
+
+    if not selfTbl.enableSkidmarks then return true end
 
     -- Create skidmarks
     local skidmarkSize = self:GetRadius() * parent.WheelSkidmarkScale
