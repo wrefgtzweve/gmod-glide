@@ -17,13 +17,35 @@ local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 function ENT:OnEntityCopyTableFinish( data )
     Glide.FilterEntityCopyTable( data, self.DuplicatorNetworkVariables )
 
-    if data["DT"] and data["DT"]["WheelRadius"] then
-        -- Override `WheelRadius` if any of our wheels use the `useModelSize` parameter.
-        for _, w in ipairs( self.wheels ) do
-            if IsValid( w ) and w.params.useModelSize then
-                data["DT"]["WheelRadius"] = w.params.radius
-                break
-            end
+    -- Save radius for every individual wheel
+    local wheelRadius = {}
+    local wheelCount = 0
+
+    for i, w in ipairs( self.wheels ) do
+        if IsValid( w ) and w.params.useModelSize then
+            wheelRadius[i] = w:GetRadius()
+            wheelCount = wheelCount + 1
+        end
+    end
+
+    if wheelCount > 0 then
+        data["WheelRadius"] = wheelRadius
+    end
+end
+
+function ENT:OnDuplicated( data )
+    -- Restore radius for every individual wheel
+    local wheelRadius = data["WheelRadius"]
+    if type( wheelRadius ) ~= "table" then return end
+
+    local wheels = self.wheels
+    local w
+
+    for i, radius in pairs( wheelRadius ) do
+        w = wheels[i]
+
+        if IsValid( w ) and type( radius ) == "number" then
+            w:ChangeRadius( radius )
         end
     end
 end
