@@ -129,6 +129,7 @@ if CLIENT then
     function ENT:OnDeactivateMisc() end
     function ENT:OnUpdateMisc() end
     function ENT:OnUpdateParticles() end
+    function ENT:OnActivateWheel( _wheel, _index ) end
 
     function ENT:GetSeatBoneManipulations( _seatIndex ) end
     function ENT:AllowFirstPersonMuffledSound( _seatIndex ) return true end
