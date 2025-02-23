@@ -36,7 +36,7 @@ function Glide.GetRandomSound( id )
         if audioExt[id:sub( -4 )] then
             return id
         else
-            Glide.Print( "Tried to get inexistant sound set: %s", id )
+            Glide.Print( "Tried to get inexistent sound set: %s", id )
             return ""
         end
     end
@@ -56,7 +56,7 @@ function Glide.PlaySoundSet( id, source, volume, pitch, level, filter )
             dummySet.paths[1] = id
             set = dummySet
         else
-            Glide.Print( "Tried to play inexistant sound set: %s", id )
+            Glide.Print( "Tried to play inexistent sound set: %s", id )
             return
         end
     end

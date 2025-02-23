@@ -191,7 +191,7 @@ function ENT:AutoGearSwitch( throttle )
 
     local gearRPM
 
-    -- Pick the gear that matches better the engine-to-transmittion RPM
+    -- Pick the gear that matches better the engine-to-transmission RPM
     for i = 1, self.maxGear do
         gearRPM = self:TransmissionToEngineRPM( i )
 

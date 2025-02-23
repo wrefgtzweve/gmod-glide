@@ -705,7 +705,7 @@ function ENT:TriggerInput( name, value )
     BaseClass.TriggerInput( self, name, value )
 
     if name == "Ignition" then
-        -- Avoid continous triggers
+        -- Avoid continuous triggers
         self.wireSetEngineOn = value > 0
 
     elseif name == "Throttle" then
