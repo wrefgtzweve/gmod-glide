@@ -525,7 +525,7 @@ function ENT:DoExhaustPop()
 
     for _, v in ipairs( self.ExhaustOffsets ) do
         local pos = self:LocalToWorld( v.pos )
-        local dir = -self:LocalToWorldAngles( v.ang or DEFAULT_EXHAUST_ANG ):Forward()
+        local dir = -self:LocalToWorldAngles( v.ang or v.angle or DEFAULT_EXHAUST_ANG ):Forward()
 
         eff:SetOrigin( pos )
         eff:SetStart( pos + dir * 10 )
@@ -552,7 +552,7 @@ function ENT:OnUpdateParticles()
         for _, v in ipairs( self.ExhaustOffsets ) do
             local eff = EffectData()
             eff:SetOrigin( self:LocalToWorld( v.pos ) )
-            eff:SetAngles( self:LocalToWorldAngles( v.ang or DEFAULT_EXHAUST_ANG ) )
+            eff:SetAngles( self:LocalToWorldAngles( v.ang or v.angle or DEFAULT_EXHAUST_ANG ) )
             eff:SetStart( velocity )
             eff:SetScale( v.scale or 1 )
             eff:SetColor( self.ExhaustAlpha )
