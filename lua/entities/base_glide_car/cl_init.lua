@@ -330,18 +330,18 @@ do
             end
 
             if enable and ltype == "headlight" then
-                DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT )
+                DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, l.spriteMaterial )
 
             elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
-                DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
+                DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE, l.spriteMaterial )
                 DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius, l.lightBrightness or DEFAULT_BRIGHTNESS[ltype] )
 
             elseif enable and ltype == "brake" then
-                DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE )
+                DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE, l.spriteMaterial )
                 DrawLight( pos + dir * 10, l.color or COLOR_BRAKE, l.lightRadius, l.lightBrightness )
 
             elseif enable and ltype == "reverse" then
-                DrawLightSprite( pos, dir, l.size or 20, l.color or COLOR_REV )
+                DrawLightSprite( pos, dir, l.size or 20, l.color or COLOR_REV, l.spriteMaterial )
                 DrawLight( pos + dir * 10, l.color or COLOR_REV, l.lightRadius, l.lightBrightness )
             end
         end
@@ -350,6 +350,7 @@ end
 
 local IsValid = IsValid
 local ExpDecay = Glide.ExpDecay
+local DEFAULT_SIREN_COLOR = Color( 255, 255, 255, 255 )
 
 --- Implement this base class function.
 function ENT:OnUpdateMisc()
@@ -452,11 +453,11 @@ function ENT:OnUpdateMisc()
             radius = v.lightRadius or 150
 
             if radius > 0 then
-                DrawLight( pos, v.color or color_white, radius )
+                DrawLight( pos, v.color or DEFAULT_SIREN_COLOR, radius )
             end
 
             dir = v.dir and self:LocalToWorld( v.dir ) - myPos or nil
-            DrawLightSprite( pos, dir, v.size or 30, v.color or color_white )
+            DrawLightSprite( pos, dir, v.size or 30, v.color or DEFAULT_SIREN_COLOR, v.spriteMaterial )
         end
 
         -- Merge multiple bodygroup entries so that any one of them can "enable" a bodygroup
