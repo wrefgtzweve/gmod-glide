@@ -22,7 +22,7 @@ function ENT:OnEntityCopyTableFinish( data )
     local wheelCount = 0
 
     for i, w in ipairs( self.wheels ) do
-        if IsValid( w ) and w.params.useModelSize then
+        if IsValid( w ) then
             wheelRadius[i] = w:GetRadius()
             wheelCount = wheelCount + 1
         end
