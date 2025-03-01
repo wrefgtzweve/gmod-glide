@@ -38,6 +38,10 @@ if SERVER then
             ply = source:CPPIGetOwner()
         end
 
+        if type( ply ) == "number" then
+            ply = nil
+        end
+
         if not IsValid( ply ) then
             ply = source:GetCreator()
         end
