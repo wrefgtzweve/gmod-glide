@@ -246,6 +246,7 @@ if SERVER then
     function ENT:OnDriverExit() end
     function ENT:OnSeatInput( _seatIndex, _action, _pressed ) end
     function ENT:OnWeaponFire( _weapon, _weaponIndex ) end
+    function ENT:OnWeaponStart( _weapon, _weaponIndex ) end
     function ENT:OnWeaponStop( _weapon, _weaponIndex ) end
 
     function ENT:OnPostThink( _dt, _selfTbl ) end
