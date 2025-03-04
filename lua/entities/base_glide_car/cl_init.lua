@@ -331,16 +331,17 @@ do
                 end
             end
 
+            -- If the light has a `beamType` key, only draw the sprite
+            -- if the value of `beamType` matches the current headlight state.
+            if
+                ( l.beamType == "low" and headlightState ~= 1 ) or
+                ( l.beamType == "high" and headlightState ~= 2 )
+            then
+                enable = false
+            end
+
             if enable and ltype == "headlight" then
-                -- If the light has a `beamType` key, only draw the sprite
-                -- if the value of `beamType` matches the current headlight state.
-                if
-                    not l.beamType or
-                    ( l.beamType == "low" and headlightState == 1 ) or
-                    ( l.beamType == "high" and headlightState == 2 )
-                then
-                    DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, l.spriteMaterial )
-                end
+                DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, l.spriteMaterial )
 
             elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
                 DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE, l.spriteMaterial )
