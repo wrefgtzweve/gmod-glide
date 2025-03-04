@@ -547,7 +547,7 @@ function PANEL:SetActiveTabById( targetId )
 
     if activePanel then
         activePanel:UpdateStats()
-        activePanel:RecaulculateEngineSimPanel()
+        activePanel:InvalidateEnginePanel()
     else
         self:UpdateStats( 0, 0 )
     end
