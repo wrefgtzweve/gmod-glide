@@ -339,9 +339,11 @@ do
 
     --- Update out model's bodygroups depending on which lights are on.
     function ENT:UpdateBodygroups()
+        local headlightState = self:GetHeadlightState()
+
         lightState.brake = self:GetIsBraking()
         lightState.reverse = self:GetGear() == -1
-        lightState.headlight = self:GetHeadlightState() > 0
+        lightState.headlight = headlightState > 0
 
         local signal = self:GetTurnSignalState()
         local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
@@ -367,6 +369,15 @@ do
                 elseif l.signal == "right" and lightState.signal_right then
                     enable = signalBlink
                 end
+            end
+
+            -- If the light has a `beamType` key, only enable the bodygroup
+            -- if the value of `beamType` matches the current headlight state.
+            if
+                ( l.beamType == "low" and headlightState ~= 1 ) or
+                ( l.beamType == "high" and headlightState ~= 2 )
+            then
+                enable = false
             end
 
             self:SetBodygroup( l.bodyGroupId, enable and l.subModelId or 0 )
