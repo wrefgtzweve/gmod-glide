@@ -294,10 +294,12 @@ do
 
     --- Update out model's bodygroups depending on which lights are on.
     function ENT:DrawLights()
+        local headlightState = self:GetHeadlightState()
+
         lightState.brake = self:GetIsBraking()
         lightState.reverse = self:GetGear() == -1
-        lightState.headlight = self:GetHeadlightState() > 0
-        lightState.taillight = lightState.headlight
+        lightState.headlight = headlightState > 0
+        lightState.taillight = headlightState > 0
 
         local signal = self:GetTurnSignalState()
         local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
@@ -330,7 +332,15 @@ do
             end
 
             if enable and ltype == "headlight" then
-                DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, l.spriteMaterial )
+                -- If the light has a `beamType` key, only draw the sprite
+                -- if the value of `beamType` matches the current headlight state.
+                if
+                    not l.beamType or
+                    ( l.beamType == "low" and headlightState == 1 ) or
+                    ( l.beamType == "high" and headlightState == 2 )
+                then
+                    DrawLightSprite( pos, dir, l.size or 30, COLOR_HEADLIGHT, l.spriteMaterial )
+                end
 
             elseif enable and ( ltype == "taillight" or ltype == "signal_left" or ltype == "signal_right" ) then
                 DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_BRAKE, l.spriteMaterial )
