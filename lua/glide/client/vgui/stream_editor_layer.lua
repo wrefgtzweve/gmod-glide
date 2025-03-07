@@ -40,7 +40,6 @@ function PANEL:Init()
     local buttonAdd = vgui.Create( "DButton", panelFooter )
     buttonAdd:SetText( L"stream_editor.add_controller" )
     buttonAdd:SetIcon( "icon16/cog_add.png" )
-    buttonAdd:SizeToContents()
     buttonAdd:Dock( RIGHT )
     buttonAdd:DockMargin( 0, 0, self.padding, 0 )
 
@@ -50,6 +49,20 @@ function PANEL:Init()
 
     buttonAdd.DoClick = function()
         self:OnClickAddController()
+    end
+
+    local buttonChange = vgui.Create( "DButton", panelFooter )
+    buttonChange:SetText( L"stream_editor.change_audio" )
+    buttonChange:SetIcon( "icon16/sound_add.png" )
+    buttonChange:Dock( RIGHT )
+    buttonChange:DockMargin( 0, 0, self.padding, 0 )
+
+    self.buttonChange = buttonChange
+    ApplyTheme( buttonChange )
+    buttonChange:SetFont( "StyledTheme_Tiny" )
+
+    buttonChange.DoClick = function()
+        self:OnClickChangeAudio()
     end
 
     local checkRevLimiter = StyledTheme.CreateFormToggle( panelFooter, L"stream_editor.rev_limiter", false, function( value )
@@ -104,6 +117,38 @@ function PANEL:OnClickRemoveController( index )
         table.remove( controllers, index )
         self:SetControllers( controllers )
         self:OnChanged()
+    end
+end
+
+function PANEL:OnClickChangeAudio()
+    local fileBrowser = StyledTheme.CreateFileBrowser()
+    fileBrowser:SetTitle( L"stream_editor.open_audio" )
+    fileBrowser:SetIcon( "icon16/sound.png" )
+    fileBrowser:SetExtensionFilter( { "ogg", "wav", "mp3" } )
+    fileBrowser:SetBasePath( "sound/" )
+
+    fileBrowser.OnConfirmPath = function( path )
+        if not IsValid( self ) then return end
+
+        path = string.sub( path, 7 ) -- remove "sound/"
+        Glide.lastAudioFolderPath = string.GetPathFromFilename( path )
+
+        local layer = self.layerData
+
+        if IsValid( layer.channel ) then
+            layer.channel:Stop()
+        end
+
+        layer.path = path
+        layer.channel = nil
+        layer.isLoaded = false
+
+        self.path = path
+        self:OnChanged()
+    end
+
+    if Glide.lastAudioFolderPath then
+        fileBrowser:NavigateTo( Glide.lastAudioFolderPath )
     end
 end
 
@@ -296,9 +341,13 @@ function PANEL:SetControllers( controllers )
 end
 
 function PANEL:PerformLayout( w )
-    self.buttonRemove:SizeToContentsX( ScaleSize( 8 ) )
-    self.buttonAdd:SizeToContentsX( ScaleSize( 8 ) )
-    self.checkRevLimiter:SizeToContentsX( ScaleSize( 8 ) )
+    local buttonPadding = ScaleSize( 8 )
+
+    self.buttonRemove:SizeToContentsX( buttonPadding )
+    self.buttonAdd:SizeToContentsX( buttonPadding )
+    self.checkRevLimiter:SizeToContentsX( buttonPadding )
+    self.buttonChange:SizeToContentsX( buttonPadding )
+    self.checkMute:SizeToContentsX( buttonPadding )
 
     -- panelWidth - leftPadding - removeControllerButton - layerPadding
     local listW = w - 2 - ScaleSize( 28 ) - self.padding * 2
