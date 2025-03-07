@@ -184,9 +184,9 @@ function ENT:AutoGearSwitch( throttle )
     local currentGear = self:GetGear()
     local gear = Clamp( currentGear, 1, self.maxGear )
 
-    -- Switch up early while on 1st gear and the throttle is high
-    if currentGear == 1 or self.reducedThrottle then
-        maxRPM = maxRPM * ( 1 - throttle * 0.2 )
+    -- Switch up early while using reduced throttle
+    if self.reducedThrottle then
+        maxRPM = maxRPM * ( 1 - throttle * 0.3 )
     end
 
     local gearRPM
