@@ -189,8 +189,6 @@ function ENT:TurnOff()
     self.startupTimer = nil
 
     self.clutch = 1
-    self.frontBrake = 0.2
-    self.rearBrake = 0.2
     self.reducedThrottle = false
 
     if self.autoTurnOffLights then
@@ -533,6 +531,17 @@ function ENT:OnPostThink( dt, selfTbl )
     else
         selfTbl.availableFrontTorque = 0
         selfTbl.availableRearTorque = 0
+
+        local brake = self:GetInputFloat( 1, "brake" )
+
+        if self:GetInputBool( 1, "handbrake" ) then
+            brake = 0.5
+        end
+
+        brake = Clamp( 0.05 + brake, 0, 1 )
+
+        selfTbl.frontBrake = brake
+        selfTbl.rearBrake = brake
     end
 
     -- Update driver inputs

@@ -19,8 +19,8 @@ function ENT:EngineInit()
     self.groundedCount = 0
     self.burnout = 0
 
-    self.frontBrake = 0.2
-    self.rearBrake = 0.2
+    self.frontBrake = 0
+    self.rearBrake = 0
     self.availableFrontTorque = 0
     self.availableRearTorque = 0
 
@@ -340,8 +340,8 @@ function ENT:EngineThink( dt )
             inputBrake = 0.15
         end
 
-        self.frontBrake = inputBrake * 0.3
-        self.rearBrake = inputBrake * 0.7
+        self.frontBrake = inputBrake * 0.5
+        self.rearBrake = inputBrake * 0.5
 
         self.frontTractionMult = 1
         self.rearTractionMult = 1
