@@ -1,6 +1,5 @@
 include( "shared.lua" )
 
-ENT.RenderGroup = RENDERGROUP_OPAQUE
 ENT.AutomaticFrameAdvance = true
 
 function ENT:Initialize()

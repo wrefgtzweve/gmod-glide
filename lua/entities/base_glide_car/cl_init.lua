@@ -1,6 +1,5 @@
 include( "shared.lua" )
 
-ENT.RenderGroup = RENDERGROUP_OPAQUE
 ENT.AutomaticFrameAdvance = true
 
 --- Implement this base class function.
