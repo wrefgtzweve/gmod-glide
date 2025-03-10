@@ -238,9 +238,7 @@ function Camera:Think()
     end
 
     -- Toggle first person
-    local client = LocalPlayer()
-    local ducking = IsValid( client ) and client:KeyDown( IN_DUCK ) or false
-    local isSwitchKeyDown = ducking and not vgui.CursorVisible()
+    local isSwitchKeyDown = self.user:KeyDown( IN_DUCK ) and not vgui.CursorVisible()
 
     if self.isSwitchKeyDown ~= isSwitchKeyDown then
         self.isSwitchKeyDown = isSwitchKeyDown
