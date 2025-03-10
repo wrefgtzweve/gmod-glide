@@ -311,6 +311,7 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
         return
     end
 
+    fw = ray.HitNormal:Cross( rt )
     pos = params.enableAxleForces and pos or contactPos
 
     -- Get the velocity at the wheel position
