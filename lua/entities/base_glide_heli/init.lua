@@ -130,12 +130,19 @@ local Approach = math.Approach
 local ExpDecay = Glide.ExpDecay
 local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
+function ENT:ShouldPowerDown( selfTbl )
+    return not IsValid( selfTbl.mainRotor )
+end
+
 function ENT:ShouldGoOutOfControl( selfTbl )
     return not IsValid( selfTbl.tailRotor ) and selfTbl.TailRotorModel
 end
 
-function ENT:ShouldPowerDown( selfTbl )
-    return not IsValid( selfTbl.mainRotor )
+function ENT:HandleOutOfControl( selfTbl, power, dt )
+    local phys = self:GetPhysicsObject()
+    local force = self:GetRight() * power * phys:GetMass() * -100
+
+    phys:ApplyForceOffset( force * dt, self:LocalToWorld( selfTbl.TailRotorOffset ) )
 end
 
 --- Override this base class function.
@@ -156,7 +163,7 @@ function ENT:OnPostThink( dt, selfTbl )
     local throttle = self:GetInputFloat( 1, "throttle" )
 
     -- If the main rotor was destroyed, turn off and disable power
-    if self:ShouldPowerDown() then
+    if self:ShouldPowerDown( selfTbl ) then
         if self:IsEngineOn() then
             self:TurnOff()
         end
@@ -216,11 +223,7 @@ function ENT:OnPostThink( dt, selfTbl )
         local isOutOfControl = self:GetOutOfControl()
 
         if isOutOfControl then
-            local phys = self:GetPhysicsObject()
-            local force = self:GetRight() * power * phys:GetMass() * -100
-
-            phys:ApplyForceOffset( force * dt, self:LocalToWorld( selfTbl.TailRotorOffset ) )
-
+            self:HandleOutOfControl( selfTbl, power, dt )
         elseif power > 0.5 and self:ShouldGoOutOfControl( selfTbl ) then
             self:SetOutOfControl( true )
         end
