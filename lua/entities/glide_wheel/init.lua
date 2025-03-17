@@ -369,9 +369,6 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
     slipAngle = ( Atan2( velR, Abs( velF ) ) / PI ) * 2
     self:SetSideSlip( slipAngle * Clamp( vehicle.totalSpeed * 0.005, 0, 1 ) * 2 )
 
-    -- Reduce sideways traction as the suspension spring applies less force
-    surfaceGrip = surfaceGrip * Clamp( ( springForce * 0.5 ) / params.springStrength, 0, 1 )
-
     -- Sideways traction ramp
     slipAngle = Abs( slipAngle * slipAngle )
     maxTraction = TractionRamp( slipAngle, params.sideTractionMaxAng, params.sideTractionMax, params.sideTractionMin ) * surfaceGrip
@@ -380,8 +377,11 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
     -- Reduce sideways traction force as the wheel slips forward
     sideForce = sideForce * ( 1 - Clamp( Abs( gripLoss ) * 0.1, 0, 1 ) * 0.9 )
 
+    -- Reduce sideways force as the suspension spring applies less force
+    surfaceGrip = Clamp( springForce / params.springStrength, 0, 1 )
+
     -- Apply sideways traction force
-    force:Add( Clamp( sideForce, -maxTraction, maxTraction ) * rt )
+    force:Add( Clamp( sideForce, -maxTraction, maxTraction ) * surfaceGrip * rt )
 
     -- Apply an extra, small sideways force that is not clamped by maxTraction.
     -- This helps at lot with cornering at high speed.
