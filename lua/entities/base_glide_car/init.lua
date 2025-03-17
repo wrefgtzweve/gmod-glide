@@ -190,6 +190,8 @@ function ENT:TurnOff()
 
     self.clutch = 1
     self.reducedThrottle = false
+    self.availableFrontTorque = 0
+    self.availableRearTorque = 0
 
     if self.autoTurnOffLights then
         self:ChangeHeadlightState( 0, true )
