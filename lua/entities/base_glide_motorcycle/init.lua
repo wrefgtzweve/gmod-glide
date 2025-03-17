@@ -15,10 +15,10 @@ function ENT:OnPostInitialize()
 
     -- Change steering parameters to better suit bikes
     self:SetMaxSteerAngle( 30 )
-    self:SetSteerConeChangeRate( 10 )
+    self:SetSteerConeChangeRate( 12 )
     self:SetSteerConeMaxSpeed( 1200 )
-    self:SetSteerConeMaxAngle( 0.15 )
-    self:SetCounterSteer( 0.5 )
+    self:SetSteerConeMaxAngle( 0.3 )
+    self:SetCounterSteer( 0.75 )
     self:SetPowerDistribution( -1 )
 
     -- Change traction parameters to better suit bikes
@@ -94,7 +94,6 @@ function ENT:UpdateSteering( dt )
     BaseClass.UpdateSteering( self, dt )
 
     local isAnyWheelGrounded = self.groundedCount > 0
-    local invSpeedOverFactor = 1 - Clamp( self.totalSpeed / self:GetSteerConeMaxSpeed(), 0, 1 )
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
     local tilt = Clamp( sideSlip * -2, -0.5, 0.5 )
@@ -107,7 +106,7 @@ function ENT:UpdateSteering( dt )
         end
     end
 
-    self.steerTilt = ExpDecay( self.steerTilt, tilt, 8 + invSpeedOverFactor * 2, dt )
+    self.steerTilt = ExpDecay( self.steerTilt, tilt, 10, dt )
 
     if
         isAnyWheelGrounded and
