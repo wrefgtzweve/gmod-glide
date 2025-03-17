@@ -164,15 +164,6 @@ function ENT:AutoGearSwitch( throttle )
         return
     end
 
-    -- While not on ground, first gear
-    if self.groundedCount < self.wheelCount then
-        if self:GetGear() < 1 then
-            self:SwitchGear( 1, 0 )
-        end
-
-        return
-    end
-
     if self.forwardSpeed < 0 and throttle < 0.1 then return end
     if Abs( self.avgForwardSlip ) > 10 then return end
 
