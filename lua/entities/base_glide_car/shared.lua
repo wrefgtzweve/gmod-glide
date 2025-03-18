@@ -224,7 +224,7 @@ end
 
 if SERVER then
     ENT.CollisionParticleSize = 0.9
-    ENT.AngularDrag = Vector( -0.5, -0.5, -4 ) -- Roll, pitch, yaw
+    ENT.AngularDrag = Vector( -0.5, -0.5, -3 ) -- Roll, pitch, yaw
 
     -- How long does it take for the vehicle to start up?
     ENT.StartupTime = 0.6
@@ -236,7 +236,10 @@ if SERVER then
     ENT.LightBodygroups = {}
 
     -- How much force to apply when trying to turn while doing a burnout?
-    ENT.BurnoutForce = 60
+    ENT.BurnoutForce = 40
+
+    -- How much yaw drag to negate when trying to do a J-turn?
+    ENT.JTurnOppositeYawDrag = 1.6
 
     -- How much force to apply when the driver tries to unflip the vehicle?
     ENT.UnflipForce = 6

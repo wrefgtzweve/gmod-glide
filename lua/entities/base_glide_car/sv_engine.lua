@@ -285,7 +285,7 @@ function ENT:EngineThink( dt )
 
     -- Do a burnout when holding down the throttle and brake inputs
     if inputThrottle > 0.1 and inputBrake > 0.1 and Abs( self.forwardSpeed ) < 50 then
-        self.burnout = Approach( self.burnout, 1, dt )
+        self.burnout = Approach( self.burnout, 1, dt * 2 )
 
         clutch = 0
 

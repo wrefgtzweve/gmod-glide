@@ -593,6 +593,10 @@ function ENT:UpdateSteering( dt )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
     self.steerAngle[2] = -inputSteer * self:GetMaxSteerAngle()
+
+    -- Negate yaw drag when going slow/backwards, to allow for J-turns
+    local negateFactor = self.forwardSpeed < 0 and 1 or 1 - Clamp( self.totalSpeed / 1000, 0, 1 )
+    self.extraYawDrag = -self.AngularDrag[3] * negateFactor * self.JTurnOppositeYawDrag
 end
 
 --- Let the driver unflip the vehicle when it is upside down.

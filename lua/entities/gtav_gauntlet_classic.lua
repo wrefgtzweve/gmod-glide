@@ -68,7 +68,6 @@ end
 
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
-    ENT.BurnoutForce = 80
 
     function ENT:GetGears()
         return {
@@ -104,7 +103,6 @@ if SERVER then
         self:SetMinRPMTorque( 1300 )
         self:SetMaxRPMTorque( 1500 )
 
-        self:SetForwardTractionMax( 2500 )
         self:SetSideTractionMaxAng( 30 )
         self:SetSideTractionMax( 3000 )
         self:SetSideTractionMin( 1100 )
