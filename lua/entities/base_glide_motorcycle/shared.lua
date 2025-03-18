@@ -46,8 +46,6 @@ if SERVER then
 
     -- Bike-specific variables
     ENT.TiltForce = 550
-    ENT.YawDrag = -8
-
     ENT.KeepUprightForce = 1500
     ENT.KeepUprightDrag = -3
 

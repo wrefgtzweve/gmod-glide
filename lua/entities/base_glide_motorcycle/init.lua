@@ -12,6 +12,7 @@ function ENT:OnPostInitialize()
     self.steerTilt = 0
     self.stayUpright = false
     self.reverseInput = 0
+    self.extraYawDrag = -8
 
     -- Change steering parameters to better suit bikes
     self:SetMaxSteerAngle( 30 )
@@ -149,10 +150,7 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
     local angVel = phys:GetAngleVelocity()
     local mass = phys:GetMass()
 
-    -- Apply an extra yaw angular drag
-    if isAnyWheelGrounded then
-        outAng[3] = outAng[3] + angVel[3] * mass * self.YawDrag
-    else
+    if not isAnyWheelGrounded then
         self.steerTilt = 0
     end
 
@@ -168,7 +166,7 @@ function ENT:OnSimulatePhysics( phys, _, outLin, outAng )
         strength = strength * Clamp( self.totalSpeed / 200, 0, 1 )
         strength = strength * Clamp( 1 - self.frontBrake - self.rearBrake, 0, 1 )
 
-        -- Drag
+        -- Wheelie angular drag
         outAng[2] = outAng[2] + angVel[2] * mass * self.WheelieDrag * strength
 
         local frontPos = self.wheels[1]:GetPos()
