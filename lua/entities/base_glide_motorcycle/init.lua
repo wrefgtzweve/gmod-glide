@@ -12,7 +12,6 @@ function ENT:OnPostInitialize()
     self.steerTilt = 0
     self.stayUpright = false
     self.reverseInput = 0
-    self.extraYawDrag = -8
 
     -- Change steering parameters to better suit bikes
     self:SetMaxSteerAngle( 30 )
@@ -93,6 +92,9 @@ local ExpDecay = Glide.ExpDecay
 --- Override this base class function.
 function ENT:UpdateSteering( dt )
     BaseClass.UpdateSteering( self, dt )
+
+    -- Override the J-turn logic from base class
+    self.extraYawDrag = 0
 
     local isAnyWheelGrounded = self.groundedCount > 0
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
