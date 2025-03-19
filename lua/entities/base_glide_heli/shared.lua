@@ -141,7 +141,7 @@ if SERVER then
         end
 
         -- Create tail rotor, if it doesn't exist and we have a model for it
-        if not IsValid( self.tailRotor ) then
+        if not IsValid( self.tailRotor ) and self.TailRotorModel ~= "" then
             self.tailRotor = self:CreateRotor( self.TailRotorOffset, self.TailRotorRadius, self.TailRotorModel, self.TailRotorFastModel )
             self.tailRotor:SetBaseAngles( self.TailRotorAngle )
             self.tailRotor:SetSpinAxis( "Right" )
