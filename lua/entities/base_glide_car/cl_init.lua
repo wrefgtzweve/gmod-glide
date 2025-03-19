@@ -643,7 +643,7 @@ function ENT:DrawVehicleHUD( screenW, screenH )
     throttle = ExpDecay( throttle, Clamp( self:GetEngineThrottle(), 0, 1 ), 20, dt )
     colors.throttleBar.a = 255
 
-    DrawOutlinedCircle( r * 0.985, x + r, y + r, size * 0.025, colors.throttleBar, 90 * throttle, 361 )
+    DrawOutlinedCircle( r * 0.985, x + r, y + r, size * 0.025, colors.throttleBar, 89 * throttle, 361 )
 
     -- Engine state
     local iconSize = size * 0.11
