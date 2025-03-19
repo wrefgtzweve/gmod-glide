@@ -119,6 +119,7 @@ if SERVER then
     -- `selfTbl` is a more efficient way to access variables on the entity.
 
     function ENT:ShouldAllowRotorSpin( selfTbl )
+        if selfTbl.MainRotorModel == "" then return true end
         return IsValid( selfTbl.mainRotor )
     end
 
@@ -135,7 +136,7 @@ if SERVER then
 
     function ENT:CreateRotors()
         -- Create main rotor, if it doesn't exist
-        if not IsValid( self.mainRotor ) then
+        if not IsValid( self.mainRotor ) and self.MainRotorModel ~= "" then
             self.mainRotor = self:CreateRotor( self.MainRotorOffset, self.MainRotorRadius, self.MainRotorModel, self.MainRotorFastModel )
             self.mainRotor:SetBaseAngles( self.MainRotorAngle )
         end
