@@ -599,8 +599,8 @@ end
 
 --- Override this base class function.
 function ENT:GetYawDragMultiplier()
-    if self.groundedCount < self.wheelCount then
-        -- Keep normal yaw drag while any wheel is not grounded
+    if self.groundedCount < 1 then
+        -- Keep normal yaw drag while this vehicle is not grounded
         return 1
     end
 
