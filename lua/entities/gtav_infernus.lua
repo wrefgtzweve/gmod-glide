@@ -60,7 +60,7 @@ end
 if SERVER then
     ENT.ChassisMass = 800
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
-    ENT.BurnoutForce = 48
+    ENT.BurnoutForce = 35
 
     ENT.LightBodygroups = {
         { type = "brake", bodyGroupId = 16, subModelId = 1 },

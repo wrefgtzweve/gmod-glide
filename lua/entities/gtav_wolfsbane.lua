@@ -121,7 +121,7 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
     ENT.StartupTime = 0.5
 
-    ENT.BurnoutForce = 160
+    ENT.BurnoutForce = 55
     ENT.WheelieForce = 400
 
     ENT.LightBodygroups = {

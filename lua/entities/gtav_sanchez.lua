@@ -77,7 +77,7 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
     ENT.StartupTime = 0.4
-    ENT.BurnoutForce = 220
+    ENT.BurnoutForce = 50
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 6, subModelId = 1 }, -- Headlight

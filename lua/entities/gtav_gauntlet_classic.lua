@@ -69,6 +69,7 @@ end
 if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 30 )
     ENT.AngularDrag = Vector( -0.5, -0.5, -5 ) -- Roll, pitch, yaw
+    ENT.BurnoutForce = 28
 
     function ENT:GetGears()
         return {

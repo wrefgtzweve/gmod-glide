@@ -18,7 +18,10 @@ function ENT:OnPostInitialize()
     self.inputAirRoll = 0
     self.inputAirPitch = 0
     self.inputAirYaw = 0
+
+    self.jTurnMultiplier = 0
     self.frontSideTractionMult = 1
+    self.rearSideTractionMult = 1
 
     -- Initialize the engine
     self:EngineInit()
@@ -594,7 +597,23 @@ function ENT:UpdateSteering( dt )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
     self.steerAngle[2] = -inputSteer * self:GetMaxSteerAngle()
-    self.frontSideTractionMult = ExpDecay( self.frontSideTractionMult, 1, 2, dt )
+
+    -- Reduce front wheel sideways friction when trying to do a J-turn 
+    if self.forwardSpeed < -100 then
+        self.jTurnMultiplier = 0.5
+    else
+        self.jTurnMultiplier = ExpDecay( self.jTurnMultiplier, 1, 2, dt )
+    end
+
+    -- Reduce wheel sideways friction when doing a burnout
+    if self.burnout > 0.1 then
+        local frontBurnout = self:GetPowerDistribution() > 0
+        self.frontSideTractionMult = frontBurnout and 0.5 or 1
+        self.rearSideTractionMult = frontBurnout and 1 or 0.5
+    else
+        self.frontSideTractionMult = self.jTurnMultiplier
+        self.rearSideTractionMult = 1
+    end
 end
 
 --- Override this base class function.
@@ -606,7 +625,6 @@ function ENT:GetYawDragMultiplier()
 
     -- Don't apply yaw drag when going backwards, to allow for easier J-turns
     if self.forwardSpeed < 0 then
-        self.frontSideTractionMult = 0.5
         return 0
     end
 
@@ -715,13 +733,10 @@ function ENT:WheelThink( dt )
         state.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
         state.brake = w.isFrontWheel and frontBrake or rearBrake
         state.forwardTractionMult = w.isFrontWheel and tractionFront or tractionRear
+        state.sideTractionMult = w.isFrontWheel and selfTbl.frontSideTractionMult or selfTbl.rearSideTractionMult
 
         if inputHandbrake and not w.isFrontWheel then
             state.angularVelocity = 0
-        end
-
-        if w.isFrontWheel then
-            state.sideTractionMult = selfTbl.frontSideTractionMult
         end
 
         if rpm > maxRPM then
