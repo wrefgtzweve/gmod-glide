@@ -84,6 +84,16 @@ function ENT:Use( activator )
     activator:EnterVehicle( freeSeat )
 end
 
+--- Override this base class function.
+function ENT:GetYawDragMultiplier()
+    if self.groundedCount < 1 then
+        -- Reduce yaw drag while this vehicle is not grounded
+        return 0.1
+    end
+
+    return BaseClass.GetYawDragMultiplier( self )
+end
+
 local IsValid = IsValid
 local Abs = math.abs
 local Clamp = math.Clamp
