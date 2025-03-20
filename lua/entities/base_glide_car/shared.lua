@@ -238,9 +238,6 @@ if SERVER then
     -- How much force to apply when trying to turn while doing a burnout?
     ENT.BurnoutForce = 40
 
-    -- How much yaw drag to negate when trying to do a J-turn?
-    ENT.JTurnOppositeYawDrag = 1.6
-
     -- How much force to apply when the driver tries to unflip the vehicle?
     ENT.UnflipForce = 6
 

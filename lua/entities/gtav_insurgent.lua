@@ -183,7 +183,6 @@ if SERVER then
 
     ENT.FallOnCollision = true
     ENT.BurnoutForce = 20
-    ENT.JTurnOppositeYawDrag = 1.7
     ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )
 
     ENT.LightBodygroups = {

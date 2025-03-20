@@ -18,6 +18,7 @@ function ENT:OnPostInitialize()
     self.inputAirRoll = 0
     self.inputAirPitch = 0
     self.inputAirYaw = 0
+    self.frontSideTractionMult = 1
 
     -- Initialize the engine
     self:EngineInit()
@@ -593,10 +594,24 @@ function ENT:UpdateSteering( dt )
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
     self.steerAngle[2] = -inputSteer * self:GetMaxSteerAngle()
+    self.frontSideTractionMult = ExpDecay( self.frontSideTractionMult, 1, 2, dt )
+end
 
-    -- Negate yaw drag when going slow/backwards, to allow for J-turns
-    local negateFactor = self.forwardSpeed < 0 and 1 or 1 - Clamp( self.totalSpeed / 1000, 0, 1 )
-    self.extraYawDrag = -self.AngularDrag[3] * negateFactor * self.JTurnOppositeYawDrag
+--- Override this base class function.
+function ENT:GetYawDragMultiplier()
+    if self.groundedCount < self.wheelCount then
+        -- Keep normal yaw drag while any wheel is not grounded
+        return 1
+    end
+
+    -- Don't apply yaw drag when going backwards, to allow for easier J-turns
+    if self.forwardSpeed < 0 then
+        self.frontSideTractionMult = 0.5
+        return 0
+    end
+
+    -- Apply more yaw drag when going faster
+    return Clamp( self.totalSpeed / 1000, 0, 1 )
 end
 
 --- Let the driver unflip the vehicle when it is upside down.
@@ -703,6 +718,10 @@ function ENT:WheelThink( dt )
 
         if inputHandbrake and not w.isFrontWheel then
             state.angularVelocity = 0
+        end
+
+        if w.isFrontWheel then
+            state.sideTractionMult = selfTbl.frontSideTractionMult
         end
 
         if rpm > maxRPM then

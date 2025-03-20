@@ -93,9 +93,6 @@ local ExpDecay = Glide.ExpDecay
 function ENT:UpdateSteering( dt )
     BaseClass.UpdateSteering( self, dt )
 
-    -- Override the J-turn logic from base class
-    self.extraYawDrag = 0
-
     local isAnyWheelGrounded = self.groundedCount > 0
     local inputSteer = Clamp( self:GetInputFloat( 1, "steer" ), -1, 1 )
     local sideSlip = Clamp( self.avgSideSlip, -1, 1 )
