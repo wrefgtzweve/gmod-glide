@@ -678,6 +678,8 @@ end
 
 --- Override this base class function.
 function ENT:CreateWheel( offset, params )
+    params = params or {}
+
     local wheel = BaseClass.CreateWheel( self, offset, params )
 
     -- If the `isFrontWheel` param is not forced, figure it out now
