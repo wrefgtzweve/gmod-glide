@@ -314,7 +314,6 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
         return
     end
 
-    fw = ray.HitNormal:Cross( rt )
     pos = params.enableAxleForces and pos or contactPos
 
     -- Get the velocity at the wheel position
@@ -324,6 +323,9 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
     velF = fw:Dot( vel )
     velR = rt:Dot( vel )
     absVelR = Abs( velR )
+
+    -- Make forward forces be perpendicular to the surface normal
+    fw = ray.HitNormal:Cross( rt )
 
     -- Suspension spring force & damping
     offset = maxLen - ( fraction * maxLen )
