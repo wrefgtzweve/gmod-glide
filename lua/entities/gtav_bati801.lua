@@ -16,7 +16,6 @@ end
 
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 50 )
-    ENT.WheelSkidmarkScale = 0.45
 
     ENT.ExhaustOffsets = {
         { pos = Vector( -40, 2, 22.5 ), scale = 0.8 },
