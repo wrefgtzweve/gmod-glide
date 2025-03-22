@@ -32,8 +32,8 @@ if CLIENT then
     }
 
     ENT.Headlights = {
-        { offset = Vector( 78, 30, 10 ) },
-        { offset = Vector( 78, -30, 10 ) }
+        { offset = Vector( 78, 30, 10 ), texture = "glide/effects/headlight_circle2" },
+        { offset = Vector( 78, -30, 10 ), texture = "glide/effects/headlight_circle2" }
     }
 
     ENT.LightSprites = {
