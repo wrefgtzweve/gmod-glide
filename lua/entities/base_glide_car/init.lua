@@ -481,7 +481,7 @@ function ENT:OnPostThink( dt, selfTbl )
                 end
             end
         else
-            local startupTime = health < 0.5 and math.Rand( 1, 2 ) or selfTbl.StartupTime
+            local startupTime = health < 0.6 and math.Rand( 1, 2 ) or selfTbl.StartupTime
             selfTbl.startupTimer = CurTime() + startupTime
         end
 

@@ -242,7 +242,7 @@ function ENT:OnUpdateSounds()
     if health < 0.4 then
         if sounds.runDamaged then
             sounds.runDamaged:ChangePitch( 100 + self.rpmFraction * 20 )
-            sounds.runDamaged:ChangeVolume( Clamp( ( 0.6 - health ) + inputs.throttle, 0, 1 ) * 0.8 )
+            sounds.runDamaged:ChangeVolume( Clamp( ( 0.75 - health ) + inputs.throttle, 0, 1 ) * 0.8 )
         else
             local snd = self:CreateLoopingSound( "runDamaged", "glide/engines/run_damaged_1.wav", 75, self )
             snd:PlayEx( 0.5, 100 )
@@ -253,9 +253,9 @@ function ENT:OnUpdateSounds()
         sounds.runDamaged = nil
     end
 
-    if health < 0.5 then
+    if health < 0.6 then
         if sounds.rattle then
-            sounds.rattle:ChangeVolume( Clamp( self.rpmFraction - inputs.throttle, 0, 1 ) * ( 1 - health ) * 0.8 )
+            sounds.rattle:ChangeVolume( Clamp( self.rpmFraction - inputs.throttle, 0, 1 ) * ( 1 - health ) * 0.9 )
         else
             local snd = self:CreateLoopingSound( "rattle", "glide/engines/exhaust_rattle.wav", 75, self )
             snd:PlayEx( 0.5, 100 )
@@ -573,7 +573,7 @@ function ENT:OnUpdateParticles()
     end
 
     local health = self:GetEngineHealth()
-    if health > 0.5 then return end
+    if health > 0.6 then return end
 
     local color = Clamp( health * 255, 0, 255 )
     local scale = 2 - health * 2
