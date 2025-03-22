@@ -8,6 +8,12 @@ ENT.PrintName = "JB 700"
 ENT.GlideCategory = "Default"
 ENT.ChassisModel = "models/gta5/vehicles/jb700/chassis.mdl"
 
+function ENT:GetFirstPersonOffset( _, localEyePos )
+    localEyePos[1] = localEyePos[1] + 15
+    localEyePos[3] = localEyePos[3] + 8
+    return localEyePos
+end
+
 if CLIENT then
     ENT.CameraOffset = Vector( -240, 0, 45 )
     ENT.HornSound = "glide/horns/car_horn_med_3.wav"
@@ -93,8 +99,8 @@ if SERVER then
         self:SetSuspensionLength( 8 )
         self:SetCounterSteer( 0.4 )
 
-        self:CreateSeat( Vector( -38, 15, -17 ), Angle( 0, 270, 5 ), Vector( 20, 80, 0 ), true )
-        self:CreateSeat( Vector( -18, -15, -12 ), Angle( 0, 270, 25 ), Vector( 20, -80, 0 ), true )
+        self:CreateSeat( Vector( -38, 14, -17 ), Angle( 0, 270, 5 ), Vector( 20, 80, 0 ), true )
+        self:CreateSeat( Vector( -18, -14, -12 ), Angle( 0, 270, 25 ), Vector( 20, -80, 0 ), true )
 
         -- Front left
         self:CreateWheel( Vector( 56, 32, -3.5 ), {

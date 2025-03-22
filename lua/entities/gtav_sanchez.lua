@@ -9,6 +9,12 @@ ENT.ChassisModel = "models/gta5/vehicles/sanchez/chassis.mdl"
 
 DEFINE_BASECLASS( "base_glide_motorcycle" )
 
+function ENT:GetFirstPersonOffset( _, localEyePos )
+    --localEyePos[1] = localEyePos[1] + 15
+    --localEyePos[3] = localEyePos[3] + 8
+    return localEyePos
+end
+
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 50 )
 
