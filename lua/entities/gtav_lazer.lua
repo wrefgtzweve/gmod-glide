@@ -184,8 +184,8 @@ if SERVER then
 
     ENT.WeaponSlots = {
         { maxAmmo = 0, fireRate = 0.08, replenishDelay = 0, ammoType = "explosive_cannon" },
-        { maxAmmo = 0, fireRate = 1.0, replenishDelay = 0, ammoType = "missile", lockOn = true },
-        { maxAmmo = 0, fireRate = 1.0, replenishDelay = 0, ammoType = "missile" }
+        { maxAmmo = 2, fireRate = 1.0, replenishDelay = 4, ammoType = "missile", lockOn = true },
+        { maxAmmo = 2, fireRate = 1.0, replenishDelay = 4, ammoType = "missile" }
     }
 
     -- Custom weapon logic
