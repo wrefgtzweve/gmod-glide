@@ -11,15 +11,16 @@ function EFFECT:Init( data )
 
     local origin = data:GetOrigin()
     local scale = data:GetScale()
+    local angles = data:GetAngles()
 
-    self.offset = self.parent:WorldToLocal( data:GetOrigin() )
-    self.angles = self.parent:WorldToLocalAngles( data:GetAngles() )
+    self.offset = self.parent:WorldToLocal( origin )
+    self.angles = self.parent:WorldToLocalAngles( angles )
 
     self:SetRenderMode( RENDERMODE_WORLDGLOW )
     self:SetModel( "models/glide/effects/afterburner_flame.mdl" )
     self:SetModelScale( scale * RandomFloat( 0.85, 1.1 ) )
 
-    origin = origin - self.parent:GetForward() * data:GetRadius()
+    origin = origin - angles:Forward() * data:GetRadius()
 
     local emitter = ParticleEmitter( origin, false )
     local p = emitter:Add( FLARE_MATERIAL, origin )
