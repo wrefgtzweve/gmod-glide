@@ -76,9 +76,14 @@ if CLIENT then
         self.elevatorLBone = self:LookupBone( "elevator_l" )
         self.aileronRBone = self:LookupBone( "aileron_r" )
         self.aileronLBone = self:LookupBone( "aileron_l" )
+        self.airbrakeRBone = self:LookupBone( "airbrake_r" )
+        self.airbrakeLBone = self:LookupBone( "airbrake_l" )
+
+        self.airbrake = 0
     end
 
     local ang = Angle()
+    local ExpDecay = Glide.ExpDecay
 
     function ENT:OnUpdateAnimations()
         if not self.rudderLBone then return end
@@ -104,6 +109,18 @@ if CLIENT then
         self:ManipulateBoneAngles( self.aileronRBone, ang )
         ang[3] = -ang[3]
         self:ManipulateBoneAngles( self.aileronLBone, ang )
+
+        self.airbrake = ExpDecay( self.airbrake, self:GetThrottle() < 0 and 1 or 0, 6, FrameTime() )
+
+        ang[1] = 0
+        ang[2] = 0
+        ang[3] = self.airbrake * 20
+        self:ManipulateBoneAngles( self.airbrakeRBone, ang )
+
+        ang[1] = 0
+        ang[2] = self.airbrake * 20
+        ang[3] = 0
+        self:ManipulateBoneAngles( self.airbrakeLBone, ang )
     end
 
     function ENT:OnUpdateSounds()
