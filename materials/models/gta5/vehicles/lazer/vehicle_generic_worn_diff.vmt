@@ -4,7 +4,7 @@
 	"$bumpmap" "models/gta5/vehicles/body_normal"
 
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[0.9 0.9 0.9]"
+	"$envmaptint" "[0.1 0.1 0.1]"
 
 	"$phong" "1"
 	"$phongboost" "2"

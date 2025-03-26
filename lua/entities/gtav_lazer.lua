@@ -200,6 +200,10 @@ if SERVER then
         Vector( 50, -163, -11 )
     }
 
+    function ENT:GetSpawnColor()
+        return Color( 255, 255, 255, 255 )
+    end
+
     function ENT:CreateFeatures()
         self:CreateSeat( Vector( 165, 0, 2 ), Angle( 0, 270, 10 ), Vector( 190, 120, 0 ), true )
 
