@@ -64,8 +64,8 @@ if CLIENT then
     ENT.ThrustSound = "glide/aircraft/thrust.wav"
     ENT.ThrustSoundMinPitch = 90
     ENT.ThrustSoundMaxPitch = 100
-    ENT.ThrustSoundLowVolume = 0.2
-    ENT.ThrustSoundHighVolume = 0.5
+    ENT.ThrustSoundLowVolume = 0.1
+    ENT.ThrustSoundHighVolume = 0.4
 
     function ENT:OnActivateMisc()
         BaseClass.OnActivateMisc( self )

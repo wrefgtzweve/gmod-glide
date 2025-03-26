@@ -3,7 +3,7 @@ local Clamp = math.Clamp
 local RandomFloat = math.Rand
 
 local FLARE_MATERIAL = "effects/yellowflare"
-local DEFAULT_COLOR = Color( 255, 121, 25 )
+local DEFAULT_COLOR = Color( 255, 150, 63 )
 
 function EFFECT:Init( data )
     self.parent = data:GetEntity()
