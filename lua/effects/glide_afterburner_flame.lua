@@ -1,18 +1,44 @@
 local CurTime = CurTime
 local RandomFloat = math.Rand
 
+local FLARE_MATERIAL = "effects/blueblackflash"
+
 function EFFECT:Init( data )
     self.parent = data:GetEntity()
     self.lifetime = CurTime() + 0.1
 
     if not IsValid( self.parent ) then return end
 
+    local origin = data:GetOrigin()
+    local scale = data:GetScale()
+
     self.offset = self.parent:WorldToLocal( data:GetOrigin() )
     self.angles = self.parent:WorldToLocalAngles( data:GetAngles() )
 
     self:SetRenderMode( RENDERMODE_WORLDGLOW )
     self:SetModel( "models/glide/effects/afterburner_flame.mdl" )
-    self:SetModelScale( data:GetScale() * RandomFloat( 0.85, 1.1 ) )
+    self:SetModelScale( scale * RandomFloat( 0.85, 1.1 ) )
+
+    origin = origin - self.parent:GetForward() * data:GetRadius()
+
+    local emitter = ParticleEmitter( origin, false )
+    local p = emitter:Add( FLARE_MATERIAL, origin )
+
+    if p then
+        local size = RandomFloat( 15, 20 ) * scale
+
+        p:SetDieTime( 0.05 )
+        p:SetStartAlpha( 230 )
+        p:SetEndAlpha( 50 )
+        p:SetStartSize( size )
+        p:SetEndSize( size * 0.8 )
+        p:SetRoll( RandomFloat( -1, 1 ) )
+        p:SetVelocity( self.parent:GetVelocity() )
+        p:SetColor( 255, 255, 255 )
+        p:SetLighting( false )
+    end
+
+    emitter:Finish()
 end
 
 function EFFECT:Think()
