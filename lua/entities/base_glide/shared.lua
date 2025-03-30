@@ -6,6 +6,8 @@ ENT.Author = "StyledStrike"
 ENT.Purpose = "Move around"
 ENT.Instructions = "Aim at it, then press USE to enter"
 ENT.AdminOnly = false
+ENT.RenderGroup = RENDERGROUP_BOTH
+
 ENT.VJ_ID_Destructible = true
 ENT.VJ_ID_Vehicle = true
 
