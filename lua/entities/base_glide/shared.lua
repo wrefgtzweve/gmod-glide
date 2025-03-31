@@ -18,6 +18,12 @@ ENT.VehicleType = Glide.VEHICLE_TYPE.UNDEFINED
 -- Max. chassis health
 ENT.MaxChassisHealth = 1000
 
+-- Does this vehicle have headlights?
+ENT.CanSwitchHeadlights = false
+
+-- How long is the on/off cycle for turn signals?
+ENT.TurnSignalCycle = 0.8
+
 function ENT:SetupDataTables()
     -- Setup default network variables. Do not override these slots
     -- when creating children classes! You can omit the 3rd "slot"
@@ -34,6 +40,19 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "ChassisHealth" )
     self:NetworkVar( "Float", "EngineHealth" )
 
+    self:NetworkVar( "Bool", "IsBraking" )
+    self:NetworkVar( "Int", "HeadlightState" )
+    self:NetworkVar( "Int", "TurnSignalState" )
+
+    -- Headlight color can be edited if it's available
+    local editData = nil
+
+    if true then
+        editData = { KeyName = "HeadlightColor", Edit = { type = "VectorColor", order = 0, category = "#glide.settings" } }
+    end
+
+    self:NetworkVar( "Vector", "HeadlightColor", editData )
+
     -- Set default values, to avoid some weird behaviour when prediction kicks in
     self:SetDriver( NULL )
     self:SetEngineState( 0 )
@@ -42,6 +61,10 @@ function ENT:SetupDataTables()
     self:SetWeaponIndex( 1 )
     self:SetLockOnState( 0 )
     self:SetLockOnTarget( NULL )
+
+    self:SetIsBraking( false )
+    self:SetHeadlightState( 0 )
+    self:SetTurnSignalState( 0 )
 
     if CLIENT then
         -- Callback used to run `OnTurnOn` and `OnTurnOff` clientside
@@ -55,6 +78,9 @@ function ENT:SetupDataTables()
 
         -- Callback used to setup the driver's HUD clientside
         self:NetworkVarNotify( "Driver", self.OnDriverChange )
+
+        -- Callback used to update the light color
+        self:NetworkVarNotify( "HeadlightColor", self.OnHeadlightColorChange )
     end
 end
 
@@ -65,6 +91,12 @@ end
 -- You can safely override these on children classes
 function ENT:IsEngineOn()
     return self:GetEngineState() > 0
+end
+
+-- You can safely override these on children classes.
+-- Used to update bodygroups and draw sprites while in reverse gear.
+function ENT:IsReversing()
+    return false
 end
 
 function ENT:OnPostInitialize() end
@@ -120,6 +152,18 @@ if CLIENT then
 
     -- How wide should the skidmarks be?
     ENT.WheelSkidmarkScale = 0.5
+
+    -- Properties for break, reverse and headlight sprites
+    ENT.LightSprites = {}
+
+    -- Positions and colors for headlights
+    ENT.Headlights = {}
+
+    -- Light sounds
+    ENT.TurnSignalPitch = 90
+    ENT.TurnSignalVolume = 0.75
+    ENT.TurnSignalTickOnSound = ")glide/headlights_on.wav"
+    ENT.TurnSignalTickOffSound = ")glide/headlights_off.wav"
 
     -- You can safely override these on children classes.
     function ENT:ShouldActivateSounds() return true end
@@ -213,6 +257,9 @@ if SERVER then
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressHeavy"
     ENT.SuspensionDownSound = "Glide.Suspension.Down"
     ENT.SuspensionUpSound = "Glide.Suspension.Up"
+
+    -- Bodygroup toggles for break, reverse and headlights
+    ENT.LightBodygroups = {}
 
     -- If Wiremod is installed, this function gets called to add
     -- inputs/outputs to be created when the vehicle is initialized.

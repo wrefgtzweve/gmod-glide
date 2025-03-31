@@ -12,9 +12,7 @@ local getTable = EntityMeta.GetTable
 --- Implement this base class function.
 function ENT:OnPostInitialize()
     -- Setup variables used on all cars
-    self.headlights = {}
     self.inputSteer = 0
-
     self.inputAirRoll = 0
     self.inputAirPitch = 0
     self.inputAirYaw = 0
@@ -29,13 +27,7 @@ function ENT:OnPostInitialize()
     -- Set default network values
     self:SetIsRedlining( false )
     self:SetIsHonking( false )
-    self:SetIsBraking( false )
-    self:SetHeadlightState( 0 )
-    self:SetTurnSignalState( 0 )
     self:SetGear( 0 )
-
-    local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
-    self:SetHeadlightColor( Vector( headlightColor.r / 255, headlightColor.g / 255, headlightColor.b / 255 ) )
 
     self:SetSteering( 0 )
     self:SetEngineRPM( 0 )
@@ -230,31 +222,8 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
 
     if not pressed then return end
 
-    if action == "headlights" then
-        self:ChangeHeadlightState( self:GetHeadlightState() + 1 )
-
-    elseif action == "siren" then
+    if action == "siren" then
         self:ChangeSirenState( self:GetSirenState() + 1 )
-
-    elseif action == "signal_left" then
-        -- If the driver is also holding "signal_right"
-        if self:GetInputBool( 1, "signal_right" ) then
-            -- Toggle hazard lights
-            self:ChangeTurnSignalState( self:GetTurnSignalState() == 3 and 0 or 3 )
-        else
-            -- Toggle left turn signal
-            self:ChangeTurnSignalState( self:GetTurnSignalState() == 1 and 0 or 1 )
-        end
-
-    elseif action == "signal_right" then
-        -- If the driver is also holding "signal_left"
-        if self:GetInputBool( 1, "signal_left" ) then
-            -- Toggle hazard lights
-            self:ChangeTurnSignalState( self:GetTurnSignalState() == 3 and 0 or 3 )
-        else
-            -- Toggle right turn signal
-            self:ChangeTurnSignalState( self:GetTurnSignalState() == 2 and 0 or 2 )
-        end
 
     elseif action == "reduce_throttle" then
         self.reducedThrottle = not self.reducedThrottle
@@ -289,24 +258,6 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     end
 end
 
-function ENT:ChangeHeadlightState( state, dontPlaySound )
-    if not self.CanSwitchHeadlights then return end
-
-    state = math.floor( state )
-
-    if state < 0 then state = 2 end
-    if state > 2 then state = 0 end
-
-    self:SetHeadlightState( state )
-
-    if dontPlaySound then return end
-
-    local driver = self:GetDriver()
-    local soundEnt = IsValid( driver ) and driver or self
-
-    soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 100, 1.0 )
-end
-
 function ENT:ChangeSirenState( state )
     if not self.CanSwitchSiren then return end
 
@@ -316,77 +267,6 @@ function ENT:ChangeSirenState( state )
     if state > 2 then state = 0 end
 
     self:SetSirenState( state )
-end
-
-function ENT:ChangeTurnSignalState( state, dontPlaySound )
-    state = math.Clamp( math.floor( state ), 0, 3 )
-    self:SetTurnSignalState( state )
-
-    if dontPlaySound then return end
-
-    local driver = self:GetDriver()
-    local soundEnt = IsValid( driver ) and driver or self
-
-    soundEnt:EmitSound( state == 0 and "glide/headlights_off.wav" or "glide/headlights_on.wav", 70, 60, 0.5 )
-end
-
-do
-    local lightState = {
-        brake = false,
-        reverse = false,
-        headlight = false,
-        signal_left = false,
-        signal_right = false
-    }
-
-    local CurTime = CurTime
-
-    --- Update out model's bodygroups depending on which lights are on.
-    function ENT:UpdateBodygroups()
-        local headlightState = self:GetHeadlightState()
-
-        lightState.brake = self:GetIsBraking()
-        lightState.reverse = self:GetGear() == -1
-        lightState.headlight = headlightState > 0
-
-        local signal = self:GetTurnSignalState()
-        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
-
-        lightState.signal_left = signal == 1 or signal == 3
-        lightState.signal_right = signal == 2 or signal == 3
-
-        local enable
-
-        for _, l in ipairs( self.LightBodygroups ) do
-            enable = lightState[l.type]
-
-            -- Blink "signal_*" light types
-            if l.type == "signal_left" or l.type == "signal_right" then
-                enable = enable and signalBlink
-            end
-
-            -- Allow other types of light to blink with turn signals, if "signal" is set.
-            if l.signal and signal > 0 then
-                if l.signal == "left" and lightState.signal_left then
-                    enable = signalBlink
-
-                elseif l.signal == "right" and lightState.signal_right then
-                    enable = signalBlink
-                end
-            end
-
-            -- If the light has a `beamType` key, only enable the bodygroup
-            -- if the value of `beamType` matches the current headlight state.
-            if
-                ( l.beamType == "low" and headlightState ~= 1 ) or
-                ( l.beamType == "high" and headlightState ~= 2 )
-            then
-                enable = false
-            end
-
-            self:SetBodygroup( l.bodyGroupId, enable and l.subModelId or 0 )
-        end
-    end
 end
 
 --- Override this base class function.
@@ -428,8 +308,6 @@ local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 --- Implement this base class function.
 function ENT:OnPostThink( dt, selfTbl )
-    self:UpdateBodygroups()
-
     if selfTbl.shouldUpdateWheelParams then
         self:UpdateWheelParameters()
     end

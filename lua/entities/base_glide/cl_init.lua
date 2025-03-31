@@ -1,4 +1,5 @@
 include( "shared.lua" )
+include( "cl_lights.lua" )
 
 ENT.AutomaticFrameAdvance = true
 
@@ -15,7 +16,7 @@ function ENT:Initialize()
     self.rfSounds:SetTestCallback( "ShouldActivateSounds" )
     self.rfSounds:SetActivateCallback( "OnActivateSounds" )
     self.rfSounds:SetDeactivateCallback( "DeactivateSounds" )
-    self.rfSounds:SetUpdateCallback( "OnUpdateSounds" )
+    self.rfSounds:SetUpdateCallback( "UpdateSounds" )
 
     -- Create a RangedFeature to handle misc. features, such as particles and animations
     self.rfMisc = Glide.CreateRangedFeature( self, self.MaxMiscDistance )
@@ -103,6 +104,28 @@ function ENT:DeactivateSounds()
     self:OnDeactivateSounds()
 end
 
+function ENT:UpdateSounds()
+    local signal = self:GetTurnSignalState()
+
+    if signal > 0 then
+        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
+
+        if self.lastSignalBlink ~= signalBlink then
+            self.lastSignalBlink = signalBlink
+
+            if signalBlink and self.TurnSignalTickOnSound ~= "" then
+                self:EmitSound( self.TurnSignalTickOnSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+
+            elseif not signalBlink and self.TurnSignalTickOffSound ~= "" then
+                self:EmitSound( self.TurnSignalTickOffSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+            end
+        end
+    end
+
+    -- Let children classes handle their own sounds
+    self:OnUpdateSounds()
+end
+
 function ENT:ActivateMisc()
     -- Find and store the wheel and seat entities we have
     local wheels = {}
@@ -119,8 +142,14 @@ function ENT:ActivateMisc()
 
     self.wheels = table.Reverse( wheels )
     self.seats = table.Reverse( seats )
+
+    -- Cache player names to display on the HUD
     self.lastNick = {}
+
+    -- Store state for particles and headlights
     self.particleCD = 0
+    self.headlightState = nil
+    self.headlights = {}
 
     -- Let children classes create their own stuff
     self:OnActivateMisc()
@@ -148,6 +177,7 @@ function ENT:DeactivateMisc()
     self.wheels = nil
     self.seats = nil
     self.lastNick = nil
+    self:RemoveHeadlights()
 
     -- Let children classes cleanup their own stuff
     self:OnDeactivateMisc()
@@ -191,6 +221,9 @@ function ENT:UpdateMisc()
         self.engineFireSound:Stop()
         self.engineFireSound = nil
     end
+
+    -- Update lights and sprites
+    self:UpdateLights()
 
     -- Let children classes do their own stuff
     self:OnUpdateMisc()

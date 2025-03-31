@@ -1,11 +1,13 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "cl_lights.lua" )
 
 include( "shared.lua" )
 include( "sv_input.lua" )
 include( "sv_damage.lua" )
 include( "sv_weapons.lua" )
 include( "sv_wheels.lua" )
+include( "sv_lights.lua" )
 
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
 
@@ -131,6 +133,10 @@ function ENT:Initialize()
 
     -- Setup wheel systems
     self:WheelInit()
+
+    -- Set default headlight color
+    local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
+    self:SetHeadlightColor( Vector( headlightColor.r / 255, headlightColor.g / 255, headlightColor.b / 255 ) )
 
     local data = { Color = self:GetSpawnColor() }
 
@@ -566,6 +572,9 @@ function ENT:Think()
     if selfTbl.wheelCount > 0 then
         self:WheelThink( dt )
     end
+
+    -- Update bodygroups
+    self:UpdateLightBodygroups()
 
     -- Let children classes do their own stuff
     self:OnPostThink( dt, selfTbl )

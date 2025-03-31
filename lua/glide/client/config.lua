@@ -577,6 +577,7 @@ function Config:OpenFrame()
     CreateHeader( panelKeyboard, L"input.general_controls", 0 )
     CreateBinderButton( panelKeyboard, L"input.switch_weapon", "switch_weapon", generalBinds.switch_weapon, OnChangeGeneralBind )
     CreateBinderButton( panelKeyboard, L"input.toggle_engine", "toggle_engine", generalBinds.toggle_engine, OnChangeGeneralBind )
+    CreateBinderButton( panelKeyboard, L"input.headlights", "headlights", generalBinds.headlights, OnChangeGeneralBind )
 
     local landBinds = binds["land_controls"]
 
@@ -597,7 +598,6 @@ function Config:OpenFrame()
 
     CreateBinderButton( panelKeyboard, L"input.horn", "horn", landBinds.horn, OnChangeLandBind )
     CreateBinderButton( panelKeyboard, L"input.siren", "siren", landBinds.siren, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.headlights", "headlights", landBinds.headlights, OnChangeLandBind )
     CreateBinderButton( panelKeyboard, L"input.reduce_throttle", "reduce_throttle", landBinds.reduce_throttle, OnChangeLandBind )
 
     CreateBinderButton( panelKeyboard, L"input.lean_forward", "lean_forward", landBinds.lean_forward, OnChangeLandBind )
