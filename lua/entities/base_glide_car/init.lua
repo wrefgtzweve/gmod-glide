@@ -755,6 +755,8 @@ function ENT:WheelThink( dt )
     selfTbl.avgSideSlip = totalSideSlip / selfTbl.wheelCount
     selfTbl.avgForwardSlip = totalForwardSlip / selfTbl.wheelCount
 
+    self:ValidatePhysDamping( phys )
+
     if GetDevMode() then
         debugoverlay.Axis( self:LocalToWorld( phys:GetMassCenter() ), self:GetAngles(), 15, 0.1, true )
     end
