@@ -98,6 +98,9 @@ function ENT:SetInputBool( seatIndex, action, pressed )
             -- Toggle right turn signal
             self:ChangeTurnSignalState( self:GetTurnSignalState() == 2 and 0 or 2 )
         end
+
+    elseif action == "detach_trailer" and self.socketCount > 0 then
+        self:DisconnectAllSockets()
     end
 end
 

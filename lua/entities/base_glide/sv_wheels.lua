@@ -54,29 +54,12 @@ function ENT:GetYawDragMultiplier()
     return 1
 end
 
-local GetDevMode = Glide.GetDevMode
-
---- Make sure nothing messed with our physics damping values.
-function ENT:ValidatePhysDamping( phys )
-    local lin, ang = phys:GetDamping()
-
-    if lin > 0 or ang > 0 then
-        phys:SetDamping( 0, 0 )
-    end
-end
-
 function ENT:WheelThink( dt )
     local phys = self:GetPhysicsObject()
     local isAsleep = phys:IsValid() and phys:IsAsleep()
 
     for _, w in ipairs( self.wheels ) do
         w:Update( self, self.steerAngle, isAsleep, dt )
-    end
-
-    self:ValidatePhysDamping( phys )
-
-    if GetDevMode() then
-        debugoverlay.Axis( self:LocalToWorld( phys:GetMassCenter() ), self:GetAngles(), 15, 0.1, true )
     end
 end
 

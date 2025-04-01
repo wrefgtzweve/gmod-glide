@@ -9,6 +9,7 @@ include( "sv_damage.lua" )
 include( "sv_weapons.lua" )
 include( "sv_wheels.lua" )
 include( "sv_lights.lua" )
+include( "sv_sockets.lua" )
 
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
 
@@ -129,11 +130,14 @@ function ENT:Initialize()
     self:AddEFlags( EFL_DONTBLOCKLOS )
     self:AddFlags( FL_OBJECT )
 
-    -- Setup weapon systems
+    -- Setup weapon system
     self:WeaponInit()
 
-    -- Setup wheel systems
+    -- Setup wheel system
     self:WheelInit()
+
+    -- Setup the trailer attachment system
+    self:SocketInit()
 
     -- Set default headlight color
     local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
@@ -496,12 +500,14 @@ end
 
 local CurTime = CurTime
 local TickInterval = engine.TickInterval
+local GetDevMode = Glide.GetDevMode
 
 function ENT:Think()
     local selfTbl = getTable( self )
 
     -- Run again next tick
-    self:NextThink( CurTime() )
+    local time = CurTime()
+    self:NextThink( time )
 
     -- Update speed variables
     selfTbl.localVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
@@ -574,6 +580,11 @@ function ENT:Think()
         self:WheelThink( dt )
     end
 
+    -- Update trailer sockets
+    if selfTbl.socketCount > 0 then
+        self:SocketThink( dt, time )
+    end
+
     -- Update bodygroups
     self:UpdateLightBodygroups()
 
@@ -583,7 +594,28 @@ function ENT:Think()
     -- Let children classes update their features
     self:OnUpdateFeatures( dt )
 
+    -- Make sure we have the corrent damping values
+    local phys = self:GetPhysicsObject()
+
+    if IsValid( phys ) then
+        self:ValidatePhysDamping( phys )
+    end
+
+    -- Draw debug overlays, if `developer` cvar is active
+    if GetDevMode() then
+        debugoverlay.Axis( self:LocalToWorld( phys:GetMassCenter() ), self:GetAngles(), 15, 0.1, true )
+    end
+
     return true
+end
+
+--- Make sure nothing messed with our physics damping values.
+function ENT:ValidatePhysDamping( phys )
+    local lin, ang = phys:GetDamping()
+
+    if lin > 0 or ang > 0 then
+        phys:SetDamping( 0, 0 )
+    end
 end
 
 function ENT:UpdateHealthOutputs()
