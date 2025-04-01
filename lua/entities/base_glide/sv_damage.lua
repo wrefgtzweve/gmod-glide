@@ -8,6 +8,9 @@ end
 function ENT:Explode( attacker, inflictor )
     if self.hasExploded then return end
 
+    local creator = Glide.GetEntityCreator( self )
+    local phys = self:GetPhysicsObject()
+
     -- Don't let stuff like collision/damage events
     -- call this again, to prevent infinite loops.
     self.hasExploded = true
@@ -26,9 +29,9 @@ function ENT:Explode( attacker, inflictor )
 
     self:Remove()
 
-    -- Spawn gibs
-    local phys = self:GetPhysicsObject()
+    local SetEntityCreator = Glide.SetEntityCreator
 
+    -- Spawn wheel gibs
     if self.wheels and IsValid( phys ) then
         local vehPos = self:GetPos()
 
@@ -42,6 +45,8 @@ function ENT:Explode( attacker, inflictor )
                 gib:Spawn()
                 gib:CopyVelocities( self )
 
+                SetEntityCreator( gib, creator )
+
                 local gibPhys = gib:GetPhysicsObject()
                 if IsValid( gibPhys ) then
                     local dir = gibPos - vehPos
@@ -52,6 +57,8 @@ function ENT:Explode( attacker, inflictor )
         end
     end
 
+    -- If the `ExplosionGibs` table is empty,
+    -- just spawn a gib using this vehicle's model.
     if #self.ExplosionGibs == 0 then
         local gib = ents.Create( "glide_gib" )
         gib:SetPos( self:GetPos() )
@@ -61,6 +68,8 @@ function ENT:Explode( attacker, inflictor )
         gib:CopyVelocities( self )
         gib:SetOnFire()
 
+        SetEntityCreator( gib, creator )
+
         for _, v in ipairs( gib:GetBodyGroups() ) do
             gib:SetBodygroup( v.id, 1 )
         end
@@ -68,6 +77,7 @@ function ENT:Explode( attacker, inflictor )
         return
     end
 
+    -- Spawn gibs given by the `ExplosionGibs` table
     for k, v in ipairs( self.ExplosionGibs ) do
         local gib = ents.Create( "glide_gib" )
         gib:SetPos( self:GetPos() )
@@ -75,6 +85,8 @@ function ENT:Explode( attacker, inflictor )
         gib:SetModel( v )
         gib:Spawn()
         gib:CopyVelocities( self )
+
+        SetEntityCreator( gib, creator )
 
         if k == 1 then
             gib:SetOnFire()
