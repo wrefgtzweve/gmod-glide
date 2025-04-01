@@ -283,6 +283,8 @@ function Config:TransmitInputSettings( immediate )
         binds = self.binds
     }
 
+    Glide.Print( "Transmitting input data to the server." )
+
     Glide.StartCommand( Glide.CMD_INPUT_SETTINGS )
     Glide.WriteTable( data )
     net.SendToServer()
