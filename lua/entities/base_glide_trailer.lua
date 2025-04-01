@@ -26,6 +26,10 @@ function ENT:IsReversing()
     return self:GetIsVehicleReversing()
 end
 
+if CLIENT then
+    ENT.TurnSignalVolume = 0
+end
+
 if not SERVER then return end
 
 ENT.BlastDamageMultiplier = 0

@@ -258,7 +258,7 @@ if SERVER then
     ENT.SuspensionDownSound = "Glide.Suspension.Down"
     ENT.SuspensionUpSound = "Glide.Suspension.Up"
 
-    -- Bodygroup toggles for break, reverse and headlights
+    -- Bodygroup toggles for break, reverse lights, headlights and turn signals
     ENT.LightBodygroups = {}
 
     --[[

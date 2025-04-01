@@ -108,7 +108,7 @@ end
 function ENT:UpdateSounds()
     local signal = self:GetTurnSignalState()
 
-    if signal > 0 then
+    if signal > 0 and self.TurnSignalVolume > 0 then
         local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
         if self.lastSignalBlink ~= signalBlink then
