@@ -4,7 +4,9 @@ ENT.AutomaticFrameAdvance = true
 
 --- Implement this base class function.
 function ENT:OnPostInitialize()
-    self.brakePressure = 0
+    self.slowBrakePressure = 0
+    self.fastBrakePressure = 0
+
     self.rpmFraction = 0
     self.streamJSONOverride = nil
 end
@@ -62,7 +64,8 @@ end
 
 --- Implement this base class function.
 function ENT:OnActivateMisc()
-    self.brakePressure = 0
+    self.slowBrakePressure = 0
+    self.fastBrakePressure = 0
     self.rpmFraction = 0
 end
 
@@ -106,6 +109,8 @@ function ENT:UpdateTurboSound( sounds )
     end
 end
 
+local Min = math.min
+
 --- Implement this base class function.
 function ENT:OnUpdateSounds()
     local sounds = self.sounds
@@ -148,9 +153,24 @@ function ENT:OnUpdateSounds()
         sounds.siren = nil
     end
 
-    if self.brakePressure > 0.1 then
+    -- Brake sounds
+    if self:GetIsBraking() then
+        local isSlow = self:GetVelocity():LengthSqr() < 1000
+
+        self.slowBrakePressure = Min( isSlow and self.slowBrakePressure + dt or 0, 1 )
+        self.fastBrakePressure = Min( isSlow and 0 or self.fastBrakePressure + dt, 1 )
+    else
+        if self.slowBrakePressure > 0.5 and self.BrakeSqueakSound ~= "" then
+            Glide.PlaySoundSet( self.BrakeReleaseSound, self, 0.8 )
+        end
+
+        self.slowBrakePressure = 0
+        self.fastBrakePressure = 0
+    end
+
+    if self.fastBrakePressure > 0.1 then
         if sounds.brakeLoop then
-            sounds.brakeLoop:ChangeVolume( ( self.brakePressure - 0.1 ) * self.BrakeLoopVolume )
+            sounds.brakeLoop:ChangeVolume( ( self.fastBrakePressure - 0.1 ) * self.BrakeLoopVolume )
 
         elseif self.BrakeLoopSound ~= "" then
             local snd = self:CreateLoopingSound( "brakeLoop", self.BrakeLoopSound, 80, self )
@@ -160,6 +180,10 @@ function ENT:OnUpdateSounds()
     elseif sounds.brakeLoop then
         sounds.brakeLoop:Stop()
         sounds.brakeLoop = nil
+
+        if self.BrakeReleaseSound ~= "" then
+            Glide.PlaySoundSet( self.BrakeSqueakSound, self, 0.8 )
+        end
     end
 
     if not self:IsEngineOn() then return end
@@ -267,24 +291,6 @@ function ENT:OnUpdateMisc()
     local rpmFraction = ( self:GetEngineRPM() - self:GetMinRPM() ) / ( self:GetMaxRPM() - self:GetMinRPM() )
 
     self.rpmFraction = ExpDecay( self.rpmFraction, rpmFraction, rpmFraction > self.rpmFraction and 7 or 4, dt )
-
-    -- Brake release sounds
-    if self:GetIsBraking() then
-        if self.brakePressure < 1 then
-            self.brakePressure = self.brakePressure + dt
-        end
-    else
-        if self.brakePressure > 0.5 then
-            if self:GetVelocity():LengthSqr() < 1000 and self.BrakeReleaseSound ~= "" then
-                self:EmitSound( self.BrakeReleaseSound, 80, 100, 0.8 )
-
-            elseif self.BrakeSqueakSound ~= "" then
-                Glide.PlaySoundSet( self.BrakeSqueakSound, self, 0.8 )
-            end
-        end
-
-        self.brakePressure = 0
-    end
 
     -- Siren lights/bodygroups
     local siren = self:GetSirenState()
