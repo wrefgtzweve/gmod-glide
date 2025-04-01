@@ -17,6 +17,7 @@ if CLIENT then
     ENT.HornSound = "glide/horns/large_truck_horn_2.wav"
 
     ENT.ReverseSound = "glide/alarms/reverse_warning.wav"
+    ENT.BrakeLoopSound = "glide/wheels/rig_brake_disc_1.wav"
     ENT.BrakeReleaseSound = "glide/wheels/rig_brake_release.wav"
     ENT.BrakeSqueakSound = "Glide.Brakes.Squeak"
 
@@ -58,7 +59,7 @@ if CLIENT then
 
     function ENT:OnCreateEngineStream( stream )
         stream.offset = Vector( 50, 0, 0 )
-        stream:LoadPreset( "airbus" )
+        stream:LoadPreset( "hauler" )
     end
 end
 
@@ -101,13 +102,13 @@ if SERVER then
         self:SetSideTractionMax( 4000 )
         self:SetSideTractionMin( 5500 )
 
-        self:SetDifferentialRatio( 3.0 )
+        self:SetDifferentialRatio( 2.7 )
         self:SetPowerDistribution( -0.7 )
 
         self:SetMinRPM( 1000 )
         self:SetMaxRPM( 10000 )
         self:SetMinRPMTorque( 3000 )
-        self:SetMaxRPMTorque( 3500 )
+        self:SetMaxRPMTorque( 3800 )
 
         self:SetBrakePower( 6000 )
         self:SetMaxSteerAngle( 40 )

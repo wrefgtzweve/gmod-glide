@@ -175,6 +175,9 @@ if CLIENT then
     ENT.BrakeReleaseSound = ""
     ENT.BrakeSqueakSound = ""
 
+    ENT.BrakeLoopSound = ""
+    ENT.BrakeLoopVolume = 0.6
+
     -- Exhaust positions
     ENT.ExhaustOffsets = {}
     ENT.ExhaustAlpha = 50
