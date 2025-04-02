@@ -146,6 +146,7 @@ end
 local RealTime = RealTime
 local DamageInfo = DamageInfo
 
+local Abs = math.abs
 local Clamp = math.Clamp
 local RandomInt = math.random
 local PlaySoundSet = Glide.PlaySoundSet
@@ -157,10 +158,9 @@ function ENT:PhysicsCollide( data )
         return
     end
 
-    local velocity = data.OurNewVelocity - data.OurOldVelocity
     local hitHormal = data.HitNormal
     local speedNormal = -data.HitSpeed:GetNormalized()
-    local speed = velocity:Length()
+    local speed = ( data.HitSpeed * Abs( speedNormal:Dot( hitHormal ) ) ):Length() * 0.75
 
     if self.FallOnCollision then
         self:PhysicsCollideFall( speed, speedNormal, data )
@@ -233,7 +233,7 @@ function ENT:PhysicsCollideFall( speed, speedNormal, data )
 
     -- Did the hit come from below the vehicle?
     elseif upDot < -0.5 and relativeHitPos[3] < 0 then
-        speed = speed * 0.25
+        speed = speed * 0.2
     end
 
     if speed < 600 then return end
