@@ -328,7 +328,7 @@ function ENT:EngineThink( dt )
     else
         -- Automatically apply brakes when not accelerating, on first gear, with low engine RPM
         if inputThrottle < 0.05 and inputBrake < 0.1 and gear < 2 and rpm < self:GetMinRPM() * 1.2 then
-            inputBrake = 0.15
+            inputBrake = 0.2
         end
 
         self.frontBrake = inputBrake * 0.5
