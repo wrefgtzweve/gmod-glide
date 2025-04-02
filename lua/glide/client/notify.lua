@@ -127,8 +127,8 @@ function Glide.ShowTip( text, icon )
     } )
 end
 
-function Glide.ShowKeyTip( text, key, icon )
-    if HasGivenHint( text ) then return end
+function Glide.ShowKeyTip( text, key, icon, immediate )
+    if not immediate and HasGivenHint( text ) then return end
 
     if text:sub( 1, 1 ) == "#" then
         text = language.GetPhrase( text )
@@ -141,7 +141,8 @@ function Glide.ShowKeyTip( text, key, icon )
 
     Glide.Notify( {
         text = text:format( colorTag .. keyName:upper() .. "</color></b>" ),
-        icon = icon or "materials/glide/icons/car.png"
+        icon = icon or "materials/glide/icons/car.png",
+        immediate = immediate
     } )
 end
 

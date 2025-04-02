@@ -77,6 +77,14 @@ function Config:ResetBinds()
     self.binds = binds
 end
 
+-- Utility function to get the button bound to a certain input action.
+function Config:GetInputActionButton( action, categoryName )
+    local category = self.binds[categoryName]
+    if category then
+        return category[action]
+    end
+end
+
 --- Save settings to disk.
 function Config:Save( immediate )
     timer.Remove( "Glide.SaveConfig" )
