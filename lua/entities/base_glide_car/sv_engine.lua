@@ -158,12 +158,6 @@ function ENT:AutoGearSwitch( throttle )
         return
     end
 
-    -- Neutral when the speed is slow enough
-    if Abs( self.forwardSpeed ) < 100 and throttle < 0.1 then
-        self:SwitchGear( 0, 0 )
-        return
-    end
-
     if self.forwardSpeed < 0 and throttle < 0.1 then return end
     if Abs( self.avgForwardSlip ) > 10 then return end
 
@@ -326,8 +320,15 @@ function ENT:EngineThink( dt )
         clutch = 1
 
     else
-        -- Automatically apply brakes when not accelerating, on first gear, with low engine RPM
-        if inputThrottle < 0.05 and inputBrake < 0.1 and gear < 2 and rpm < self:GetMinRPM() * 1.2 then
+        -- Automatically apply brakes when not accelerating, on the ground,
+        -- with low engine RPM, while on first gear or reverse gear.
+        if
+            ( gear == -1 or gear == 1 ) and
+            inputThrottle < 0.05 and
+            inputBrake < 0.1 and
+            self.groundedCount > 1 and
+            rpm < self:GetMinRPM() * 1.2
+        then
             inputBrake = 0.2
         end
 
