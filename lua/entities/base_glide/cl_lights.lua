@@ -3,7 +3,7 @@ function ENT:OnHeadlightColorChange()
     self.headlightState = 0
 end
 
-function ENT:CreateHeadlight( offset, angles, color, texture )
+function ENT:CreateHeadlight( offset, angles, color, texture, fovScale )
     color = color or Color( 255, 255, 255 )
 
     local state = self.headlightState
@@ -22,7 +22,7 @@ function ENT:CreateHeadlight( offset, angles, color, texture )
     light:SetColor( color )
     light:SetNearZ( 10 )
     light:SetFarZ( state > 1 and 3000 or 1500 )
-    light:SetFOV( fov )
+    light:SetFOV( fov * ( fovScale or 1 ) )
     light:SetPos( self:LocalToWorld( offset ) )
     light:SetAngles( self:LocalToWorldAngles( angles or Angle() ) )
     light:Update()
@@ -84,7 +84,7 @@ function ENT:UpdateLights()
 
         for _, v in ipairs( self.Headlights ) do
             v.angles = v.angles or Angle( 10, 0, 0 )
-            self:CreateHeadlight( v.offset, v.angles, v.color or COLOR_HEADLIGHT, v.texture )
+            self:CreateHeadlight( v.offset, v.angles, v.color or COLOR_HEADLIGHT, v.texture, v.fovScale )
         end
     end
 
