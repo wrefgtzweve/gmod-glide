@@ -4,7 +4,7 @@ Glide.Config = Config
 
 --- Reset settings to their default values.
 function Config:Reset()
-    self.version = 1
+    self.version = 2
 
     -- Audio settings
     self.carVolume = 1.0
@@ -164,8 +164,22 @@ function Config:CheckVersion( data )
         return {}
     end
 
-    -- This data is fine
-    Glide.Print( "glide.json: version %i", data.version )
+    local upgraded = false
+
+    if data.version == 1 then
+        -- Reset to new default "detach_trailer" bind to avoid conflict with "switch gear up" key
+        if type( data.binds ) == "table" and data.binds.land_controls and data.binds.land_controls.detach_trailer then
+            data.binds.land_controls.detach_trailer = nil
+        end
+
+        upgraded = true
+    end
+
+    if upgraded then
+        Glide.Print( "glide.json: Upgraded from version %i", data.version )
+    else
+        Glide.Print( "glide.json: Version %i", data.version )
+    end
 
     return data
 end

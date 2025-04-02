@@ -29,7 +29,7 @@ InputCategories["land_controls"] = {
     ["horn"] = KEY_R,
     ["siren"] = KEY_L,
     ["reduce_throttle"] = KEY_LSHIFT,
-    ["detach_trailer"] = KEY_G,
+    ["detach_trailer"] = KEY_K,
 
     ["lean_forward"] = KEY_UP,
     ["lean_back"] = KEY_DOWN,
