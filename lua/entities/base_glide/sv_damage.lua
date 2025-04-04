@@ -146,7 +146,6 @@ end
 local RealTime = RealTime
 local DamageInfo = DamageInfo
 
-local Abs = math.abs
 local Clamp = math.Clamp
 local RandomInt = math.random
 local PlaySoundSet = Glide.PlaySoundSet
@@ -158,15 +157,15 @@ function ENT:PhysicsCollide( data )
         return
     end
 
-    local hitHormal = data.HitNormal
-    local speedNormal = -data.HitSpeed:GetNormalized()
-    local speed = ( data.HitSpeed * Abs( speedNormal:Dot( hitHormal ) ) ):Length() * 0.75
+    local velocityChange = data.OurNewVelocity - data.OurOldVelocity
+    local surfaceNormal = data.HitNormal
+
+    local speed = velocityChange:Length()
+    if speed < 30 then return end
 
     if self.FallOnCollision then
-        self:PhysicsCollideFall( speed, speedNormal, data )
+        self:PhysicsCollideFall( speed, data )
     end
-
-    if speed < 30 then return end
 
     local ent = data.HitEntity
     local isPlayer = IsValid( ent ) and ent:IsPlayer()
@@ -178,21 +177,21 @@ function ENT:PhysicsCollide( data )
 
     elseif t > self.collisionShakeCooldown then
         self.collisionShakeCooldown = t + 0.5
-        Glide.SendViewPunch( self:GetAllPlayers(), Clamp( speed / 1500, 0, 1 ) * 3 )
+        Glide.SendViewPunch( self:GetAllPlayers(), Clamp( speed / 1000, 0, 1 ) * 3 )
     end
 
     local eff = EffectData()
     eff:SetOrigin( data.HitPos )
-    eff:SetScale( math.min( speed * 0.01, 6 ) * self.CollisionParticleSize )
-    eff:SetNormal( hitHormal )
+    eff:SetScale( math.min( speed * 0.02, 6 ) * self.CollisionParticleSize )
+    eff:SetNormal( surfaceNormal )
     util.Effect( "glide_metal_impact", eff )
 
-    local veryHard = speed > 500
+    local isHardHit = speed > 300
 
-    PlaySoundSet( "Glide.Collision.VehicleHard", self, speed / 400, nil, veryHard and 80 or 75 )
+    PlaySoundSet( "Glide.Collision.VehicleHard", self, speed / 400, nil, isHardHit and 80 or 75 )
 
-    if veryHard then
-        PlaySoundSet( "Glide.Collision.VehicleSoft", self, speed / 400, nil, veryHard and 80 or 75 )
+    if isHardHit then
+        PlaySoundSet( "Glide.Collision.VehicleSoft", self, speed / 400, nil, isHardHit and 80 or 75 )
 
         if self.IsHeavyVehicle then
             self:EmitSound( "physics/metal/metal_barrel_impact_hard5.wav", 90, RandomInt( 70, 90 ), 1 )
@@ -201,22 +200,22 @@ function ENT:PhysicsCollide( data )
     elseif isPlayer then
         PlaySoundSet( "Glide.Collision.VehicleHard", ent, speed / 1000, RandomInt( 90, 130 ) )
 
-    elseif hitHormal:Dot( speedNormal ) < 0.5 then
+    elseif surfaceNormal:Dot( -data.HitSpeed:GetNormalized() ) < 0.5 then
         PlaySoundSet( "Glide.Collision.VehicleScrape", self, 0.4 )
     end
 
-    if not isPlayer and veryHard then
+    if not isPlayer and isHardHit then
         local dmg = DamageInfo()
         dmg:SetAttacker( ent )
         dmg:SetInflictor( self )
-        dmg:SetDamage( ( speed / 8 ) * self.CollisionDamageMultiplier * cvarCollision:GetFloat() )
+        dmg:SetDamage( ( speed / 10 ) * self.CollisionDamageMultiplier * cvarCollision:GetFloat() )
         dmg:SetDamageType( 1 ) -- DMG_CRUSH
         dmg:SetDamagePosition( data.HitPos )
         self:TakeDamageInfo( dmg )
     end
 end
 
-function ENT:PhysicsCollideFall( speed, speedNormal, data )
+function ENT:PhysicsCollideFall( speed, data )
     local ent = data.HitEntity
 
     if IsValid( ent ) then
@@ -224,16 +223,16 @@ function ENT:PhysicsCollideFall( speed, speedNormal, data )
         if ent:GetClass() == "func_breakable" then return end
     end
 
-    local upDot = speedNormal:Dot( self:GetUp() )
+    local upDot = self:GetUp():Dot( -data.HitSpeed:GetNormalized() )
     local relativeHitPos = self:WorldToLocal( data.HitPos )
 
-    -- Did the hit come from above the vehicle?
-    if upDot > 0.3 and relativeHitPos[3] > 0 then
-        speed = speed * 5
-
-    -- Did the hit come from below the vehicle?
-    elseif upDot < -0.5 and relativeHitPos[3] < 0 then
+    if upDot < -0.5 and relativeHitPos[3] < 0 then
+        -- The hit came from below the vehicle
         speed = speed * 0.2
+
+    elseif upDot > 0.5 and relativeHitPos[3] > 0 then
+        -- The hit came from above the vehicle
+        speed = speed * 5
     end
 
     if speed < 600 then return end
