@@ -150,7 +150,7 @@ function ENT:ActivateMisc()
     -- Store state for particles and headlights
     self.particleCD = 0
     self.headlightState = nil
-    self.headlights = {}
+    self.activeHeadlights = {}
 
     -- Let children classes create their own stuff
     self:OnActivateMisc()
