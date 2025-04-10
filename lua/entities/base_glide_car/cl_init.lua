@@ -367,18 +367,29 @@ function ENT:DoExhaustPop()
     local eff = EffectData()
     eff:SetEntity( self )
 
+    local emit
+
     for _, v in ipairs( self.ExhaustOffsets ) do
-        local pos = self:LocalToWorld( v.pos )
-        local dir = -self:LocalToWorldAngles( v.ang or v.angle or DEFAULT_EXHAUST_ANG ):Forward()
+        emit = true
 
-        eff:SetOrigin( pos )
-        eff:SetStart( pos + dir * 10 )
-        eff:SetScale( 0.5 )
-        eff:SetFlags( 0 )
-        eff:SetColor( 0 )
-        util.Effect( "glide_tracer", eff )
+        -- Check for optional bodygroup requirement
+        if v.ifBodygroupId then
+            emit = emit and self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
+        end
 
-        DrawLight( pos + dir * 50, EXHAUST_COLOR, 80 )
+        if emit then
+            local pos = self:LocalToWorld( v.pos )
+            local dir = -self:LocalToWorldAngles( v.ang or v.angle or DEFAULT_EXHAUST_ANG ):Forward()
+
+            eff:SetOrigin( pos )
+            eff:SetStart( pos + dir * 10 )
+            eff:SetScale( 0.5 )
+            eff:SetFlags( 0 )
+            eff:SetColor( 0 )
+            util.Effect( "glide_tracer", eff )
+
+            DrawLight( pos + dir * 50, EXHAUST_COLOR, 80 )
+        end
     end
 end
 
@@ -393,15 +404,26 @@ function ENT:OnUpdateParticles()
     if rpmFraction < 0.5 and self:IsEngineOn() then
         rpmFraction = rpmFraction * 2
 
+        local emit
+
         for _, v in ipairs( self.ExhaustOffsets ) do
-            local eff = EffectData()
-            eff:SetOrigin( self:LocalToWorld( v.pos ) )
-            eff:SetAngles( self:LocalToWorldAngles( v.ang or v.angle or DEFAULT_EXHAUST_ANG ) )
-            eff:SetStart( velocity )
-            eff:SetScale( v.scale or 1 )
-            eff:SetColor( self.ExhaustAlpha )
-            eff:SetMagnitude( rpmFraction * 1000 )
-            Effect( "glide_exhaust", eff, true, true )
+            emit = true
+
+            -- Check for optional bodygroup requirement
+            if v.ifBodygroupId then
+                emit = emit and self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
+            end
+
+            if emit then
+                local eff = EffectData()
+                eff:SetOrigin( self:LocalToWorld( v.pos ) )
+                eff:SetAngles( self:LocalToWorldAngles( v.ang or v.angle or DEFAULT_EXHAUST_ANG ) )
+                eff:SetStart( velocity )
+                eff:SetScale( v.scale or 1 )
+                eff:SetColor( self.ExhaustAlpha )
+                eff:SetMagnitude( rpmFraction * 1000 )
+                Effect( "glide_exhaust", eff, true, true )
+            end
         end
     end
 
