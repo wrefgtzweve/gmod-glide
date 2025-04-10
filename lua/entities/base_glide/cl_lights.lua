@@ -142,6 +142,11 @@ function ENT:UpdateLights()
             enable = false
         end
 
+        -- Check for optional bodygroup requirement
+        if l.ifBodygroupId then
+            enable = enable and self:GetBodygroup( l.ifBodygroupId ) == ( l.ifSubModelId or 0 )
+        end
+
         if enable and ltype == "headlight" then
             DrawLightSprite( pos, dir, l.size or 30, l.color or COLOR_HEADLIGHT, l.spriteMaterial )
 
