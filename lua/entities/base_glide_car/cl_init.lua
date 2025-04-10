@@ -374,7 +374,7 @@ function ENT:DoExhaustPop()
 
         -- Check for optional bodygroup requirement
         if v.ifBodygroupId then
-            emit = emit and self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
+            emit = self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
         end
 
         if emit then
@@ -411,7 +411,7 @@ function ENT:OnUpdateParticles()
 
             -- Check for optional bodygroup requirement
             if v.ifBodygroupId then
-                emit = emit and self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
+                emit = self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
             end
 
             if emit then
