@@ -328,6 +328,11 @@ function ENT:OnUpdateMisc()
     for _, v in ipairs( self.SirenLights ) do
         on = t > v.time and t < v.time + ( v.duration or 0.125 )
 
+        -- Check for optional bodygroup requirement
+        if v.ifBodygroupId then
+            on = on and self:GetBodygroup( v.ifBodygroupId ) == ( v.ifSubModelId or 0 )
+        end
+
         if on and v.offset then
             pos = self:LocalToWorld( v.offset )
             radius = v.lightRadius or 150
