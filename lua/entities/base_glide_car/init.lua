@@ -288,6 +288,8 @@ function ENT:OnSocketDisconnect( socket )
     } )
 end
 
+local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
+
 function ENT:ChangeSirenState( state )
     if not self.CanSwitchSiren then return end
 
@@ -297,6 +299,10 @@ function ENT:ChangeSirenState( state )
     if state > 2 then state = 0 end
 
     self:SetSirenState( state )
+
+    if TriggerOutput then
+        TriggerOutput( self, "SirenState", state )
+    end
 end
 
 --- Override this base class function.
@@ -317,6 +323,11 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     outputs[#outputs + 1] = { "EngineState", "NORMAL", "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
     outputs[#outputs + 1] = { "EngineRPM", "NORMAL", "Current engine RPM" }
     outputs[#outputs + 1] = { "MaxRPM", "NORMAL", "Max. engine RPM" }
+
+    if not self.CanSwitchSiren then return end
+
+    inputs[#inputs + 1] = { "Siren", "NORMAL", "0: Off\n1: Lights only\n2: Lights + sounds" }
+    outputs[#outputs + 1] = { "SirenState", "NORMAL", "0: Off\n1: Lights only\n2: Lights + sounds" }
 end
 
 function ENT:CheckWaterLevel()
@@ -334,7 +345,6 @@ end
 local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
-local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
 
 --- Implement this base class function.
 function ENT:OnPostThink( dt, selfTbl )
@@ -706,5 +716,8 @@ function ENT:TriggerInput( name, value )
 
     elseif name == "TurnSignal" then
         self:ChangeTurnSignalState( value, true )
+
+    elseif name == "Siren" then
+        self:ChangeSirenState( Floor( value ) )
     end
 end
