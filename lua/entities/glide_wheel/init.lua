@@ -57,7 +57,8 @@ function ENT:Initialize()
     -- Used for raycasting, updates with wheel radius
     self.traceData = {
         mins = Vector(),
-        maxs = Vector( 1, 1, 1 )
+        maxs = Vector( 1, 1, 1 ),
+        collisiongroup = COLLISION_GROUP_WORLD
     }
 
     self.contractSoundCD = 0
