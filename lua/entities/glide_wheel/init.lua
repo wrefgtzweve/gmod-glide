@@ -51,12 +51,13 @@ function ENT:Initialize()
         lastFraction = 1,
         lastSpringOffset = 0,
         angularVelocity = 0,
-
-        -- Used for raycasting, updates with wheel radius
-        traceMins = Vector(),
-        traceMaxs = Vector( 1, 1, 1 ),
-
         isDebugging = Glide.GetDevMode()
+    }
+
+    -- Used for raycasting, updates with wheel radius
+    self.traceData = {
+        mins = Vector(),
+        maxs = Vector( 1, 1, 1 )
     }
 
     self.contractSoundCD = 0
@@ -164,8 +165,8 @@ function ENT:ChangeRadius( radius )
     self:SetModelScale2( scale )
 
     -- Used on util.TraceHull
-    self.state.traceMins = Vector( radius * -0.2, radius * -0.2, 0 )
-    self.state.traceMaxs = Vector( radius * 0.2, radius * 0.2, 1 )
+    self.traceData.mins = Vector( radius * -0.2, radius * -0.2, 0 )
+    self.traceData.maxs = Vector( radius * 0.2, radius * 0.2, 1 )
 end
 
 do
@@ -260,9 +261,9 @@ local surfaceGrip, maxTraction, brakeForce, forwardForce, signForwardForce
 local tractionCycle, gripLoss, groundAngularVelocity, angularVelocity = Vector()
 local slipAngle, sideForce
 local force, linearImp, angularImp
-local state, params
+local state, params, traceData
 
-function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
+function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt )
     state, params = self.state, self.params
 
     -- Get the starting point of the raycast, where the suspension connects to the chassis
@@ -280,10 +281,10 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
     radius = self:GetRadius()
     maxLen = state.suspensionLengthMult * params.suspensionLength + radius
 
+    traceData = self.traceData
+    traceData.filter = traceFilter
     traceData.start = pos
     traceData.endpos = pos - up * maxLen
-    traceData.mins = state.traceMins
-    traceData.maxs = state.traceMaxs
 
     ray = TraceHull( traceData )
     fraction = Clamp( ray.Fraction, radius / maxLen, 1 )
@@ -298,7 +299,7 @@ function ENT:DoPhysics( vehicle, phys, traceData, outLin, outAng, dt )
 
     if state.isDebugging then
         debugoverlay.Cross( pos, 10, 0.05, Color( 100, 100, 100 ), true )
-        debugoverlay.Box( contactPos, state.traceMins, state.traceMaxs, 0.05, Color( 0, 200, 0 ) )
+        debugoverlay.Box( contactPos, traceData.mins, traceData.maxs, 0.05, Color( 0, 200, 0 ) )
     end
 
     -- Update the wheel position and sounds

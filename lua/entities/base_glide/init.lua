@@ -94,11 +94,9 @@ function ENT:Initialize()
     self.forwardSpeed = 0
     self.totalSpeed = 0
 
-    -- Setup trace data used for hitscan weapons and other things
+    -- Setup trace filter used for hitscan weapons and other things
     -- that need to ignore the vehicle's chassis and seats.
-    self.traceData = {
-        filter = { self }
-    }
+    self.traceFilter = { self }
 
     -- Setup the chassis model and physics
     self:SetModel( self.ChassisModel )
@@ -245,15 +243,18 @@ function ENT:TurnOff()
     self:OnTurnOff()
 end
 
---- Utility function to setup trace data that
---- ignores the vehicle's chassis and seats.
-function ENT:GetTraceData( startPos, endPos )
-    local data = self.traceData
+do
+    local data = {}
 
-    data.start = startPos
-    data.endpos = endPos
+    --- Utility function to setup trace data that
+    --- ignores the vehicle's chassis and seats.
+    function ENT:GetTraceData( startPos, endPos )
+        data.filter = self.traceFilter
+        data.start = startPos
+        data.endpos = endPos
 
-    return data
+        return data
+    end
 end
 
 do
@@ -336,25 +337,27 @@ do
             return self:GetPos() -- Not much we can do here...
         end
 
+        local traceData = self:GetTraceData()
+
         -- Try the original exit position first
-        local blocked, pos = ValidateExitPos( seat.GlideExitPos, self.traceData, self )
+        local blocked, pos = ValidateExitPos( seat.GlideExitPos, traceData, self )
 
         if blocked then
             -- Try on the other side
             pos = Vector( seat.GlideExitPos[1], -seat.GlideExitPos[2], seat.GlideExitPos[3] )
-            blocked, pos = ValidateExitPos( pos, self.traceData, self )
+            blocked, pos = ValidateExitPos( pos, traceData, self )
         end
 
         if blocked then
             -- Okay uh... Can we leave at the back?
             local mins = self:OBBMins()
-            blocked, pos = ValidateExitPos( Vector( mins[1] * 1.5, 0, 0 ), self.traceData, self )
+            blocked, pos = ValidateExitPos( Vector( mins[1] * 1.5, 0, 0 ), traceData, self )
         end
 
         if blocked then
             -- Uhhh... Can we leave at the front?
             local maxs = self:OBBMaxs()
-            blocked, pos = ValidateExitPos( Vector( maxs[1] * 2, 0, 0 ), self.traceData, self )
+            blocked, pos = ValidateExitPos( Vector( maxs[1] * 2, 0, 0 ), traceData, self )
         end
 
         if blocked then
@@ -477,8 +480,7 @@ function ENT:CreateSeat( offset, angle, exitPos, isHidden )
     self.inputFloats[index] = {}
 
     -- Don't let weapon fire or other traces hit this seat
-    local filter = self.traceData.filter
-    filter[#filter + 1] = seat
+    self.traceFilter[#self.traceFilter + 1] = seat
 
     -- Update seat wire outputs
     if TriggerOutput then

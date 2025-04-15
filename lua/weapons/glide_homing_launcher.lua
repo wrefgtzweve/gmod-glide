@@ -70,7 +70,7 @@ function SWEP:Deploy()
     if SERVER then
         self.lockOnThinkCD = 0
         self.lockOnStateCD = 0
-        self.traceData = { filter = { self:GetOwner() } }
+        self.traceFilter = self:GetOwner()
     end
 
     if CLIENT then
@@ -380,13 +380,13 @@ function SWEP:UpdateTarget()
         end
 
         -- Stick to the same target for as long as possible
-        if CanLockOnEntity( target, myPos, myDir, self.LockOnThreshold, self.LockOnMaxDistance, user, true, self.traceData ) then
+        if CanLockOnEntity( target, myPos, myDir, self.LockOnThreshold, self.LockOnMaxDistance, user, true, self.traceFilter ) then
             return
         end
     end
 
     -- Find a new target
-    target = FindLockOnTarget( myPos, myDir, self.LockOnThreshold, self.LockOnMaxDistance, user, self.traceData )
+    target = FindLockOnTarget( myPos, myDir, self.LockOnThreshold, self.LockOnMaxDistance, user, self.traceFilter )
 
     if target ~= self:GetLockTarget() then
         self:SetLockTarget( target )

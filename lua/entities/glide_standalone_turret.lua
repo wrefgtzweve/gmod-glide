@@ -144,7 +144,7 @@ function ENT:Initialize()
     self.tracerColor = Color( 255, 160, 35 )
 
     self.nextShoot = 0
-    self.traceData = { filter = self }
+    self.traceFilter = self
 
     self:SetIsFiring( false )
     self:SetShootLoopSound( ")glide/weapons/mg_shoot_loop.wav" )
@@ -184,7 +184,7 @@ function ENT:UpdateTurret( t )
         isExplosive = self.isExplosive,
         tracerColor = self.tracerColor,
         scale = 0.5
-    }, self.traceData )
+    }, self.traceFilter )
 end
 
 local cvarMaxDamage = GetConVar( "glide_turret_max_damage" )
