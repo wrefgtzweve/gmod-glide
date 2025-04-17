@@ -106,6 +106,7 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 
 | Command | Description
 | ------- | -----------
+| `glide_ragdoll_enable` `<number>` | When set to 0, players will not be ragdolled when unsuccessfully falling out of vehicles
 | `glide_ragdoll_max_time` `<number>` | The max. amount of time a player can stay ragdolled. Set to 0 for infinite
 
 ## Contributing

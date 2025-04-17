@@ -167,6 +167,7 @@ if SERVER then
     CreateConVar( "glide_physics_damage_multiplier", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier taken by Glide vehicles after colliding against other things.", 0, 10 )
 
     -- Ragdoll time
+    CreateConVar( "glide_ragdoll_enable", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "When set to 0, players will not be ragdolled when unsuccessfully falling out of vehicles.", 0, 1 )
     CreateConVar( "glide_ragdoll_max_time", "10", FCVAR_ARCHIVE + FCVAR_NOTIFY, "The max. amount of time a player can stay ragdolled. Set to 0 for infinite.", 0 )
 end
 
