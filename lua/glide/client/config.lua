@@ -845,6 +845,9 @@ function Config:OpenFrame()
         { name = "glide_gib_lifetime", decimals = 0, min = 0, max = 60 },
         { name = "glide_gib_enable_collisions", decimals = 0, min = 0, max = 1 },
 
+        { name = "glide_ragdoll_enable", decimals = 0, min = 0, max = 1 },
+        { name = "glide_ragdoll_max_time", decimals = 0, min = 0, max = 30 },
+
         { category = "#tool.glide_turret.name" },
         { name = "glide_turret_max_damage", decimals = 0, min = 0, max = 1000 },
         { name = "glide_turret_min_delay", decimals = 2, min = 0, max = 1 },

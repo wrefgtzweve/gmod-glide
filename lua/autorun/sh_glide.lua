@@ -165,10 +165,6 @@ if SERVER then
     CreateConVar( "glide_bullet_damage_multiplier", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier for bullets hitting Glide vehicles.", 0, 10 )
     CreateConVar( "glide_blast_damage_multiplier", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier for explosions hitting Glide vehicles.", 0, 10 )
     CreateConVar( "glide_physics_damage_multiplier", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier taken by Glide vehicles after colliding against other things.", 0, 10 )
-
-    -- Ragdoll time
-    CreateConVar( "glide_ragdoll_enable", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "When set to 0, players will not be ragdolled when unsuccessfully falling out of vehicles.", 0, 1 )
-    CreateConVar( "glide_ragdoll_max_time", "10", FCVAR_ARCHIVE + FCVAR_NOTIFY, "The max. amount of time a player can stay ragdolled. Set to 0 for infinite.", 0 )
 end
 
 -- Sandbox limits
@@ -199,8 +195,12 @@ CreateConVar( "glide_projectile_launcher_max_radius", "500", FCVAR_ARCHIVE + FCV
 CreateConVar( "glide_projectile_launcher_max_damage", "200", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Maximum damage dealt by explosions from Glide Projectile Launchers.", 1 )
 
 -- Gib convars
-CreateConVar( "glide_gib_lifetime", "8", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Lifetime of Glide Gibs, 0 for no despawning.", 0 )
-CreateConVar( "glide_gib_enable_collisions", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "When set to 0, gibs wont collide with players/props.", 0, 1 )
+CreateConVar( "glide_gib_lifetime", "8", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Lifetime of Glide Gibs, 0 for no despawning.", 0 )
+CreateConVar( "glide_gib_enable_collisions", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 0, gibs wont collide with players/props.", 0, 1 )
+
+-- Ragdoll convars
+CreateConVar( "glide_ragdoll_enable", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 0, players will not be ragdolled when unsuccessfully falling out of vehicles.", 0, 1 )
+CreateConVar( "glide_ragdoll_max_time", "10", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "The max. amount of time a player can stay ragdolled. Set to 0 for infinite.", 0 )
 
 list.Set( "ContentCategoryIcons", "Glide", "materials/glide/icons/car.png" )
 
