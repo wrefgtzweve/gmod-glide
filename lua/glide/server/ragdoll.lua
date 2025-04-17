@@ -152,11 +152,7 @@ local function PoseRagdollBones( ragdoll, bones, velocity )
     end
 end
 
-local ragdollEnable = GetConVar( "glide_ragdoll_enable" )
-
 function Glide.RagdollPlayer( ply, velocity, unragdollTime )
-    if not ragdollEnable:GetBool() then return end
-
     local success, velocityOverride, unragdollTimeOverride = hook.Run( "Glide_CanRagdollPlayer", ply, velocity, unragdollTime )
     if success == false then return end
 

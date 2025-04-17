@@ -258,10 +258,12 @@ do
 end
 
 do
+    local ragdollEnableCvar = GetConVar( "glide_ragdoll_enable" )
     local maxRagdollTimeCvar = GetConVar( "glide_ragdoll_max_time" )
 
     --- Kicks out all passengers, then ragdoll them.
     function ENT:RagdollPlayers( time, vel )
+        if ragdollEnableCvar:GetBool() then return end
         time = time or maxRagdollTimeCvar:GetFloat()
         vel = vel or self:GetVelocity()
 
