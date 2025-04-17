@@ -263,7 +263,7 @@ do
 
     --- Kicks out all passengers, then ragdoll them.
     function ENT:RagdollPlayers( time, vel )
-        if ragdollEnableCvar:GetBool() then return end
+        if not ragdollEnableCvar:GetBool() then return end
         time = time or maxRagdollTimeCvar:GetFloat()
         vel = vel or self:GetVelocity()
 
