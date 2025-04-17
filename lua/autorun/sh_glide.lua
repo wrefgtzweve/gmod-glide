@@ -171,6 +171,11 @@ if SERVER then
 end
 
 -- Sandbox limits
+cleanup.Register( "glide_vehicles" )
+cleanup.Register( "glide_standalone_turrets" )
+cleanup.Register( "glide_missile_launchers" )
+cleanup.Register( "glide_projectile_launchers" )
+
 CreateConVar( "sbox_maxglide_vehicles", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide vehicles that one player can have", 0 )
 CreateConVar( "sbox_maxglide_standalone_turrets", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide Turrets that one player can have", 0 )
 CreateConVar( "sbox_maxglide_missile_launchers", "5", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "Max. number of Glide Missile Launchers that one player can have", 0 )

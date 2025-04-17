@@ -161,6 +161,7 @@ function Glide.VehicleFactory( ply, data )
     ent:Activate()
 
     ply:AddCount( "glide_vehicles", ent )
+    cleanup.Add( ply, "glide_vehicles", ent )
 
     return ent
 end

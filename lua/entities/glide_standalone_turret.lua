@@ -109,6 +109,7 @@ local function MakeSpawner( ply, data )
     ent:Activate()
 
     ply:AddCount( "glide_standalone_turrets", ent )
+    cleanup.Add( ply, "glide_standalone_turrets", ent )
 
     for k, v in pairs( data ) do
         if ENT_VARS[k] then ent[k] = v end
