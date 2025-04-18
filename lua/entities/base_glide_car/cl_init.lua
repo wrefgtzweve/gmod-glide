@@ -154,7 +154,9 @@ function ENT:OnUpdateSounds()
     end
 
     -- Brake sounds
-    if self:GetIsBraking() then
+    local brake = self:GetBrakeValue()
+
+    if brake > 0.1 then
         local isSlow = self:GetVelocity():LengthSqr() < 1000
 
         self.slowBrakePressure = Min( isSlow and self.slowBrakePressure + dt or 0, 1 )
@@ -170,7 +172,7 @@ function ENT:OnUpdateSounds()
 
     if self.fastBrakePressure > 0.1 then
         if sounds.brakeLoop then
-            sounds.brakeLoop:ChangeVolume( ( self.fastBrakePressure - 0.1 ) * self.BrakeLoopVolume )
+            sounds.brakeLoop:ChangeVolume( ( self.fastBrakePressure - 0.1 ) * self.BrakeLoopVolume * brake )
 
         elseif self.BrakeLoopSound ~= "" then
             local snd = self:CreateLoopingSound( "brakeLoop", self.BrakeLoopSound, 80, self )

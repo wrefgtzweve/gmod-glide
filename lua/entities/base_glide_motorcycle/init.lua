@@ -129,7 +129,7 @@ function ENT:UpdateSteering( dt )
         self.frontBrake = 0
         self.rearBrake = 0
         self.clutch = 1
-        self:SetIsBraking( false )
+        self:SetBrakeValue( 0 )
     else
         self.reverseInput = 0
     end

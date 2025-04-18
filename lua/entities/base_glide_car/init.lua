@@ -470,7 +470,7 @@ function ENT:OnPostThink( dt, selfTbl )
 
     -- Update driver inputs
     self:UpdateSteering( dt )
-    self:SetIsBraking( self:GetInputBool( 1, "handbrake" ) or ( self.frontBrake + self.rearBrake ) > 0.1 )
+    self:SetBrakeValue( Clamp( self.frontBrake + self.rearBrake + ( self:GetInputBool( 1, "handbrake" ) and 1 or 0 ), 0, 1 ) )
 
     local phys = self:GetPhysicsObject()
 

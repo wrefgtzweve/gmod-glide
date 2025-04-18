@@ -40,7 +40,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "ChassisHealth" )
     self:NetworkVar( "Float", "EngineHealth" )
 
-    self:NetworkVar( "Bool", "IsBraking" )
+    self:NetworkVar( "Float", "BrakeValue" )
     self:NetworkVar( "Int", "HeadlightState" )
     self:NetworkVar( "Int", "TurnSignalState" )
 
@@ -62,7 +62,7 @@ function ENT:SetupDataTables()
     self:SetLockOnState( 0 )
     self:SetLockOnTarget( NULL )
 
-    self:SetIsBraking( false )
+    self:SetBrakeValue( 0 )
     self:SetHeadlightState( 0 )
     self:SetTurnSignalState( 0 )
 
@@ -97,6 +97,10 @@ end
 -- Used to update bodygroups and draw sprites while in reverse gear.
 function ENT:IsReversing()
     return false
+end
+
+function ENT:GetIsBraking()
+    return self:GetBrakeValue() > 0.1
 end
 
 function ENT:OnPostInitialize() end
