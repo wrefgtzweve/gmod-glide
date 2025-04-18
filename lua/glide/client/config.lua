@@ -45,6 +45,7 @@ function Config:Reset()
     -- Misc. settings
     self.showHUD = true
     self.showPassengerList = true
+    self.showCustomHealth = true
     self.showEmptyVehicleHealth = false
     self.showSkybox = true
     self.reduceTireParticles = false
@@ -143,6 +144,7 @@ function Config:Save( immediate )
 
         showHUD = self.showHUD,
         showPassengerList = self.showPassengerList,
+        showCustomHealth = self.showCustomHealth,
         showEmptyVehicleHealth = self.showEmptyVehicleHealth,
         showSkybox = self.showSkybox,
         reduceTireParticles = self.reduceTireParticles,
@@ -249,6 +251,7 @@ function Config:Load()
 
     LoadBool( "showHUD", true )
     LoadBool( "showPassengerList", true )
+    LoadBool( "showCustomHealth", true )
     LoadBool( "showEmptyVehicleHealth", false )
     LoadBool( "showSkybox", true )
     LoadBool( "reduceTireParticles", false )
@@ -749,6 +752,11 @@ function Config:OpenFrame()
 
     CreateToggle( panelMisc, L"misc.show_passenger_list", self.showPassengerList, function( value )
         self.showPassengerList = value
+        self:Save()
+    end )
+
+    CreateToggle( panelMisc, L"misc.show_custom_health", self.showCustomHealth, function( value )
+        self.showCustomHealth = value
         self:Save()
     end )
 
