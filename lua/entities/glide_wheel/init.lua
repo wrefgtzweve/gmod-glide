@@ -375,14 +375,14 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfa
 
     -- Sideways traction ramp
     slipAngle = Abs( slipAngle * slipAngle )
-    maxTraction = TractionRamp( slipAngle, params.sideTractionMaxAng, params.sideTractionMax, params.sideTractionMin ) * surfaceGrip
+    maxTraction = TractionRamp( slipAngle, params.sideTractionMaxAng, params.sideTractionMax, params.sideTractionMin )
     sideForce = -rt:Dot( vel * params.sideTractionMultiplier * state.sideTractionMult )
 
     -- Reduce sideways traction force as the wheel slips forward
     sideForce = sideForce * ( 1 - Clamp( Abs( gripLoss ) * 0.1, 0, 1 ) * 0.9 )
 
     -- Reduce sideways force as the suspension spring applies less force
-    surfaceGrip = Clamp( springForce / params.springStrength, 0, 1 )
+    surfaceGrip = surfaceGrip * Clamp( springForce / params.springStrength, 0, 1 )
 
     -- Apply sideways traction force
     force:Add( Clamp( sideForce, -maxTraction, maxTraction ) * surfaceGrip * rt )
