@@ -10,6 +10,7 @@ ENT.MaxChassisHealth = 2000
 
 if CLIENT then
     ENT.CameraOffset = Vector( -500, 0, 140 )
+    ENT.CameraTrailerDistanceMultiplier = 0.65
 
     ENT.StartSound = "Glide.Engine.TruckStart"
     ENT.ExhaustPopSound = ""

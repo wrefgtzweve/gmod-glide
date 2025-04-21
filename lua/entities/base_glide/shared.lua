@@ -43,6 +43,7 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "BrakeValue" )
     self:NetworkVar( "Int", "HeadlightState" )
     self:NetworkVar( "Int", "TurnSignalState" )
+    self:NetworkVar( "Int", "ConnectedReceptacleCount" )
 
     -- Headlight color can be edited if it's available
     local editData = nil
@@ -128,6 +129,13 @@ if CLIENT then
     ENT.CameraOffset = Vector( -200, 0, 50 )
     ENT.CameraCenterOffset = Vector( 0, 0, 0 )
     ENT.CameraAngleOffset = Angle( 6, 0, 0 )
+
+    -- This multiplier adds to the final forward offset
+    -- while a trailer is attached.
+    ENT.CameraTrailerDistanceMultiplier = 0.3
+
+    -- Added to ENT.CameraCenterOffset while a trailer is attached.
+    ENT.CameraTrailerOffset = Vector( -150, 0, 10 ) -- Push the camera backwards and a little bit up
 
     -- Setup how far away players can hear sounds and update misc. features
     ENT.MaxSoundDistance = 6000
