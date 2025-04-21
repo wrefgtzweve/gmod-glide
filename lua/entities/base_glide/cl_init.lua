@@ -1,6 +1,7 @@
 include( "shared.lua" )
 include( "cl_lights.lua" )
 include( "cl_hud.lua" )
+include( "sh_vehicle_compat.lua" )
 
 ENT.AutomaticFrameAdvance = true
 

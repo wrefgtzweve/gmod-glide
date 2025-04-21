@@ -2,6 +2,7 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_lights.lua" )
 AddCSLuaFile( "cl_hud.lua" )
+AddCSLuaFile( "sh_vehicle_compat.lua" )
 
 include( "shared.lua" )
 include( "sv_input.lua" )
@@ -10,6 +11,7 @@ include( "sv_weapons.lua" )
 include( "sv_wheels.lua" )
 include( "sv_lights.lua" )
 include( "sv_sockets.lua" )
+include( "sh_vehicle_compat.lua" )
 
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
 

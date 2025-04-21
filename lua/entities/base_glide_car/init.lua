@@ -721,3 +721,13 @@ function ENT:TriggerInput( name, value )
         self:ChangeSirenState( Floor( value ) )
     end
 end
+
+-- Override some `Vehicle` metatable functions
+
+function ENT:GetRPM()
+    return self:GetEngineRPM()
+end
+
+function ENT:GetThrottle()
+    return self:GetEngineThrottle()
+end
