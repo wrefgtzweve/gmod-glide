@@ -123,8 +123,10 @@ function ENT:UpdateLights()
     end
 
     -- Handle sprites
-    lightState.brake = self:GetIsBraking()
-    lightState.reverse = self:IsReversing()
+    local allowLights = self:IsEngineOn() or headlightState > 0
+
+    lightState.brake = allowLights and self:GetIsBraking()
+    lightState.reverse = allowLights and self:IsReversing()
     lightState.headlight = headlightState > 0
     lightState.taillight = headlightState > 0
 
