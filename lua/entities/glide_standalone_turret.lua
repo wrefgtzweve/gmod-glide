@@ -91,6 +91,7 @@ function ENT:PostEntityPaste( ply, ent, createdEntities )
     Glide.PostEntityPaste( ply, ent, createdEntities )
 
     -- Update parameters in case the limits/console variables are not set to default
+    self:SetTurretExplosive( self.isExplosive )
     self:SetTurretDamage( self.turretDamage )
     self:SetTurretDelay( self.turretDelay )
     self:SetTurretSpread( self.turretSpread )
@@ -188,8 +189,13 @@ function ENT:UpdateTurret( t )
     }, self.traceFilter )
 end
 
+local cvarExplosive = GetConVar( "glide_turret_explosive_allow" )
 local cvarMaxDamage = GetConVar( "glide_turret_max_damage" )
 local cvarMinDelay = GetConVar( "glide_turret_min_delay" )
+
+function ENT:SetTurretExplosive( bool )
+    self.isExplosive = cvarExplosive:GetBool() and bool or false
+end
 
 function ENT:SetTurretDamage( damage )
     self.turretDamage = math.Clamp( damage, 1, cvarMaxDamage and cvarMaxDamage:GetFloat() or 50 )

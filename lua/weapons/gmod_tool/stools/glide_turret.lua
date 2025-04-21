@@ -42,11 +42,11 @@ if SERVER then
         local g = self:GetClientNumber( "tracer_g", 160 )
         local b = self:GetClientNumber( "tracer_b", 35 )
 
+        ent:SetTurretExplosive( isExplosive )
         ent:SetTurretDelay( delay )
         ent:SetTurretDamage( damage )
         ent:SetTurretSpread( spread )
         ent:SetTracerColor( r, g, b )
-        ent.isExplosive = isExplosive
 
         local preset = SOUND_PRESETS[presetId]
 
