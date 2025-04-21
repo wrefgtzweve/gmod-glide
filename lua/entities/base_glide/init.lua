@@ -100,6 +100,10 @@ function ENT:Initialize()
     -- that need to ignore the vehicle's chassis and seats.
     self.traceFilter = { self }
 
+    -- Copy default surface multipliers to this vehicle.
+    self.surfaceGrip = table.Copy( Glide.SURFACE_GRIP )
+    self.surfaceResistance = table.Copy( Glide.SURFACE_RESISTANCE )
+
     -- Setup the chassis model and physics
     self:SetModel( self.ChassisModel )
     self:InitializePhysics()

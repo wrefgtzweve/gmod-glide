@@ -240,8 +240,6 @@ do
     end
 end
 
-local SURFACE_GRIP = Glide.SURFACE_GRIP
-local SURFACE_RESISTANCE = Glide.SURFACE_RESISTANCE
 local MAP_SURFACE_OVERRIDES = Glide.MAP_SURFACE_OVERRIDES
 
 local PI = math.pi
@@ -264,7 +262,7 @@ local slipAngle, sideForce
 local force, linearImp, angularImp
 local state, params, traceData
 
-function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt )
+function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfaceGrip, vehSurfaceResistance )
     state, params = self.state, self.params
 
     -- Get the starting point of the raycast, where the suspension connects to the chassis
@@ -337,10 +335,10 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt )
     force = ( springForce - damperForce ) * up:Dot( ray.HitNormal ) * ray.HitNormal
 
     -- Rolling resistance
-    force:Add( ( SURFACE_RESISTANCE[surfaceId] or 0.05 ) * -velF * fw )
+    force:Add( ( vehSurfaceResistance[surfaceId] or 0.05 ) * -velF * fw )
 
     -- Brake and torque forces
-    surfaceGrip = SURFACE_GRIP[surfaceId] or 1
+    surfaceGrip = vehSurfaceGrip[surfaceId] or 1
     maxTraction = params.forwardTractionMax * surfaceGrip * state.forwardTractionMult
 
     -- Grip loss logic
