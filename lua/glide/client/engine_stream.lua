@@ -243,9 +243,11 @@ function EngineStream:Think( dt, eyePos, eyeRight )
         pan = eyeRight:Dot( dir )
     end
 
+    local inputs = self.inputs
+
     -- Gear switch "wobble"
     if self.wobbleTime > 0 then
-        self.wobbleTime = self.wobbleTime - dt
+        self.wobbleTime = self.wobbleTime - dt * ( 0.1 + inputs.throttle )
 
         pitch = pitch + Cos( self.wobbleTime * self.wobbleFrequency ) * self.wobbleTime * ( 1 - self.wobbleTime ) * self.wobbleStrength
     end
@@ -259,7 +261,6 @@ function EngineStream:Think( dt, eyePos, eyeRight )
         redlineVol = 0.75 + Cos( Time() * self.redlineFrequency ) * 0.25
     end
 
-    local inputs = self.inputs
     local channel, value
 
     for _, layer in pairs( self.layers ) do
