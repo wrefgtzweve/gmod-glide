@@ -92,6 +92,20 @@ if SERVER then
         { offset = Vector( -60, 0, 0 ), id = "TruckSocket", isReceptacle = true }
     }
 
+    function ENT:GetGears()
+        return {
+            [-1] = 2.5, -- Reverse
+            [0] = 0, -- Neutral (this number has no effect)
+            [1] = 2.8,
+            [2] = 1.7,
+            [3] = 1.2,
+            [4] = 0.9,
+            [5] = 0.75,
+            [6] = 0.68,
+            [7] = 0.64
+        }
+    end
+
     function ENT:CreateFeatures()
         self.engineBrakeTorque = 4000
 
@@ -104,13 +118,13 @@ if SERVER then
         self:SetSideTractionMax( 4000 )
         self:SetSideTractionMin( 5500 )
 
-        self:SetDifferentialRatio( 2.7 )
+        self:SetDifferentialRatio( 1.3 )
         self:SetPowerDistribution( -0.7 )
 
-        self:SetMinRPM( 1000 )
-        self:SetMaxRPM( 10000 )
-        self:SetMinRPMTorque( 3000 )
-        self:SetMaxRPMTorque( 3800 )
+        self:SetMinRPM( 600 )
+        self:SetMaxRPM( 4500 )
+        self:SetMinRPMTorque( 6000 )
+        self:SetMaxRPMTorque( 7000 )
 
         self:SetBrakePower( 6000 )
         self:SetMaxSteerAngle( 40 )
