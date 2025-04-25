@@ -131,7 +131,7 @@ function ENT:OnUpdateSounds()
         if sounds.horn then
             sounds.horn:ChangeVolume( volume )
         else
-            local snd = self:CreateLoopingSound( "horn", isSirenEnabled and self.SirenLoop2Sound or self.HornSound, 85, self )
+            local snd = self:CreateLoopingSound( "horn", isSirenEnabled and self.SirenLoopAltSound or self.HornSound, 85, self )
             snd:PlayEx( volume, 100 )
         end
 
