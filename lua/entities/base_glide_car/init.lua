@@ -392,8 +392,8 @@ function ENT:OnPostThink( dt, selfTbl )
 
                 if health > 0 then
                     self:SetEngineState( 2 )
-                    self:SetFlywheelRPM( self:GetMaxRPM() * 0.5 )
-                    self:EngineAccelerate( self.flywheelTorque, dt )
+                    self:SetFlywheelRPM( self:GetMaxRPM() * 0.75 )
+                    self:EngineAccelerate( self.flywheelTorque * 2, dt )
                 else
                     self:SetEngineState( 0 )
                     Glide.PlaySoundSet( "Glide.Engine.CarStartTail", self )
