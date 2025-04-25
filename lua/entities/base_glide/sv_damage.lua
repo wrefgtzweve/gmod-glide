@@ -145,12 +145,14 @@ end
 
 local RealTime = RealTime
 local DamageInfo = DamageInfo
+local GetWorld = game.GetWorld
 
 local Clamp = math.Clamp
 local RandomInt = math.random
 local PlaySoundSet = Glide.PlaySoundSet
 
 local cvarCollision = GetConVar( "glide_physics_damage_multiplier" )
+local cvarWorldCollision = GetConVar( "glide_world_physics_damage_multiplier" )
 
 function ENT:PhysicsCollide( data )
     if data.TheirSurfaceProps == 76 then -- default_silent
@@ -205,10 +207,14 @@ function ENT:PhysicsCollide( data )
     end
 
     if not isPlayer and isHardHit then
+        -- `ent:IsWorld` is returning `false` on "Entity [0][worldspawn]",
+        -- so I'm comparing against `game.GetWorld` instead.
+        local multiplier = ent == GetWorld() and cvarWorldCollision:GetFloat() or cvarCollision:GetFloat()
+
         local dmg = DamageInfo()
         dmg:SetAttacker( ent )
         dmg:SetInflictor( self )
-        dmg:SetDamage( ( speed / 10 ) * self.CollisionDamageMultiplier * cvarCollision:GetFloat() )
+        dmg:SetDamage( ( speed / 10 ) * self.CollisionDamageMultiplier * multiplier )
         dmg:SetDamageType( 1 ) -- DMG_CRUSH
         dmg:SetDamagePosition( data.HitPos )
         self:TakeDamageInfo( dmg )

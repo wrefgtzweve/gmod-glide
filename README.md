@@ -66,7 +66,8 @@ A pack of content and entity classes to add cars, motorcycles, planes, helicopte
 | ------- | -----------
 | `glide_bullet_damage_multiplier` `<number>` | Damage multiplier for bullets hitting Glide vehicles
 | `glide_blast_damage_multiplier` `<number>` | Damage multiplier for explosions hitting Glide vehicles
-| `glide_physics_damage_multiplier` `<number>` | Damage multiplier taken by Glide vehicles after colliding against other things
+| `glide_physics_damage_multiplier` `<number>` | Damage multiplier taken by Glide vehicles after colliding against things that are not the world.
+| `glide_world_physics_damage_multiplier` `<number>` | Damage multiplier taken by Glide vehicles after colliding against the world.
 
 ### Sandbox limits
 
