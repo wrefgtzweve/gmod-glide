@@ -162,7 +162,7 @@ if CLIENT then
     ENT.HornSound = ")glide/horns/police_horn_1.wav"
 
     ENT.SirenLoopSound = ")glide/alarms/police_siren_3.wav"
-    ENT.SirenLoop2Sound = ")glide/horns/police_horn_2.wav"
+    ENT.SirenLoopAltSound = ")glide/horns/police_horn_2.wav"
     ENT.SirenInterruptSound = "Glide.Wail.Interrupt"
     ENT.SirenVolume = 0.8
 
