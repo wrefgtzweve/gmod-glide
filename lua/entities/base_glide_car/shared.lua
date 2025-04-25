@@ -82,7 +82,7 @@ function ENT:SetupDataTables()
     AddBoolVar( "TurboCharged", "#glide.editvar.engine" )
     AddBoolVar( "FastTransmission", "#glide.editvar.engine" )
 
-    AddFloatVar( "MinRPM", 1000, 5000, "#glide.editvar.engine" )
+    AddFloatVar( "MinRPM", 500, 5000, "#glide.editvar.engine" )
     AddFloatVar( "MaxRPM", 6000, 30000, "#glide.editvar.engine" )
     AddFloatVar( "MinRPMTorque", 10, 20000, "#glide.editvar.engine" )
     AddFloatVar( "MaxRPMTorque", 10, 20000, "#glide.editvar.engine" )
