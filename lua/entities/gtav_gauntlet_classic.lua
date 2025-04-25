@@ -105,7 +105,7 @@ if SERVER then
         self:SetMinRPMTorque( 3300 )
         self:SetMaxRPMTorque( 4000 )
 
-        self:SetForwardTractionMax( 2600 )
+        self:SetForwardTractionMax( 2800 )
         self:SetSideTractionMaxAng( 30 )
         self:SetSideTractionMax( 3000 )
         self:SetSideTractionMin( 1100 )
