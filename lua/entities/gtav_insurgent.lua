@@ -202,13 +202,15 @@ if SERVER then
     end
 
     function ENT:CreateFeatures()
-        self.engineBrakeTorque = 1300
+        self.engineBrakeTorque = 4000
 
         self:SetBrakePower( 3800 )
-        self:SetDifferentialRatio( 3.3 )
+        self:SetDifferentialRatio( 0.9 )
         self:SetPowerDistribution( -0.4 )
-        self:SetMinRPMTorque( 2000 )
-        self:SetMaxRPMTorque( 2500 )
+
+        self:SetMaxRPM( 5500 )
+        self:SetMinRPMTorque( 7000 )
+        self:SetMaxRPMTorque( 8500 )
 
         self:SetMaxSteerAngle( 30 )
         self:SetSteerConeMaxSpeed( 1100 )
