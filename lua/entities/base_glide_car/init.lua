@@ -47,7 +47,7 @@ function ENT:OnPostInitialize()
         brakePower = 3000,
 
         -- Forward traction
-        forwardTractionMax = 2600,
+        forwardTractionMax = 2200,
 
         -- Side traction
         sideTractionMultiplier = 20,
@@ -78,12 +78,12 @@ function ENT:OnPostInitialize()
     self:SetSideTractionMin( params.sideTractionMin )
 
     -- Fake engine parameters
-    self:SetMinRPM( 2000 )
-    self:SetMaxRPM( 20000 )
+    self:SetMinRPM( 500 )
+    self:SetMaxRPM( 6000 )
 
-    self:SetMinRPMTorque( 1200 )
-    self:SetMaxRPMTorque( 1500 )
-    self:SetDifferentialRatio( 1.9 )
+    self:SetMinRPMTorque( 3200 )
+    self:SetMaxRPMTorque( 4200 )
+    self:SetDifferentialRatio( 0.55 )
     self:SetTransmissionEfficiency( 0.8 )
     self:SetPowerDistribution( -0.9 )
 
@@ -392,7 +392,8 @@ function ENT:OnPostThink( dt, selfTbl )
 
                 if health > 0 then
                     self:SetEngineState( 2 )
-                    self:SetEngineThrottle( 2 )
+                    self:SetFlywheelRPM( self:GetMaxRPM() * 0.5 )
+                    self:EngineAccelerate( self.flywheelTorque, dt )
                 else
                     self:SetEngineState( 0 )
                     Glide.PlaySoundSet( "Glide.Engine.CarStartTail", self )
