@@ -122,6 +122,7 @@ if SERVER then
     ENT.SpawnPositionOffset = Vector( 0, 0, 40 )
     ENT.StartupTime = 0.4
     ENT.BurnoutForce = 50
+    ENT.TiltForce = 650
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 7, subModelId = 1 }, -- Headlight
@@ -131,7 +132,7 @@ if SERVER then
     function ENT:InitializePhysics()
         self:SetSolid( SOLID_VPHYSICS )
         self:SetMoveType( MOVETYPE_VPHYSICS )
-        self:PhysicsInit( SOLID_VPHYSICS, Vector( 0, 0, -16 ) )
+        self:PhysicsInit( SOLID_VPHYSICS, Vector( 0, 0, -11 ) )
     end
 
     function ENT:CreateFeatures()
