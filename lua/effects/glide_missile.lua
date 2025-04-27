@@ -28,7 +28,7 @@ local FLAME_MATERIAL = "glide/effects/flamelet"
 local SMOKE_MATERIAL = "particle/smokesprites_000"
 
 function EFFECT:Rocket( emitter, origin, normal, scale )
-    local p = emitter:Add( FLAME_MATERIAL .. RandomInt( 1, 5 ), origin )
+    local p = emitter:Add( FLAME_MATERIAL .. RandomInt( 1, 5 ), origin + normal * 16 )
 
     if p then
         local size = RandomFloat( 8, 10 ) * scale
