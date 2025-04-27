@@ -44,7 +44,7 @@ function EFFECT:Rocket( emitter, origin, normal, scale )
     end
 
     for i = 1, 5 do
-        p = emitter:Add( SMOKE_MATERIAL .. RandomInt( 1, 5 ), origin + normal * i * 8 )
+        p = emitter:Add( SMOKE_MATERIAL .. RandomInt( 1, 5 ), origin + normal * i * 16 )
 
         if p then
             p:SetDieTime( 0.05 )
@@ -79,7 +79,7 @@ function EFFECT:Smoke( emitter, origin, normal, scale, spinSpeed )
     velDir:Normalize()
 
     for i = 1, 10 do
-        local p = emitter:Add( SMOKE_MATERIAL .. RandomInt( 9 ), origin + normal * i * 10 )
+        local p = emitter:Add( SMOKE_MATERIAL .. RandomInt( 9 ), origin + normal * i * 16 )
 
         if p then
             p:SetDieTime( RandomFloat( 0.5, 1.0 ) )
