@@ -148,7 +148,7 @@ function SWEP:CanAttack()
         return false
     end
 
-    if lockRequiredConvar:GetBool() and not ( IsValid( target ) and self:GetLockState() == 3 ) then
+    if lockRequiredConvar:GetBool() and not ( IsValid( self:GetLockTarget() ) and self:GetLockState() == 3 ) then
         return false
     end
 
