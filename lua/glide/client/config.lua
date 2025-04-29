@@ -898,7 +898,7 @@ hook.Add( "Tick", "Glide.CheckVoiceActivity", function()
     local isAnyoneTalking = false
 
     for _, ply in player.Iterator() do
-        if ply:IsVoiceAudible() and ply:VoiceVolume() > 0.05 then
+        if ply:IsValid() and ply:IsVoiceAudible() and ply:VoiceVolume() > 0.05 then
             isAnyoneTalking = true
             break
         end
