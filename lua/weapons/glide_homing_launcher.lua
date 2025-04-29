@@ -1,3 +1,5 @@
+local lockRequiredConvar = CreateConVar( "glide_homing_launcher_lock_required", "0", FCVAR_ARCHIVE + FCVAR_REPLICATED, "Should homing launcher require a lock to fire?" )
+
 SWEP.PrintName = "#glide.swep.homing_launcher"
 SWEP.Instructions = "#glide.swep.homing_launcher.desc"
 SWEP.Author = "StyledStrike"
@@ -143,6 +145,10 @@ function SWEP:CanAttack()
     end
 
     if self:GetNextPrimaryFire() > CurTime() then
+        return false
+    end
+
+    if lockRequiredConvar:GetBool() and not ( IsValid( self:GetLockTarget() ) and self:GetLockState() == 3 ) then
         return false
     end
 
