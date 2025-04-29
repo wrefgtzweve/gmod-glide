@@ -895,13 +895,10 @@ local Approach = math.Approach
 local glideVolume = 1
 
 hook.Add( "Tick", "Glide.CheckVoiceActivity", function()
-    local players = player.GetAll()
-    local ply, isAnyoneTalking = nil, false
+    local isAnyoneTalking = false
 
-    for i = 1, #players do
-        ply = players[i]
-
-        if ply:IsVoiceAudible() and ply:VoiceVolume() > 0.05 then
+    for _, ply in player.Iterator() do
+        if ply:IsValid() and ply:IsVoiceAudible() and ply:VoiceVolume() > 0.05 then
             isAnyoneTalking = true
             break
         end
