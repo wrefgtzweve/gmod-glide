@@ -595,11 +595,10 @@ function ENT:Think()
     -- Let children classes update their features
     self:OnUpdateFeatures( dt )
 
-    -- Make sure we have the corrent damping values
     local phys = self:GetPhysicsObject()
 
     if IsValid( phys ) then
-        self:ValidatePhysDamping( phys )
+        self:ValidatePhysSettings( phys )
     end
 
     -- Draw debug overlays, if `developer` cvar is active
@@ -610,8 +609,11 @@ function ENT:Think()
     return true
 end
 
---- Make sure nothing messed with our physics damping values.
-function ENT:ValidatePhysDamping( phys )
+--- Make sure nothing messed with
+--- our physics damping and buoyancy values.
+function ENT:ValidatePhysSettings( phys )
+    phys:SetBuoyancyRatio( 0.02 )
+
     local lin, ang = phys:GetDamping()
 
     if lin > 0 or ang > 0 then
