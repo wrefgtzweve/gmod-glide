@@ -238,6 +238,10 @@ end
 function ENT:TurnOff()
     self:SetEngineState( 0 )
     self:OnTurnOff()
+
+    if self.autoTurnOffLights then
+        self:ChangeHeadlightState( 0, true )
+    end
 end
 
 do
