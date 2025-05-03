@@ -69,6 +69,16 @@ function ENT:SpawnFunction( ply, tr )
     local pos = self.SpawnPositionOffset or Vector( 0, 0, 10 )
     local ang = self.SpawnAngleOffset or Angle( 0, 90, 0 )
 
+    local ray = util.TraceLine( {
+        start = tr.StartPos,
+        endpos = tr.HitPos,
+        mask = MASK_WATER
+    } )
+
+    if ray.Hit and ray.HitWorld then
+        tr.HitPos = ray.HitPos
+    end
+
     return Glide.VehicleFactory( ply, {
         Pos = tr.HitPos + pos,
         Angle = Angle( 0, ply:EyeAngles().y, 0 ) + ang,
