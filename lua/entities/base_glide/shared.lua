@@ -226,6 +226,9 @@ if SERVER then
     ENT.BlastDamageMultiplier = 5
     ENT.CollisionDamageMultiplier = 0.5
 
+    ENT.SoftCollisionSound = "Glide.Collision.VehicleHard"
+    ENT.HardCollisionSound = "Glide.Collision.VehicleSoft"
+
     -- How much of the chassis damage is also applied to the engine?
     ENT.EngineDamageMultiplier = 1.3
 
