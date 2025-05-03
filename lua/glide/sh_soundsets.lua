@@ -293,10 +293,10 @@ Glide.AddSoundSet( "Glide.Collision.BoatHard", 75, 80, 120, {
 } )
 
 Glide.AddSoundSet( "Glide.Collision.BoatLandOnWater", 80, 90, 110, {
-    "glide/collisions/land_on_water_1.wav",
-    "glide/collisions/land_on_water_2.wav",
-    "glide/collisions/land_on_water_3.wav",
-    "glide/collisions/land_on_water_4.wav"
+    ")glide/collisions/land_on_water_1.wav",
+    ")glide/collisions/land_on_water_2.wav",
+    ")glide/collisions/land_on_water_3.wav",
+    ")glide/collisions/land_on_water_4.wav"
 } )
 
 ----- Collision sounds for exploded vehicle gibs
