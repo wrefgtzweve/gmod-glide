@@ -25,7 +25,7 @@ local Vector = Vector
 local TraceLine = util.TraceLine
 
 local traceData = {
-    mask = 131083 -- MASK_NPCWORLDSTATIC
+    mask = MASK_NPCWORLDSTATIC
 }
 
 function SkidHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
