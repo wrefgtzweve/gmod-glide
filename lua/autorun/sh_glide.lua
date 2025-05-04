@@ -7,7 +7,8 @@ Glide.VEHICLE_TYPE = {
     MOTORCYCLE = 2,
     HELICOPTER = 3,
     PLANE = 4,
-    TANK = 5
+    TANK = 5,
+    BOAT = 6
 }
 
 -- Max. seats a single vehicle can have
@@ -37,6 +38,7 @@ Glide.LOCKON_WHITELIST = {
     ["base_glide_aircraft"] = true,
     ["base_glide_heli"] = true,
     ["base_glide_plane"] = true,
+    ["base_glide_boat"] = true,
     ["base_glide_motorcycle"] = true,
     ["prop_vehicle_prisoner_pod"] = true
 }

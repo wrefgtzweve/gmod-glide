@@ -188,10 +188,6 @@ function ENT:TurnOff()
     self.reducedThrottle = false
     self.availableFrontTorque = 0
     self.availableRearTorque = 0
-
-    if self.autoTurnOffLights then
-        self:ChangeHeadlightState( 0, true )
-    end
 end
 
 --- Override this base class function.

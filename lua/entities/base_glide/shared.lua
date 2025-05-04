@@ -226,6 +226,9 @@ if SERVER then
     ENT.BlastDamageMultiplier = 5
     ENT.CollisionDamageMultiplier = 0.5
 
+    ENT.SoftCollisionSound = "Glide.Collision.VehicleHard"
+    ENT.HardCollisionSound = "Glide.Collision.VehicleSoft"
+
     -- How much of the chassis damage is also applied to the engine?
     ENT.EngineDamageMultiplier = 1.3
 
@@ -251,6 +254,9 @@ if SERVER then
 
     -- Should passengers fall on collisions?
     ENT.FallOnCollision = false
+
+    -- Should passengers fall when under water?
+    ENT.FallWhileUnderWater = false
 
     -- Damage things nearby when the vehicle explodes
     ENT.ExplosionRadius = 500

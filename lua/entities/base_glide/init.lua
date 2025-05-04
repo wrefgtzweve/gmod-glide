@@ -69,6 +69,16 @@ function ENT:SpawnFunction( ply, tr )
     local pos = self.SpawnPositionOffset or Vector( 0, 0, 10 )
     local ang = self.SpawnAngleOffset or Angle( 0, 90, 0 )
 
+    local ray = util.TraceLine( {
+        start = tr.StartPos,
+        endpos = tr.HitPos,
+        mask = MASK_WATER
+    } )
+
+    if ray.Hit and ray.HitWorld then
+        tr.HitPos = ray.HitPos
+    end
+
     return Glide.VehicleFactory( ply, {
         Pos = tr.HitPos + pos,
         Angle = Angle( 0, ply:EyeAngles().y, 0 ) + ang,
@@ -238,6 +248,10 @@ end
 function ENT:TurnOff()
     self:SetEngineState( 0 )
     self:OnTurnOff()
+
+    if self.autoTurnOffLights then
+        self:ChangeHeadlightState( 0, true )
+    end
 end
 
 do
@@ -551,7 +565,7 @@ function ENT:Think()
     end
 
     -- If necessary, kick passengers when underwater
-    if selfTbl.FallOnCollision and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
+    if selfTbl.FallWhileUnderWater and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
         self:RagdollPlayers( 3 )
     end
 
@@ -595,11 +609,10 @@ function ENT:Think()
     -- Let children classes update their features
     self:OnUpdateFeatures( dt )
 
-    -- Make sure we have the corrent damping values
     local phys = self:GetPhysicsObject()
 
     if IsValid( phys ) then
-        self:ValidatePhysDamping( phys )
+        self:ValidatePhysSettings( phys )
     end
 
     -- Draw debug overlays, if `developer` cvar is active
@@ -610,8 +623,11 @@ function ENT:Think()
     return true
 end
 
---- Make sure nothing messed with our physics damping values.
-function ENT:ValidatePhysDamping( phys )
+--- Make sure nothing messed with
+--- our physics damping and buoyancy values.
+function ENT:ValidatePhysSettings( phys )
+    phys:SetBuoyancyRatio( 0.02 )
+
     local lin, ang = phys:GetDamping()
 
     if lin > 0 or ang > 0 then
