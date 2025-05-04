@@ -185,6 +185,8 @@ if SERVER then
     ENT.BulletDamageMultiplier = 0.5
 
     ENT.FallOnCollision = true
+    ENT.FallWhileUnderWater = true
+
     ENT.BurnoutForce = 12
     ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )
 

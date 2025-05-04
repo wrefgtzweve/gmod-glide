@@ -565,7 +565,7 @@ function ENT:Think()
     end
 
     -- If necessary, kick passengers when underwater
-    if selfTbl.FallOnCollision and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
+    if selfTbl.FallWhileUnderWater and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
         self:RagdollPlayers( 3 )
     end
 
