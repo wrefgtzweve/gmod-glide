@@ -232,6 +232,8 @@ function ENT:UpdateMisc()
 end
 
 function ENT:Think()
+    if self:IsDormant() then return end
+
     -- Run again next frame
     self:SetNextClientThink( CurTime() )
 
