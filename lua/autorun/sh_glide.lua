@@ -295,8 +295,14 @@ do
     local Band = bit.band
     local PointContents = util.PointContents
 
+    local CONTENTS_SLIME = CONTENTS_SLIME
+    local CONTENTS_WATER = CONTENTS_WATER
+
     function Glide.IsUnderWater( pos )
-        return Band( PointContents( pos ), 32 ) == 32
+        local contents = PointContents( pos )
+
+        return Band( contents, CONTENTS_SLIME ) == CONTENTS_SLIME or
+            Band( contents, CONTENTS_WATER ) == CONTENTS_WATER
     end
 end
 
