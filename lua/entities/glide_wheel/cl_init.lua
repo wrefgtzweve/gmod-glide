@@ -91,6 +91,8 @@ local m = Matrix()
 local MAT_SLOSH = MAT_SLOSH
 
 function ENT:Think()
+    if self:IsDormant() then return end
+
     local t = CurTime()
 
     local selfTbl = getTable( self )
