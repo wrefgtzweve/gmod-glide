@@ -255,6 +255,9 @@ if SERVER then
     -- Should passengers fall on collisions?
     ENT.FallOnCollision = false
 
+    -- Should passengers fall when under water?
+    ENT.FallWhileUnderWater = false
+
     -- Damage things nearby when the vehicle explodes
     ENT.ExplosionRadius = 500
 
