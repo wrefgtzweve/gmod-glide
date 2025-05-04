@@ -300,7 +300,7 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfa
     contactPos = pos - maxLen * fraction * up
 
     -- Update ground contact NW variables
-    surfaceId = ray.MatType or 0
+    surfaceId = ray.Hit and ( ray.MatType or 0 ) or 0
     surfaceId = MAP_SURFACE_OVERRIDES[surfaceId] or surfaceId
 
     state.isOnGround = ray.Hit
