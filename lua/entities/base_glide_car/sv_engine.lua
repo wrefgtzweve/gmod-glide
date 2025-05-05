@@ -438,6 +438,10 @@ function ENT:BoatEngineThink( dt )
     local waterState = self:GetWaterState()
     local speed = self.forwardSpeed
 
+    if self.reducedThrottle then
+        inputThrottle = inputThrottle * 0.65
+    end
+
     throttle = 0
 
     if Abs( speed ) > 20 or waterState > 0 then
