@@ -219,13 +219,6 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
             immediate = true
         } )
 
-    elseif action == "toggle_engine" then
-        if self:GetEngineState() == 0 then
-            self:TurnOn()
-        else
-            self:TurnOff()
-        end
-
     elseif action == "accelerate" and self:GetEngineState() == 0 then
         self:TurnOn()
     end

@@ -113,8 +113,16 @@ function ENT:SetInputBool( seatIndex, action, pressed )
         self:DisconnectAllSockets()
     end
 
-    if seatIndex == 1 then
-        WakePhysics( self )
+    if seatIndex > 1 then return end
+
+    WakePhysics( self )
+
+    if action == "toggle_engine" then
+        if self:GetEngineState() == 0 then
+            self:TurnOn()
+        else
+            self:TurnOff()
+        end
     end
 end
 

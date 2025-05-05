@@ -46,16 +46,6 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "horn" then
         self:SetIsHonking( pressed )
     end
-
-    if not pressed then return end
-
-    if action == "toggle_engine" then
-        if self:GetEngineState() == 0 then
-            self:TurnOn()
-        else
-            self:TurnOff()
-        end
-    end
 end
 
 --- Override this base class function.
