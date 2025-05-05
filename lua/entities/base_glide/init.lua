@@ -648,6 +648,8 @@ function ENT:Think()
     return true
 end
 
+local Abs = math.abs
+
 --- Make sure nothing messed with
 --- our physics damping and buoyancy values.
 function ENT:ValidatePhysSettings( phys )
@@ -657,6 +659,18 @@ function ENT:ValidatePhysSettings( phys )
 
     if lin > 0 or ang > 0 then
         phys:SetDamping( 0, 0 )
+    end
+
+    -- Make sure the physics stay awake when necessary,
+    -- otherwise the driver's input won't do anything.
+    local driverInput =
+        self:GetInputFloat( 1, "accelerate" ) +
+        self:GetInputFloat( 1, "brake" ) +
+        self:GetInputFloat( 1, "steer" ) +
+        self:GetInputFloat( 1, "throttle" )
+
+    if phys:IsAsleep() and Abs( driverInput ) > 0.01 then
+        phys:Wake()
     end
 end
 

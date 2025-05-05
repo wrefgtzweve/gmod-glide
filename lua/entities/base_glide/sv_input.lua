@@ -61,16 +61,6 @@ do
     end
 end
 
-local function WakePhysics( self )
-    -- Make sure the physics stay awake when necessary,
-    -- otherwise the driver's input won't do anything.
-    local phys = self:GetPhysicsObject()
-
-    if phys:IsValid() and phys:IsAsleep() then
-        phys:Wake()
-    end
-end
-
 function ENT:SetInputBool( seatIndex, action, pressed )
     local handled = self:OnSeatInput( seatIndex, action, pressed )
     if handled then return end
@@ -115,8 +105,6 @@ function ENT:SetInputBool( seatIndex, action, pressed )
 
     if seatIndex > 1 then return end
 
-    WakePhysics( self )
-
     if action == "toggle_engine" then
         if self:GetEngineState() == 0 then
             self:TurnOn()
@@ -131,10 +119,6 @@ function ENT:SetInputFloat( seatIndex, action, value )
 
     if floats then
         floats[action] = value
-    end
-
-    if seatIndex == 1 then
-        WakePhysics( self )
     end
 end
 
