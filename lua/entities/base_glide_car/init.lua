@@ -582,7 +582,7 @@ end
 --- Implement this base class function.
 function ENT:OnSimulatePhysics( phys, dt, outLin, outAng )
     if self.IsAmphibious then
-        local throttle = self:GetEngineThrottle()
+        local throttle = self:IsEngineOn() and self:GetEngineThrottle() or 0
         throttle = self:GetGear() == -1 and -throttle or throttle
 
         self:SimulateBoat( phys, dt, outLin, outAng, throttle, self:GetInputFloat( 1, "steer" ) )
