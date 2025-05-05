@@ -37,7 +37,7 @@ function EFFECT:Init( data )
         p = emitter:Add( "effects/splash4", origin + right * RandomFloat( -length, length ) )
 
         if p then
-            p:SetDieTime( 0.5 )
+            p:SetDieTime( 0.3 )
             p:SetStartAlpha( 100 * magnitude )
             p:SetEndAlpha( 0 )
             p:SetStartSize( 5 * scale )
