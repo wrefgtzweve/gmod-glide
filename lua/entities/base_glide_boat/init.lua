@@ -46,16 +46,6 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "horn" then
         self:SetIsHonking( pressed )
     end
-
-    if not pressed then return end
-
-    if action == "toggle_engine" then
-        if self:GetEngineState() == 0 then
-            self:TurnOn()
-        else
-            self:TurnOff()
-        end
-    end
 end
 
 --- Override this base class function.
@@ -64,13 +54,6 @@ function ENT:OnTakeDamage( dmginfo )
 
     if self:GetEngineHealth() <= 0 and self:GetEngineState() == 2 then
         self:TurnOff()
-    end
-end
-
---- Override this base class function.
-function ENT:TurnOn()
-    if self:GetEngineState() < 1 then
-        self:SetEngineState( 1 )
     end
 end
 
@@ -104,7 +87,6 @@ function ENT:OnPostThink( dt, selfTbl )
 
                 if health > 0 then
                     self:SetEngineState( 2 )
-                    self:OnTurnOn()
                 else
                     self:SetEngineState( 0 )
                 end
@@ -113,22 +95,14 @@ function ENT:OnPostThink( dt, selfTbl )
             local startupTime = health < 0.5 and math.Rand( 1, 2 ) or selfTbl.StartupTime
             selfTbl.startupTimer = CurTime() + startupTime
         end
+
+    elseif state == 3 then
+        -- This vehicle does not do a "shutdown" sequence.
+        self:SetEngineState( 0 )
     end
 
     if self:IsEngineOn() then
         self:UpdateEngine( dt, selfTbl )
-
-        -- Make sure the physics stay awake when necessary,
-        -- otherwise the driver's input won't do anything.
-        local phys = self:GetPhysicsObject()
-
-        if IsValid( phys ) and phys:IsAsleep() then
-            local driverInput = self:GetInputFloat( 1, "accelerate" ) + self:GetInputFloat( 1, "brake" ) + self:GetInputFloat( 1, "steer" )
-
-            if Abs( driverInput ) > 0.01 then
-                phys:Wake()
-            end
-        end
     end
 
     -- Update steer input

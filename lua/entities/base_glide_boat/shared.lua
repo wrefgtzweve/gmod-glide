@@ -10,14 +10,6 @@ ENT.AutomaticFrameAdvance = true
 ENT.VehicleType = Glide.VEHICLE_TYPE.BOAT
 ENT.CanSwitchHeadlights = true
 
---[[
-    For boats, the values on Get/SetEngineState mean:
-
-    0 - Off
-    1 - Starting
-    2 - Running
-]]
-
 DEFINE_BASECLASS( "base_glide" )
 
 --- Override this base class function.
@@ -40,11 +32,6 @@ function ENT:UpdatePlayerPoseParameters( ply )
     end
 
     return true
-end
-
---- Override this base class function.
-function ENT:IsEngineOn()
-    return self:GetEngineState() > 1
 end
 
 if CLIENT then

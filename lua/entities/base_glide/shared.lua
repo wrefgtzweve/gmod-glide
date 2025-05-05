@@ -24,6 +24,15 @@ ENT.CanSwitchHeadlights = false
 -- How long is the on/off cycle for turn signals?
 ENT.TurnSignalCycle = 0.8
 
+--[[
+    For all vehicles, the values on Get/SetEngineState mean:
+
+    0 - Off
+    1 - Starting
+    2 - Running
+    3 - Shutting down or Ignition/Fuel cut-off
+]]
+
 function ENT:SetupDataTables()
     -- Setup default network variables. Do not override these slots
     -- when creating children classes! You can omit the 3rd "slot"
@@ -79,10 +88,10 @@ function ENT:SetupDataTables()
     self:SetHeadlightState( 0 )
     self:SetTurnSignalState( 0 )
 
-    if CLIENT then
-        -- Callback used to run `OnTurnOn` and `OnTurnOff` clientside
-        self:NetworkVarNotify( "EngineState", self.OnEngineStateChange )
+    -- Callback used to run `ENT:OnTurnOn` and `ENT:OnTurnOff`
+    self:NetworkVarNotify( "EngineState", self.OnEngineStateChange )
 
+    if CLIENT then
         -- Callback used to run `OnSwitchWeapon` clientside
         self:NetworkVarNotify( "WeaponIndex", self.OnWeaponIndexChange )
 
@@ -103,19 +112,22 @@ end
 
 -- You can safely override these on children classes
 function ENT:IsEngineOn()
-    return self:GetEngineState() > 0
+    return self:GetEngineState() > 1
 end
 
--- You can safely override these on children classes.
+-- You can safely override this on children classes.
 -- Used to update bodygroups and draw sprites while in reverse gear.
 function ENT:IsReversing()
     return false
 end
 
-function ENT:GetIsBraking()
+-- You can safely override this on children classes.
+-- Used to update bodygroups and draw sprites while braking.
+function ENT:IsBraking()
     return self:GetBrakeValue() > 0.1
 end
 
+-- You can safely override these on children classes.
 function ENT:OnPostInitialize() end
 function ENT:OnEntityReload() end
 function ENT:OnTurnOn() end
@@ -123,8 +135,9 @@ function ENT:OnTurnOff() end
 function ENT:OnSwitchWeapon( _weaponIndex ) end
 function ENT:UpdatePlayerPoseParameters( _ply ) return false end
 
--- drive_airboat, drive_pd, sit, sit_rollercoaster
 function ENT:GetPlayerSitSequence( seatIndex )
+    -- Some sequences I'm aware of are:
+    -- drive_airboat, drive_pd, sit, sit_rollercoaster
     return seatIndex > 1 and "sit" or "drive_jeep"
 end
 
@@ -153,6 +166,10 @@ if CLIENT then
     -- Setup how far away players can hear sounds and update misc. features
     ENT.MaxSoundDistance = 6000
     ENT.MaxMiscDistance = 3000
+
+    -- Startup/ignition sounds, leave empty to disable
+    ENT.StartSound = ""
+    ENT.StartTailSound = ""
 
     -- Set label/icons for each weapon slot.
     -- This should contain a array of tables, where each table looks like these:
@@ -384,6 +401,7 @@ if SERVER then
         outputs[#outputs + 1] = { "MaxChassisHealth", "NORMAL", "Max. chassis health" }
         outputs[#outputs + 1] = { "ChassisHealth", "NORMAL", "Current chassis health (between 0.0 and MaxChassisHealth)" }
         outputs[#outputs + 1] = { "EngineHealth", "NORMAL", "Current engine health (between 0.0 and 1.0)" }
+        outputs[#outputs + 1] = { "EngineState", "NORMAL", "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
         outputs[#outputs + 1] = { "Active", "NORMAL", "0: No driver\n1: Has a driver" }
         outputs[#outputs + 1] = { "Driver", "ENTITY", "The current driver" }
         outputs[#outputs + 1] = { "DriverSeat", "ENTITY", "The driver seat" }

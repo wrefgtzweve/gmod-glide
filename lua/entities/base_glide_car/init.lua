@@ -158,20 +158,10 @@ end
 
 --- Override this base class function.
 function ENT:TurnOn()
+    BaseClass.TurnOn( self )
+
     self.reducedThrottle = false
     self:SetGear( 0 )
-
-    local state = self:GetEngineState()
-
-    if state == 3 then
-        self:SetEngineState( 2 )
-        return
-    end
-
-    if state ~= 2 then
-        self:SetEngineState( 1 )
-    end
-
     self:SetFlywheelRPM( 0 )
 end
 
@@ -180,7 +170,6 @@ function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
     self:SetIsHonking( false )
-    self:SetEngineState( 3 )
     self:SetGear( 0 )
     self.startupTimer = nil
 
@@ -229,13 +218,6 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
             icon = "materials/glide/icons/" .. ( self.reducedThrottle and "play_next" or "fast_forward" ) .. ".png",
             immediate = true
         } )
-
-    elseif action == "toggle_engine" then
-        if self:GetEngineState() == 0 then
-            self:TurnOn()
-        else
-            self:TurnOff()
-        end
 
     elseif action == "accelerate" and self:GetEngineState() == 0 then
         self:TurnOn()
@@ -316,7 +298,6 @@ function ENT:SetupWiremodPorts( inputs, outputs )
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
-    outputs[#outputs + 1] = { "EngineState", "NORMAL", "0: Off\n1: Starting\n2: Running\n3: Shutting down/Ignition cut-off" }
     outputs[#outputs + 1] = { "EngineRPM", "NORMAL", "Current engine RPM" }
     outputs[#outputs + 1] = { "MaxRPM", "NORMAL", "Max. engine RPM" }
 
@@ -358,7 +339,6 @@ function ENT:OnPostThink( dt, selfTbl )
         local maxRPM = self:GetMaxRPM()
         TriggerOutput( self, "MaxRPM", maxRPM )
         TriggerOutput( self, "Gear", self:GetGear() )
-        TriggerOutput( self, "EngineState", state )
         TriggerOutput( self, "EngineRPM", Clamp( self:GetFlywheelRPM(), 0, maxRPM ) )
 
         if selfTbl.wireSetEngineOn ~= nil then
@@ -421,18 +401,6 @@ function ENT:OnPostThink( dt, selfTbl )
     end
 
     if self:IsEngineOn() then
-        -- Make sure the physics stay awake,
-        -- otherwise the driver's input won't do anything.
-        local phys = self:GetPhysicsObject()
-
-        if IsValid( phys ) and phys:IsAsleep() then
-            local driverInput = self:GetInputFloat( 1, "accelerate" ) + self:GetInputFloat( 1, "brake" )
-
-            if Abs( driverInput ) > 0.01 then
-                phys:Wake()
-            end
-        end
-
         -- Ignition cut-off, slowdown the flywheel and then turn off
         if state == 3 then
             local rpm = self:GetFlywheelRPM()
