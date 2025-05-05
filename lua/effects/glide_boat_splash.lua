@@ -50,7 +50,7 @@ function EFFECT:Init( data )
             p:SetAirResistance( 200 )
             p:SetGravity( gravity )
             p:SetVelocity( velocity + startVel + normal * RandomFloat( 150, 350 ) * scale * magnitude )
-            p:SetColor( 255, 255, 255 )
+            p:SetColor( 200, 200, 200 )
             p:SetCollide( false )
         end
     end

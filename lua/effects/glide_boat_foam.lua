@@ -24,7 +24,7 @@ function EFFECT:Init( data )
 
     if ray.Hit then
         origin = ray.HitPos
-        origin[3] = origin[3] + 2
+        origin[3] = origin[3] + 1
     end
 
     local p
@@ -42,7 +42,7 @@ function EFFECT:Init( data )
             p:SetAirResistance( 200 )
             p:SetVelocity( velocity )
             p:SetAngles( angles )
-            p:SetColor( 255, 255, 255 )
+            p:SetColor( 220, 220, 220 )
             p:SetCollide( false )
         end
     end

@@ -86,6 +86,7 @@ local IsUnderWater = Glide.IsUnderWater
 function ENT:DoWaterParticles( power, throttle )
     local vel = self:GetVelocity()
 
+    -- Propeller "throws water upwards" effect
     if throttle > 0.1 then
         local eff = EffectData()
         local dir = -self:GetForward()
@@ -117,6 +118,7 @@ function ENT:DoWaterParticles( power, throttle )
         local magnitude = Clamp( speed / 1000, 0, 1 )
         local scale = self.WaterParticlesScale
 
+        -- Waves left behind the vehicle
         local eff = EffectData()
         eff:SetOrigin( self:LocalToWorld( pos ) )
         eff:SetStart( vel )
@@ -125,8 +127,10 @@ function ENT:DoWaterParticles( power, throttle )
         Effect( "glide_boat_foam", eff )
 
         if waterState > 1 then
+            -- How long is the "strip" of water splashes on each side?
             local length = maxs[1] * 0.75
 
+            -- Right-side water splashes
             pos[1] = 0
             pos[2] = mins[2] * 0.75
 
@@ -136,6 +140,7 @@ function ENT:DoWaterParticles( power, throttle )
             eff:SetRadius( length )
             Effect( "glide_boat_splash", eff )
 
+            -- Left-side water splashes
             pos[2] = maxs[2] * 0.75
 
             eff:SetOrigin( self:LocalToWorld( pos ) )
