@@ -247,7 +247,6 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
     if action == "countermeasures" then
         self:FireCountermeasures()
         return true
-
     end
 end
 

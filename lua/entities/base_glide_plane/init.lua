@@ -73,6 +73,8 @@ end
 --- Override this base class function.
 function ENT:TurnOn()
     BaseClass.TurnOn( self )
+
+    self:SetEngineState( 2 )
     self:SetExtraPitch( 1 )
     self.divePitch = 0
 end

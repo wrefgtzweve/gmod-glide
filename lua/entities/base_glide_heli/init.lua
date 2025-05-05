@@ -71,6 +71,8 @@ end
 --- Override this base class function.
 function ENT:TurnOn()
     BaseClass.TurnOn( self )
+
+    self:SetEngineState( 2 )
     self:SetOutOfControl( false )
 end
 
