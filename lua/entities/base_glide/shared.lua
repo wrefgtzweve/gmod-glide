@@ -45,6 +45,18 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Int", "TurnSignalState" )
     self:NetworkVar( "Int", "ConnectedReceptacleCount" )
 
+    --[[
+        0: Not on water
+        1: At least one buoyancy point is on water
+        2: At least half of the buoyancy points are on water
+        3: Fully submerged
+    ]]
+    self:NetworkVar( "Int", "WaterState" )
+
+    if CLIENT then
+        self:NetworkVarNotify( "WaterState", self.OnWaterStateChange )
+    end
+
     -- Headlight color can be edited if it's available
     local editData = nil
 
@@ -105,6 +117,7 @@ function ENT:GetIsBraking()
 end
 
 function ENT:OnPostInitialize() end
+function ENT:OnEntityReload() end
 function ENT:OnTurnOn() end
 function ENT:OnTurnOff() end
 function ENT:OnSwitchWeapon( _weaponIndex ) end
@@ -176,6 +189,32 @@ if CLIENT then
     ENT.TurnSignalVolume = 0.75
     ENT.TurnSignalTickOnSound = ")glide/headlights_on.wav"
     ENT.TurnSignalTickOffSound = ")glide/headlights_off.wav"
+
+    --[[
+        Sounds played when floating over water surfaces.
+        These are audible only if your vehicle/vehicle base calls `ENT:DoWaterSounds`.
+    ]]
+    ENT.FallOnWaterSound = "Glide.Collision.BoatLandOnWater"
+
+    ENT.WaterSideSlideLoop = ")ambient/levels/canals/dam_water_loop2.wav"
+    ENT.WaterSideSlideVolume = 0.8
+    ENT.WaterSideSlidePitch = 255
+
+    ENT.FastWaterLoop = "vehicles/airboat/pontoon_fast_water_loop1.wav"
+    ENT.FastWaterPitch = 110
+    ENT.FastWaterVolume = 0.5
+
+    ENT.CalmWaterLoop = ")vehicles/airboat/pontoon_stopped_water_loop1.wav"
+    ENT.CalmWaterPitch = 100
+    ENT.CalmWaterVolume = 0.9
+
+    -- Offsets where propeller particle effects are emitted.
+    -- These are visible only if your vehicle/vehicle base calls `ENT:DoWaterParticles`.
+    ENT.PropellerPositions = {}
+
+    -- Size multiplier for water foam/splash effects.
+    -- They are visible only if your vehicle/vehicle base calls `ENT:DoWaterParticles`.
+    ENT.WaterParticlesScale = 1
 
     -- You can safely override these on children classes.
     function ENT:ShouldActivateSounds() return true end
@@ -295,6 +334,41 @@ if SERVER then
         with their default values being `connectForce = 700` and `connectDrag = 15`.
     ]]
     ENT.Sockets = {}
+
+    --[[
+        The following parameters are relevant only if
+        the vehicle calls the `ENT:SimulateBoat` function.
+    ]]
+
+    -- If you have not overritten `ENT:GetBuoyancyOffsets`,
+    -- this variable moves the auto-generated points on the Z axis.
+    ENT.BuoyancyPointsZOffset = 5
+
+    -- If you have not overritten `ENT:GetBuoyancyOffsets`,
+    -- this variable spaces out the auto-generated points on the X axis.
+    ENT.BuoyancyPointsXSpacing = 0.6
+
+    -- If you have not overritten `ENT:GetBuoyancyOffsets`,
+    -- this variable spaces out the auto-generated points on the Y axis.
+    ENT.BuoyancyPointsYSpacing = 0.6
+
+    -- Drag & force constants for floating on water.
+    ENT.BoatParams = {
+        waterLinearDrag = Vector( 0.2, 1.5, 0.02 ), -- (Forward, right, up)
+        waterAngularDrag = Vector( -5, -20, -15 ), -- (Roll, pitch, yaw)
+
+        buoyancy = 6,           -- How strong is the buoyancy force on each buoyancy point?
+        buoyancyDepth = 30,     -- How far from the water surface each buoyancy point have to be for the `buoyancy` to fully apply?
+
+        turbulanceForce = 100,  -- Force to wobble the vehicle
+        alignForce = 800,       -- Force to align the vehicle towards the direction of movement
+        maxSpeed = 1000,        -- Stop applying `engineForce` once the vehicle hits this speed
+
+        engineForce = 500,
+        engineLiftForce = 1300, -- Pitch the vehicle up when accelerating
+        turnForce = 1200,
+        rollForce = 200         -- Roll the vehicle when turning
+    }
 
     -- If Wiremod is installed, this function gets called to add
     -- inputs/outputs to be created when the vehicle is initialized.

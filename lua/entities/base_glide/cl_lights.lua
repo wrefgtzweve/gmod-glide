@@ -1,8 +1,3 @@
-function ENT:OnReloaded()
-    -- Let UpdateHeadlights recreate the lights
-    self.headlightState = 0
-end
-
 function ENT:OnHeadlightColorChange()
     -- Let UpdateHeadlights recreate the lights
     self.headlightState = 0

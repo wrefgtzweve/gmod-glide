@@ -1,12 +1,22 @@
 include( "shared.lua" )
 include( "cl_lights.lua" )
 include( "cl_hud.lua" )
+include( "cl_water.lua" )
 include( "sh_vehicle_compat.lua" )
 
 ENT.AutomaticFrameAdvance = true
 
+function ENT:OnReloaded()
+    -- Let UpdateHeadlights recreate the lights
+    self.headlightState = 0
+
+    -- Let children classes do their own logic
+    self:OnEntityReload()
+end
+
 function ENT:Initialize()
     self.sounds = {}
+    self.waterSideSlide = 0
     self.isLocalPlayerInFirstPerson = false
 
     self.crosshair = {
@@ -16,7 +26,7 @@ function ENT:Initialize()
     -- Create a RangedFeature to handle engine sounds
     self.rfSounds = Glide.CreateRangedFeature( self, self.MaxSoundDistance )
     self.rfSounds:SetTestCallback( "ShouldActivateSounds" )
-    self.rfSounds:SetActivateCallback( "OnActivateSounds" )
+    self.rfSounds:SetActivateCallback( "ActivateSounds" )
     self.rfSounds:SetDeactivateCallback( "DeactivateSounds" )
     self.rfSounds:SetUpdateCallback( "UpdateSounds" )
 
@@ -91,6 +101,13 @@ function ENT:CreateLoopingSound( id, path, level, parent )
     end
 
     return snd
+end
+
+function ENT:ActivateSounds()
+    self.waterSideSlide = 0
+
+    -- Let children classes do their own thing
+    self:OnActivateSounds()
 end
 
 function ENT:DeactivateSounds()

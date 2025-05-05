@@ -57,7 +57,8 @@ function ENT:UpdateGearList()
     end
 end
 
-function ENT:OnReloaded()
+--- Override this base class function.
+function ENT:OnEntityReload()
     self:UpdateGearList()
 end
 

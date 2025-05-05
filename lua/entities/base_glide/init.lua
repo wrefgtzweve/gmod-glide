@@ -2,6 +2,7 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_lights.lua" )
 AddCSLuaFile( "cl_hud.lua" )
+AddCSLuaFile( "cl_water.lua" )
 AddCSLuaFile( "sh_vehicle_compat.lua" )
 
 include( "shared.lua" )
@@ -11,6 +12,7 @@ include( "sv_weapons.lua" )
 include( "sv_wheels.lua" )
 include( "sv_lights.lua" )
 include( "sv_sockets.lua" )
+include( "sv_water.lua" )
 include( "sh_vehicle_compat.lua" )
 
 duplicator.RegisterEntityClass( "base_glide", Glide.VehicleFactory, "Data" )
@@ -86,6 +88,14 @@ function ENT:SpawnFunction( ply, tr )
     } )
 end
 
+function ENT:OnReloaded()
+    -- Setup water logic again
+    self:WaterInit()
+
+    -- Let children classes do their own logic
+    self:OnEntityReload()
+end
+
 function ENT:Initialize()
     -- Setup variables used on all vehicle types.
     self.seats = {}     -- Keep track of all seats we've created
@@ -152,6 +162,9 @@ function ENT:Initialize()
 
     -- Setup the trailer attachment system
     self:SocketInit()
+
+    -- Setup water-related logic
+    self:WaterInit()
 
     -- Set default headlight color
     local headlightColor = Glide.DEFAULT_HEADLIGHT_COLOR
@@ -564,10 +577,8 @@ function ENT:Think()
         self:WeaponThink()
     end
 
-    -- If necessary, kick passengers when underwater
-    if selfTbl.FallWhileUnderWater and self:WaterLevel() > 2 and #self:GetAllPlayers() > 0 then
-        self:RagdollPlayers( 3 )
-    end
+    -- Update water logic
+    self:WaterThink( selfTbl )
 
     local dt = TickInterval()
 
