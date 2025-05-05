@@ -7,6 +7,8 @@ DEFINE_BASECLASS( "base_glide" )
 
 --- Implement this base class function.
 function ENT:OnPostInitialize()
+    self.reducedThrottle = false
+
     self:SetEngineThrottle( 0 )
     self:SetEnginePower( 0 )
     self:SetIsHonking( false )
@@ -45,6 +47,15 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
 
     if action == "horn" then
         self:SetIsHonking( pressed )
+
+    elseif pressed and action == "reduce_throttle" then
+        self.reducedThrottle = not self.reducedThrottle
+
+        Glide.SendNotification( self:GetAllPlayers(), {
+            text = "#glide.notify.reduced_throttle_" .. ( self.reducedThrottle and "on" or "off" ),
+            icon = "materials/glide/icons/" .. ( self.reducedThrottle and "play_next" or "fast_forward" ) .. ".png",
+            immediate = true
+        } )
     end
 end
 
@@ -58,6 +69,13 @@ function ENT:OnTakeDamage( dmginfo )
 end
 
 --- Override this base class function.
+function ENT:TurnOn()
+    BaseClass.TurnOn( self )
+
+    self.reducedThrottle = false
+end
+
+--- Override this base class function.
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
@@ -65,6 +83,7 @@ function ENT:TurnOff()
     self:SetEngineThrottle( 0 )
     self:SetIsHonking( false )
 
+    self.reducedThrottle = false
     self.startupTimer = nil
 end
 
@@ -131,10 +150,16 @@ end
 function ENT:UpdateEngine( dt, selfTbl )
     local waterState = self:GetWaterState()
     local speed = selfTbl.forwardSpeed
+
+    local inputThrottle = self:GetInputFloat( 1, "accelerate" )
     local throttle = 0
 
+    if self.reducedThrottle then
+        inputThrottle = inputThrottle * 0.65
+    end
+
     if Abs( speed ) > 20 or waterState > 0 then
-        throttle = self:GetInputFloat( 1, "accelerate" ) - self:GetInputFloat( 1, "brake" )
+        throttle = inputThrottle - self:GetInputFloat( 1, "brake" )
     end
 
     self:SetEngineThrottle( ExpDecay( self:GetEngineThrottle(), throttle, 5, dt ) )
