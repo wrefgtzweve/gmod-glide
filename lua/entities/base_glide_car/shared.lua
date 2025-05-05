@@ -18,6 +18,9 @@ ENT.CanSwitchSiren = false
 -- Does this vehicle have headlights?
 ENT.CanSwitchHeadlights = true
 
+-- Can this vehicle drive over water?
+ENT.IsAmphibious = false
+
 DEFINE_BASECLASS( "base_glide" )
 
 --- Override this base class function.

@@ -579,6 +579,16 @@ function ENT:CreateWheel( offset, params )
     return wheel
 end
 
+--- Implement this base class function.
+function ENT:OnSimulatePhysics( phys, dt, outLin, outAng )
+    if self.IsAmphibious then
+        local throttle = self:GetEngineThrottle()
+        throttle = self:GetGear() == -1 and -throttle or throttle
+
+        self:SimulateBoat( phys, dt, outLin, outAng, throttle, self:GetInputFloat( 1, "steer" ) )
+    end
+end
+
 local traction, tractionFront, tractionRear
 local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake
 local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip, state

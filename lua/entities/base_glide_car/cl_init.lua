@@ -170,6 +170,10 @@ function ENT:OnUpdateSounds()
         end
     end
 
+    if self.IsAmphibious then
+        self:DoWaterSounds()
+    end
+
     if not self:IsEngineOn() then return end
 
     if self:GetGear() == -1 and self.ReverseSound ~= "" then
@@ -416,6 +420,10 @@ function ENT:OnUpdateParticles()
                 Effect( "glide_exhaust", eff, true, true )
             end
         end
+    end
+
+    if self.IsAmphibious and self:GetWaterState() > 0 then
+        self:DoWaterParticles( rpmFraction, self:GetEngineThrottle() )
     end
 
     local health = self:GetEngineHealth()
