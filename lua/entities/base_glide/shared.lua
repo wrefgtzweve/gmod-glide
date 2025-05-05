@@ -106,13 +106,15 @@ function ENT:IsEngineOn()
     return self:GetEngineState() > 0
 end
 
--- You can safely override these on children classes.
+-- You can safely override this on children classes.
 -- Used to update bodygroups and draw sprites while in reverse gear.
 function ENT:IsReversing()
     return false
 end
 
-function ENT:GetIsBraking()
+-- You can safely override this on children classes.
+-- Used to update bodygroups and draw sprites while braking.
+function ENT:IsBraking()
     return self:GetBrakeValue() > 0.1
 end
 

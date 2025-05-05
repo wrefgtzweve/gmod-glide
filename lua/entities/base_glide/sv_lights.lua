@@ -43,7 +43,7 @@ function ENT:UpdateLightBodygroups()
     local headlightState = self:GetHeadlightState()
     local allowLights = self:IsEngineOn() or headlightState > 0
 
-    lightState.brake = allowLights and self:GetIsBraking()
+    lightState.brake = allowLights and self:IsBraking()
     lightState.reverse = allowLights and self:IsReversing()
     lightState.headlight = headlightState > 0
 
