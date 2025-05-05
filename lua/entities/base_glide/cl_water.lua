@@ -1,9 +1,6 @@
 local PlaySoundSet = Glide.PlaySoundSet
 
 function ENT:OnWaterStateChange( _, _, state )
-    if not self.rfSounds then return end
-    if not self.rfSounds.isActive then return end
-
     local speed = self:GetVelocity():Length()
 
     if state > 0 and state < 3 and speed > 10 then
