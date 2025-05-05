@@ -148,15 +148,13 @@ function SWEP:CanAttack()
         return false
     end
 
-    if lockRequiredConvar:GetBool() and not ( IsValid( self:GetLockTarget() ) and self:GetLockState() == 3 ) then
-        return false
-    end
-
     return true
 end
 
 function SWEP:PrimaryAttack()
     if not self:CanAttack() then return end
+
+    if lockRequiredConvar:GetBool() and not ( IsValid( self:GetLockTarget() ) and self:GetLockState() == 3 ) then return end
 
     local fireDelay = CurTime() + self.FireTime
 
