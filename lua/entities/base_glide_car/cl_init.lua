@@ -195,15 +195,17 @@ function ENT:OnUpdateSounds()
     local stream = self.stream
 
     if not stream then
-        self.stream = Glide.CreateEngineStream( self )
+        if self:GetEngineState() < 3 then
+            self.stream = Glide.CreateEngineStream( self )
 
-        if self.streamJSONOverride then
-            self.stream:LoadJSON( self.streamJSONOverride )
-        else
-            self:OnCreateEngineStream( self.stream )
+            if self.streamJSONOverride then
+                self.stream:LoadJSON( self.streamJSONOverride )
+            else
+                self:OnCreateEngineStream( self.stream )
+            end
+
+            self.stream:Play()
         end
-
-        self.stream:Play()
 
         return
     end
