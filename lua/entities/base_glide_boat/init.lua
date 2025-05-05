@@ -113,18 +113,6 @@ function ENT:OnPostThink( dt, selfTbl )
 
     if self:IsEngineOn() then
         self:UpdateEngine( dt, selfTbl )
-
-        -- Make sure the physics stay awake when necessary,
-        -- otherwise the driver's input won't do anything.
-        local phys = self:GetPhysicsObject()
-
-        if IsValid( phys ) and phys:IsAsleep() then
-            local driverInput = self:GetInputFloat( 1, "accelerate" ) + self:GetInputFloat( 1, "brake" ) + self:GetInputFloat( 1, "steer" )
-
-            if Abs( driverInput ) > 0.01 then
-                phys:Wake()
-            end
-        end
     end
 
     -- Update steer input

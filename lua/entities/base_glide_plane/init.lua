@@ -144,8 +144,6 @@ function ENT:OnPostThink( dt, selfTbl )
     self:SetThrottle( throttle )
 
     if self:IsEngineOn() then
-        -- Make sure the physics stay awake,
-        -- otherwise the driver's input won't do anything.
         local phys = self:GetPhysicsObject()
 
         if IsValid( phys ) then
@@ -154,10 +152,6 @@ function ENT:OnPostThink( dt, selfTbl )
 
             selfTbl.divePitch = Approach( selfTbl.divePitch, downDot > 0.5 and downDot or 0, dt * 0.5 )
             self:SetExtraPitch( Approach( self:GetExtraPitch(), 1 + pitchVel + ( selfTbl.divePitch * 0.3 ), dt * 0.1 ) )
-
-            if phys:IsAsleep() then
-                phys:Wake()
-            end
         end
 
         if self:GetEngineHealth() > 0 then
