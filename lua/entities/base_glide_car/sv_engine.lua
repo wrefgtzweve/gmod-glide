@@ -253,6 +253,7 @@ function ENT:EngineThink( dt )
     if amphibiousMode then
         self.burnout = 0
         self:BoatEngineThink( dt )
+        self:SetIsRedlining( false )
 
         if inputThrottle > 0 then
             self:SwitchGear( 1, 0 )
