@@ -58,10 +58,18 @@ function ENT:OnRemove( fullUpdate )
     end
 end
 
-function ENT:OnEngineStateChange( _, _, state )
-    if state > 0 then
+function ENT:OnEngineStateChange( _, lastState, state )
+    if state == 1 then
+        -- If we have a "startup" sound, play it now.
+        if self.rfSounds and self.rfSounds.isActive and self.StartSound and self.StartSound ~= "" then
+            local snd = self:CreateLoopingSound( "start", Glide.GetRandomSound( self.StartSound ), 70, self )
+            snd:PlayEx( 1, 100 )
+        end
+
+    elseif lastState ~= 3 and state == 2 then
         self:OnTurnOn()
-    else
+
+    elseif state == 0 then
         self:OnTurnOff()
     end
 end
@@ -138,6 +146,17 @@ function ENT:UpdateSounds()
             elseif not signalBlink and self.TurnSignalTickOffSound ~= "" then
                 self:EmitSound( self.TurnSignalTickOffSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
             end
+        end
+    end
+
+    local sounds = self.sounds
+
+    if sounds.start and self:GetEngineState() ~= 1 then
+        sounds.start:Stop()
+        sounds.start = nil
+
+        if self.StartTailSound and self.StartTailSound ~= "" then
+            Glide.PlaySoundSet( self.StartTailSound, self )
         end
     end
 

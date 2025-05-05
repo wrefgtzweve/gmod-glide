@@ -39,11 +39,7 @@ end
 
 --- Override this base class function.
 function ENT:TurnOn()
-    local state = self:GetEngineState()
-
-    if state ~= 2 then
-        self:SetEngineState( 1 )
-    end
+    BaseClass.TurnOn( self )
 
     self:SetEngineThrottle( 0 )
     self:SetEnginePower( 0 )
@@ -245,6 +241,10 @@ function ENT:OnPostThink( dt, selfTbl )
             local startupTime = health < 0.5 and math.Rand( 1, 2 ) or selfTbl.StartupTime
             selfTbl.startupTimer = CurTime() + startupTime
         end
+
+    elseif state == 3 then
+        -- This vehicle does not do a "shutdown" sequence.
+        self:SetEngineState( 0 )
     end
 
     if self:IsEngineOn() then

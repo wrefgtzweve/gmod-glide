@@ -249,18 +249,32 @@ function ENT:Use( activator )
     end
 end
 
---- Sets the "EngineState" network variable to `1` and calls `ENT:OnTurnOn`.
-function ENT:TurnOn()
-    if self:GetEngineHealth() > 0 then
-        self:SetEngineState( 1 )
+function ENT:OnEngineStateChange( _, lastState, state )
+    if lastState == 1 and state == 2 then
         self:OnTurnOn()
+
+    elseif state == 0 then
+        self:OnTurnOff()
+    end
+
+    if WireLib then
+        WireLib.TriggerOutput( self, "EngineState", state )
     end
 end
 
---- Sets the "EngineState" network variable to `0` and calls `ENT:OnTurnOff`.
+function ENT:TurnOn()
+    local state = self:GetEngineState()
+
+    if state == 3 then
+        self:SetEngineState( 2 )
+
+    elseif state ~= 2 then
+        self:SetEngineState( 1 )
+    end
+end
+
 function ENT:TurnOff()
-    self:SetEngineState( 0 )
-    self:OnTurnOff()
+    self:SetEngineState( 3 )
 
     if self.autoTurnOffLights then
         self:ChangeHeadlightState( 0, true )

@@ -9,22 +9,6 @@ function ENT:OnPostInitialize()
     self.streamJSONOverride = nil
 end
 
---- Override this base class function.
-function ENT:OnEngineStateChange( _, lastState, state )
-    if state == 1 then
-        if self.rfSounds and self.rfSounds.isActive then
-            local snd = self:CreateLoopingSound( "start", Glide.GetRandomSound( self.StartSound ), 70, self )
-            snd:PlayEx( 1, 100 )
-        end
-
-    elseif lastState == 1 and state == 2 then
-        self:OnTurnOn()
-
-    elseif state == 0 then
-        self:OnTurnOff()
-    end
-end
-
 local GetVolume = Glide.Config.GetVolume
 
 --- Implement this base class function.
@@ -63,12 +47,6 @@ local FrameTime = FrameTime
 --- Implement this base class function.
 function ENT:OnUpdateSounds()
     local sounds = self.sounds
-
-    if sounds.start and self:GetEngineState() ~= 1 then
-        sounds.start:Stop()
-        sounds.start = nil
-        Glide.PlaySoundSet( self.StartTailSound, self )
-    end
 
     local dt = FrameTime()
     local isHonking = self:GetIsHonking()

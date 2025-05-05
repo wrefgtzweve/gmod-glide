@@ -36,6 +36,12 @@ function ENT:Repair()
     self:CreateRotors()
 end
 
+--- Override this base class function.
+function ENT:TurnOff()
+    BaseClass.TurnOff( self )
+    self:SetEngineState( 0 )
+end
+
 --- Creates and stores a new rotor entity.
 ---
 --- `radius` is used for collision checking.

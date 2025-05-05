@@ -20,15 +20,6 @@ ENT.CanSwitchHeadlights = true
 
 DEFINE_BASECLASS( "base_glide" )
 
---[[
-    For cars, the values on Get/SetEngineState mean:
-
-    0 - Off
-    1 - Starting
-    2 - Running
-    3 - Shutting down or Ignition/Fuel cut-off
-]]
-
 --- Override this base class function.
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
@@ -130,11 +121,6 @@ function ENT:UpdatePlayerPoseParameters( ply )
     end
 
     return true
-end
-
---- Override this base class function.
-function ENT:IsEngineOn()
-    return self:GetEngineState() > 1
 end
 
 --- Override this base class function.

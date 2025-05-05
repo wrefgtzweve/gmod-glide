@@ -68,13 +68,6 @@ function ENT:OnTakeDamage( dmginfo )
 end
 
 --- Override this base class function.
-function ENT:TurnOn()
-    if self:GetEngineState() < 1 then
-        self:SetEngineState( 1 )
-    end
-end
-
---- Override this base class function.
 function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
@@ -104,7 +97,6 @@ function ENT:OnPostThink( dt, selfTbl )
 
                 if health > 0 then
                     self:SetEngineState( 2 )
-                    self:OnTurnOn()
                 else
                     self:SetEngineState( 0 )
                 end
@@ -113,6 +105,10 @@ function ENT:OnPostThink( dt, selfTbl )
             local startupTime = health < 0.5 and math.Rand( 1, 2 ) or selfTbl.StartupTime
             selfTbl.startupTimer = CurTime() + startupTime
         end
+
+    elseif state == 3 then
+        -- This vehicle does not do a "shutdown" sequence.
+        self:SetEngineState( 0 )
     end
 
     if self:IsEngineOn() then
