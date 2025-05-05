@@ -48,7 +48,7 @@ function ENT:SetupDataTables()
     -- Headlight color can be edited if it's available
     local editData = nil
 
-    if true then
+    if self.CanSwitchHeadlights then
         editData = { KeyName = "HeadlightColor", Edit = { type = "VectorColor", order = 0, category = "#glide.settings" } }
     end
 
