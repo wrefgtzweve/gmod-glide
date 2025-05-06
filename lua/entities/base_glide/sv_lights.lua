@@ -82,6 +82,9 @@ function ENT:UpdateLightBodygroups()
             enable = false
         end
 
-        self:SetBodygroup( l.bodyGroupId, enable and l.subModelId or 0 )
+        local targetSubModel = enable and l.subModelId or 0
+        if self:GetBodygroup( l.bodyGroupId ) ~= targetSubModel then
+            self:SetBodygroup( l.bodyGroupId, targetSubModel )
+        end
     end
 end
