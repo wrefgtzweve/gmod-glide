@@ -24,6 +24,8 @@ local Vector = Vector
 local RealTime = RealTime
 local TraceLine = util.TraceLine
 
+local Config = Glide.Config
+
 local traceData = {
     mask = MASK_NPCWORLDSTATIC
 }
@@ -65,7 +67,7 @@ function SkidHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
         lastQuad and lastQuad[2] or pos,    -- [3] 3rd vertex
         lastQuad and lastQuad[1] or pos,    -- [4] 4th vertex
         55 + 200 * strength,                -- [5] Alpha
-        RealTime() + 10                     -- [6] Lifetime
+        RealTime() + Config.skidmarkTimeLimit -- [6] Lifetime
     }
 
     return i
@@ -131,8 +133,6 @@ end
 
 function Glide.SetupSkidMarkMeshes()
     Glide.DestroySkidMarkMeshes()
-
-    local Config = Glide.Config
 
     -- Mesh handler for skid marks
     if Config.maxSkidMarkPieces > 0 then

@@ -53,6 +53,7 @@ function Config:Reset()
 
     self.maxSkidMarkPieces = 500
     self.maxTireRollPieces = 400
+    self.skidmarkTimeLimit = 15
 
     self.manualGearShifting = false
     self.autoHeadlightOn = true
@@ -141,6 +142,7 @@ function Config:Save( immediate )
         -- Misc. settings
         maxSkidMarkPieces = self.maxSkidMarkPieces,
         maxTireRollPieces = self.maxTireRollPieces,
+        skidmarkTimeLimit = self.skidmarkTimeLimit,
 
         showHUD = self.showHUD,
         showPassengerList = self.showPassengerList,
@@ -248,6 +250,7 @@ function Config:Load()
     -- Misc. settings
     SetNumber( self, "maxSkidMarkPieces", data.maxSkidMarkPieces, 0, 1000, self.maxSkidMarkPieces )
     SetNumber( self, "maxTireRollPieces", data.maxTireRollPieces, 0, 1000, self.maxTireRollPieces )
+    SetNumber( self, "skidmarkTimeLimit", data.skidmarkTimeLimit, 3, 300, self.skidmarkTimeLimit )
 
     LoadBool( "showHUD", true )
     LoadBool( "showPassengerList", true )
@@ -739,6 +742,12 @@ function Config:OpenFrame()
         end
 
         self.maxTireRollPieces = value
+        self:Save()
+        self:ApplySkidMarkLimits()
+    end )
+
+    CreateSlider( panelMisc, L"misc.skid_mark_time", self.skidmarkTimeLimit, 3, 300, 0, function( value )
+        self.skidmarkTimeLimit = value
         self:Save()
         self:ApplySkidMarkLimits()
     end )
