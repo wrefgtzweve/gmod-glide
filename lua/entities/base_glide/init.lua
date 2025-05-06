@@ -89,6 +89,8 @@ function ENT:SpawnFunction( ply, tr )
 end
 
 function ENT:OnReloaded()
+    self.lastBodygroups = {}
+
     -- Setup water logic again
     self:WaterInit()
 
