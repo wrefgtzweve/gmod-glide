@@ -423,7 +423,8 @@ function ENT:OnUpdateParticles()
     end
 
     if self.IsAmphibious and self:GetWaterState() > 0 then
-        self:DoWaterParticles( rpmFraction, self:GetEngineThrottle() )
+        local throttle = self:GetGear() > 0 and self:GetEngineThrottle() or 0
+        self:DoWaterParticles( rpmFraction, throttle )
     end
 
     local health = self:GetEngineHealth()
