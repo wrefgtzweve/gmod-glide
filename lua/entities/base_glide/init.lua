@@ -101,6 +101,7 @@ function ENT:Initialize()
     self.seats = {}     -- Keep track of all seats we've created
     self.exitPos = {}   -- Per-seat exit offsets
     self.lastDriver = NULL
+    self.lastBodygroups = {}
 
     self.inputBools = {}        -- Per-seat bool inputs
     self.inputFloats = {}       -- Per-seat float inputs

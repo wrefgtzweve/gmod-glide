@@ -53,7 +53,8 @@ function ENT:UpdateLightBodygroups()
     lightState.signal_left = signal == 1 or signal == 3
     lightState.signal_right = signal == 2 or signal == 3
 
-    local enable
+    local lastBodygroups = self.lastBodygroups
+    local enable, targetSubModel
 
     for _, l in ipairs( self.LightBodygroups ) do
         enable = lightState[l.type]
@@ -82,8 +83,10 @@ function ENT:UpdateLightBodygroups()
             enable = false
         end
 
-        local targetSubModel = enable and l.subModelId or 0
-        if self:GetBodygroup( l.bodyGroupId ) ~= targetSubModel then
+        targetSubModel = enable and l.subModelId or 0
+
+        if lastBodygroups[l.bodyGroupId] ~= targetSubModel then
+            lastBodygroups[l.bodyGroupId] = targetSubModel
             self:SetBodygroup( l.bodyGroupId, targetSubModel )
         end
     end
