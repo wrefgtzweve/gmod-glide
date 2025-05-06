@@ -20,24 +20,20 @@ function SkidHandler:Destroy()
     setmetatable( self, nil )
 end
 
-local Vector = Vector
 local RealTime = RealTime
 local TraceLine = util.TraceLine
 
 local Config = Glide.Config
 
-local traceData = {
-    mask = MASK_NPCWORLDSTATIC
-}
+local ray = {}
+local traceData = { mask = MASK_NPCWORLDSTATIC, output = ray }
 
-function SkidHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
+function SkidHandler:AddPiece( lastQuadId, pos, forward, normal, width, strength )
     traceData.start = pos + normal * 10
     traceData.endpos = pos - normal * 10
+    TraceLine( traceData )
 
-    local tr = TraceLine( traceData )
-    if not tr.Hit then return end
-
-    pos = tr.HitPos + normal * 1
+    if not ray.Hit then return end
 
     local quads = self.quads
     local i = self.lastQuadIndex + 1
@@ -47,23 +43,16 @@ function SkidHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
 
     self.lastQuadIndex = i
 
-    local v1 = Vector( 0, width, 0.2 )
-    local v2 = Vector( 0, -width, 0.2 )
+    normal = ray.HitNormal
+    pos = ray.HitPos + normal
+    forward:Normalize()
 
-    dir:Normalize()
-
-    local ang = dir:Angle()
-    v1:Rotate( ang )
-    v2:Rotate( ang )
-
-    v1 = pos + v1
-    v2 = pos + v2
-
+    local right = normal:Cross( forward )
     local lastQuad = quads[lastQuadId]
 
     quads[i] = {
-        v1,                                 -- [1] 1st vertex
-        v2,                                 -- [2] 2nd vertex
+        pos + right * width,                -- [1] 1st vertex
+        pos - right * width,                -- [2] 2nd vertex
         lastQuad and lastQuad[2] or pos,    -- [3] 3rd vertex
         lastQuad and lastQuad[1] or pos,    -- [4] 4th vertex
         55 + 200 * strength,                -- [5] Alpha
@@ -101,15 +90,15 @@ end
 local skidMarkHandler = Glide.skidMarkHandler
 local tireRollHandler = Glide.tireRollHandler
 
-function Glide.AddSkidMarkPiece( lastQuadId, pos, dir, normal, width, strength )
+function Glide.AddSkidMarkPiece( lastQuadId, pos, forward, normal, width, strength )
     if skidMarkHandler then
-        return skidMarkHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
+        return skidMarkHandler:AddPiece( lastQuadId, pos, forward, normal, width, strength )
     end
 end
 
-function Glide.AddTireRollPiece( lastQuadId, pos, dir, normal, width, strength )
+function Glide.AddTireRollPiece( lastQuadId, pos, forward, normal, width, strength )
     if tireRollHandler then
-        return tireRollHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
+        return tireRollHandler:AddPiece( lastQuadId, pos, forward, normal, width, strength )
     end
 end
 
