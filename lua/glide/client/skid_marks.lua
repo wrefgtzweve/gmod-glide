@@ -20,8 +20,8 @@ function SkidHandler:Destroy()
     setmetatable( self, nil )
 end
 
-local Color = Color
 local Vector = Vector
+local RealTime = RealTime
 local TraceLine = util.TraceLine
 
 local traceData = {
@@ -60,28 +60,37 @@ function SkidHandler:AddPiece( lastQuadId, pos, dir, normal, width, strength )
     local lastQuad = quads[lastQuadId]
 
     quads[i] = {
-        v1,
-        v2,
-        lastQuad and lastQuad[2] or pos,
-        lastQuad and lastQuad[1] or pos,
-        Color( 255, 255, 255, 55 + 200 * strength )
+        v1,                                 -- [1] 1st vertex
+        v2,                                 -- [2] 2nd vertex
+        lastQuad and lastQuad[2] or pos,    -- [3] 3rd vertex
+        lastQuad and lastQuad[1] or pos,    -- [4] 4th vertex
+        55 + 200 * strength,                -- [5] Alpha
+        RealTime() + 10                     -- [6] Lifetime
     }
 
     return i
 end
 
+local Min = math.min
 local SetMaterial = render.SetMaterial
 local DrawQuad = render.DrawQuad
 
-function SkidHandler:Draw()
+local color = Color( 255, 255, 255 )
+
+function SkidHandler:Draw( t )
     SetMaterial( self.material )
 
     local quads = self.quads
-    local q
+    local q, timeLeft
 
     for i = 1, self.quadCount do
         q = quads[i]
-        DrawQuad( q[1], q[2], q[3], q[4], q[5] )
+        timeLeft = q[6] - t
+
+        if timeLeft > 0 then
+            color.a = q[5] * Min( timeLeft * 0.5, 1 )
+            DrawQuad( q[1], q[2], q[3], q[4], color )
+        end
     end
 end
 
@@ -155,11 +164,13 @@ hook.Add( "PreDrawTranslucentRenderables", "Glide.RenderSkidMarks", function( is
     SetBlend( 1 )
     SetColorModulation( 1, 1, 1 )
 
+    local t = RealTime()
+
     if skidMarkHandler then
-        skidMarkHandler:Draw()
+        skidMarkHandler:Draw( t )
     end
 
     if tireRollHandler then
-        tireRollHandler:Draw()
+        tireRollHandler:Draw( t )
     end
 end )
