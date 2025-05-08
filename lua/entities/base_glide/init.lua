@@ -382,6 +382,9 @@ do
 
         local traceData = self:GetTraceData()
 
+        -- Ignore water
+        traceData.mask = MASK_NPCSOLID - MASK_WATER
+
         -- Try the original exit position first
         local blocked, pos = ValidateExitPos( seat.GlideExitPos, traceData, self )
 
@@ -402,6 +405,8 @@ do
             local maxs = self:OBBMaxs()
             blocked, pos = ValidateExitPos( Vector( maxs[1] * 2, 0, 0 ), traceData, self )
         end
+
+        traceData.mask = nil
 
         if blocked then
             -- We're cooked...
