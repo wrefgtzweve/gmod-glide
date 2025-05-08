@@ -417,6 +417,19 @@ do
     end
 end
 
+--- Returns how many players are inside of this vehicle.
+function ENT:GetPlayerCount()
+    local count = 0
+
+    for _, seat in ipairs( self.seats ) do
+        if IsValid( seat ) and IsValid( seat:GetDriver() ) then
+            count = count + 1
+        end
+    end
+
+    return count
+end
+
 --- Returns all players that are inside of this vehicle.
 function ENT:GetAllPlayers()
     local players = {}

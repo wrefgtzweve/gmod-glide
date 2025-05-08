@@ -65,7 +65,7 @@ function ENT:WaterThink( selfTbl )
     self:SetWaterState( waterState )
 
     -- If necessary, kick passengers when underwater
-    if selfTbl.FallWhileUnderWater and waterState > 2 and #self:GetAllPlayers() > 0 then
+    if selfTbl.FallWhileUnderWater and waterState > 2 and self:GetPlayerCount() > 0 then
         self:RagdollPlayers( 3 )
     end
 
