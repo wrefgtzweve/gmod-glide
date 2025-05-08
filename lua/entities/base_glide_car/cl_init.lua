@@ -145,7 +145,7 @@ function ENT:OnUpdateSounds()
         self.fastBrakePressure = Min( isSlow and 0 or self.fastBrakePressure + dt, 1 )
     else
         if self.slowBrakePressure > 0.5 and self.BrakeSqueakSound ~= "" then
-            Glide.PlaySoundSet( self.BrakeReleaseSound, self, 0.8 )
+            Glide.PlaySoundSet( self.BrakeSqueakSound, self, 0.8 )
         end
 
         self.slowBrakePressure = 0
@@ -166,7 +166,7 @@ function ENT:OnUpdateSounds()
         sounds.brakeLoop = nil
 
         if self.BrakeReleaseSound ~= "" then
-            Glide.PlaySoundSet( self.BrakeSqueakSound, self, 0.8 )
+            Glide.PlaySoundSet( self.BrakeReleaseSound, self, 0.8 )
         end
     end
 
