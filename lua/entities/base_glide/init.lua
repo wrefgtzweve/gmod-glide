@@ -423,10 +423,12 @@ function ENT:GetAllPlayers()
     local driver
 
     for _, seat in ipairs( self.seats ) do
-        driver = seat:GetDriver()
+        if IsValid( seat ) then
+            driver = seat:GetDriver()
 
-        if IsValid( driver ) then
-            players[#players + 1] = driver
+            if IsValid( driver ) then
+                players[#players + 1] = driver
+            end
         end
     end
 
@@ -567,7 +569,8 @@ function ENT:Think()
     -- If we have at least one seat...
     if #selfTbl.seats > 0 then
         -- Use it to check if we have a driver
-        local driver = selfTbl.seats[1]:GetDriver()
+        local driverSeat = selfTbl.seats[1]
+        local driver = IsValid( driverSeat ) and driverSeat:GetDriver() or NULL
 
         if driver ~= self:GetDriver() then
             self:SetDriver( driver )
