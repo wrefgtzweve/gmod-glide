@@ -1,11 +1,7 @@
 local RandomFloat = math.Rand
-local TraceLine = util.TraceLine
+local FindWaterSurfaceAbove = Glide.FindWaterSurfaceAbove
 
 local angles = Angle( 270, 0, 0 )
-local traceOffset = Vector( 0, 0, 100 )
-
-local ray = {}
-local traceData = { mask = MASK_WATER, output = ray }
 
 function EFFECT:Init( data )
     local origin = data:GetOrigin()
@@ -17,15 +13,8 @@ function EFFECT:Init( data )
     if not IsValid( emitter ) then return end
 
     -- Try to find a water surface above the origin
-    traceData.start = origin + traceOffset
-    traceData.endpos = origin
-
-    TraceLine( traceData )
-
-    if ray.Hit then
-        origin = ray.HitPos
-        origin[3] = origin[3] + 1
-    end
+    origin = FindWaterSurfaceAbove( origin ) or origin
+    origin[3] = origin[3] + 1
 
     local p
 

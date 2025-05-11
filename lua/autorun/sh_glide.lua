@@ -367,6 +367,26 @@ do
     end
 end
 
+do
+    local TraceLine = util.TraceLine
+
+    local ray = {}
+    local traceData = { mask = MASK_WATER, output = ray }
+    local offset = Vector()
+
+    function Glide.FindWaterSurfaceAbove( origin, maxHeight )
+        offset[3] = maxHeight or 100
+
+        traceData.start = origin + offset
+        traceData.endpos = origin
+        TraceLine( traceData )
+
+        if ray.Hit then
+            return ray.HitPos, ray.Fraction
+        end
+    end
+end
+
 hook.Add( "Initialize", "Glide.OverrideIsVehicle", function()
     local VehicleMeta = FindMetaTable( "Entity" )
     local IsVehicle = VehicleMeta.IsVehicle
