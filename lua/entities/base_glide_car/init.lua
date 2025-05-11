@@ -471,7 +471,6 @@ function ENT:UpdateSteering( dt )
     inputSteer = ExpDecay( self.inputSteer, inputSteer * steerCone, self:GetSteerConeChangeRate(), dt )
 
     self.inputSteer = inputSteer
-    self:SetSteering( inputSteer )
 
     -- Counter-steer when slipping, going fast and not using steer input
     local counterSteer = sideSlip * steerConeFactor * ( 1 - absInputSteer )
@@ -479,6 +478,7 @@ function ENT:UpdateSteering( dt )
     counterSteer = Clamp( counterSteer, -1, 1 ) * self:GetCounterSteer()
     inputSteer = Clamp( inputSteer + counterSteer, -1, 1 )
 
+    self:SetSteering( inputSteer )
     self.steerAngle[2] = -inputSteer * self:GetMaxSteerAngle()
 
     -- Reduce front wheel sideways friction when trying to do a J-turn 
