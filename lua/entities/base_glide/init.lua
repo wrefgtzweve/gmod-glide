@@ -340,33 +340,54 @@ end
 local IsValid = IsValid
 
 do
+    local GetDevMode = Glide.GetDevMode
+    local TraceLine = util.TraceLine
     local TraceHull = util.TraceHull
 
-    local TRACE_OFFSET = Vector( 0, 0, -100 )
-    local TRACE_MINS = Vector( -16, -16, 0 )
-    local TRACE_MAXS = Vector( 16, 16, 50 )
+    local ray = {}
+    local traceData = {
+        mins = Vector( -16, -16, 0 ),
+        maxs = Vector( 16, 16, 50 ),
+        output = ray, -- Output TraceResult to this table
+        mask = MASK_NPCSOLID - MASK_WATER -- Ignore water
+    }
 
-    local function ValidateExitPos( pos, data, vehicle )
-        local exitPos = vehicle:LocalToWorld( pos )
+    local function ValidateExitPos( vehicle, seatPos, localPos )
+        local exitPos = vehicle:LocalToWorld( localPos )
 
-        data.mins = TRACE_MINS
-        data.maxs = TRACE_MAXS
-        data.start = exitPos
-        data.endpos = exitPos + TRACE_OFFSET
+        -- First, make sure there's nothing in between the vehicle's seat and `exitPos`
+        traceData.start = seatPos
+        traceData.endpos = exitPos
 
-        -- debugoverlay.Box( data.start, data.mins, data.maxs, 10, Color( 255, 255, 255, 10 ) )
-        -- debugoverlay.Line( data.start, data.endpos, 10, Color( 0, 0, 255 ), true )
+        TraceLine( traceData )
 
-        local tr = TraceHull( data )
-
-        if tr.Hit then
-            if tr.StartSolid then
-                return true -- This exit is blocked
+        if ray.Hit then
+            if GetDevMode() then
+                debugoverlay.Line( seatPos, traceData.endpos, 8, Color( 255, 0, 0 ), true )
+                debugoverlay.EntityTextAtPosition( traceData.endpos, 0, "<exit blocked>", 8, Color( 255, 0, 0 ) )
             end
 
-            -- debugoverlay.Box( tr.HitPos, data.mins, data.maxs, 10, Color( 0, 255, 0, 30 ) )
+            return true, exitPos
+        end
 
-            return false, tr.HitPos
+        -- Second, make sure the player's hitbox can fit on the `exitPos`
+        traceData.start = exitPos
+        traceData.endpos = exitPos
+
+        TraceHull( traceData )
+
+        if ray.StartSolid then
+            if GetDevMode() then
+                debugoverlay.Line( seatPos, traceData.endpos, 8, Color( 255, 100, 0 ), true )
+                debugoverlay.EntityTextAtPosition( traceData.endpos, 0, "<exit is too small>", 8, Color( 255, 100, 0 ) )
+            end
+
+            return true, exitPos
+        end
+
+        if GetDevMode() then
+            debugoverlay.Line( seatPos, exitPos, 8, Color( 0, 255, 0 ), true )
+            debugoverlay.Box( exitPos, traceData.mins, traceData.maxs, 8, Color( 255, 255, 255, 20 ) )
         end
 
         return false, exitPos
@@ -380,40 +401,63 @@ do
             return self:GetPos() -- Not much we can do here...
         end
 
-        local traceData = self:GetTraceData()
-
-        -- Ignore water
-        traceData.mask = MASK_NPCSOLID - MASK_WATER
+        traceData.filter = table.Copy( self.traceFilter )
+        traceData.filter[#traceData.filter + 1] = "player"
 
         -- Try the original exit position first
-        local blocked, pos = ValidateExitPos( seat.GlideExitPos, traceData, self )
+        local seatPos = seat:GetPos()
+        local blocked, pos = ValidateExitPos( self, seatPos, seat.GlideExitPos )
 
         if blocked then
             -- Try on the other side
-            pos = Vector( seat.GlideExitPos[1], -seat.GlideExitPos[2], seat.GlideExitPos[3] )
-            blocked, pos = ValidateExitPos( pos, traceData, self )
+            blocked, pos = ValidateExitPos( self, seatPos, Vector( seat.GlideExitPos[1], -seat.GlideExitPos[2], seat.GlideExitPos[3] ) )
         end
 
         if blocked then
-            -- Okay uh... Can we leave at the back?
-            local mins = self:OBBMins()
-            blocked, pos = ValidateExitPos( Vector( mins[1] * 1.5, 0, 0 ), traceData, self )
-        end
+            -- Well, let's just try a bunch of positions then
+            local obbSize = self:OBBMaxs() - self:OBBMins()
 
-        if blocked then
-            -- Uhhh... Can we leave at the front?
-            local maxs = self:OBBMaxs()
-            blocked, pos = ValidateExitPos( Vector( maxs[1] * 2, 0, 0 ), traceData, self )
-        end
+            obbSize[1] = obbSize[1] < 150 and 150 or obbSize[1]
+            obbSize[2] = obbSize[2] < 100 and 100 or obbSize[2]
 
-        traceData.mask = nil
+            local offset = Vector()
+            local rad
+
+            for ang = 0, 360, 15 do
+                rad = math.rad( ang )
+                offset[1] = math.sin( rad ) * obbSize[1] * 0.75
+                offset[2] = math.cos( rad ) * obbSize[2] * 0.75
+
+                blocked, pos = ValidateExitPos( self, seatPos, offset )
+
+                if not blocked then
+                    break
+                end
+            end
+        end
 
         if blocked then
             -- We're cooked...
-            pos = seat:GetPos()
+            pos = seatPos
+        else
+            -- Put the exit position on the ground
+            traceData.start = pos
+            traceData.endpos = Vector( pos[1], pos[2], pos[3] - 100 )
+
+            TraceHull( traceData )
+
+            if ray.Hit then
+                pos = ray.HitPos
+                pos[3] = pos[3] + 5
+            end
         end
 
-        return pos + Vector( 0, 0, 5 )
+        if GetDevMode() then
+            debugoverlay.EntityTextAtPosition( pos, 0, "<final exit pos>", 8, Color( blocked and 255 or 0, 255, 0 ) )
+            debugoverlay.Box( pos, traceData.mins, traceData.maxs, 8, Color( blocked and 255 or 0, 255, 0, 30 ) )
+        end
+
+        return pos
     end
 end
 

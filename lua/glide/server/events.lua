@@ -53,7 +53,7 @@ hook.Add( "PlayerEnteredVehicle", "Glide.OnEnterSeat", function( ply, seat )
     ply.GlideCurrentSeatIndex = seatIndex
     ply:DrawShadow( false )
 
-    -- Let the target player know about the current vehicle/seat they are sitting on
+    -- Let the player know about the current vehicle/seat they are sitting on
     Glide.StartCommand( Glide.CMD_SET_CURRENT_VEHICLE, false )
     net.WriteEntity( parent )
     net.WriteUInt( seatIndex, 6 )
@@ -82,7 +82,7 @@ hook.Add( "PlayerLeaveVehicle", "Glide.OnExitSeat", function( ply )
     ply.GlideCurrentSeatIndex = 0
     ply:DrawShadow( true )
 
-    -- Let the target player know about the current vehicle/seat they are sitting on
+    -- Let the player know that they aren't on a vehicle anymore
     Glide.StartCommand( Glide.CMD_SET_CURRENT_VEHICLE, false )
     net.WriteEntity( NULL )
     net.WriteUInt( 0, 6 )
