@@ -18,6 +18,9 @@ ENT.CanSwitchSiren = false
 -- Does this vehicle have headlights?
 ENT.CanSwitchHeadlights = true
 
+-- Does this vehicle have turn signals?
+ENT.CanSwitchTurnSignals = true
+
 -- Can this vehicle drive over water?
 ENT.IsAmphibious = false
 

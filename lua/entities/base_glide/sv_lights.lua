@@ -17,6 +17,8 @@ function ENT:ChangeHeadlightState( state, dontPlaySound )
 end
 
 function ENT:ChangeTurnSignalState( state, dontPlaySound )
+    if not self.CanSwitchTurnSignals then return end
+
     state = math.Clamp( math.floor( state ), 0, 3 )
     self:SetTurnSignalState( state )
 

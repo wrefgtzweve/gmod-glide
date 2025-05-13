@@ -719,6 +719,12 @@ function ENT:TriggerInput( name, value )
 
     elseif name == "LockVehicle" then
         self:SetLocked( value > 0, true )
+
+    elseif name == "Headlights" then
+        self:ChangeHeadlightState( value, true )
+
+    elseif name == "TurnSignal" then
+        self:ChangeTurnSignalState( value, true )
     end
 end
 

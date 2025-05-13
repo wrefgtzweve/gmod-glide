@@ -289,12 +289,10 @@ function ENT:SetupWiremodPorts( inputs, outputs )
 
     inputs[#inputs + 1] = { "Ignition", "NORMAL", "1: Turn the engine on\n0: Turn the engine off" }
     inputs[#inputs + 1] = { "Steer", "NORMAL", "A value between -1.0 and 1.0" }
-    inputs[#inputs + 1] = { "Throttle", "NORMAL", "A value between 0.0 and 1.0\nAlso acts brake input when reversing." }
-    inputs[#inputs + 1] = { "Brake", "NORMAL", "A value between 0.0 and 1.0\nAlso acts throttle input when reversing." }
+    inputs[#inputs + 1] = { "Throttle", "NORMAL", "A value between 0.0 and 1.0\nAlso acts as brake input when reversing." }
+    inputs[#inputs + 1] = { "Brake", "NORMAL", "A value between 0.0 and 1.0\nAlso acts as throttle input when reversing." }
     inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
-    inputs[#inputs + 1] = { "Headlights", "NORMAL", "0: Off\n1: Low beams\n2: High beams" }
     inputs[#inputs + 1] = { "Horn", "NORMAL", "Set to 1 to sound the horn" }
-    inputs[#inputs + 1] = { "TurnSignal", "NORMAL", "0: Off\n1: Left-turn signal\n2: Right-turn signal\n3: Hazard lights" }
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
@@ -683,14 +681,8 @@ function ENT:TriggerInput( name, value )
             self.inputManualShift = false
         end
 
-    elseif name == "Headlights" then
-        self:ChangeHeadlightState( Floor( value ), true )
-
     elseif name == "Horn" then
         self:SetIsHonking( value > 0 )
-
-    elseif name == "TurnSignal" then
-        self:ChangeTurnSignalState( value, true )
 
     elseif name == "Siren" then
         self:ChangeSirenState( Floor( value ) )

@@ -21,6 +21,9 @@ ENT.MaxChassisHealth = 1000
 -- Does this vehicle have headlights?
 ENT.CanSwitchHeadlights = false
 
+-- Does this vehicle have turn signals?
+ENT.CanSwitchTurnSignals = false
+
 -- How long is the on/off cycle for turn signals?
 ENT.TurnSignalCycle = 0.8
 
@@ -396,6 +399,14 @@ if SERVER then
         -- Input name, input type, input description
         inputs[#inputs + 1] = { "EjectDriver", "NORMAL", "When set to 1, kicks the driver out of the vehicle" }
         inputs[#inputs + 1] = { "LockVehicle", "NORMAL", "When set to 1, only the vehicle creator and friends can enter the vehicle" }
+
+        if self.CanSwitchHeadlights then
+            inputs[#inputs + 1] = { "Headlights", "NORMAL", "0: Off\n1: Low beams\n2: High beams" }
+        end
+
+        if self.CanSwitchTurnSignals then
+            inputs[#inputs + 1] = { "TurnSignal", "NORMAL", "0: Off\n1: Left-turn signal\n2: Right-turn signal\n3: Hazard lights" }
+        end
 
         -- Output name, output type, output description
         outputs[#outputs + 1] = { "MaxChassisHealth", "NORMAL", "Max. chassis health" }
