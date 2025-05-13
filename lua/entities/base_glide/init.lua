@@ -346,24 +346,24 @@ do
 
     local ray = {}
     local traceData = {
-        mins = Vector( -16, -16, 0 ),
-        maxs = Vector( 16, 16, 50 ),
+        mins = Vector( -20, -20, 0 ),
+        maxs = Vector( 20, 20, 50 ),
         output = ray, -- Output TraceResult to this table
         mask = MASK_NPCSOLID - MASK_WATER -- Ignore water
     }
 
-    local function ValidateExitPos( vehicle, seatPos, localPos )
+    local function ValidateExitPos( vehicle, origin, localPos )
         local exitPos = vehicle:LocalToWorld( localPos )
 
         -- First, make sure there's nothing in between the vehicle's seat and `exitPos`
-        traceData.start = seatPos
+        traceData.start = origin
         traceData.endpos = exitPos
 
         TraceLine( traceData )
 
         if ray.Hit then
             if GetDevMode() then
-                debugoverlay.Line( seatPos, traceData.endpos, 8, Color( 255, 0, 0 ), true )
+                debugoverlay.Line( origin, traceData.endpos, 8, Color( 255, 0, 0 ), true )
                 debugoverlay.EntityTextAtPosition( traceData.endpos, 0, "<exit blocked>", 8, Color( 255, 0, 0 ) )
             end
 
@@ -378,7 +378,7 @@ do
 
         if ray.StartSolid then
             if GetDevMode() then
-                debugoverlay.Line( seatPos, traceData.endpos, 8, Color( 255, 100, 0 ), true )
+                debugoverlay.Line( origin, traceData.endpos, 8, Color( 255, 100, 0 ), true )
                 debugoverlay.EntityTextAtPosition( traceData.endpos, 0, "<exit is too small>", 8, Color( 255, 100, 0 ) )
             end
 
@@ -386,7 +386,7 @@ do
         end
 
         if GetDevMode() then
-            debugoverlay.Line( seatPos, exitPos, 8, Color( 0, 255, 0 ), true )
+            debugoverlay.Line( origin, exitPos, 8, Color( 0, 255, 0 ), true )
             debugoverlay.Box( exitPos, traceData.mins, traceData.maxs, 8, Color( 255, 255, 255, 20 ) )
         end
 
@@ -405,12 +405,12 @@ do
         traceData.filter[#traceData.filter + 1] = "player"
 
         -- Try the original exit position first
-        local seatPos = seat:GetPos()
-        local blocked, pos = ValidateExitPos( self, seatPos, seat.GlideExitPos )
+        local origin = self:GetPos()
+        local blocked, pos = ValidateExitPos( self, origin, seat.GlideExitPos )
 
         if blocked then
             -- Try on the other side
-            blocked, pos = ValidateExitPos( self, seatPos, Vector( seat.GlideExitPos[1], -seat.GlideExitPos[2], seat.GlideExitPos[3] ) )
+            blocked, pos = ValidateExitPos( self, origin, Vector( seat.GlideExitPos[1], -seat.GlideExitPos[2], seat.GlideExitPos[3] ) )
         end
 
         if blocked then
@@ -428,7 +428,7 @@ do
                 offset[1] = math.sin( rad ) * obbSize[1] * 0.75
                 offset[2] = math.cos( rad ) * obbSize[2] * 0.75
 
-                blocked, pos = ValidateExitPos( self, seatPos, offset )
+                blocked, pos = ValidateExitPos( self, origin, offset )
 
                 if not blocked then
                     break
@@ -438,7 +438,7 @@ do
 
         if blocked then
             -- We're cooked...
-            pos = seatPos
+            pos = seat:GetPos()
         else
             -- Put the exit position on the ground
             traceData.start = pos
