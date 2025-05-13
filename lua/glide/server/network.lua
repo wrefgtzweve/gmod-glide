@@ -185,3 +185,11 @@ function Glide.SendViewPunch( target, force )
     net.WriteFloat( force )
     net.Send( target )
 end
+
+--- Let a player know about the current vehicle/seat they are sitting on.
+function Glide.SendCurrentVehicle( target, vehicle, seatIndex )
+    Glide.StartCommand( Glide.CMD_SET_CURRENT_VEHICLE, false )
+    net.WriteEntity( vehicle )
+    net.WriteUInt( seatIndex, 6 )
+    net.Send( target )
+end

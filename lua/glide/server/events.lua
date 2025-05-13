@@ -49,9 +49,9 @@ hook.Add( "PlayerEnteredVehicle", "Glide.OnEnterSeat", function( ply, seat )
 
     -- Store some variables on this player
     ply.IsUsingGlideVehicle = true
-    ply:SetNWInt( "GlideSeatIndex", seatIndex )
-    ply:SetNWEntity( "GlideVehicle", parent )
     ply:DrawShadow( false )
+
+    Glide.SendCurrentVehicle( ply, parent, seatIndex )
 
     -- Enable vehicle input
     Glide.ActivateInput( ply, parent, seatIndex )
@@ -72,9 +72,9 @@ hook.Add( "PlayerLeaveVehicle", "Glide.OnExitSeat", function( ply )
 
     -- Cleanup variables
     ply.IsUsingGlideVehicle = false
-    ply:SetNWInt( "GlideSeatIndex", -1 )
-    ply:SetNWEntity( "GlideVehicle", NULL )
     ply:DrawShadow( true )
+
+    Glide.SendCurrentVehicle( ply, NULL, 0 )
 
     if IsValid( vehicle ) then
         ply:SetPos( vehicle:GetSeatExitPos( seatIndex ) )
@@ -252,7 +252,6 @@ local function ResetAll()
         local seatIndex = seat.GlideSeatIndex
 
         if seatIndex then
-            seat:SetNWInt( "GlideSeatIndex", seatIndex )
             seat:SetMoveType( MOVETYPE_NONE )
             seat:SetNotSolid( true )
             seat:DrawShadow( false )
