@@ -12,7 +12,6 @@ end
 
 function ENT:CreateWheel( offset, params )
     params = params or {}
-    params.localPos = offset
 
     local pos = self:LocalToWorld( offset )
     local ang = self:LocalToWorldAngles( Angle() )
