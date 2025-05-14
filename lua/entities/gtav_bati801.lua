@@ -125,8 +125,8 @@ if SERVER then
     ENT.TiltForce = 650
 
     ENT.LightBodygroups = {
-        { type = "headlight", bodyGroupId = 7, subModelId = 1 }, -- Headlight
-        { type = "headlight", bodyGroupId = 10, subModelId = 1 } -- Tail light
+        { type = "headlight", bodyGroupId = 7, subModelId = 1 },
+        { type = "brake_or_taillight", bodyGroupId = 10, subModelId = 1 }
     }
 
     function ENT:InitializePhysics()

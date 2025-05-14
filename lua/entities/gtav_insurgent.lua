@@ -46,10 +46,10 @@ if CLIENT then
     }
 
     ENT.LightSprites = {
-        { type = "brake", offset = Vector( -132, 30.5, 11 ), dir = Vector( -1, 0, 0 ) },
-        { type = "brake", offset = Vector( -132, -30.5, 11 ), dir = Vector( -1, 0, 0 ) },
-        { type = "taillight", offset = Vector( -132, 30.5, 11 ), dir = Vector( -1, 0, 0 ), size = 15 },
-        { type = "taillight", offset = Vector( -132, -30.5, 11 ), dir = Vector( -1, 0, 0 ), size = 15 },
+        { type = "brake", offset = Vector( -132, 30.5, 11 ), dir = Vector( -1, 0, 0 ), size = 60 },
+        { type = "brake", offset = Vector( -132, -30.5, 11 ), dir = Vector( -1, 0, 0 ), size = 60  },
+        { type = "taillight", offset = Vector( -132, 30.5, 11 ), dir = Vector( -1, 0, 0 ), size = 20 },
+        { type = "taillight", offset = Vector( -132, -30.5, 11 ), dir = Vector( -1, 0, 0 ), size = 20 },
 
         { type = "reverse", offset = Vector( -132, 24, 11 ), dir = Vector( -1, 0, 0 ) },
         { type = "reverse", offset = Vector( -132, -24, 11 ), dir = Vector( -1, 0, 0 ) },
@@ -192,7 +192,7 @@ if SERVER then
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 10, subModelId = 1 }, -- Headlights
-        { type = "headlight", bodyGroupId = 12, subModelId = 1 }, -- Tail lights
+        { type = "brake_or_taillight", bodyGroupId = 12, subModelId = 1 }, -- Tail lights
         { type = "headlight", bodyGroupId = 13, subModelId = 1, beamType = "high" }, -- Extra lights
         { type = "reverse", bodyGroupId = 11, subModelId = 1 },
         { type = "signal_left", bodyGroupId = 14, subModelId = 1 },
