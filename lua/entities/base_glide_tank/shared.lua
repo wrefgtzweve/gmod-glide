@@ -120,9 +120,6 @@ if SERVER then
     ENT.SuspensionHeavySound = "Glide.Suspension.CompressTruck"
     ENT.SuspensionDownSound = "Glide.Suspension.Stress"
 
-    ENT.HornSound = "glide/horns/large_truck_horn_2.wav"
-    ENT.ExhaustPopSound = ""
-
     -- Setup a weapon slot for the turret
     ENT.WeaponSlots = {
         { maxAmmo = 0, fireRate = 2.0 },

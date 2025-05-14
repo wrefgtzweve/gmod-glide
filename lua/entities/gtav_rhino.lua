@@ -25,6 +25,9 @@ if CLIENT then
         { offset = Vector( -130, -40, 18 ), angle = Angle( 0, 180, 0 ), width = 35 }
     }
 
+    ENT.HornSound = "glide/horns/large_truck_horn_2.wav"
+    ENT.ExhaustPopSound = ""
+
     function ENT:OnCreateEngineStream( stream )
         stream:LoadPreset( "rhino" )
         stream.offset = Vector( -30, 0, 0 )
