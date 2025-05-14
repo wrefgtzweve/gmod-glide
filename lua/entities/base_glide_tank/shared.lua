@@ -125,6 +125,13 @@ if SERVER then
         { maxAmmo = 0, fireRate = 2.0 },
     }
 
+    -- Can this tank "turn in place"?
+    ENT.CanTurnInPlace = true
+
+    -- How much extra torque to apply when trying to spin in place?
+    ENT.TurnInPlaceTorqueMultiplier = 3
+
+    -- Turret parameters
     ENT.TurretFireSound = ")glide/tanks/acf_fire4.mp3"
     ENT.TurretFireVolume = 0.8
     ENT.TurretRecoilForce = 50

@@ -5,6 +5,9 @@ include( "shared.lua" )
 
 DEFINE_BASECLASS( "base_glide_car" )
 
+local EntityMeta = FindMetaTable( "Entity" )
+local GetTable = EntityMeta.GetTable
+
 --- Implement this base class function.
 function ENT:OnPostInitialize()
     BaseClass.OnPostInitialize( self )
@@ -171,6 +174,37 @@ function ENT:OnWeaponFire( weapon )
     end
 end
 
+--- Override this base class function.
+function ENT:UpdatePowerDistribution()
+    -- Let the base class do front/rear power distribution
+    BaseClass.UpdatePowerDistribution( self )
+
+    -- Let's also do a left/right power distribution
+    local rCount, lCount = 0, 0
+
+    -- First, count how many wheels are in the left/right
+    for _, w in ipairs( self.wheels ) do
+        w.isOnRightSide = w.params.basePos[2] > 0
+
+        if w.isOnRightSide then
+            rCount = rCount + 1
+        else
+            lCount = lCount + 1
+        end
+    end
+
+    -- Then, use that count to split the torque between left/right side wheels
+    local lDistribution = 0.5 + self:GetPowerDistribution() * 0.5
+    local rDistribution = 1 - lDistribution
+
+    rDistribution = rDistribution / rCount
+    lDistribution = lDistribution / lCount
+
+    for _, w in ipairs( self.wheels ) do
+        w.sideDistributionFactor = w.isOnRightSide and rDistribution or lDistribution
+    end
+end
+
 local Abs = math.abs
 
 --- Override this base class function.
@@ -200,34 +234,133 @@ function ENT:OnPostThink( dt, selfTbl )
     end
 end
 
+local ExpDecay = Glide.ExpDecay
+
 --- Override this base class function.
-function ENT:WheelThink( dt )
-    BaseClass.WheelThink( self, dt )
+function ENT:EngineThink( dt )
+    local selfTbl = GetTable( self )
 
-    local phys = self:GetPhysicsObject()
+    local inputThrottle = self:GetInputFloat( 1, "accelerate" )
+    local inputBrake = self:GetInputFloat( 1, "brake" )
+    local inputSteer = self:GetInputFloat( 1, "steer" )
+    local amphibiousMode = self.IsAmphibious and self:GetWaterState() > 0
 
-    if IsValid( phys ) and phys:IsAsleep() then
-        self:SetTrackSpeed( 0 )
+    selfTbl.isTurningInPlace = selfTbl.CanTurnInPlace and not amphibiousMode
+        and selfTbl.groundedCount == selfTbl.wheelCount
+        and Abs( selfTbl.forwardSpeed ) < 100 and Abs( inputSteer ) > 0.1
+        and Abs( inputThrottle + inputBrake ) < 0.1
+
+    if selfTbl.isTurningInPlace then
+        self:SetGear( 1 )
+
+        -- Custom engine logic
+        local throttle = ExpDecay( self:GetEngineThrottle(), Abs( inputSteer ), 4, dt )
+
+        self:SetEngineThrottle( throttle )
+
+        local minRPM = self:GetMinRPM()
+        local rpmRange = self:GetMaxRPM() - minRPM
+        local currentPower = ( self:GetEngineRPM() - minRPM ) / rpmRange
+
+        currentPower = ExpDecay( currentPower, throttle * 0.5, 2, dt )
+
+        self:SetFlywheelRPM( minRPM + rpmRange * currentPower )
+
+        local torque = self:GetMaxRPMTorque() * selfTbl.TurnInPlaceTorqueMultiplier * inputSteer * throttle
+
+        selfTbl.availableFrontTorque = torque
+        selfTbl.availableRearTorque = -torque
+        selfTbl.frontBrake = 0
+        selfTbl.rearBrake = 0
     else
-        local totalAngVel = 0
-
-        for _, w in ipairs( self.wheels ) do
-            totalAngVel = totalAngVel + Abs( w.state.angularVelocity )
-        end
-
-        self:SetTrackSpeed( totalAngVel / self.wheelCount )
+        BaseClass.EngineThink( self, dt )
     end
 end
 
---[[    local inputThrottle = self:GetInputFloat( 1, "accelerate" )
-    local inputHandbrake = self:GetInputBool( 1, "handbrake" )
-    local inputBrake = self:GetInputFloat( 1, "brake" )
-    local inputSteer = self:GetInputFloat( 1, "steer" )
+--- Override this base class function.
+function ENT:UpdateSteering( dt )
+    local selfTbl = GetTable( self )
 
-    if inputHandbrake then
-        inputThrottle = 0
-        inputBrake = 1
+    if selfTbl.isTurningInPlace then
+        local inputSteer = ExpDecay( selfTbl.inputSteer, self:GetInputFloat( 1, "steer" ), 4, dt )
+
+        self:SetSteering( inputSteer )
+        selfTbl.steerAngle[2] = inputSteer * -70
+        selfTbl.inputSteer = inputSteer
+    else
+        BaseClass.UpdateSteering( self, dt )
+    end
+end
+
+local Clamp = math.Clamp
+
+local traction, tractionFront, tractionRear
+local frontTorque, rearTorque, steerAngle, frontBrake, rearBrake
+local groundedCount, rpm, avgRPM, totalSideSlip, totalForwardSlip, totalAngVel, state
+
+--- Override this base class function.
+--- On tanks, if `isTurningInPlace` is true, `frontTorque` and `rearTorque`
+--- becomes the torque for the right-side track wheels and left-side track wheels respectively.
+function ENT:WheelThink( dt )
+    local selfTbl = GetTable( self )
+
+    local phys = self:GetPhysicsObject()
+    local isAsleep = IsValid( phys ) and phys:IsAsleep()
+    local isTurningInPlace = selfTbl.isTurningInPlace
+
+    local maxRPM = self:GetTransmissionMaxRPM( self:GetGear() )
+    local inputHandbrake = self:GetInputBool( 1, "handbrake" )
+
+    traction = self:GetForwardTractionBias()
+    tractionFront = ( 1 + Clamp( traction, -1, 0 ) ) * selfTbl.frontTractionMult
+    tractionRear = ( 1 - Clamp( traction, 0, 1 ) ) * selfTbl.rearTractionMult
+
+    frontTorque = selfTbl.availableFrontTorque
+    rearTorque = selfTbl.availableRearTorque
+    steerAngle = selfTbl.steerAngle
+
+    frontBrake, rearBrake = selfTbl.frontBrake, selfTbl.rearBrake
+    groundedCount, avgRPM, totalSideSlip, totalForwardSlip, totalAngVel = 0, 0, 0, 0, 0
+
+    for _, w in ipairs( selfTbl.wheels ) do
+        w:Update( self, steerAngle, isAsleep, dt )
+
+        totalSideSlip = totalSideSlip + w:GetSideSlip()
+        totalForwardSlip = totalForwardSlip + w:GetForwardSlip()
+
+        rpm = w:GetRPM()
+        avgRPM = avgRPM + rpm * w.distributionFactor
+
+        state = w.state
+        state.brake = w.isFrontWheel and frontBrake or rearBrake
+        state.forwardTractionMult = w.isFrontWheel and tractionFront or tractionRear
+        state.sideTractionMult = w.isFrontWheel and selfTbl.frontSideTractionMult or selfTbl.rearSideTractionMult
+
+        if isTurningInPlace then
+            state.torque = w.sideDistributionFactor * ( w.isOnRightSide and frontTorque or rearTorque )
+        else
+            state.torque = w.distributionFactor * ( w.isFrontWheel and frontTorque or rearTorque )
+        end
+
+        if inputHandbrake and not w.isFrontWheel then
+            state.angularVelocity = 0
+        end
+
+        if rpm > maxRPM then
+            w:SetRPM( maxRPM )
+        end
+
+        if state.isOnGround then
+            groundedCount = groundedCount + 1
+        end
+
+        totalAngVel = totalAngVel + Abs( state.angularVelocity )
     end
 
-    self.isTurningInPlace = Abs( self.forwardSpeed ) < 100 and Abs( inputSteer ) > 0.1 and Abs( inputThrottle + inputBrake ) < 0.1
-]]
+    selfTbl.avgPoweredRPM = avgRPM
+    selfTbl.groundedCount = groundedCount
+    selfTbl.avgSideSlip = totalSideSlip / selfTbl.wheelCount
+    selfTbl.avgForwardSlip = totalForwardSlip / selfTbl.wheelCount
+
+    self:SetTrackSpeed( isAsleep and 0 or totalAngVel / self.wheelCount )
+end
