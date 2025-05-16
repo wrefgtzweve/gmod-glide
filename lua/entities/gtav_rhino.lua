@@ -197,6 +197,8 @@ if SERVER then
             steerMultiplier = -1
         } )
 
+        -- Since the model already has a visual representation
+        -- for the wheels and tracks, hide the actual wheels.
         for _, w in ipairs( self.wheels ) do
             Glide.HideEntity( w, true )
         end
