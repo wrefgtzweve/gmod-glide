@@ -69,11 +69,9 @@ if CLIENT then
 
     function ENT:OnLocalPlayerEnter( seatIndex )
         self:DisableCrosshair()
-        self.isUsingTurret = false
 
         if seatIndex == 5 then
             self:EnableCrosshair( { iconType = "dot", color = Color( 0, 255, 0 ) } )
-            self.isUsingTurret = true
         else
             BaseClass.OnLocalPlayerEnter( self, seatIndex )
         end
@@ -81,7 +79,6 @@ if CLIENT then
 
     function ENT:OnLocalPlayerExit()
         self:DisableCrosshair()
-        self.isUsingTurret = false
     end
 
     function ENT:UpdateCrosshairPosition()
@@ -105,7 +102,7 @@ if CLIENT then
         local turret = self:GetTurret()
         if not IsValid( turret ) then return end
 
-        local bodyAng = self.isUsingTurret and turret.predictedBodyAngle or turret:GetLastBodyAngle()
+        local bodyAng = turret:GetLastBodyAngle()
         local seat = self:GetTurretSeat()
 
         if IsValid( seat ) then
