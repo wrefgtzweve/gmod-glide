@@ -6,7 +6,11 @@ include( "shared.lua" )
 -- Store the TraceResult on this table instead of
 -- creating a new one every time. It's contents are
 -- overritten every time a wheel calls `util.TraceHull`.
-local ray = {}
+local ray = Glide.LastWheelTraceResult or {}
+
+-- Keep the same table reference on Lua autorefresh.
+-- Prevents errors on existing wheels when updating this file.
+Glide.LastWheelTraceResult = ray
 
 function ENT:Initialize()
     self:SetModel( "models/editor/axis_helper.mdl" )
@@ -63,7 +67,6 @@ function ENT:Initialize()
     self.traceData = {
         mins = Vector(),
         maxs = Vector( 1, 1, 1 ),
-        collisiongroup = COLLISION_GROUP_WORLD,
 
         -- Output TraceResult to `ray`
         output = ray
