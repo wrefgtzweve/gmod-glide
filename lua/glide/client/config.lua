@@ -43,7 +43,8 @@ function Config:Reset()
     self.mouseShow = true
 
     self.mouseSteerMode = Glide.MOUSE_STEER_MODE.DISABLED
-    self.mouseSteerSensitivity = 1.0
+    self.mouseSteerSensitivity = 0.5
+    self.mouseSteerDecayRate = 1.5
 
     -- Misc. settings
     self.showHUD = true
@@ -138,6 +139,7 @@ function Config:Save( immediate )
 
         mouseSteerMode = self.mouseSteerMode,
         mouseSteerSensitivity = self.mouseSteerSensitivity,
+        mouseSteerDecayRate = self.mouseSteerDecayRate,
 
         pitchMouseAxis = self.pitchMouseAxis,
         yawMouseAxis = self.yawMouseAxis,
@@ -243,18 +245,18 @@ function Config:Load()
     self.mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, self.mouseFlyMode ) )
     LoadBool( "mouseInvertX", false )
     LoadBool( "mouseInvertY", false )
+    LoadBool( "mouseShow", true )
 
-    SetNumber( self, "mouseSensitivityX", data.mouseSensitivityX, 0.01, 5, self.mouseSensitivityX )
-    SetNumber( self, "mouseSensitivityY", data.mouseSensitivityY, 0.01, 5, self.mouseSensitivityY )
+    SetNumber( self, "mouseSensitivityX", data.mouseSensitivityX, 0.05, 5, self.mouseSensitivityX )
+    SetNumber( self, "mouseSensitivityY", data.mouseSensitivityY, 0.05, 5, self.mouseSensitivityY )
     SetNumber( self, "pitchMouseAxis", data.pitchMouseAxis, 0, 2, self.pitchMouseAxis )
     SetNumber( self, "yawMouseAxis", data.yawMouseAxis, 0, 2, self.yawMouseAxis )
     SetNumber( self, "rollMouseAxis", data.rollMouseAxis, 0, 2, self.rollMouseAxis )
-
-    self.mouseDeadzone =  Glide.ValidateNumber( data.mouseDeadzone, 0, 1, self.mouseDeadzone )
-    LoadBool( "mouseShow", true )
+    SetNumber( self, "mouseDeadzone", data.mouseDeadzone, 0, 1, self.mouseDeadzone )
 
     self.mouseSteerMode = math.Round( Glide.ValidateNumber( data.mouseSteerMode, 0, 2, self.mouseSteerMode ) )
-    SetNumber( self, "mouseSteerSensitivity", data.mouseSteerSensitivity, 0.01, 5, self.mouseSteerSensitivity )
+    SetNumber( self, "mouseSteerSensitivity", data.mouseSteerSensitivity, 0.05, 3, self.mouseSteerSensitivity )
+    SetNumber( self, "mouseSteerDecayRate", data.mouseSteerDecayRate, 0, 3, self.mouseSteerDecayRate )
 
     -- Misc. settings
     SetNumber( self, "maxSkidMarkPieces", data.maxSkidMarkPieces, 0, 1000, self.maxSkidMarkPieces )
@@ -512,7 +514,7 @@ function Config:OpenFrame()
         self:TransmitInputSettings()
 
         SetupMouseSteerModeSettings()
-        -- TODO: Glide.MouseSteerInput:Activate()
+        Glide.MouseInput:Activate()
     end )
 
     local directMouseSteerPanel = vgui.Create( "DPanel", panelMouse )
@@ -525,8 +527,13 @@ function Config:OpenFrame()
 
         if self.mouseSteerMode ~= Glide.MOUSE_STEER_MODE.DIRECT then return end
 
-        CreateSlider( directMouseSteerPanel, L"mouse.sensitivity_x", self.mouseSteerSensitivity, 0.1, 5, 1, function( value )
+        CreateSlider( directMouseSteerPanel, L"mouse.sensitivity_x", self.mouseSteerSensitivity, 0.05, 3, 2, function( value )
             self.mouseSteerSensitivity = value
+            self:Save()
+        end )
+
+        CreateSlider( directMouseSteerPanel, L"mouse.decay_rate", self.mouseSteerDecayRate, 0, 3, 1, function( value )
+            self.mouseSteerDecayRate = value
             self:Save()
         end )
 
@@ -595,12 +602,12 @@ function Config:OpenFrame()
             self:Save()
         end )
 
-        CreateSlider( directMouseFlyPanel, L"mouse.sensitivity_x", self.mouseSensitivityX, 0.1, 5, 1, function( value )
+        CreateSlider( directMouseFlyPanel, L"mouse.sensitivity_x", self.mouseSensitivityX, 0.05, 5, 1, function( value )
             self.mouseSensitivityX = value
             self:Save()
         end )
 
-        CreateSlider( directMouseFlyPanel, L"mouse.sensitivity_y", self.mouseSensitivityY, 0.1, 5, 1, function( value )
+        CreateSlider( directMouseFlyPanel, L"mouse.sensitivity_y", self.mouseSensitivityY, 0.05, 5, 1, function( value )
             self.mouseSensitivityY = value
             self:Save()
         end )
@@ -656,6 +663,7 @@ function Config:OpenFrame()
     CreateBinderButton( panelKeyboard, L"input.switch_weapon", "switch_weapon", generalBinds.switch_weapon, OnChangeGeneralBind )
     CreateBinderButton( panelKeyboard, L"input.toggle_engine", "toggle_engine", generalBinds.toggle_engine, OnChangeGeneralBind )
     CreateBinderButton( panelKeyboard, L"input.headlights", "headlights", generalBinds.headlights, OnChangeGeneralBind )
+    CreateBinderButton( panelKeyboard, L"input.free_look", "free_look", generalBinds.free_look, OnChangeGeneralBind )
 
     local landBinds = binds["land_controls"]
 
@@ -708,7 +716,6 @@ function Config:OpenFrame()
     CreateBinderButton( panelKeyboard, L"input.attack", "attack", airBinds.attack, OnChangeAirBind )
     CreateBinderButton( panelKeyboard, L"input.attack_alt", "attack_alt", airBinds.attack_alt, OnChangeAirBind )
 
-    CreateBinderButton( panelKeyboard, L"input.free_look", "free_look", airBinds.free_look, OnChangeAirBind )
     CreateBinderButton( panelKeyboard, L"input.landing_gear", "landing_gear", airBinds.landing_gear, OnChangeAirBind )
     CreateBinderButton( panelKeyboard, L"input.countermeasures", "countermeasures", airBinds.countermeasures, OnChangeAirBind )
 
