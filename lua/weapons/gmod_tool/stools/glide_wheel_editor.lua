@@ -280,27 +280,12 @@ function TOOL:Reload()
     return false
 end
 
--- Clear the `closestWheel` variable on the server too, even though it's used client-side only.
--- It's a workaround for `TOOL:Holster` not running clientside on single player,
--- where CLIENT and SERVER are the same.
-function TOOL:Holster()
-    if IsFirstTimePredicted() then
-        self.closestWheel = nil
-    end
-end
-
 if not CLIENT then return end
-
-function TOOL:Think()
-    if IsFirstTimePredicted() then
-        self.closestWheel = self:GetAimingAtWheel()
-    end
-end
 
 local matWireframe = Material( "models/wireframe" )
 
 function TOOL:DrawHUD()
-    local wheel = self.closestWheel
+    local wheel = self:GetAimingAtWheel()
     if not IsValid( wheel ) then return end
 
     local pulse = 0.6 + math.sin( RealTime() * 8 ) * 0.4
