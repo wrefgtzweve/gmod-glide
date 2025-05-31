@@ -48,7 +48,8 @@ do
             binds = binds,
             manualGearShifting = data.manualGearShifting == true,
             autoTurnOffLights = data.autoTurnOffLights == true,
-            mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) )
+            mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) ),
+            mouseSteerMode = math.Round( Glide.ValidateNumber( data.mouseSteerMode, 0, 2, 0 ) )
         }
 
         -- Replace yaw actions with roll actions when the client asks for it,
@@ -233,7 +234,10 @@ local function HandleMouseInput( ply, active )
     if not settings then return end
 
     local vehTbl = getTable( vehicle )
-    -- Ignore is this vehicle is not an aircraft
+
+    -- TODO: mouse steering logic
+
+    -- Ignore if this vehicle is not an aircraft
     if vehTbl.VehicleType ~= 3 and vehTbl.VehicleType ~= 4 then return end
 
     -- Ignore if the mouse aim mode is "Free camera"

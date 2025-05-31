@@ -42,6 +42,9 @@ function Config:Reset()
     self.mouseDeadzone = 0.15
     self.mouseShow = true
 
+    self.mouseSteerMode = Glide.MOUSE_STEER_MODE.DISABLED
+    self.mouseSteerSensitivity = 1.0
+
     -- Misc. settings
     self.showHUD = true
     self.showPassengerList = true
@@ -132,6 +135,9 @@ function Config:Save( immediate )
         mouseSensitivityY = self.mouseSensitivityY,
         mouseInvertX = self.mouseInvertX,
         mouseInvertY = self.mouseInvertY,
+
+        mouseSteerMode = self.mouseSteerMode,
+        mouseSteerSensitivity = self.mouseSteerSensitivity,
 
         pitchMouseAxis = self.pitchMouseAxis,
         yawMouseAxis = self.yawMouseAxis,
@@ -247,6 +253,9 @@ function Config:Load()
     self.mouseDeadzone =  Glide.ValidateNumber( data.mouseDeadzone, 0, 1, self.mouseDeadzone )
     LoadBool( "mouseShow", true )
 
+    self.mouseSteerMode = math.Round( Glide.ValidateNumber( data.mouseSteerMode, 0, 2, self.mouseSteerMode ) )
+    SetNumber( self, "mouseSteerSensitivity", data.mouseSteerSensitivity, 0.01, 5, self.mouseSteerSensitivity )
+
     -- Misc. settings
     SetNumber( self, "maxSkidMarkPieces", data.maxSkidMarkPieces, 0, 1000, self.maxSkidMarkPieces )
     SetNumber( self, "maxTireRollPieces", data.maxTireRollPieces, 0, 1000, self.maxTireRollPieces )
@@ -299,6 +308,7 @@ function Config:TransmitInputSettings( immediate )
     local data = {
         -- Mouse settings
         mouseFlyMode = self.mouseFlyMode,
+        mouseSteerMode = self.mouseSteerMode,
         replaceYawWithRoll = self.mouseFlyMode == Glide.MOUSE_FLY_MODE.DIRECT and self.yawMouseAxis > 0,
 
         -- Keyboard settings
@@ -479,98 +489,136 @@ function Config:OpenFrame()
 
     local panelMouse = frame:AddTab( "styledstrike/icons/mouse.png", L"settings.mouse" )
 
-    CreateHeader( panelMouse, L"settings.mouse", 0 )
+    local MouseSubPanelLayout = function( s )
+        if #s:GetChildren() > 0 then
+            s:SizeToChildren( false, true )
+        else
+            s:SetTall( 1 )
+        end
+    end
 
-    local mouseModeOptions = {
-        L"mouse.mode_aim",
-        L"mouse.mode_direct",
-        L"mouse.mode_camera"
-    }
+    -- Mouse steering settings
+    CreateHeader( panelMouse, L"mouse.steering_settings", 0 )
 
-    local SetupMouseModeSettings
+    local SetupMouseSteerModeSettings
 
-    CreateCombo( panelMouse, L"mouse.flying_mode", mouseModeOptions, self.mouseFlyMode + 1, function( value )
+    CreateCombo( panelMouse, L"mouse.steering_mode", {
+        L"mouse.steer_mode_disabled",
+        L"mouse.steer_mode_aim",
+        L"mouse.steer_mode_direct"
+    }, self.mouseSteerMode + 1, function( value )
+        self.mouseSteerMode = value - 1
+        self:Save()
+        self:TransmitInputSettings()
+
+        SetupMouseSteerModeSettings()
+        -- TODO: Glide.MouseSteerInput:Activate()
+    end )
+
+    local directMouseSteerPanel = vgui.Create( "DPanel", panelMouse )
+    directMouseSteerPanel:SetPaintBackground( false )
+    directMouseSteerPanel:Dock( TOP )
+    directMouseSteerPanel.PerformLayout = MouseSubPanelLayout
+
+    SetupMouseSteerModeSettings = function()
+        directMouseSteerPanel:Clear()
+
+        if self.mouseSteerMode ~= Glide.MOUSE_STEER_MODE.DIRECT then return end
+
+        CreateSlider( directMouseSteerPanel, L"mouse.sensitivity_x", self.mouseSteerSensitivity, 0.1, 5, 1, function( value )
+            self.mouseSteerSensitivity = value
+            self:Save()
+        end )
+
+        directMouseSteerPanel:InvalidateLayout()
+    end
+
+    SetupMouseSteerModeSettings()
+
+    -- Mouse aircraft settings
+    CreateHeader( panelMouse, L"mouse.flying_settings", 0 )
+
+    local SetupFlyMouseModeSettings
+
+    CreateCombo( panelMouse, L"mouse.flying_mode", {
+        L"mouse.fly_mode_aim",
+        L"mouse.fly_mode_direct",
+        L"mouse.fly_mode_camera"
+    }, self.mouseFlyMode + 1, function( value )
         self.mouseFlyMode = value - 1
         self:Save()
         self:TransmitInputSettings()
 
-        SetupMouseModeSettings()
+        SetupFlyMouseModeSettings()
         Glide.MouseInput:Activate()
     end )
 
-    local directMousePanel = vgui.Create( "DPanel", panelMouse )
-    directMousePanel:SetPaintBackground( false )
-    directMousePanel:Dock( TOP )
+    local directMouseFlyPanel = vgui.Create( "DPanel", panelMouse )
+    directMouseFlyPanel:SetPaintBackground( false )
+    directMouseFlyPanel:Dock( TOP )
+    directMouseFlyPanel.PerformLayout = MouseSubPanelLayout
 
-    directMousePanel.PerformLayout = function()
-        if self.mouseFlyMode == Glide.MOUSE_FLY_MODE.DIRECT then
-            directMousePanel:SizeToChildren( false, true )
-        else
-            directMousePanel:SetTall( 1 )
-        end
-    end
-
-    local mouseAxisOptions = {
-        L"mouse.none",
-        L"mouse.x",
-        L"mouse.y"
-    }
-
-    SetupMouseModeSettings = function()
-        for _, p in pairs( directMousePanel:GetChildren() ) do
-            p:Remove()
-        end
+    SetupFlyMouseModeSettings = function()
+        directMouseFlyPanel:Clear()
 
         if self.mouseFlyMode ~= Glide.MOUSE_FLY_MODE.DIRECT then return end
 
-        CreateCombo( directMousePanel, L"mouse.pitch_axis", mouseAxisOptions, self.pitchMouseAxis + 1, function( value )
+        local axisOptions = {
+            L"mouse.none",
+            L"mouse.x",
+            L"mouse.y"
+        }
+
+        CreateCombo( directMouseFlyPanel, L"mouse.pitch_axis", axisOptions, self.pitchMouseAxis + 1, function( value )
             self.pitchMouseAxis = value - 1
             self:Save()
         end )
 
-        CreateCombo( directMousePanel, L"mouse.yaw_axis", mouseAxisOptions, self.yawMouseAxis + 1, function( value )
+        CreateCombo( directMouseFlyPanel, L"mouse.yaw_axis", axisOptions, self.yawMouseAxis + 1, function( value )
             self.yawMouseAxis = value - 1
             self:Save()
             self:TransmitInputSettings()
         end )
 
-        CreateCombo( directMousePanel, L"mouse.roll_axis", mouseAxisOptions, self.rollMouseAxis + 1, function( value )
+        CreateCombo( directMouseFlyPanel, L"mouse.roll_axis", axisOptions, self.rollMouseAxis + 1, function( value )
             self.rollMouseAxis = value - 1
             self:Save()
         end )
 
-        CreateToggle( directMousePanel, L"mouse.invert_x", self.mouseInvertX, function( value )
+        CreateToggle( directMouseFlyPanel, L"mouse.invert_x", self.mouseInvertX, function( value )
             self.mouseInvertX = value
             self:Save()
         end )
 
-        CreateToggle( directMousePanel, L"mouse.invert_y", self.mouseInvertY, function( value )
+        CreateToggle( directMouseFlyPanel, L"mouse.invert_y", self.mouseInvertY, function( value )
             self.mouseInvertY = value
             self:Save()
         end )
 
-        CreateSlider( directMousePanel, L"mouse.sensitivity_x", self.mouseSensitivityX, 0.1, 5, 1, function( value )
+        CreateSlider( directMouseFlyPanel, L"mouse.sensitivity_x", self.mouseSensitivityX, 0.1, 5, 1, function( value )
             self.mouseSensitivityX = value
             self:Save()
         end )
 
-        CreateSlider( directMousePanel, L"mouse.sensitivity_y", self.mouseSensitivityY, 0.1, 5, 1, function( value )
+        CreateSlider( directMouseFlyPanel, L"mouse.sensitivity_y", self.mouseSensitivityY, 0.1, 5, 1, function( value )
             self.mouseSensitivityY = value
             self:Save()
         end )
 
-        CreateSlider( directMousePanel, L"mouse.deadzone", self.mouseDeadzone, 0, 0.5, 2, function( value )
+        CreateSlider( directMouseFlyPanel, L"mouse.deadzone", self.mouseDeadzone, 0, 0.5, 2, function( value )
             self.mouseDeadzone = value
             self:Save()
         end )
 
-        CreateToggle( directMousePanel, L"mouse.show_hud", self.mouseShow, function( value )
+        CreateToggle( directMouseFlyPanel, L"mouse.show_hud", self.mouseShow, function( value )
             self.mouseShow = value
             self:Save()
         end )
+
+        directMouseFlyPanel:InvalidateLayout()
     end
 
-    SetupMouseModeSettings()
+    SetupFlyMouseModeSettings()
 
     ----- Keyboard settings -----
 
