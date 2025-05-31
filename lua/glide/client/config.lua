@@ -28,6 +28,7 @@ function Config:Reset()
     self.fixedCameraMode = 0
     self.enableAutoCenter = true
     self.autoCenterDelay = 1.5
+    self.shakeStrength = 1.0
 
     -- Mouse settings
     self.mouseFlyMode = Glide.MOUSE_FLY_MODE.AIM
@@ -129,6 +130,7 @@ function Config:Save( immediate )
         fixedCameraMode = self.fixedCameraMode,
         enableAutoCenter = self.enableAutoCenter,
         autoCenterDelay = self.autoCenterDelay,
+        shakeStrength = self.shakeStrength,
 
         -- Mouse settings
         mouseFlyMode = self.mouseFlyMode,
@@ -240,6 +242,7 @@ function Config:Load()
 
     LoadBool( "enableAutoCenter", true )
     SetNumber( self, "autoCenterDelay", data.autoCenterDelay, 0.1, 5, self.autoCenterDelay )
+    SetNumber( self, "shakeStrength", data.shakeStrength, 0, 2, self.shakeStrength )
 
     -- Mouse settings
     self.mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, self.mouseFlyMode ) )
@@ -452,6 +455,11 @@ function Config:OpenFrame()
         if Glide.Camera.isActive then
             Glide.Camera:SetFirstPerson( false )
         end
+    end )
+
+    CreateSlider( panelCamera, L"camera.shake_strength", self.shakeStrength, 0, 2, 1, function( value )
+        self.shakeStrength = value
+        self:Save()
     end )
 
     local autoCenterButton, autoCenterSlider
