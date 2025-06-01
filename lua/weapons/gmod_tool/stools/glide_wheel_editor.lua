@@ -204,8 +204,6 @@ if SERVER then
     duplicator.RegisterEntityModifier( "glide_wheel_params", ApplyVehicleWheelParameters )
 end
 
--- TODO: show warning when target wheel has .GlideIsHidden 
-
 function TOOL:LeftClick()
     local wheel = self:GetAimingAtWheel()
     if not IsValid( wheel ) then return false end
