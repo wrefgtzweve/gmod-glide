@@ -293,6 +293,7 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     inputs[#inputs + 1] = { "Brake", "NORMAL", "A value between 0.0 and 1.0\nAlso acts as throttle input when reversing." }
     inputs[#inputs + 1] = { "Handbrake", "NORMAL", "A value larger than 0 will set the handbrake" }
     inputs[#inputs + 1] = { "Horn", "NORMAL", "Set to 1 to sound the horn" }
+    inputs[#inputs + 1] = { "Gear", "NORMAL", "From 1 to MaxGear: Select gear\n-2: Automatic transmission\n-1: Reverse\n0: Neutral" }
 
     outputs[#outputs + 1] = { "MaxGear", "NORMAL", "Highest gear available for this vehicle" }
     outputs[#outputs + 1] = { "Gear", "NORMAL", "Current engine gear" }
