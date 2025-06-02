@@ -20,44 +20,6 @@ TOOL.ClientConVar = {
     offset_z = 0
 }
 
--- Add some Glide wheel models to the whitelist
-list.Set( "GlideWheelModels", "models/gta5/vehicles/airbus/wheel_front.mdl", { angle = angle_zero, scale = Vector( 1, 0.35, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/airbus/wheel_rear.mdl", { angle = angle_zero, scale = Vector( 1, 0.35, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/blazer/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.5, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/dukes/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/gauntlet_classic/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/speedo/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/stunt/stunt_wheel.mdl", { angle = Angle( 0, 180, 0 ), scale = Vector( 1, 0.6, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/infernus/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.4, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/gta5/vehicles/jb700/wheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
-
--- Add some gmod wheel models to the whitelist
-list.Set( "GlideWheelModels", "models/mechanics/wheels/bmw.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/rim_1.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/tractors.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/wheel_2.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/wheel_extruded_48.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/wheel_race.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/wheel_rounded_36.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/wheel_rugged_24.mdl", {} )
-list.Set( "GlideWheelModels", "models/mechanics/wheels/wheel_spike_24.mdl", {} )
-list.Set( "GlideWheelModels", "models/nateswheel/nateswheel.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.4, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/normal_tire.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/smallwheel.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/747wheel.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/breakable_tire.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/drugster_back.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/drugster_front.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/magnetic_large.mdl", { offset = Vector( 0, -4, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/monster_truck.mdl", { offset = Vector( 0, -3.5, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/moped_tire.mdl", { offset = Vector( 0, -7, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/trucktire.mdl", { offset = Vector( 0, -3.5, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_phx/wheels/trucktire2.mdl", { offset = Vector( 0, -3.5, 0 ) } )
-list.Set( "GlideWheelModels", "models/props_vehicles/apc_tire001.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/xeon133/offroad/off-road-30.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.4, 1, 1 ) } )
-list.Set( "GlideWheelModels", "models/xeon133/racewheel/race-wheel-30.mdl", { angle = Angle( 90, 0, 0 ), scale = Vector( 1, 0.4, 1 ) } )
-list.Set( "GlideWheelModels", "models/xqm/airplanewheel1medium.mdl", { angle = Angle( 0, 90, 0 ), scale = Vector( 0.35, 1, 1 ) } )
-
 local IsValid = IsValid
 
 local function IsGlideVehicle( ent )
