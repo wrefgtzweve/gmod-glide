@@ -208,7 +208,7 @@ if SERVER then
     ENT.FallWhileUnderWater = true
 
     ENT.BurnoutForce = 12
-    ENT.AirControlForce = Vector( 0.3, 0.2, 0.2 )
+    ENT.AirControlForce = Vector( 0.1, 0.05, 0.2 )
 
     ENT.LightBodygroups = {
         { type = "headlight", bodyGroupId = 10, subModelId = 1 }, -- Headlights
