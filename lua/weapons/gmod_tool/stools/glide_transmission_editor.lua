@@ -165,7 +165,7 @@ function Glide.RefreshTransmissionToolPanel()
         panel:AddItem( row )
 
         local ratioSlider = vgui.Create( "DNumSlider", row )
-        ratioSlider:SetMin( 0.1 )
+        ratioSlider:SetMin( 0.05 )
         ratioSlider:SetMax( 4.0 )
         ratioSlider:SetValue( ratio or 2.5 )
         ratioSlider:SetText( ( index == -1 ) and "R" or ( "#" .. index ) )
