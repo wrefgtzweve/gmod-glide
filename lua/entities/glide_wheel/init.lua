@@ -20,8 +20,8 @@ function ENT:Initialize()
     self.params = {
         -- Suspension
         suspensionLength = 10,
-        springStrength = 800,
-        springDamper = 3000,
+        springStrength = 500,
+        springDamper = 2000,
 
         -- Brake force
         brakePower = 3000,
