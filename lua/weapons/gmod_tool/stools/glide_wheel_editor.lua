@@ -108,23 +108,12 @@ local ApplyVehicleWheelParameters
 
 if SERVER then
     local ValidateNumber = Glide.ValidateNumber
-
-    local function ValidateModel( model )
-        if type( model ) ~= "string" then
-            return false
-        end
-
-        if not file.Exists( model, "GAME" ) then
-            return false
-        end
-
-        return true
-    end
+    local IsValidModel = Glide.IsValidModel
 
     local function ApplyWheelParameters( wheel, params )
         -- Proceed only if we've a valid model
         local model = params.model
-        if not ValidateModel( model ) then return end
+        if not IsValidModel( model ) then return end
 
         local modelData = list.Get( "GlideWheelModels" )[model]
         if not modelData then return end

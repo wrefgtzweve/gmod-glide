@@ -186,3 +186,19 @@ function Glide.ValidateTransmissionData( data )
 
     return cleanData
 end
+
+function Glide.IsValidModel( model )
+    if type( model ) ~= "string" then
+        return false
+    end
+
+    if model:sub( -4, -1 ) ~= ".mdl" then
+        return false
+    end
+
+    if not file.Exists( model, "GAME" ) then
+        return false
+    end
+
+    return true
+end
