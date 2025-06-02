@@ -154,7 +154,7 @@ Glide.MAX_GEAR = 8
 local Clamp = math.Clamp
 
 function Glide.ClampGearRatio( ratio )
-    return Clamp( ratio, 0.5, 4.0 )
+    return Clamp( ratio, 0.01, 4.0 )
 end
 
 local Type = type
