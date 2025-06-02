@@ -364,7 +364,7 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfa
     maxTraction = params.forwardTractionMax * surfaceGrip * state.forwardTractionMult
 
     -- Grip loss logic
-    brakeForce = Clamp( -velF, -state.brake, state.brake ) * params.brakePower * surfaceGrip
+    brakeForce = ( velF > 0 and -state.brake or state.brake ) * params.brakePower * surfaceGrip
     forwardForce = state.torque + brakeForce
     signForwardForce = forwardForce > 0 and 1 or ( forwardForce < 0 and -1 or 0 )
 
@@ -374,9 +374,8 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfa
     tractionCycle[2] = forwardForce
     gripLoss = Max( tractionCycle:Length() - maxTraction, 0 )
 
-    -- Reduce the forward force by the amount of grip we lost,
-    -- but still allow some amount of brake force to apply regardless.
-    forwardForce = forwardForce - ( gripLoss * signForwardForce ) + Clamp( brakeForce * 0.5, -maxTraction, maxTraction )
+    -- Reduce the forward force by the amount of grip we lost.
+    forwardForce = forwardForce - ( gripLoss * signForwardForce )
     force:Add( fw * forwardForce )
 
     -- Get how fast the wheel would be spinning if it had never lost grip
