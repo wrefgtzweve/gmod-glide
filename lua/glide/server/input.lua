@@ -244,7 +244,8 @@ local function HandleMouseInput( ply, active, dt )
             if not IsValid( phys ) then return end
 
             local angVel = phys:GetAngleVelocity()
-            local targetDir = ply:GlideGetCameraAngles():Forward()
+            local targetDir = ply:GlideGetAimPos() - phys:GetPos()
+            targetDir:Normalize()
 
             local steerDrag = Clamp( angVel[3] * 0.1, -2, 2 ) * dt * 3
             local steer = Clamp( ( targetDir:Dot( vehicle:GetRight() ) * 3 ) + steerDrag, -1, 1 )
