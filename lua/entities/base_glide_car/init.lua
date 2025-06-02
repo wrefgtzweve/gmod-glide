@@ -89,7 +89,7 @@ function ENT:OnPostInitialize()
 
     -- Steering parameters
     self:SetMaxSteerAngle( 35 )
-    self:SetSteerConeChangeRate( 8 )
+    self:SetSteerConeChangeRate( 6 )
     self:SetSteerConeMaxSpeed( 1800 )
     self:SetSteerConeMaxAngle( 0.25 )
     self:SetCounterSteer( 0.1 )

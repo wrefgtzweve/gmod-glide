@@ -228,7 +228,7 @@ if SERVER then
     function ENT:CreateFeatures()
         self.engineBrakeTorque = 4000
 
-        self:SetBrakePower( 3800 )
+        self:SetBrakePower( 4600 )
         self:SetDifferentialRatio( 0.9 )
         self:SetPowerDistribution( -0.4 )
 
