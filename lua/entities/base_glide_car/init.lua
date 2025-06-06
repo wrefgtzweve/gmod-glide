@@ -33,7 +33,7 @@ function ENT:OnPostInitialize()
     self:SetEngineRPM( 0 )
     self:SetEngineThrottle( 0 )
 
-    self:SetTireSmokeColor( Vector( 0.6, 0.6, 0.6 ) )
+    self:SetTireSmokeColor( Vector( 0.8, 0.8, 0.8 ) )
     self:SetWheelRadius( 15 )
 
     -- Setup default NW wheel params
