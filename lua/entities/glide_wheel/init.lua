@@ -374,8 +374,9 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfa
     tractionCycle[2] = forwardForce
     gripLoss = Max( tractionCycle:Length() - maxTraction, 0 )
 
-    -- Reduce the forward force by the amount of grip we lost.
-    forwardForce = forwardForce - ( gripLoss * signForwardForce )
+    -- Reduce the forward force by the amount of grip we lost,
+    -- but still allow some amount of brake force to apply regardless.
+    forwardForce = forwardForce - ( gripLoss * signForwardForce ) + Clamp( brakeForce * 0.5, -maxTraction, maxTraction )
     force:Add( fw * forwardForce )
 
     -- Get how fast the wheel would be spinning if it had never lost grip
