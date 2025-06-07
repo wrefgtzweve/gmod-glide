@@ -224,7 +224,7 @@ function Camera:DoEffects( t, dt, speed )
 
     -- Apply a small shake
     if self.mode == CAMERA_TYPE.CAR then
-        local mult = Clamp( speed * 0.001, 0, 1 ) * Config.shakeStrength
+        local mult = Clamp( speed * 0.0005, 0, 1 ) * Config.shakeStrength
 
         self.shakeOffset[2] = Cos( t * 1.5 ) * 4 * mult
         self.shakeOffset[3] = ( ( Cos( t * 2 ) * 1.8 ) + ( Cos( t * 30 ) * 0.4 ) ) * mult
