@@ -26,6 +26,10 @@ local function IsGlideProjectileLauncher( ent )
 end
 
 if SERVER then
+    function TOOL:Deploy()
+        Glide.ToolCheckMissingWiremod( self:GetOwner() )
+    end
+
     function TOOL:UpdateProjectileLauncher( ent )
         local speed = self:GetClientNumber( "speed" )
         local gravity = self:GetClientNumber( "gravity" )

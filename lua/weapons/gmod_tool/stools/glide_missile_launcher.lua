@@ -21,6 +21,10 @@ local function IsGlideMissileLauncher( ent )
 end
 
 if SERVER then
+    function TOOL:Deploy()
+        Glide.ToolCheckMissingWiremod( self:GetOwner() )
+    end
+
     function TOOL:UpdateMissileLauncher( ent )
         local delay = self:GetClientNumber( "delay" )
         local lifetime = self:GetClientNumber( "lifetime" )
