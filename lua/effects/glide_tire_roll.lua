@@ -56,7 +56,7 @@ function EFFECT:DoSurface( emitter, origin, velocity, scale, fx )
     end
 end
 
-local SMOKE_MAT = "particle/smokesprites_000"
+local SMOKE_MAT = "glide/effects/tire_slip_forward_"
 local SMOKE_GRAVITY = Vector( 0, 0, 60 )
 local DEFAULT_COLOR = Vector( 0, 0, 0 )
 
@@ -73,7 +73,7 @@ function EFFECT:DoSmoke( emitter, origin, velocity, scale, vehicle )
     local lifetime = Config.reduceTireParticles and 0.4 or 1
 
     for _ = 1, count do
-        p = emitter:Add( SMOKE_MAT .. RandomInt( 9 ), origin )
+        p = emitter:Add( SMOKE_MAT .. RandomInt( 4 ), origin )
 
         if p then
             p:SetDieTime( RandomFloat( 2, 3 ) * lifetime )
@@ -87,7 +87,7 @@ function EFFECT:DoSmoke( emitter, origin, velocity, scale, vehicle )
             p:SetGravity( SMOKE_GRAVITY * RandomFloat( 0.5, 1 ) )
             p:SetVelocity( velocity * RandomFloat( 0.4, 0.8 ) )
             p:SetColor( r, g, b )
-            p:SetLighting( false )
+            p:SetLighting( true )
             p:SetCollide( true )
         end
     end
