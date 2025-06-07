@@ -273,7 +273,7 @@ local slipAngle, sideForce
 local force, linearImp, angularImp
 local state, params, traceData
 
-function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfaceGrip, vehSurfaceResistance, vehVel, vehAngVel )
+function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfaceGrip, vehSurfaceResistance, vehPos, vehVel, vehAngVel )
     state, params = self.state, self.params
 
     -- Get the starting point of the raycast, where the suspension connects to the chassis
@@ -354,6 +354,10 @@ function ENT:DoPhysics( vehicle, phys, traceFilter, outLin, outAng, dt, vehSurfa
         linearImp, angularImp = phys:CalculateVelocityOffset( ( -velU / dt ) * ray.HitNormal, pos )
         vehVel:Add( linearImp )
         vehAngVel:Add( angularImp )
+
+        -- Teleport back up, using phys:SetPos to prevent going through stuff.
+        linearImp = phys:CalculateVelocityOffset( ray.HitPos - ( contactPos + ray.HitNormal * velU * dt ), pos )
+        vehPos:Add( linearImp / dt )
     end
 
     -- Rolling resistance
