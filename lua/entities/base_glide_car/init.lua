@@ -219,7 +219,7 @@ function ENT:OnSeatInput( seatIndex, action, pressed )
             immediate = true
         } )
 
-    elseif action == "accelerate" and self:GetEngineState() == 0 then
+    elseif action == "accelerate" and self:GetEngineState() == 0 and self:GetEngineRPM() < 1 then
         self:TurnOn()
     end
 
