@@ -64,7 +64,7 @@ function EFFECT:DoSurface( emitter, origin, scale, normal, fx )
     end
 end
 
-local SMOKE_MAT = "glide/effects/tire_slip_forward_"
+local SMOKE_MAT = "glide/effects/tire_particles/tire_slip_forward_"
 local SMOKE_GRAVITY = Vector( 0, 0, 60 )
 local DEFAULT_COLOR = Vector( 0, 0, 0 )
 
