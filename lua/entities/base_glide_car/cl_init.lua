@@ -525,13 +525,9 @@ function ENT:DrawVehicleHUD( screenW, screenH )
     -- Speed
     speedLerp = ExpDecay( speedLerp, self:GetVelocity():Length(), 20, dt )
 
-    -- Convert Source units to MPH
-    local speed = speedLerp * 0.0568182
-
-    if Config.useKMH then
-        speed = speed * 1.60934 -- Convert MPH to km/h
-    end
-
+    -- Convert from Source Units to either km/h or mph
+    -- Formula source: https://github.com/wiremod/wire/blob/master/lua/entities/gmod_wire_speedometer.lua
+    local speed = Config.useKMH and ( speedLerp * 3600 * 0.0000254 * 0.75 ) or ( speedLerp * 3600 / 63360 * 0.75 )
     local unit = Config.useKMH and " km/h" or " mph"
     local cornerRadius = Floor( screenH * 0.008 )
 
