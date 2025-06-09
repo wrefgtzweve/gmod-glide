@@ -413,7 +413,7 @@ do
         traceData.filter[#traceData.filter + 1] = "player"
 
         -- Try the original exit position first
-        local origin = self:GetPos()
+        local origin = self:LocalToWorld( self:OBBCenter() )
         local blocked, pos = ValidateExitPos( self, origin, seat.GlideExitPos )
 
         if blocked then
