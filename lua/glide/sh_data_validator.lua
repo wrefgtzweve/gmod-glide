@@ -149,12 +149,13 @@ function Glide.ValidateMiscSoundData( data )
     return true
 end
 
-Glide.MAX_GEAR = 8
+Glide.MAX_GEAR = 20
+Glide.MAX_GEAR_RATIO = 20.0
 
 local Clamp = math.Clamp
 
 function Glide.ClampGearRatio( ratio )
-    return Clamp( ratio, 0.05, 4.0 )
+    return Clamp( ratio, 0.05, Glide.MAX_GEAR_RATIO )
 end
 
 local Type = type
