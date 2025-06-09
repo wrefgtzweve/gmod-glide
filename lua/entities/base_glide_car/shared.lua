@@ -83,7 +83,7 @@ function ENT:SetupDataTables()
     AddFloatVar( "MaxRPM", 6000, 30000, "#glide.editvar.engine" )
     AddFloatVar( "MinRPMTorque", 10, 20000, "#glide.editvar.engine" )
     AddFloatVar( "MaxRPMTorque", 10, 20000, "#glide.editvar.engine" )
-    AddFloatVar( "DifferentialRatio", 0.2, 4, "#glide.editvar.engine" )
+    AddFloatVar( "DifferentialRatio", 0.05, 4, "#glide.editvar.engine" )
     AddFloatVar( "TransmissionEfficiency", 0.3, 1, "#glide.editvar.engine" )
     AddFloatVar( "PowerDistribution", -1, 1, "#glide.editvar.engine" )
 
