@@ -113,11 +113,13 @@ if SERVER then
         end
     end
 
-    ApplyVehicleWheelParameters = function( _ply, ent, paramsPerWheel )
-        if not IsGlideVehicle( ent ) then return false end
+    ApplyVehicleWheelParameters = function( _ply, vehicle, paramsPerWheel )
+        if not IsGlideVehicle( vehicle ) then return false end
+
+        duplicator.ClearEntityModifier( vehicle, "glide_wheel_params" )
 
         -- Make sure the target vehicle has at least one wheel
-        local wheels = ent.wheels
+        local wheels = vehicle.wheels
         if type( wheels ) ~= "table" then return false end
         if #wheels < 1 then return false end
 
@@ -132,13 +134,13 @@ if SERVER then
                     -- Apply parameters to this wheel
                     ApplyWheelParameters( wheel, params )
 
-                    -- This can be saved
+                    -- This parameter can be saved
                     filteredParamsPerWheel[index] = params
                 end
             end
         end
 
-        duplicator.StoreEntityModifier( ent, "glide_wheel_params", filteredParamsPerWheel )
+        duplicator.StoreEntityModifier( vehicle, "glide_wheel_params", filteredParamsPerWheel )
 
         return true
     end
@@ -169,8 +171,8 @@ function TOOL:LeftClick( trace )
 
         local paramsPerWheel = {}
 
-        if type( vehicle.EntityMods["glide_wheel_mods"] ) == "table" then
-            paramsPerWheel = table.Copy( vehicle.EntityMods["glide_wheel_mods"] )
+        if type( vehicle.EntityMods["glide_wheel_params"] ) == "table" then
+            paramsPerWheel = table.Copy( vehicle.EntityMods["glide_wheel_params"] )
         end
 
         local setOnAllWheels = ply:KeyDown( IN_USE )
@@ -188,7 +190,7 @@ function TOOL:LeftClick( trace )
 
         for index, w in ipairs( vehicle.wheels ) do
             if wheel == w or setOnAllWheels then
-                paramsPerWheel[index] = params
+                paramsPerWheel[index] = table.Copy( params )
 
                 if not setOnAllWheels then
                     break
