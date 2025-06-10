@@ -134,7 +134,9 @@ if SERVER then
                     -- Apply parameters to this wheel
                     ApplyWheelParameters( wheel, params )
 
-                    -- This parameter can be saved
+                    -- This parameter can be saved, but don't save the
+                    -- radius since `base_glide` already does it.
+                    params.radius = nil
                     filteredParamsPerWheel[index] = params
                 end
             end
