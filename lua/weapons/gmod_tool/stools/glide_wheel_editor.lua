@@ -26,44 +26,33 @@ local function IsGlideVehicle( ent )
     return IsValid( ent ) and ent.IsGlideVehicle
 end
 
-do
-    local function GetClosestWheel( pos, radius )
-        local wheels = ents.FindByClass( "glide_wheel" )
-        if #wheels < 1 then return end
+local function GetGlideVehicle( trace )
+    local ent = trace.Entity
 
-        radius = radius or 200
+    if IsGlideVehicle( ent ) then
+        return ent
+    end
 
-        local closestDist = radius * radius
-        local dist, closestWheel
+    return false
+end
 
-        for _, w in ipairs( wheels ) do
-            dist = pos:DistToSqr( w:GetPos() )
+local function GetAimingAtWheel( vehicle, pos )
+    local wheels = vehicle.wheels
+    if #wheels < 1 then return end
 
-            if dist < closestDist then
-                closestDist = dist
-                closestWheel = w
-            end
+    local closestDist = 99999
+    local dist, closestWheel
+
+    for _, w in ipairs( wheels ) do
+        dist = pos:DistToSqr( w:GetPos() )
+
+        if dist < closestDist then
+            closestDist = dist
+            closestWheel = w
         end
-
-        return closestWheel
     end
 
-    local traceData = {
-        filter = { "player" },
-        mask = MASK_NPCSOLID,
-        mins = Vector( -10, -10, -10 ),
-        maxs = Vector( 10, 10, 10 ),
-    }
-
-    function TOOL:GetAimingAtWheel()
-        local ply = self:GetOwner()
-
-        traceData.start = ply:EyePos()
-        traceData.endpos = traceData.start + ply:GetAimVector() * 1000
-
-        local tr = util.TraceHull( traceData )
-        return GetClosestWheel( tr.HitPos )
-    end
+    return closestWheel
 end
 
 local ApplyVehicleWheelParameters
@@ -77,8 +66,10 @@ if SERVER then
         local model = params.model
         if not IsValidModel( model ) then return end
 
-        local modelData = list.Get( "GlideWheelModels" )[model]
-        if not modelData then return end
+        local modelData = list.Get( "GlideWheelModels" )[model] or {
+            angle = Angle( 0, 90, 0 ),
+            scale = Vector( 0.35, 1, 1 )
+        }
 
         local scale = ( modelData.scale or Vector( 1, 1, 0.35 ) ) * Vector(
             ValidateNumber( params.scaleX, 0.1, 5, 1 ),
@@ -155,12 +146,12 @@ if SERVER then
     duplicator.RegisterEntityModifier( "glide_wheel_params", ApplyVehicleWheelParameters )
 end
 
-function TOOL:LeftClick()
-    local wheel = self:GetAimingAtWheel()
-    if not IsValid( wheel ) then return false end
+function TOOL:LeftClick( trace )
+    local vehicle = GetGlideVehicle( trace )
+    if not vehicle then return false end
 
-    local vehicle = wheel:GetParent()
-    if not IsGlideVehicle( vehicle ) then return false end
+    local wheel = GetAimingAtWheel( vehicle, trace.HitPos )
+    if not IsValid( wheel ) then return false end
 
     if SERVER then
         local ply = self:GetOwner()
@@ -184,20 +175,20 @@ function TOOL:LeftClick()
 
         local setOnAllWheels = ply:KeyDown( IN_USE )
 
+        local params = {
+            model = self:GetClientInfo( "model" ),
+            radius = self:GetClientNumber( "radius", 15 ),
+            scaleX = self:GetClientNumber( "scale_x", 1 ),
+            scaleY = self:GetClientNumber( "scale_y", 1 ),
+            scaleZ = self:GetClientNumber( "scale_z", 1 ),
+            offsetX = self:GetClientNumber( "offset_x", 1 ),
+            offsetY = self:GetClientNumber( "offset_y", 1 ),
+            offsetZ = self:GetClientNumber( "offset_z", 1 ),
+        }
+
         for index, w in ipairs( vehicle.wheels ) do
             if wheel == w or setOnAllWheels then
-                paramsPerWheel[index] = {
-                    model = self:GetClientInfo( "model" ),
-                    radius = self:GetClientNumber( "radius", 15 ),
-
-                    scaleX = self:GetClientNumber( "scale_x", 1 ),
-                    scaleY = self:GetClientNumber( "scale_y", 1 ),
-                    scaleZ = self:GetClientNumber( "scale_z", 1 ),
-
-                    offsetX = self:GetClientNumber( "offset_x", 1 ),
-                    offsetY = self:GetClientNumber( "offset_y", 1 ),
-                    offsetZ = self:GetClientNumber( "offset_z", 1 ),
-                }
+                paramsPerWheel[index] = params
 
                 if not setOnAllWheels then
                     break
@@ -211,8 +202,11 @@ function TOOL:LeftClick()
     return true
 end
 
-function TOOL:RightClick()
-    local wheel = self:GetAimingAtWheel()
+function TOOL:RightClick( trace )
+    local vehicle = GetGlideVehicle( trace )
+    if not vehicle then return false end
+
+    local wheel = GetAimingAtWheel( vehicle, trace.HitPos )
     if not IsValid( wheel ) then return false end
 
     if SERVER then
@@ -234,7 +228,11 @@ if not CLIENT then return end
 local matWireframe = Material( "models/wireframe" )
 
 function TOOL:DrawHUD()
-    local wheel = self:GetAimingAtWheel()
+    local trace = self:GetOwner():GetEyeTrace()
+    local vehicle = GetGlideVehicle( trace )
+    if not vehicle then return end
+
+    local wheel = GetAimingAtWheel( vehicle, trace.HitPos )
     if not IsValid( wheel ) then return end
 
     local pulse = 0.6 + math.sin( RealTime() * 8 ) * 0.4
