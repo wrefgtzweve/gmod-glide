@@ -58,6 +58,7 @@ function ENT:CreatePropeller( offset, radius, slowModel, fastModel )
 
     self:DeleteOnRemove( prop )
 
+    prop:SetOwner( self )
     prop:SetParent( self )
     prop:SetLocalPos( offset )
     prop:Spawn()
