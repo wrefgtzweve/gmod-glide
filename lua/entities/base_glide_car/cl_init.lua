@@ -94,6 +94,7 @@ function ENT:UpdateTurboSound( sounds )
 end
 
 local Min = math.min
+local Pow = math.pow
 
 --- Implement this base class function.
 function ENT:OnUpdateSounds()
@@ -217,10 +218,15 @@ function ENT:OnUpdateSounds()
     stream.firstPerson = self.isLocalPlayerInFirstPerson
 
     local health = self:GetEngineHealth()
+    local engineThrottle = self:GetEngineThrottle()
     local inputs = stream.inputs
 
+    if engineThrottle > inputs.throttle and self.doWobble then
+        stream.wobbleTime = 1
+    end
+
     inputs.rpmFraction = self.rpmFraction or 0
-    inputs.throttle = self:GetEngineThrottle()
+    inputs.throttle = Pow( engineThrottle, 0.6 )
 
     local isRedlining = self:GetIsRedlining() and inputs.throttle > 0.9
 
@@ -230,11 +236,6 @@ function ENT:OnUpdateSounds()
         if isRedlining and ( self:GetGear() < 3 or health < 0.1 ) then
             self:DoExhaustPop()
         end
-    end
-
-    if self.doWobble and inputs.throttle > 0.9 then
-        self.doWobble = false
-        stream.wobbleTime = 1
     end
 
     -- Handle damaged engine sounds

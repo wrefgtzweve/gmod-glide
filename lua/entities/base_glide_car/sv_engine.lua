@@ -190,7 +190,7 @@ function ENT:AutoGearSwitch( throttle )
 
     -- Switch up early while using reduced throttle
     if self.reducedThrottle then
-        maxRPM = maxRPM * ( 1 - throttle * 0.3 )
+        maxRPM = maxRPM * ( 1 - throttle * 0.2 )
     end
 
     local gearRPM
