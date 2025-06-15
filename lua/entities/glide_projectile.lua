@@ -143,7 +143,7 @@ local TraceHull = util.TraceHull
 local GetDevMode = Glide.GetDevMode
 
 local traceData = {
-    filter = { NULL },
+    filter = { NULL, NULL },
     mask = MASK_PLAYERSOLID,
     maxs = Vector(),
     mins = Vector()

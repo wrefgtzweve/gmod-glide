@@ -147,7 +147,7 @@ local GetClosestFlare = Glide.GetClosestFlare
 local TraceHull = util.TraceHull
 
 local traceData = {
-    filter = { NULL },
+    filter = { NULL, NULL },
     mask = MASK_PLAYERSOLID,
     maxs = Vector(),
     mins = Vector()
