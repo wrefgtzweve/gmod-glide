@@ -43,7 +43,7 @@ local function GetAimingAtWheel( vehicle, pos )
     local closestDist = 99999
     local dist, closestWheel
 
-    for _, w in ipairs( wheels ) do
+    for _, w in Glide.EntityPairs( wheels ) do
         dist = pos:DistToSqr( w:GetPos() )
 
         if dist < closestDist then
