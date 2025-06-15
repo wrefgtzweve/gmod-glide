@@ -146,7 +146,10 @@ local Approach = math.Approach
 local GetClosestFlare = Glide.GetClosestFlare
 local TraceHull = util.TraceHull
 
+local ray = {}
+
 local traceData = {
+    output = ray,
     filter = { NULL, NULL },
     mask = MASK_PLAYERSOLID,
     maxs = Vector(),
@@ -220,8 +223,10 @@ function ENT:Think()
     traceData.filter[1] = self
     traceData.filter[2] = self:GetOwner()
 
-    local tr = TraceHull( traceData )
-    if not tr.HitSky and tr.Hit then
+    -- Trace result is stored on `ray`
+    TraceHull( traceData )
+
+    if not ray.HitSky and ray.Hit then
         self:Explode()
     end
 

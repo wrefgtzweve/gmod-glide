@@ -142,7 +142,10 @@ local FrameTime = FrameTime
 local TraceHull = util.TraceHull
 local GetDevMode = Glide.GetDevMode
 
+local ray = {}
+
 local traceData = {
+    output = ray,
     filter = { NULL, NULL },
     mask = MASK_PLAYERSOLID,
     maxs = Vector(),
@@ -193,15 +196,16 @@ function ENT:Think()
         debugoverlay.Line( traceData.start, traceData.endpos, 0.75, Color( 255, 0, 0 ), true )
     end
 
-    local tr = TraceHull( traceData )
+    -- Trace result is stored on `ray`
+    TraceHull( traceData )
 
-    if tr.HitSky then
+    if ray.HitSky then
         self:Remove()
         return
     end
 
-    if tr.Hit then
-        self:SetPos( tr.HitPos )
+    if ray.Hit then
+        self:SetPos( ray.HitPos )
         self:Explode()
         return
     end

@@ -65,9 +65,19 @@ do
     local attacker, inflictor, length
     local damage, spread, explosionRadius
 
+    local ray, rayWater = {}, {}
+
     local traceData = {
-        mins = Vector(),
-        maxs = Vector()
+        mins = Vector( -1, -1, -1 ),
+        maxs = Vector( 1, 1, 1 ),
+        output = ray
+    }
+
+    local waterTraceData = {
+        mask = MASK_WATER,
+        mins = Vector( -1, -1, -1 ),
+        maxs = Vector( 1, 1, 1 ),
+        output = rayWater
     }
 
     function Glide.FireBullet( params, traceFilter )
@@ -96,23 +106,24 @@ do
         traceData.endpos = pos + dir * length
         traceData.filter = traceFilter
 
-        local tr = TraceHull( traceData )
+        -- The trace result is stored on `ray`
+        TraceHull( traceData )
 
-        if tr.Hit then
-            length = length * tr.Fraction
+        if ray.Hit then
+            length = length * ray.Fraction
 
-            local waterTrace = TraceHull( {
-                start = traceData.start,
-                endpos = traceData.endpos,
-                mask = MASK_WATER
-            } )
+            waterTraceData.start = traceData.start
+            waterTraceData.endpos = traceData.endpos
 
-            if waterTrace.Hit then
+            -- The trace result is stored on `rayWater`
+            TraceHull( waterTraceData )
+
+            if rayWater.Hit then
                 local eff = EffectData()
-                eff:SetOrigin( waterTrace.HitPos )
+                eff:SetOrigin( rayWater.HitPos )
                 eff:SetScale( 13 )
 
-                if bit.band( waterTrace.Contents, CONTENTS_SLIME ) == 0 then
+                if bit.band( rayWater.Contents, CONTENTS_SLIME ) == 0 then
                     eff:SetFlags( 0 )
                 end
 
@@ -121,8 +132,8 @@ do
         end
 
         if params.isExplosive then
-            if tr.Hit and not tr.HitSky then
-                Glide.CreateExplosion( inflictor, attacker, tr.HitPos, explosionRadius, damage, tr.HitNormal, Glide.EXPLOSION_TYPE.TURRET )
+            if ray.Hit and not ray.HitSky then
+                Glide.CreateExplosion( inflictor, attacker, ray.HitPos, explosionRadius, damage, ray.HitNormal, Glide.EXPLOSION_TYPE.TURRET )
             end
 
         elseif IsValid( inflictor ) then
@@ -145,7 +156,7 @@ do
         eff:SetOrigin( pos )
         eff:SetStart( pos + dir * length )
         eff:SetScale( params.scale or 1 )
-        eff:SetFlags( tr.Hit and 1 or 0 )
+        eff:SetFlags( ray.Hit and 1 or 0 )
         eff:SetEntity( inflictor )
 
         local color = params.tracerColor
@@ -215,7 +226,8 @@ end
 
 do
     local TraceLine = util.TraceLine
-    local traceData = {}
+    local ray = {}
+    local traceData = { output = ray }
 
     --- Returns true if the target entity can be locked on from a starting position and direction.
     --- Part of that includes checking if the dot product between `normal` and
@@ -251,14 +263,16 @@ do
         traceData.endpos = entPos
         traceData.filter = traceFilter
 
-        local tr = TraceLine( traceData )
-        if not tr.Hit then return true, dot end
+        -- The trace result is stored on `ray`
+        TraceLine( traceData )
+
+        if not ray.Hit then return true, dot end
 
         -- Check if the trace hit the target directly
-        if tr.Entity == ent then return true, dot end
+        if ray.Entity == ent then return true, dot end
 
         -- Check if the trace hit the target's parent
-        return IsValid( tr.Entity ) and ent:GetParent() == tr.Entity, dot
+        return IsValid( ray.Entity ) and ent:GetParent() == ray.Entity, dot
     end
 end
 
