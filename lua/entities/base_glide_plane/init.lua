@@ -106,6 +106,7 @@ local Abs = math.abs
 local Clamp = math.Clamp
 local Approach = math.Approach
 local ExpDecay = Glide.ExpDecay
+local EntityPairs = Glide.EntityPairs
 
 local IsValid = IsValid
 local TriggerOutput = WireLib and WireLib.TriggerOutput or nil
@@ -220,7 +221,7 @@ function ENT:OnPostThink( dt, selfTbl )
     local totalSideSlip = 0
     local state
 
-    for _, w in ipairs( self.wheels ) do
+    for _, w in EntityPairs( self.wheels ) do
         state = w.state
 
         state.brake = self.brake

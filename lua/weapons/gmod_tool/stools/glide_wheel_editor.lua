@@ -130,7 +130,7 @@ if SERVER then
                 -- Check if a wheel with this index exists
                 local wheel = wheels[index]
 
-                if wheel and not wheel.GlideIsHidden then
+                if IsValid( wheel ) and not wheel.GlideIsHidden then
                     -- Apply parameters to this wheel
                     ApplyWheelParameters( wheel, params )
 
@@ -190,7 +190,7 @@ function TOOL:LeftClick( trace )
             offsetZ = self:GetClientNumber( "offset_z", 1 ),
         }
 
-        for index, w in ipairs( vehicle.wheels ) do
+        for index, w in Glide.EntityPairs( vehicle.wheels ) do
             if wheel == w or setOnAllWheels then
                 paramsPerWheel[index] = table.Copy( params )
 

@@ -15,6 +15,31 @@ function Glide.IsValidModel( model )
 end
 
 do
+    -- Custom iterator, similar to ipairs, but made to iterate
+    -- over a table of entities, while skipping NULL entities.
+    local NULL = NULL
+    local e
+
+    local function EntIterator( array, i )
+        i = i + 1
+        e = array[i]
+
+        while e == NULL do
+            i = i + 1
+            e = array[i]
+        end
+
+        if e then
+            return i, e
+        end
+    end
+
+    function Glide.EntityPairs( array )
+        return EntIterator, array, 0
+    end
+end
+
+do
     -- Transmission gears/ratios validator
     Glide.MAX_GEAR = 20
     Glide.MAX_GEAR_RATIO = 20.0
