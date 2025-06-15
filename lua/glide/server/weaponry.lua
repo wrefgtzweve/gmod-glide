@@ -65,7 +65,10 @@ do
     local attacker, inflictor, length
     local damage, spread, explosionRadius
 
-    local traceData = {}
+    local traceData = {
+        mins = Vector(),
+        maxs = Vector()
+    }
 
     function Glide.FireBullet( params, traceFilter )
         pos = params.pos
