@@ -139,12 +139,14 @@ function ENT:Explode()
 end
 
 local FrameTime = FrameTime
-local TraceLine = util.TraceLine
+local TraceHull = util.TraceHull
 local GetDevMode = Glide.GetDevMode
 
 local traceData = {
-    filter = { NULL },
+    filter = { NULL, NULL },
     mask = MASK_PLAYERSOLID,
+    maxs = Vector(),
+    mins = Vector()
 }
 
 function ENT:Think()
@@ -191,7 +193,7 @@ function ENT:Think()
         debugoverlay.Line( traceData.start, traceData.endpos, 0.75, Color( 255, 0, 0 ), true )
     end
 
-    local tr = TraceLine( traceData )
+    local tr = TraceHull( traceData )
 
     if tr.HitSky then
         self:Remove()

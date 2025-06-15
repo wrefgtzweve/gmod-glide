@@ -58,14 +58,17 @@ end
 do
     local RandomFloat = math.Rand
     local Effect = util.Effect
-    local TraceLine = util.TraceLine
+    local TraceHull = util.TraceHull
     local EffectData = EffectData
 
     local pos, ang
     local attacker, inflictor, length
     local damage, spread, explosionRadius
 
-    local traceData = {}
+    local traceData = {
+        mins = Vector(),
+        maxs = Vector()
+    }
 
     function Glide.FireBullet( params, traceFilter )
         pos = params.pos
@@ -93,12 +96,12 @@ do
         traceData.endpos = pos + dir * length
         traceData.filter = traceFilter
 
-        local tr = TraceLine( traceData )
+        local tr = TraceHull( traceData )
 
         if tr.Hit then
             length = length * tr.Fraction
 
-            local waterTrace = TraceLine( {
+            local waterTrace = TraceHull( {
                 start = traceData.start,
                 endpos = traceData.endpos,
                 mask = MASK_WATER
