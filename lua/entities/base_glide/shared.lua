@@ -113,6 +113,10 @@ function ENT:GravGunPickupAllowed( _ply )
     return false
 end
 
+function ENT:IsVehicle()
+    return true
+end
+
 -- You can safely override these on children classes
 function ENT:IsEngineOn()
     return self:GetEngineState() > 1

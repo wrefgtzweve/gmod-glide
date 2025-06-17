@@ -278,7 +278,6 @@ end
 
 local EntityMeta = FindMetaTable( "Entity" )
 local getClass = EntityMeta.GetClass
-local isVehicle = EntityMeta.IsVehicle
 local getParent = EntityMeta.GetParent
 
 local AllEnts = ents.Iterator
@@ -306,7 +305,7 @@ local function IsLockableEntity( ent, skipParentCheck )
         return true
     end
 
-    if isVehicle( ent ) then
+    if ent:IsVehicle() then
         return true
     end
 
