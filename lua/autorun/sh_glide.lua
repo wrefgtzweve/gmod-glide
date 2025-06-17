@@ -398,7 +398,6 @@ local EntityMeta = FindMetaTable( "Entity" )
 local IsVehicle = EntityMeta.IsVehicle
 
 --- Override `Entity:IsVehicle` to return `true` on Glide vehicles.
---- Also keep compatibility with Simfphys.
 function EntityMeta:IsVehicle()
     return IsVehicle( self ) or self.IsGlideVehicle
 end
