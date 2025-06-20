@@ -394,16 +394,13 @@ do
     end
 end
 
-hook.Add( "Initialize", "Glide.OverrideIsVehicle", function()
-    local VehicleMeta = FindMetaTable( "Entity" )
-    local IsVehicle = VehicleMeta.IsVehicle
+local EntityMeta = FindMetaTable( "Entity" )
+local IsVehicle = EntityMeta.IsVehicle
 
-    --- Override `Entity:IsVehicle` to return `true` on Glide vehicles.
-    --- Also keep compatibility with Simfphys.
-    function VehicleMeta:IsVehicle()
-        return ( self.IsSimfphyscar and self:IsSimfphyscar() ) or self.IsGlideVehicle or IsVehicle( self )
-    end
-end )
+--- Override `Entity:IsVehicle` to return `true` on Glide vehicles.
+function EntityMeta:IsVehicle()
+    return self.IsGlideVehicle or IsVehicle( self )
+end
 
 local function IncludeDir( dirPath, doInclude, doTransfer )
     local files = file.Find( dirPath .. "*.lua", "LUA" )
