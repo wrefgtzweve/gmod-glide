@@ -399,7 +399,7 @@ local IsVehicle = EntityMeta.IsVehicle
 
 --- Override `Entity:IsVehicle` to return `true` on Glide vehicles.
 function EntityMeta:IsVehicle()
-    return IsVehicle( self ) or self.IsGlideVehicle
+    return self.IsGlideVehicle or IsVehicle( self )
 end
 
 local function IncludeDir( dirPath, doInclude, doTransfer )
