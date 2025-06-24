@@ -68,16 +68,16 @@ function Config:Reset()
     self.enableTips = true
 end
 
---- Reset binds to their default buttons.
+--- Reset bind actions to their default buttons.
 function Config:ResetBinds()
     local binds = {}
 
-    -- Setup default action categories and buttons
-    for category, actions in pairs( Glide.InputCategories ) do
-        binds[category] = {}
+    -- Setup default action groups and buttons
+    for groupId, actions in pairs( Glide.InputGroups ) do
+        binds[groupId] = {}
 
         for action, button in pairs( actions ) do
-            binds[category][action] = button
+            binds[groupId][action] = button
         end
     end
 
@@ -85,10 +85,10 @@ function Config:ResetBinds()
 end
 
 -- Utility function to get the button bound to a certain input action.
-function Config:GetInputActionButton( action, categoryName )
-    local category = self.binds[categoryName]
-    if category then
-        return category[action]
+function Config:GetInputActionButton( action, groupId )
+    local group = self.binds[groupId]
+    if group then
+        return group[action]
     end
 end
 
@@ -169,7 +169,7 @@ function Config:Save( immediate )
         autoTurnOffLights = self.autoTurnOffLights,
         enableTips = self.enableTips,
 
-        -- Category-action-button dictionary
+        -- Group-to-action-to-button dictionary
         binds = self.binds
     }, true )
 
@@ -281,15 +281,15 @@ function Config:Load()
     LoadBool( "autoTurnOffLights", true )
     LoadBool( "enableTips", true )
 
-    -- Category-action-button dictionary
+    -- Group-to-action-to-button dictionary
     local loadedBinds = type( data.binds ) == "table" and data.binds or {}
 
-    for category, actions in pairs( self.binds ) do
+    for groupId, actions in pairs( self.binds ) do
         for action, button in pairs( actions ) do
-            local loadedCategory = loadedBinds[category]
+            local loadedGroup = loadedBinds[groupId]
 
-            if type( loadedCategory ) == "table" then
-                SetNumber( actions, action, loadedCategory[action], KEY_NONE, BUTTON_CODE_LAST, button )
+            if type( loadedGroup ) == "table" then
+                SetNumber( actions, action, loadedGroup[action], KEY_NONE, BUTTON_CODE_LAST, button )
             end
         end
     end
@@ -349,11 +349,13 @@ function Config:ApplySkidMarkLimits( immediate )
     Glide.SetupSkidMarkMeshes()
 end
 
-Config:Load()
-
 hook.Add( "InitPostEntity", "Glide.TransmitInputSettings", function()
+    Config:Load()
     Config:TransmitInputSettings()
-    hook.Run( "Glide_OnConfigChange" )
+
+    -- Skidmarks need some values from Config, so
+    -- do this here after we've called Config:Load
+    Glide.SetupSkidMarkMeshes()
 end )
 
 ----------
@@ -380,6 +382,35 @@ end
 function Config:CloseFrame()
     if IsValid( self.frame ) then
         self.frame:Close()
+    end
+end
+
+-- Utility to create a button binder row.
+do
+    local OnBinderChange = function( self, value )
+        if self._ignoreChange then return end
+
+        if Glide.SEAT_SWITCH_BUTTONS[value] then
+            self._ignoreChange = true
+            self:SetValue( self.inputDefaultKey )
+            self._ignoreChange = nil
+
+            local msg = Glide.GetLanguageText( "input.reserved_seat_key" ):format( input.GetKeyName( value ) )
+            Derma_Message( msg, "#glide.input.invalid_bind", "#glide.ok" )
+        else
+            self.inputCallback( self.inputActionId, value )
+        end
+    end
+
+    function Config.CreateBinderButton( parent, text, actionId, defaultKey, callback )
+        local binder = StyledTheme.CreateFormBinder( parent, text, defaultKey )
+
+        binder.inputActionId = actionId
+        binder.inputDefaultKey = defaultKey
+        binder.inputCallback = callback
+        binder.OnChange = OnBinderChange
+
+        return binder
     end
 end
 
@@ -637,104 +668,54 @@ function Config:OpenFrame()
 
     ----- Keyboard settings -----
 
-    local CreateBinderButton = function( parent, text, actionId, defaultKey, callback )
-        local binder = StyledTheme.CreateFormBinder( parent, text, defaultKey )
+    local panelKeyboard = frame:AddTab( "styledstrike/icons/keyboard.png", L"settings.input" )
 
-        function binder:OnChange( value )
-            if self._ignoreChange then return end
+    local groupList = {}
 
-            if Glide.SEAT_SWITCH_BUTTONS[value] then
-                self._ignoreChange = true
-                binder:SetValue( defaultKey )
-                self._ignoreChange = nil
+    -- Display built-in input groups first
+    local groupOrder = {
+        ["general_controls"] = 1,
+        ["land_controls"] = 2,
+        ["aircraft_controls"] = 3
+    }
 
-                local msg = Glide.GetLanguageText( "input.reserved_seat_key" ):format( input.GetKeyName( value ) )
-                Derma_Message( msg, "#glide.input.invalid_bind", "#glide.ok" )
-            else
-                callback( actionId, value )
-            end
+    for groupdId, _ in pairs( Glide.InputGroups ) do
+        groupList[#groupList + 1] = {
+            id = groupdId,
+            order = groupOrder[groupdId] or 999
+        }
+    end
+
+    table.SortByMember( groupList, "order", true )
+
+    local binds = self.binds
+    local CreateBinderButton = Config.CreateBinderButton
+
+    for _, listData in ipairs( groupList ) do
+        local groupId = listData.id
+        local groupBinds = binds[groupId]
+        local actions = Glide.InputGroups[groupId]
+
+        CreateHeader( panelKeyboard, "#glide.input." .. groupId, 0 )
+
+        if groupId == "land_controls" then
+            CreateToggle( panelKeyboard, L"input.manual_shift", self.manualGearShifting, function( value )
+                self.manualGearShifting = value
+                self:Save()
+                self:TransmitInputSettings()
+            end )
+        end
+
+        local OnChangeGroupBind = function( action, key )
+            groupBinds[action] = key
+            self:Save()
+            self:TransmitInputSettings()
+        end
+
+        for action, _ in SortedPairs( actions ) do
+            CreateBinderButton( panelKeyboard, "#glide.input." .. action, action, groupBinds[action], OnChangeGroupBind )
         end
     end
-
-    local panelKeyboard = frame:AddTab( "styledstrike/icons/keyboard.png", L"settings.input" )
-    local binds = self.binds
-
-    local generalBinds = binds["general_controls"]
-
-    local function OnChangeGeneralBind( action, key )
-        generalBinds[action] = key
-        self:Save()
-        self:TransmitInputSettings()
-    end
-
-    CreateHeader( panelKeyboard, L"input.general_controls", 0 )
-    CreateBinderButton( panelKeyboard, L"input.switch_weapon", "switch_weapon", generalBinds.switch_weapon, OnChangeGeneralBind )
-    CreateBinderButton( panelKeyboard, L"input.toggle_engine", "toggle_engine", generalBinds.toggle_engine, OnChangeGeneralBind )
-    CreateBinderButton( panelKeyboard, L"input.headlights", "headlights", generalBinds.headlights, OnChangeGeneralBind )
-    CreateBinderButton( panelKeyboard, L"input.free_look", "free_look", generalBinds.free_look, OnChangeGeneralBind )
-
-    local landBinds = binds["land_controls"]
-
-    local function OnChangeLandBind( action, key )
-        landBinds[action] = key
-        self:Save()
-        self:TransmitInputSettings()
-    end
-
-    CreateHeader( panelKeyboard, L"input.land_controls" )
-    CreateBinderButton( panelKeyboard, L"input.attack", "attack", landBinds.attack, OnChangeLandBind )
-
-    CreateBinderButton( panelKeyboard, L"input.steer_left", "steer_left", landBinds.steer_left, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.steer_right", "steer_right", landBinds.steer_right, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.accelerate", "accelerate", landBinds.accelerate, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.brake", "brake", landBinds.brake, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.handbrake", "handbrake", landBinds.handbrake, OnChangeLandBind )
-
-    CreateBinderButton( panelKeyboard, L"input.horn", "horn", landBinds.horn, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.siren", "siren", landBinds.siren, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.reduce_throttle", "reduce_throttle", landBinds.reduce_throttle, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.detach_trailer", "detach_trailer", landBinds.detach_trailer, OnChangeLandBind )
-
-    CreateBinderButton( panelKeyboard, L"input.lean_forward", "lean_forward", landBinds.lean_forward, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.lean_back", "lean_back", landBinds.lean_back, OnChangeLandBind )
-
-    CreateBinderButton( panelKeyboard, L"input.signal_left", "signal_left", landBinds.signal_left, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.signal_right", "signal_right", landBinds.signal_right, OnChangeLandBind )
-
-    CreateHeader( panelKeyboard, L"input.manual_shift" )
-    CreateToggle( panelKeyboard, L"input.manual_shift", self.manualGearShifting, function( value )
-        self.manualGearShifting = value
-        self:Save()
-        self:TransmitInputSettings()
-    end )
-
-    CreateBinderButton( panelKeyboard, L"input.shift_up", "shift_up", landBinds.shift_up, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.shift_down", "shift_down", landBinds.shift_down, OnChangeLandBind )
-    CreateBinderButton( panelKeyboard, L"input.shift_neutral", "shift_neutral", landBinds.shift_neutral, OnChangeLandBind )
-
-    local airBinds = binds["aircraft_controls"]
-
-    local function OnChangeAirBind( action, key )
-        airBinds[action] = key
-        self:Save()
-        self:TransmitInputSettings()
-    end
-
-    CreateHeader( panelKeyboard, L"input.aircraft_controls" )
-    CreateBinderButton( panelKeyboard, L"input.attack", "attack", airBinds.attack, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.attack_alt", "attack_alt", airBinds.attack_alt, OnChangeAirBind )
-
-    CreateBinderButton( panelKeyboard, L"input.landing_gear", "landing_gear", airBinds.landing_gear, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.countermeasures", "countermeasures", airBinds.countermeasures, OnChangeAirBind )
-
-    CreateBinderButton( panelKeyboard, L"input.pitch_up", "pitch_up", airBinds.pitch_up, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.pitch_down", "pitch_down", airBinds.pitch_down, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.yaw_left", "yaw_left", airBinds.yaw_left, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.yaw_right", "yaw_right", airBinds.yaw_right, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.roll_left", "roll_left", airBinds.roll_left, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.roll_right", "roll_right", airBinds.roll_right, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.throttle_up", "throttle_up", airBinds.throttle_up, OnChangeAirBind )
-    CreateBinderButton( panelKeyboard, L"input.throttle_down", "throttle_down", airBinds.throttle_down, OnChangeAirBind )
 
     ----- Audio settings -----
 
