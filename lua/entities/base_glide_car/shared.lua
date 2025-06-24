@@ -245,6 +245,11 @@ if SERVER then
         }
     end
 
+    --- Override this base class function.
+    function ENT:GetInputGroups( seatIndex )
+        return seatIndex > 1 and { "general_controls" } or { "general_controls", "land_controls" }
+    end
+
     -- Save these network variables when using the duplicator
     ENT.DuplicatorNetworkVariables = {
         HeadlightColor = true,

@@ -71,16 +71,6 @@ do
 end
 
 do
-    local VEHICLE_ACTION_GROUP = {
-        [Glide.VEHICLE_TYPE.UNDEFINED] = "land_controls",
-        [Glide.VEHICLE_TYPE.CAR] = "land_controls",
-        [Glide.VEHICLE_TYPE.MOTORCYCLE] = "land_controls",
-        [Glide.VEHICLE_TYPE.HELICOPTER] = "aircraft_controls",
-        [Glide.VEHICLE_TYPE.PLANE] = "aircraft_controls",
-        [Glide.VEHICLE_TYPE.TANK] = "land_controls",
-        [Glide.VEHICLE_TYPE.BOAT] = "land_controls"
-    }
-
     --- Given a list of input actions, get all actions
     --- from that list, and then separate them per button.
     local function AddActions( binds, groupId, buttons )
@@ -120,11 +110,12 @@ do
         -- actions relevant to the current vehicle's input action group.
         local buttons = {}
 
-        -- Add button actions that apply to all vehicles
-        AddActions( settings.binds, "general_controls", buttons )
+        -- Add button actions that apply for this vehicle
+        local inputGroups = vehicle:GetInputGroups( seatIndex )
 
-        -- Add button actions that apply to this vehicle type
-        AddActions( settings.binds, VEHICLE_ACTION_GROUP[vehicle.VehicleType], buttons )
+        for _, groupId in ipairs( inputGroups ) do
+            AddActions( settings.binds, groupId, buttons )
+        end
 
         -- Let our input hooks handle this
         activeData[ply] = {
