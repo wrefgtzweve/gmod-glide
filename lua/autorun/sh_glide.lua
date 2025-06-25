@@ -215,8 +215,14 @@ CreateConVar( "glide_ragdoll_max_time", "10", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCV
 
 list.Set( "ContentCategoryIcons", "Glide", "materials/glide/icons/car.png" )
 
-function Glide.Print( str, ... )
-    MsgC( Color( 0, 0, 255 ), "[Glide] ", color_white, string.format( str, ... ), "\n" )
+do
+    local COLOR_TAG = Color( 255, 255, 255 )
+    local COLOR_SV = Color( 3, 169, 244 )
+    local COLOR_CL = Color( 222, 169, 9 )
+
+    function Glide.Print( str, ... )
+        MsgC( COLOR_TAG, "[", SERVER and COLOR_SV or COLOR_CL, "Glide", COLOR_TAG, "] ", string.format( str, ... ), "\n" )
+    end
 end
 
 do
@@ -410,6 +416,7 @@ local function IncludeDir( dirPath, doInclude, doTransfer )
         path = dirPath .. fileName
 
         if doInclude then
+            Glide.Print( "Including file: %s", path )
             include( path )
         end
 
@@ -465,3 +472,7 @@ if CLIENT then
     IncludeDir( "glide/client/", true, false )
     IncludeDir( "glide/client/vgui/", true, false )
 end
+
+-- Automatically include files under
+-- `lua/glide/autoload/`, on both server and client.
+IncludeDir( "glide/autoload/", true, true )
