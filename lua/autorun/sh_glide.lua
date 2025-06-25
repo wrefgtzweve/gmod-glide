@@ -474,5 +474,5 @@ if CLIENT then
 end
 
 -- Automatically include files under
--- `lua/glide/extensions/`, on both server and client.
-IncludeDir( "glide/extensions/", true, true )
+-- `lua/glide/autoload/`, on both server and client.
+IncludeDir( "glide/autoload/", true, true )
