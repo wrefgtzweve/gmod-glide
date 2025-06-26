@@ -349,13 +349,19 @@ function Config:ApplySkidMarkLimits( immediate )
     Glide.SetupSkidMarkMeshes()
 end
 
-hook.Add( "InitPostEntity", "Glide.TransmitInputSettings", function()
+-- Set settings to default right away, to prevent errors
+Config:Reset()
+
+-- SetupMove seems like a better time to send network messages
+hook.Add( "SetupMove", "Glide.LoadSettings", function()
+    hook.Remove( "SetupMove", "Glide.LoadSettings" )
+
     Config:Load()
     Config:TransmitInputSettings()
 
-    -- Skidmarks need some values from Config, so
+    -- Skidmarks uses some settings from Config, so
     -- do this here after we've called Config:Load
-    Glide.SetupSkidMarkMeshes()
+    Config:ApplySkidMarkLimits()
 end )
 
 ----------
