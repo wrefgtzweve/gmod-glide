@@ -351,18 +351,25 @@ end
 
 -- Set settings to default right away, to prevent errors
 Config:Reset()
+Config:ResetBinds()
 
--- SetupMove seems like a better time to send network messages
-hook.Add( "SetupMove", "Glide.LoadSettings", function()
-    hook.Remove( "SetupMove", "Glide.LoadSettings" )
+if game.SinglePlayer() then
+    -- On singleplayer, load settings on InitPostEntity
+    hook.Add( "InitPostEntity", "Glide.LoadSettings", function()
+        Config:Load()
+        Config:TransmitInputSettings()
+        Config:ApplySkidMarkLimits()
+    end )
+else
+    -- SetupMove seems like a better time to send network messages
+    hook.Add( "SetupMove", "Glide.LoadSettings", function()
+        hook.Remove( "SetupMove", "Glide.LoadSettings" )
 
-    Config:Load()
-    Config:TransmitInputSettings()
-
-    -- Skidmarks uses some settings from Config, so
-    -- do this here after we've called Config:Load
-    Config:ApplySkidMarkLimits()
-end )
+        Config:Load()
+        Config:TransmitInputSettings()
+        Config:ApplySkidMarkLimits()
+    end )
+end
 
 ----------
 
