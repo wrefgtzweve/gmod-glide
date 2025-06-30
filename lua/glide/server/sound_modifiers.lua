@@ -76,20 +76,8 @@ hook.Add( "PlayerDisconnected", "Glide.CleanupModSync", function( ply )
     end
 end )
 
--- Since `PlayerInitialSpawn` is called before the player is ready
--- to receive net events, we have to use `ClientSignOnStateChanged` instead.
-hook.Add( "ClientSignOnStateChanged", "Glide.MarkPlayerAsLoaded", function( user, _, new )
-    if new ~= SIGNONSTATE_FULL then return end
-
-    -- We can only retrieve the player entity after this hook runs, so lets use a timer.
-    -- It could have been 0 seconds, its just higher here to put less strain on the network.
-    timer.Simple( 3, function()
-        local ply = Player( user )
-
-        if IsValid( ply ) and not ply:IsBot() then
-            ply.GlideLoaded = true
-        end
-    end )
+hook.Add( "Glide_OnPlayerLoad", "Glide.MarkPlayerAsLoaded", function( ply )
+    ply.GlideLoaded = true
 end )
 
 local SUPPORTED_VEHICLE_TYPES = {
