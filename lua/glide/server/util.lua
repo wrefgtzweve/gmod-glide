@@ -148,6 +148,7 @@ hook.Add( "ClientSignOnStateChanged", "Glide.TriggerOnPlayerLoad", function( use
         local ply = Player( user )
 
         if IsValid( ply ) and not ply:IsBot() then
+            ply.GlideLoaded = true
             hook.Run( "Glide_OnPlayerLoad", ply )
         end
     end )
