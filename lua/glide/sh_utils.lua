@@ -92,7 +92,15 @@ do
     }
 
     function Glide.DoesEntitySupportEngineStreamPreset( ent )
-        return IsValid( ent ) and ent.IsGlideVehicle and SUPPORTED_VEHICLE_TYPES[ent.VehicleType]
+        if not IsValid( ent ) then
+            return false
+        end
+
+        if ent:GetClass() == "glide_engine_stream_chip" then
+            return true
+        end
+
+        return ent.IsGlideVehicle and SUPPORTED_VEHICLE_TYPES[ent.VehicleType]
     end
 end
 

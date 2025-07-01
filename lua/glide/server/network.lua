@@ -25,7 +25,7 @@ commands[Glide.CMD_UPLOAD_ENGINE_STREAM_PRESET] = function( ply )
     local veh = net.ReadEntity()
 
     if not IsValid( veh ) then return end
-    if not veh.IsGlideVehicle then return end
+    if not veh.IsGlideVehicle and veh:GetClass() ~= "glide_engine_stream_chip" then return end
 
     -- Make sure this player can tool this vehicle
     local tr = ply:GetEyeTrace()
