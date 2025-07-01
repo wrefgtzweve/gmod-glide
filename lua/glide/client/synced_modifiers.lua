@@ -43,7 +43,6 @@ timer.Create( "Glide.ApplySynchronizedModifiers", 0.5, 0, function()
         -- apply all modifiers associated with this entity.
         if IsValid( state.ent ) then
             for name, mod in pairs( state.mods ) do
-
                 -- Check if we haven't applied the data yet
                 if not mod.applied then
                     mod.applied = true
@@ -53,6 +52,8 @@ timer.Create( "Glide.ApplySynchronizedModifiers", 0.5, 0, function()
                     if receiver then
                         receiver.onApply( state.ent, mod.json )
                     end
+
+                    Glide.PrintDev( "Synchronized modifier '%s' on entity #%d", name, entIndex )
                 end
             end
         end
@@ -78,6 +79,7 @@ net.Receive( "glide.sync_entity_modifier", function()
         if not state then
             state = { ent = NULL, mods = {} }
             entModifierStates[entIndex] = state
+            Glide.PrintDev( "Started tracking modifiers for entity #%d", entIndex )
         end
 
         -- Store the modifier we just received
@@ -85,6 +87,8 @@ net.Receive( "glide.sync_entity_modifier", function()
             applied = false,
             json = json
         }
+
+        Glide.PrintDev( "Received modifier '%s' for entity #%d", name, entIndex )
     else
         -- Make sure we are tracking this entity index
         local state = entModifierStates[entIndex]
@@ -104,11 +108,13 @@ net.Receive( "glide.sync_entity_modifier", function()
 
         -- Remove the modifier from the entity state
         state.mods[name] = nil
+        Glide.PrintDev( "Removed modifier '%s' for entity #%d", name, entIndex )
 
         -- If there are no active modifiers left
         -- stop tracking this entity index.
         if table.Count( state.mods ) < 1 then
             entModifierStates[entIndex] = nil
+            Glide.PrintDev( "Stopped tracking modifiers for entity #%d", entIndex )
         end
     end
 end )

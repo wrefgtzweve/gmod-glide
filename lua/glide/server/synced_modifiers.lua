@@ -37,6 +37,8 @@ local function SendModifierTo( ply, mod )
     net.WriteUInt( size, 16 )
     net.WriteData( mod.json )
     net.Send( ply )
+
+    Glide.PrintDev( "Sent synchronized modifier '%s' from entity #%d to %s <%s>", mod.name, mod.entIndex, ply:Nick(), ply:SteamID() )
 end
 
 local function BroadcastModifierRemoval( mod )
@@ -162,6 +164,8 @@ function Glide.RegisterSyncedModifier( name, onPreApply )
             json = json,
             synced = {}
         }
+
+        Glide.PrintDev( "Added synchronized modifier '%s' to entity #%d", name, ent:EntIndex() )
     end
 
     duplicator.RegisterEntityModifier( name, ApplyModifier )
@@ -179,6 +183,8 @@ function Glide.RegisterSyncedModifier( name, onPreApply )
                 break
             end
         end
+
+        Glide.PrintDev( "Removed synchronized modifier '%s' from entity #%d", name, ent:EntIndex() )
     end
 
     return ApplyModifier, RemoveModifier
