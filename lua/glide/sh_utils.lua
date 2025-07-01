@@ -81,6 +81,43 @@ do
     end
 end
 
+do
+    -- Utility function to make sure a entity is a Glide vehicle
+    -- that supports the "glide_engine_stream" modifier.
+    local SUPPORTED_VEHICLE_TYPES = {
+        [Glide.VEHICLE_TYPE.CAR] = true,
+        [Glide.VEHICLE_TYPE.MOTORCYCLE] = true,
+        [Glide.VEHICLE_TYPE.TANK] = true,
+        [Glide.VEHICLE_TYPE.BOAT] = true
+    }
+
+    function Glide.DoesEntitySupportEngineStreamPreset( ent )
+        if not IsValid( ent ) then
+            return false
+        end
+
+        if ent:GetClass() == "glide_engine_stream_chip" then
+            return true
+        end
+
+        return ent.IsGlideVehicle and SUPPORTED_VEHICLE_TYPES[ent.VehicleType]
+    end
+end
+
+do
+    -- Utility function to make sure a entity is a Glide vehicle
+    -- that supports the "glide_misc_sounds" modifier.
+    local SUPPORTED_VEHICLE_TYPES = {
+        [Glide.VEHICLE_TYPE.CAR] = true,
+        [Glide.VEHICLE_TYPE.MOTORCYCLE] = true,
+        [Glide.VEHICLE_TYPE.BOAT] = true
+    }
+
+    function Glide.DoesEntitySupportMiscSoundsPreset( ent )
+        return IsValid( ent ) and ent.IsGlideVehicle and SUPPORTED_VEHICLE_TYPES[ent.VehicleType]
+    end
+end
+
 -- Max. Engine Stream layers
 Glide.MAX_STREAM_LAYERS = 8
 
