@@ -36,23 +36,22 @@ local Entity = Entity
 local IsValid = IsValid
 
 timer.Create( "Glide.ApplySynchronizedModifiers", 0.5, 0, function()
-    local ent
-
     for entIndex, state in pairs( entModifierStates ) do
-        ent = Entity( entIndex )
+        state.ent = Entity( entIndex )
 
-        -- Has the entity validity changed?
-        if state.ent ~= ent then
-            state.ent = ent
+        -- When the target entity becomes valid,
+        -- apply all modifiers associated with this entity.
+        if IsValid( state.ent ) then
+            for name, mod in pairs( state.mods ) do
 
-            -- When the target entity becomes valid, run the `onApply` 
-            -- receiver callback for all modifiers associated with this entity.
-            if IsValid( ent ) then
-                for name, json in pairs( state.mods ) do
+                -- Check if we haven't applied the data yet
+                if not mod.applied then
+                    mod.applied = true
+
                     local receiver = syncedModifierRegistry[name]
 
                     if receiver then
-                        receiver.onApply( state.ent, json )
+                        receiver.onApply( state.ent, mod.json )
                     end
                 end
             end
@@ -82,15 +81,17 @@ net.Receive( "glide.sync_entity_modifier", function()
         end
 
         -- Store the modifier we just received
-        state.mods[name] = json
+        state.mods[name] = {
+            applied = false,
+            json = json
+        }
     else
         -- Make sure we are tracking this entity index
         local state = entModifierStates[entIndex]
         if not state then return end
 
         -- Make sure this modifier is active on this entity
-        local mod = state.mods[name]
-        if not mod then return end
+        if not state.mods[name] then return end
 
         if IsValid( state.ent ) then
             -- Run the `onRemove` receiver callback
