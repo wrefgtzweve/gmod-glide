@@ -118,6 +118,12 @@ function Glide.RegisterSyncedModifier( name, onPreApply )
             return
         end
 
+        -- Clear existing modifier. This has to be done
+        -- due to a bug where, if you apply a modifier,
+        -- dupe the entity, and then apply the same modifier again
+        -- with different data, that last data won't save on the next dupe.
+        duplicator.ClearEntityModifier( ent, name )
+
         -- Serialize the data to sync later via networking.
         local json = Glide.ToJSON( data )
 
