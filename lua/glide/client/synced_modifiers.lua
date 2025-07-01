@@ -2,7 +2,7 @@
     Utility logic to process "synchronized" entity modifiers.
 
     Once a modifier is set on a entity, the server sends it's
-    data to be processed here
+    data to be processed here.
     
     Our job is to apply the modifier data to the target entity,
     as long as the modifier is active.
@@ -16,7 +16,7 @@ local syncedModifierRegistry = Glide.syncedModifierRegistry
 ---
 --- `onApply` will be called when the target entity with the
 --- modifier `name` becomes valid locally, and
---- it provides the `data` table sent from the server.
+--- it provides the `data` table received from the server.
 ---
 --- `onRemove` will be called when the modifier is
 --- removed from the target entity.

@@ -81,10 +81,6 @@ do
     end
 end
 
---[[
-    Synchronized modifier: Engine Stream Preset
-]]
-
 do
     -- Utility function to make sure a entity is a Glide vehicle
     -- that supports the "glide_engine_stream" modifier.
