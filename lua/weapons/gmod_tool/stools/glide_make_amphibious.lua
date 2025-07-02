@@ -15,9 +15,9 @@ TOOL.ClientConVar = {
     water_linear_drag_y = 1.5,
     water_linear_drag_z = 0.02,
 
-    water_angular_drag_x = 5,
-    water_angular_drag_y = 20,
-    water_angular_drag_z = 15,
+    water_roll_drag = 5,
+    water_pitch_drag = 20,
+    water_yaw_drag = 15,
 
     engine_force = 500,
     engine_lift_force = 200,
@@ -53,15 +53,15 @@ if SERVER then
 
             SetNumber( data, "maxSpeed", unfilteredData.maxSpeed, 200, 2000, 1000 )
             SetNumber( data, "buoyancyOffsetZ", unfilteredData.buoyancyOffsetZ, -30, 30, -15 )
-            SetNumber( data, "maxBuoyancyDepth", unfilteredData.maxBuoyancyDepth, 0, 30, 15 )
+            SetNumber( data, "maxBuoyancyDepth", unfilteredData.maxBuoyancyDepth, 5, 30, 15 )
 
             SetNumber( data, "waterLinearDragX", unfilteredData.waterLinearDragX, 0.01, 2.0, 0.2 )
             SetNumber( data, "waterLinearDragY", unfilteredData.waterLinearDragY, 0.01, 2.0, 1.5 )
             SetNumber( data, "waterLinearDragZ", unfilteredData.waterLinearDragZ, 0.01, 2.0, 0.02 )
 
-            SetNumber( data, "waterAngularDragX", unfilteredData.waterAngularDragX, 0.1, 30, 5 )
-            SetNumber( data, "waterAngularDragY", unfilteredData.waterAngularDragY, 0.1, 30, 20 )
-            SetNumber( data, "waterAngularDragZ", unfilteredData.waterAngularDragZ, 0.1, 30, 15 )
+            SetNumber( data, "waterRollDrag", unfilteredData.waterRollDrag, 0.1, 30, 5 )
+            SetNumber( data, "waterPitchDrag", unfilteredData.waterPitchDrag, 0.1, 30, 20 )
+            SetNumber( data, "waterYawDrag", unfilteredData.waterYawDrag, 0.1, 30, 15 )
 
             SetNumber( data, "engineForce", unfilteredData.engineForce, 100, 5000, 500 )
             SetNumber( data, "engineLiftForce", unfilteredData.engineLiftForce, 10, 500, 200 )
@@ -84,9 +84,9 @@ if SERVER then
             )
 
             params.waterAngularDrag = Vector(
-                -data.waterAngularDragX, -- Roll drag
-                -data.waterAngularDragY, -- Pitch drag
-                -data.waterAngularDragZ  -- Yaw drag
+                -data.waterRollDrag,
+                -data.waterPitchDrag,
+                -data.waterYawDrag
             )
 
             params.buoyancy = 6
@@ -137,9 +137,9 @@ function TOOL:LeftClick( trace )
             waterLinearDragY = self:GetClientNumber( "water_linear_drag_y" ),
             waterLinearDragZ = self:GetClientNumber( "water_linear_drag_z" ),
 
-            waterAngularDragX = self:GetClientNumber( "water_angular_drag_x" ),
-            waterAngularDragY = self:GetClientNumber( "water_angular_drag_y" ),
-            waterAngularDragZ = self:GetClientNumber( "water_angular_drag_z" ),
+            waterRollDrag = self:GetClientNumber( "water_roll_drag" ),
+            waterPitchDrag = self:GetClientNumber( "water_pitch_drag" ),
+            waterYawDrag = self:GetClientNumber( "water_yaw_drag" ),
 
             engineForce = self:GetClientNumber( "engine_force" ),
             engineLiftForce = self:GetClientNumber( "engine_lift_force" ),
@@ -188,15 +188,15 @@ function TOOL.BuildCPanel( panel )
 
     AddSlider( "max_speed", 200, 2000 )
     AddSlider( "buoyancy_offset_z", -30, 30 )
-    AddSlider( "max_buoyancy_depth", 0, 30 )
+    AddSlider( "max_buoyancy_depth", 5, 30 )
 
     AddSlider( "water_linear_drag_x", 0.01, 2.0 )
     AddSlider( "water_linear_drag_y", 0.01, 2.0 )
     AddSlider( "water_linear_drag_z", 0.01, 2.0 )
 
-    AddSlider( "water_angular_drag_x", 0.1, 30 )
-    AddSlider( "water_angular_drag_y", 0.1, 30 )
-    AddSlider( "water_angular_drag_z", 0.1, 30 )
+    AddSlider( "water_pitch_drag", 0.1, 30 )
+    AddSlider( "water_yaw_drag", 0.1, 30 )
+    AddSlider( "water_roll_drag", 0.1, 30 )
 
     AddSlider( "engine_force", 100, 5000 )
     AddSlider( "engine_lift_force", 10, 500 )
