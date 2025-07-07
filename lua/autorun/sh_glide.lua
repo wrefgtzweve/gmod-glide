@@ -346,13 +346,10 @@ function Glide.IsAircraft( vehicle )
 end
 
 do
-    local COLOR_HIDDEN = Color( 255, 255, 255, 0 )
-
     --- Hide entity without using `SetNoDraw`, because it stops networking the entity, 
     --- and removes the entity from the parent's `GetChildren` clientside.
     function Glide.HideEntity( ent, hide )
-        ent:SetRenderMode( hide and RENDERMODE_TRANSCOLOR or RENDERMODE_NORMAL )
-        ent:SetColor( hide and COLOR_HIDDEN or color_white )
+        ent:SetMaterial( hide and "null" or "" )
         ent.GlideIsHidden = Either( hide, true, nil )
     end
 end
