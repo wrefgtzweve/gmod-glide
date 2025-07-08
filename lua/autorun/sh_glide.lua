@@ -277,133 +277,14 @@ function Glide.SaveDataFile( path, data )
     file.Write( path, data )
 end
 
-if CLIENT then
-    function Glide.GetLanguageText( id )
-        return language.GetPhrase( "glide." .. id )
-    end
-
-    local lastViewPos = Vector()
-    local lastViewAng = Angle()
-
-    --- Get the cached position/angle of the local player's render view.
-    function Glide.GetLocalViewLocation()
-        return lastViewPos, lastViewAng
-    end
-
-    local EyePos = EyePos
-    local EyeAngles = EyeAngles
-
-    -- `PreDrawEffects` seems like a good place to get values from EyePos/EyeAngles reliably.
-    -- `PreDrawOpaqueRenderables`/`PostDrawOpaqueRenderables` were being called
-    -- twice when there was water, and `PreRender`/`PostRender`
-    -- were causing `EyeAngles` to return incorrect angles.
-    hook.Add( "PreDrawEffects", "Glide.CachePlayerView", function( bDepth, bSkybox, b3DSkybox )
-        if bDepth or bSkybox or b3DSkybox then return end
-
-        lastViewPos = EyePos()
-        lastViewAng = EyeAngles()
-    end )
-end
-
 do
-    local Band = bit.band
-    local PointContents = util.PointContents
+    local EntityMeta = FindMetaTable( "Entity" )
+    local IsVehicle = EntityMeta.IsVehicle
 
-    local CONTENTS_SLIME = CONTENTS_SLIME
-    local CONTENTS_WATER = CONTENTS_WATER
-
-    function Glide.IsUnderWater( pos )
-        local contents = PointContents( pos )
-
-        return Band( contents, CONTENTS_SLIME ) == CONTENTS_SLIME or
-            Band( contents, CONTENTS_WATER ) == CONTENTS_WATER
+    --- Override `Entity:IsVehicle` to return `true` on Glide vehicles.
+    function EntityMeta:IsVehicle()
+        return self.IsGlideVehicle or IsVehicle( self )
     end
-end
-
-function Glide.HasBaseClass( ent, class )
-    local depth = 0
-    local base = ent.BaseClass
-
-    while depth < 10 do
-        if base and base.ClassName == class then
-            return true
-        end
-
-        depth = depth + 1
-
-        if base then
-            base = base.BaseClass
-        else
-            break
-        end
-    end
-
-    return false
-end
-
-function Glide.IsAircraft( vehicle )
-    return vehicle.VehicleType == Glide.VEHICLE_TYPE.HELICOPTER or vehicle.VehicleType == Glide.VEHICLE_TYPE.PLANE
-end
-
-do
-    --- Hide entity without using `SetNoDraw`, because it stops networking the entity, 
-    --- and removes the entity from the parent's `GetChildren` clientside.
-    function Glide.HideEntity( ent, hide )
-        ent:SetMaterial( hide and "null" or "" )
-        ent.GlideIsHidden = Either( hide, true, nil )
-    end
-end
-
-do
-    local Exp = math.exp
-
-    --- If you ever need `Lerp()`, use this instead.
-    --- `Lerp()` is not consistent on different framerates, this is.
-    function Glide.ExpDecay( a, b, decay, dt )
-        return b + ( a - b ) * Exp( -decay * dt )
-    end
-end
-
-do
-    local function AngleDifference( a, b )
-        return ( ( ( ( b - a ) % 360 ) + 540 ) % 360 ) - 180
-    end
-
-    Glide.AngleDifference = AngleDifference
-
-    local ExpDecay = Glide.ExpDecay
-
-    function Glide.ExpDecayAngle( a, b, decay, dt )
-        return ExpDecay( a, a + AngleDifference( a, b ), decay, dt )
-    end
-end
-
-do
-    local TraceLine = util.TraceLine
-
-    local ray = {}
-    local traceData = { mask = MASK_WATER, output = ray }
-    local offset = Vector()
-
-    function Glide.FindWaterSurfaceAbove( origin, maxHeight )
-        offset[3] = maxHeight or 100
-
-        traceData.start = origin + offset
-        traceData.endpos = origin
-        TraceLine( traceData )
-
-        if ray.Hit then
-            return ray.HitPos, ray.Fraction
-        end
-    end
-end
-
-local EntityMeta = FindMetaTable( "Entity" )
-local IsVehicle = EntityMeta.IsVehicle
-
---- Override `Entity:IsVehicle` to return `true` on Glide vehicles.
-function EntityMeta:IsVehicle()
-    return self.IsGlideVehicle or IsVehicle( self )
 end
 
 local function IncludeDir( dirPath, doInclude, doTransfer )
