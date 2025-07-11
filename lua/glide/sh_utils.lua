@@ -22,8 +22,15 @@ end
 --- Hides entity, without preventing the entity from being
 --- transmitted (like how ENT:SetNoDraw does).
 function Glide.HideEntity( ent, hide )
-    ent:SetMaterial( hide and "null" or "" )
     ent.GlideIsHidden = Either( hide, true, nil )
+    ent:SetRenderMode( hide and RENDERMODE_NONE or RENDERMODE_NORMAL )
+    ent:SetColor( Color( 255, 255, 255, hide and 0 or 255 ) )
+
+    if hide then
+        ent:AddEffects( EF_NOSHADOW )
+    else
+        ent:RemoveEffects( EF_NOSHADOW )
+    end
 end
 
 function Glide.IsAircraft( vehicle )
