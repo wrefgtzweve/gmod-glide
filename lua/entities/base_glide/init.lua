@@ -121,7 +121,7 @@ function ENT:Initialize()
 
     -- Setup trace filter used for hitscan weapons and other things
     -- that need to ignore the vehicle's chassis and seats.
-    self.traceFilter = { self }
+    self.traceFilter = { self, "player" }
 
     -- Copy default surface multipliers to this vehicle.
     self.surfaceGrip = table.Copy( Glide.SURFACE_GRIP )
