@@ -2,6 +2,33 @@ local IsValid = IsValid
 local RealTime = RealTime
 local LocalPlayer = LocalPlayer
 
+do
+    -- NOTE: This is a separate crosshair from what VSWEPs use.
+    local CROSSHAIR_ICONS = {
+        ["dot"] = "glide/aim_dot.png",
+        ["tank"] = "glide/aim_tank.png",
+        ["square"] = "glide/aim_square.png"
+    }
+
+    function ENT:EnableCrosshair( params )
+        params = params or {}
+
+        self.crosshair = {
+            origin = Vector(),
+            icon = CROSSHAIR_ICONS[params.iconType or "dot"],
+
+            size = params.size or 0.05,
+            color = params.color or Color( 100, 255, 100 )
+        }
+    end
+
+    function ENT:DisableCrosshair()
+        self.crosshair = nil
+    end
+
+    function ENT:UpdateCrosshairPosition() end
+end
+
 function ENT:OnLockOnStateChange( _, _, state )
     if self:GetDriver() ~= LocalPlayer() then return end
 
@@ -27,6 +54,40 @@ function ENT:OnDriverChange( _, _, _ )
     self.weaponSlotIndex = 0
 end
 
+function ENT:OnActivateWeapon( weapon, slotIndex )
+    -- Backwards compatibility with `ENT.CrosshairInfo`
+    if self.CrosshairInfo and self.CrosshairInfo[slotIndex] then
+        local data = self.CrosshairInfo[slotIndex]
+
+        local crosshairIcons = {
+            ["dot"] = "glide/aim_dot.png",
+            ["tank"] = "glide/aim_tank.png",
+            ["square"] = "glide/aim_square.png"
+        }
+
+        if data.iconType and crosshairIcons[data.iconType] then
+            weapon.CrosshairImage = crosshairIcons[data.iconType]
+        end
+
+        if data.traceOrigin then
+            weapon.LocalCrosshairOrigin = data.traceOrigin
+        end
+    end
+
+    -- Backwards compatibility with `ENT.WeaponInfo`
+    if self.WeaponInfo and self.WeaponInfo[slotIndex] then
+        local data = self.WeaponInfo[slotIndex]
+
+        if data.name then
+            weapon.Name = data.name
+        end
+
+        if data.icon then
+            weapon.Icon = data.icon
+        end
+    end
+end
+
 function ENT:OnSyncWeaponData()
     -- Read metadata
     local slotIndex = net.ReadUInt( 5 )
@@ -42,6 +103,7 @@ function ENT:OnSyncWeaponData()
         weapon:Initialize()
 
         self.weapons[slotIndex] = weapon
+        self:OnActivateWeapon( weapon, slotIndex )
     end
 
     -- Let the weapon class read custom data
@@ -64,6 +126,7 @@ end
 
 local Config = Glide.Config
 local DrawWeaponSelection = Glide.DrawWeaponSelection
+local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
 
 function ENT:DrawVehicleHUD( screenW, screenH )
     local playerListWidth = 0
@@ -84,10 +147,25 @@ function ENT:DrawVehicleHUD( screenW, screenH )
     end
 
     -- Let the weapon class draw it's own HUD
-    local weapon = self.weapons[self.weaponSlotIndex]
+    if self:GetDriver() == LocalPlayer() then
+        local weapon = self.weapons[self.weaponSlotIndex]
 
-    if weapon then
-        weapon:DrawHUD( screenW, screenH )
+        if weapon then
+            weapon:DrawHUD( screenW, screenH )
+        end
+    end
+
+    -- If we have a custom crosshair, draw it now
+    local crosshair = self.crosshair
+
+    if crosshair then
+        self:UpdateCrosshairPosition()
+
+        local pos = crosshair.origin:ToScreen()
+
+        if pos.visible then
+            DrawWeaponCrosshair( pos.x, pos.y, crosshair.icon, crosshair.size, crosshair.color )
+        end
     end
 
     return playerListWidth

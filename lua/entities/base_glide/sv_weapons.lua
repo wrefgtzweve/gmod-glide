@@ -11,6 +11,19 @@ function ENT:WeaponInit()
         earlySync = false, -- Should a weapon data sync happen early?
         lastSyncT = 0 -- Last time a weapon data sync happened
     }
+
+    -- Backwards compatibility with `ENT.WeaponSlots`
+    if self.WeaponSlots then
+        for _, data in ipairs( self.WeaponSlots ) do
+            self:CreateWeapon( "base", {
+                AmmoType = data.ammoType,
+                MaxAmmo = data.maxAmmo,
+                FireDelay = data.fireRate,
+                ReloadDelay = data.replenishDelay,
+                EnableLockOn = data.lockOn == true
+            } )
+        end
+    end
 end
 
 --- Returns the total count of weapons on this vehicle.
