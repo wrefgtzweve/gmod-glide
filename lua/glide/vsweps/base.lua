@@ -64,6 +64,7 @@ if SERVER then
         self.nextFire = 0
         self.nextReload = 0
         self.isFiring = false
+        self.isReloading = false
         self.projectileOffsetIndex = 0
 
         -- Compatibility with vehicles that use `ENT.WeaponSlots`
@@ -124,6 +125,7 @@ if SERVER then
     function VSWEP:OnWriteData()
         net.WriteUInt( self.MaxAmmo, 16 )
         net.WriteUInt( self.ammo, 16 )
+        net.WriteFloat( self.isReloading and 1 - ( self.nextReload - CurTime() ) / self.ReloadDelay or 0 )
     end
 
     function VSWEP:Reload()
@@ -174,8 +176,13 @@ if SERVER then
         local vehicle = self.Vehicle
 
         -- Reload if it is the time to do so
-        if self.ammo < 1 and time > self.nextReload and self.MaxAmmo > 0 then
-            self:Reload()
+        self.isReloading = self.ammo < 1 and self.MaxAmmo > 0
+
+        if self.isReloading then
+            if time > self.nextReload then
+                self:Reload()
+            end
+
             vehicle:MarkWeaponDataAsDirty()
         end
 
@@ -220,6 +227,8 @@ if CLIENT then
     function VSWEP:Initialize()
         self.maxAmmo = 0
         self.ammo = 0
+        self.progressBar = 0
+        self.reloadProgress = 0
     end
 
     --- Called when we're receiving a data sync event for this weapon.
@@ -229,15 +238,20 @@ if CLIENT then
     function VSWEP:OnReadData()
         self.maxAmmo = net.ReadUInt( 16 )
         self.ammo = net.ReadUInt( 16 )
+        self.reloadProgress = net.ReadFloat()
     end
 
     local Floor = math.floor
+    local Clamp = math.Clamp
+    local ExpDecay = Glide.ExpDecay
+
     local SetColor = surface.SetDrawColor
     local DrawRect = surface.DrawRect
     local DrawSimpleText = draw.SimpleText
     local DrawIcon = Glide.DrawIcon
 
     local colors = {
+        accent = Glide.THEME_COLOR,
         text = Color( 255, 255, 255 ),
         lowAmmo = Color( 255, 115, 0 ),
         noAmmo = Color( 255, 50, 50 )
@@ -265,6 +279,16 @@ if CLIENT then
 
         SetColor( 30, 30, 30, 230 )
         DrawRect( 0, y, w, h )
+
+        -- Draw a progress bar if this weapon is reloading or does not have infinite ammo.
+        local progressBar = self.reloadProgress > 0 and self.reloadProgress or ( maxAmmo > 0 and ammo / maxAmmo or 0 )
+
+        self.progressBar = ExpDecay( self.progressBar, Clamp( progressBar, 0, 1 ), 6, FrameTime() )
+
+        if self.progressBar > 0 then
+            SetColor( colors.accent:Unpack() )
+            DrawRect( 1, y + 1, ( w - 2 ) * self.progressBar, h - 2 )
+        end
 
         local ammoColor = colors.text
 
