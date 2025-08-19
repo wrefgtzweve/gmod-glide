@@ -5,6 +5,12 @@ VSWEP.Icon = "glide/icons/rocket.png"
 if SERVER then
     VSWEP.FireDelay = 1
     VSWEP.EnableLockOn = false
+
+    -- If not empty, use this as the missile model
+    VSWEP.MissileModel = ""
+
+    -- Missile model scale
+    VSWEP.MissileModelScale = 1.0
 end
 
 if CLIENT then
@@ -23,6 +29,11 @@ if SERVER then
         end
 
         local pos = vehicle:LocalToWorld( self.ProjectileOffsets[self.projectileOffsetIndex] )
-        vehicle:FireMissile( pos, vehicle:GetAngles(), vehicle:GetSeatDriver( 1 ), target )
+        local missile = vehicle:FireMissile( pos, vehicle:GetAngles(), vehicle:GetSeatDriver( 1 ), target )
+        missile:SetModelScale( self.MissileModelScale )
+
+        if self.MissileModel ~= "" then
+            missile:SetModel( self.MissileModel )
+        end
     end
 end

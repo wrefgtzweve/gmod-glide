@@ -65,6 +65,9 @@ if SERVER then
         self.nextReload = 0
         self.isFiring = false
         self.projectileOffsetIndex = 0
+
+        -- Compatibility with vehicles that use `ENT.WeaponSlots`
+        self.ammoType = self.AmmoType
     end
 
     function VSWEP:OnRemove()
