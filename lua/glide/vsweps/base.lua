@@ -54,8 +54,8 @@ if CLIENT then
     -- Size relative to screen resolution
     VSWEP.CrosshairSize = 0.05
 
-    -- "dot", "square" or "tank"
-    VSWEP.CrosshairType = "dot"
+    -- Path (relative to "materials/") to a .png file
+    VSWEP.CrosshairImage = "glide/aim_dot.png"
 end
 
 if SERVER then
@@ -258,12 +258,6 @@ if CLIENT then
         DrawIcon( margin + iconSize * 0.5, y + h * 0.5, self.Icon, iconSize, colors.text, 0 )
     end
 
-    local CROSSHAIR_ICONS = {
-        ["dot"] = "glide/aim_dot.png",
-        ["tank"] = "glide/aim_tank.png",
-        ["square"] = "glide/aim_square.png"
-    }
-
     local LOCKON_STATE_COLORS = {
         [0] = Color( 255, 255, 255 ),
         [1] = Color( 100, 255, 100 ),
@@ -279,6 +273,8 @@ if CLIENT then
     }
 
     function VSWEP:DrawCrosshair()
+        if self.CrosshairImage == "" then return end
+
         local vehicle = self.Vehicle
         local lockOnTarget = vehicle:GetLockOnTarget()
         local origin, color
@@ -302,7 +298,7 @@ if CLIENT then
         local pos = origin:ToScreen()
 
         if pos.visible then
-            DrawWeaponCrosshair( pos.x, pos.y, CROSSHAIR_ICONS[self.CrosshairType], self.CrosshairSize, color )
+            DrawWeaponCrosshair( pos.x, pos.y, self.CrosshairImage, self.CrosshairSize, color )
         end
     end
 end

@@ -8,7 +8,7 @@ if SERVER then
 end
 
 if CLIENT then
-    VSWEP.CrosshairType = "square"
+    VSWEP.CrosshairImage = "glide/aim_square.png"
 end
 
 if SERVER then
