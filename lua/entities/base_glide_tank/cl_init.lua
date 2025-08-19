@@ -24,6 +24,18 @@ function ENT:AllowFirstPersonMuffledSound()
 end
 
 --- Override this base class function.
+function ENT:OnActivateWeapon( weapon, slotIndex )
+    if slotIndex > 1 then
+        BaseClass.OnActivateWeapon( self, weapon, slotIndex )
+    else
+        -- Disable default cannon crosshair, since we'll draw our own
+        weapon.CrosshairImage = ""
+        weapon.Name = "#glide.weapons.cannon"
+        weapon.Icon = "glide/icons/rocket.png"
+    end
+end
+
+--- Override this base class function.
 function ENT:OnPostInitialize()
     BaseClass.OnPostInitialize( self )
 
