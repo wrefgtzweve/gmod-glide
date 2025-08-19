@@ -54,7 +54,7 @@ if CLIENT then
     -- Size relative to screen resolution
     VSWEP.CrosshairSize = 0.05
 
-    -- Path (relative to "materials/") to a .png file
+    -- Path (relative to "materials/") to a image/material file
     VSWEP.CrosshairImage = "glide/aim_dot.png"
 end
 
