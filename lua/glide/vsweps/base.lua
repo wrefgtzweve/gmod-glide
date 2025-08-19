@@ -185,8 +185,8 @@ if SERVER then
 
         shouldFire = shouldFire and ( self.MaxAmmo == 0 or self.ammo > 0 )
 
-        if self.shouldFire ~= shouldFire then
-            self.shouldFire = shouldFire
+        if self.isFiring ~= shouldFire then
+            self.isFiring = shouldFire
 
             if shouldFire then
                 self:OnStartFiring()
