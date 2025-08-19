@@ -123,7 +123,7 @@ function ENT:WeaponThink()
     local weapon = self.weapons[state.index]
     if not weapon then return end
 
-    weapon:Think( time )
+    weapon:Think()
 
     local driver = self:GetDriver()
 

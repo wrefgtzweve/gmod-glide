@@ -113,14 +113,6 @@ if SERVER then
         } )
     end
 
-    function VSWEP:OnReload()
-        self.ammo = self.MaxAmmo
-
-        if self.SingleReloadSound ~= "" then
-            self.Vehicle:EmitSound( self.SingleReloadSound )
-        end
-    end
-
     function VSWEP:OnStartFiring()
         self.Vehicle:OnWeaponStart( self, self.SlotIndex )
     end
@@ -134,53 +126,69 @@ if SERVER then
         net.WriteUInt( self.ammo, 16 )
     end
 
-    function VSWEP:Think( time )
+    function VSWEP:Reload()
+        self.ammo = self.MaxAmmo
+
+        if self.SingleReloadSound ~= "" then
+            self.Vehicle:EmitSound( self.SingleReloadSound )
+        end
+    end
+
+    local CurTime = CurTime
+
+    function VSWEP:Fire()
+        self.ammo = self.ammo - 1
+        self.nextFire = CurTime() + self.FireDelay
+
+        -- Check if the vehicle is going to handle the weapon fire logic first.
+        local vehicle = self.Vehicle
+        local allowDefaultBehaviour = vehicle:OnWeaponFire( self, self.SlotIndex )
+
+        -- If not, let this weapon class handle it.
+        if allowDefaultBehaviour then
+            self.projectileOffsetIndex = self.projectileOffsetIndex + 1
+
+            if self.projectileOffsetIndex > #self.ProjectileOffsets then
+                self.projectileOffsetIndex = 1
+            end
+
+            self:OnFire()
+
+            if self.SingleShotSound ~= "" then
+                vehicle:EmitSound( self.SingleShotSound )
+            end
+        end
+
+        if self.ammo < 1 and self.MaxAmmo > 0 then
+            self.nextReload = CurTime() + self.ReloadDelay
+        end
+
+        -- Let the driver's client know about the ammo change
+        vehicle:MarkWeaponDataAsDirty()
+    end
+
+    function VSWEP:Think()
+        local time = CurTime()
         local vehicle = self.Vehicle
 
         -- Reload if it is the time to do so
         if self.ammo < 1 and time > self.nextReload and self.MaxAmmo > 0 then
-            self:OnReload()
+            self:Reload()
             vehicle:MarkWeaponDataAsDirty()
         end
 
-        local isFiring = vehicle:GetInputBool( 1, "attack" )
+        local shouldFire = vehicle:GetInputBool( 1, "attack" )
 
-        if isFiring and time > self.nextFire and ( self.ammo > 0 or self.MaxAmmo == 0 ) then
-            self.ammo = self.ammo - 1
-            self.nextFire = time + self.FireDelay
-
-            -- Check if the vehicle is going to handle the weapon fire logic first.
-            local allowDefaultBehaviour = vehicle:OnWeaponFire( self, self.SlotIndex )
-
-            -- If not, let this weapon class handle it.
-            if allowDefaultBehaviour then
-                self.projectileOffsetIndex = self.projectileOffsetIndex + 1
-
-                if self.projectileOffsetIndex > #self.ProjectileOffsets then
-                    self.projectileOffsetIndex = 1
-                end
-
-                self:OnFire()
-
-                if self.SingleShotSound ~= "" then
-                    vehicle:EmitSound( self.SingleShotSound )
-                end
-            end
-
-            if self.ammo < 1 and self.MaxAmmo > 0 then
-                self.nextReload = time + self.ReloadDelay
-            end
-
-            -- Let the driver's client know about the ammo change
-            vehicle:MarkWeaponDataAsDirty()
+        if shouldFire and time > self.nextFire and ( self.ammo > 0 or self.MaxAmmo == 0 ) then
+            self:Fire()
         end
 
-        isFiring = isFiring and ( self.MaxAmmo == 0 or self.ammo > 0 )
+        shouldFire = shouldFire and ( self.MaxAmmo == 0 or self.ammo > 0 )
 
-        if self.isFiring ~= isFiring then
-            self.isFiring = isFiring
+        if self.shouldFire ~= shouldFire then
+            self.shouldFire = shouldFire
 
-            if isFiring then
+            if shouldFire then
                 self:OnStartFiring()
             else
                 self:OnStopFiring()
