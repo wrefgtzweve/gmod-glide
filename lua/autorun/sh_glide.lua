@@ -177,6 +177,9 @@ if SERVER then
     CreateConVar( "glide_world_physics_damage_multiplier", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier taken by Glide vehicles after colliding against the world.", 0, 10 )
 end
 
+-- Toggles
+CreateConVar( "glide_pacifist_mode", "0", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 1, disables VSWEPs and vehicle turrets.", 0 )
+
 -- Sandbox limits
 cleanup.Register( "glide_vehicles" )
 cleanup.Register( "glide_standalone_turrets" )

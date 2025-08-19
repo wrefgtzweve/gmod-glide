@@ -167,6 +167,8 @@ if SERVER then
         vehicle:MarkWeaponDataAsDirty()
     end
 
+    local CanUseWeaponry = Glide.CanUseWeaponry
+
     function VSWEP:Think()
         local time = CurTime()
         local vehicle = self.Vehicle
@@ -177,7 +179,12 @@ if SERVER then
             vehicle:MarkWeaponDataAsDirty()
         end
 
+        local driver = vehicle:GetDriver()
         local shouldFire = vehicle:GetInputBool( 1, "attack" )
+
+        if shouldFire and IsValid( driver ) then
+            shouldFire = shouldFire and CanUseWeaponry( driver )
+        end
 
         if shouldFire and time > self.nextFire and ( self.ammo > 0 or self.MaxAmmo == 0 ) then
             self:Fire()

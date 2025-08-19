@@ -127,6 +127,8 @@ end
 local Config = Glide.Config
 local DrawWeaponSelection = Glide.DrawWeaponSelection
 local DrawWeaponCrosshair = Glide.DrawWeaponCrosshair
+local CanUseWeaponry = Glide.CanUseWeaponry
+local LocalPlayer = LocalPlayer
 
 function ENT:DrawVehicleHUD( screenW, screenH )
     local playerListWidth = 0
@@ -146,8 +148,14 @@ function ENT:DrawVehicleHUD( screenW, screenH )
         end
     end
 
+    local localPly = LocalPlayer()
+
+    if not CanUseWeaponry( localPly ) then
+        return playerListWidth
+    end
+
     -- Let the weapon class draw it's own HUD
-    if self:GetDriver() == LocalPlayer() then
+    if self:GetDriver() == localPly then
         local weapon = self.weapons[self.weaponSlotIndex]
 
         if weapon then
@@ -172,8 +180,6 @@ function ENT:DrawVehicleHUD( screenW, screenH )
 end
 
 local FrameTime = FrameTime
-local LocalPlayer = LocalPlayer
-
 local Floor = math.floor
 local ExpDecay = Glide.ExpDecay
 

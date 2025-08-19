@@ -79,9 +79,17 @@ function ENT:CreateWeapon( class, data )
     end
 end
 
+local CanUseWeaponry = Glide.CanUseWeaponry
+
 --- Switch the current active weapon.
 function ENT:SelectWeaponIndex( index )
     if self.weaponCount == 0 then return end
+
+    local driver = self:GetDriver()
+
+    if IsValid( driver ) and not CanUseWeaponry( driver ) then
+        return
+    end
 
     -- Wrap the index around if outside limits
     if index > self.weaponCount then
