@@ -234,6 +234,10 @@ function ENT:UpdateTransmitState()
     return 2 -- TRANSMIT_PVS
 end
 
+function ENT:OnRemove()
+    self:ClearWeapons()
+end
+
 function ENT:Use( activator )
     if not IsValid( activator ) then return end
     if not activator:IsPlayer() then return end
