@@ -104,11 +104,13 @@ function ENT:UpdateLights()
             l = self.activeHeadlights[index]
             hasLight = IsValid( l )
 
-            if hasLight then
+            local currentTick = engine.TickCount()
+            if hasLight and self.lastTick and currentTick > self.lastTick then
                 l:SetPos( self:LocalToWorld( data.offset ) )
                 l:SetAngles( self:LocalToWorldAngles( data.angles ) )
                 l:Update()
             end
+            self.lastTick = currentTick
 
             -- Check if this light no longer meets the optional bodygroup requirement.
             if data.ifBodygroupId and hasLight ~= ( self:GetBodygroup( data.ifBodygroupId ) == ( data.ifSubModelId or 0 ) ) then
