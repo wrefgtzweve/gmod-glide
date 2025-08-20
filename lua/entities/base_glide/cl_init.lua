@@ -19,9 +19,8 @@ function ENT:Initialize()
     self.waterSideSlide = 0
     self.isLocalPlayerInFirstPerson = false
 
-    self.crosshair = {
-        enabled = false
-    }
+    self.weapons = {}
+    self.weaponSlotIndex = 0
 
     -- Create a RangedFeature to handle engine sounds
     self.rfSounds = Glide.CreateRangedFeature( self, self.MaxSoundDistance )
@@ -279,26 +278,5 @@ function ENT:Think()
         self.rfMisc:Think()
     end
 
-    if self.crosshair.enabled then
-        self:UpdateCrosshairPosition()
-    end
-
     return true
-end
-
-function ENT:OnLocalPlayerEnter( seatIndex )
-    self:DisableCrosshair()
-
-    if seatIndex > 1 then return end
-
-    -- Setup the default crosshair
-    local info = self.CrosshairInfo[self:GetWeaponIndex()]
-
-    if info then
-        self:EnableCrosshair( info )
-    end
-end
-
-function ENT:OnLocalPlayerExit()
-    self:DisableCrosshair()
 end

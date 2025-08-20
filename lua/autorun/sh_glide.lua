@@ -177,6 +177,9 @@ if SERVER then
     CreateConVar( "glide_world_physics_damage_multiplier", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Damage multiplier taken by Glide vehicles after colliding against the world.", 0, 10 )
 end
 
+-- Toggles
+CreateConVar( "glide_pacifist_mode", "0", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 1, disables VSWEPs and vehicle turrets.", 0 )
+
 -- Sandbox limits
 cleanup.Register( "glide_vehicles" )
 cleanup.Register( "glide_standalone_turrets" )
@@ -287,7 +290,7 @@ do
     end
 end
 
-local function IncludeDir( dirPath, doInclude, doTransfer )
+function Glide.IncludeDir( dirPath, doInclude, doTransfer )
     local files = file.Find( dirPath .. "*.lua", "LUA" )
     local path
 
@@ -309,23 +312,23 @@ if SERVER then
     resource.AddWorkshop( "3389728250" )
 
     -- Shared files
-    IncludeDir( "glide/", true, true )
+    Glide.IncludeDir( "glide/", true, true )
 
     -- Server-only files
-    IncludeDir( "glide/server/", true, false )
+    Glide.IncludeDir( "glide/server/", true, false )
 
     -- Client-only files
     AddCSLuaFile( "includes/modules/styled_theme.lua" )
     AddCSLuaFile( "includes/modules/styled_theme_tabbed_frame.lua" )
     AddCSLuaFile( "includes/modules/styled_theme_file_browser.lua" )
 
-    IncludeDir( "glide/client/", false, true )
-    IncludeDir( "glide/client/vgui/", false, true )
+    Glide.IncludeDir( "glide/client/", false, true )
+    Glide.IncludeDir( "glide/client/vgui/", false, true )
 end
 
 if CLIENT then
     -- Shared files
-    IncludeDir( "glide/", true, false )
+    Glide.IncludeDir( "glide/", true, false )
 
     -- UI theme library
     require( "styled_theme" )
@@ -348,10 +351,10 @@ if CLIENT then
     } )
 
     -- Client-only files
-    IncludeDir( "glide/client/", true, false )
-    IncludeDir( "glide/client/vgui/", true, false )
+    Glide.IncludeDir( "glide/client/", true, false )
+    Glide.IncludeDir( "glide/client/vgui/", true, false )
 end
 
 -- Automatically include files under
 -- `lua/glide/autoload/`, on both server and client.
-IncludeDir( "glide/autoload/", true, true )
+Glide.IncludeDir( "glide/autoload/", true, true )
