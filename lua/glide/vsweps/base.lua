@@ -80,6 +80,11 @@ if SERVER then
     end
 
     function VSWEP:OnHolster()
+        if self.isFiring then
+            self.isFiring = false
+            self:OnStopFiring()
+        end
+
         local myIndex, myAmmoType = self.SlotIndex, self.AmmoType
         if myAmmoType == "" then return end
 
@@ -189,15 +194,15 @@ if SERVER then
         local driver = vehicle:GetDriver()
         local shouldFire = vehicle:GetInputBool( 1, "attack" )
 
+        shouldFire = shouldFire and ( self.MaxAmmo == 0 or self.ammo > 0 )
+
         if shouldFire and IsValid( driver ) then
             shouldFire = shouldFire and CanUseWeaponry( driver )
         end
 
-        if shouldFire and time > self.nextFire and ( self.ammo > 0 or self.MaxAmmo == 0 ) then
+        if shouldFire and time > self.nextFire then
             self:Fire()
         end
-
-        shouldFire = shouldFire and ( self.MaxAmmo == 0 or self.ammo > 0 )
 
         if self.isFiring ~= shouldFire then
             self.isFiring = shouldFire

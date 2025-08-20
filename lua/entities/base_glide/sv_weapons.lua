@@ -105,11 +105,6 @@ function ENT:SelectWeaponIndex( index )
     local lastWeapon = self.weapons[self.weaponState.index]
 
     if lastWeapon then
-        -- Trigger the "stop fire" event from the current weapon
-        if lastWeapon.isFiring then
-            lastWeapon:OnStopFiring()
-        end
-
         -- Let the last weapon know it's no longer active
         lastWeapon:OnHolster()
     end
