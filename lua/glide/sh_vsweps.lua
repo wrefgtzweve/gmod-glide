@@ -32,13 +32,7 @@ local function ValidateTableKey( tbl, key, expectedType )
 end
 
 local function RunWeaponScript( path, className )
-    local func = CompileFile( path, true )
-
-    if not func then
-        return
-    end
-
-    func()
+    include( path )
 
     -- Set ClassName field
     VSWEP.ClassName = className
@@ -133,7 +127,7 @@ function Glide.ReloadWeaponScript( className )
 end
 
 -- Only include weapons after everything else has loaded.
-hook.Add( "InitPostEntity", "Glide.RegisterVSWEPS", function()
+function Glide.InitializeVSWEPS()
     -- Include all lua files inside lua/glide/vsweps/
     local files = file.Find( "glide/vsweps/*.lua", "LUA" )
 
@@ -147,7 +141,7 @@ hook.Add( "InitPostEntity", "Glide.RegisterVSWEPS", function()
     for className, _ in pairs( Glide.WeaponRegistry ) do
         RefreshInheritance( className )
     end
-end )
+end
 
 --[[
     Server-side command to reload VSWEP code
