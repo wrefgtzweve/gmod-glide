@@ -34,9 +34,9 @@ end
 local function RunWeaponScript( path, className )
     local func = CompileFile( path )
     if not func then
+        Glide.Print( "Failed to load vehicle weapon script '%s'!", className )
         return
     end
-
     func()
 
     -- Set ClassName field
@@ -117,15 +117,11 @@ function Glide.ReloadWeaponScript( className )
     end
 
     -- Run and validate code
-    local success, err = pcall( RunWeaponScript, path, className )
-
+    local success = ProtectedCall( RunWeaponScript, path, className )
     if success then
         registry[className] = VSWEP
-
-    elseif err then
-        ErrorNoHalt( "Failed to include vehicle weapon " .. className .. ": " .. err )
     else
-        ErrorNoHalt( "Failed to include vehicle weapon " .. className )
+        Glide.Print( "Failed to load vehicle weapon script '%s'!", className )
     end
 
     VSWEP = nil
