@@ -32,7 +32,13 @@ local function ValidateTableKey( tbl, key, expectedType )
 end
 
 local function RunWeaponScript( path, className )
-    include( path )
+    local func = CompileFile( path, true )
+
+    if not func then
+        return
+    end
+
+    func()
 
     -- Set ClassName field
     VSWEP.ClassName = className
