@@ -32,8 +32,7 @@ local function ValidateTableKey( tbl, key, expectedType )
 end
 
 local function RunWeaponScript( path, className )
-    local func = CompileFile( path, true )
-
+    local func = CompileFile( path )
     if not func then
         return
     end
