@@ -102,15 +102,44 @@ function ENT:SelectWeaponIndex( index )
     local weapon = self.weapons[index]
     if not weapon then return end
 
-    local lastWeapon = self.weapons[self.weaponState.index]
+    local lastIndex = self.weaponState.index
+    local lastWeapon = self.weapons[lastIndex]
 
     if lastWeapon then
+        if lastWeapon.isFiring then
+            lastWeapon.isFiring = false
+            self:OnWeaponStop( lastWeapon, lastWeapon.SlotIndex )
+        end
+
+        local lastAmmoType = lastWeapon.AmmoType
+
+        if lastAmmoType ~= "" then
+            for i, otherWeapon in ipairs( self.weapons ) do
+                if i ~= lastIndex and lastAmmoType == otherWeapon.AmmoType then
+                    -- Share the reload and fire cooldowns to all
+                    -- other weapons with the same ammo type.
+                    otherWeapon.nextFire = lastWeapon.nextFire
+                    otherWeapon.nextReload = lastWeapon.nextReload
+
+                    -- Share the ammo count to all other weapons with the same
+                    -- ammo type AND that have `AmmoTypeShareCapacity` set to `true`.
+                    if otherWeapon.AmmoTypeShareCapacity then
+                        otherWeapon.ammo = lastWeapon.ammo
+                        otherWeapon.projectileOffsetIndex = lastWeapon.projectileOffsetIndex
+                    end
+                end
+            end
+        end
+
         -- Let the last weapon know it's no longer active
         lastWeapon:OnHolster()
     end
 
     -- Let the current weapon know it's active
     weapon:OnDeploy()
+
+    self:ClearLockOnTarget()
+    self:MarkWeaponDataAsDirty()
     self.weaponState.index = index
 end
 
@@ -126,7 +155,7 @@ function ENT:WeaponThink()
     local weapon = self.weapons[state.index]
     if not weapon then return end
 
-    weapon:Think()
+    weapon:InternalThink()
 
     local driver = self:GetDriver()
 

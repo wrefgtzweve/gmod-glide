@@ -59,6 +59,8 @@ if CLIENT then
 end
 
 if SERVER then
+    local CurTime = CurTime
+
     function VSWEP:Initialize()
         self.ammo = self.MaxAmmo
         self.nextFire = 0
@@ -67,46 +69,24 @@ if SERVER then
         self.isReloading = false
         self.projectileOffsetIndex = 0
 
-        -- Compatibility with vehicles that use `ENT.WeaponSlots`
+        -- Compatibility with vehicles that use `ENT.WeaponSlots`, and
+        -- access the weapon's `ammoType` (lowercase "a") on `ENT:OnWeaponFire`.
         self.ammoType = self.AmmoType
     end
 
-    function VSWEP:OnRemove()
-    end
+    -- You can override these on children classes.
+    function VSWEP:Think() end
+    function VSWEP:OnRemove() end
+    function VSWEP:OnDeploy() end
+    function VSWEP:OnHolster() end
 
-    function VSWEP:OnDeploy()
-        self.Vehicle:ClearLockOnTarget()
-        self.Vehicle:MarkWeaponDataAsDirty()
-    end
+    -- You can override this on children classes.
+    function VSWEP:PrimaryAttack()
+        self:TakePrimaryAmmo( 1 )
+        self:SetNextPrimaryFire( CurTime() + self.FireDelay )
+        self:IncrementProjectileIndex()
+        self:ShootEffects()
 
-    function VSWEP:OnHolster()
-        if self.isFiring then
-            self.isFiring = false
-            self:OnStopFiring()
-        end
-
-        local myIndex, myAmmoType = self.SlotIndex, self.AmmoType
-        if myAmmoType == "" then return end
-
-        for i, otherWeapon in ipairs( self.Vehicle.weapons ) do
-            if i ~= myIndex and myAmmoType == otherWeapon.AmmoType then
-
-                -- Share the reload and fire cooldowns to all
-                -- other weapons with the same ammo type.
-                otherWeapon.nextFire = self.nextFire
-                otherWeapon.nextReload = self.nextReload
-
-                -- Share the ammo count to all other weapons with the same
-                -- ammo type AND that have `AmmoTypeShareCapacity` set to `true`.
-                if otherWeapon.AmmoTypeShareCapacity then
-                    otherWeapon.ammo = self.ammo
-                    otherWeapon.projectileOffsetIndex = self.projectileOffsetIndex
-                end
-            end
-        end
-    end
-
-    function VSWEP:OnFire()
         local vehicle = self.Vehicle
 
         vehicle:FireBullet( {
@@ -119,20 +99,7 @@ if SERVER then
         } )
     end
 
-    function VSWEP:OnStartFiring()
-        self.Vehicle:OnWeaponStart( self, self.SlotIndex )
-    end
-
-    function VSWEP:OnStopFiring()
-        self.Vehicle:OnWeaponStop( self, self.SlotIndex )
-    end
-
-    function VSWEP:OnWriteData()
-        net.WriteUInt( self.MaxAmmo, 16 )
-        net.WriteUInt( self.ammo, 16 )
-        net.WriteFloat( self.isReloading and 1 - ( self.nextReload - CurTime() ) / self.ReloadDelay or 0 )
-    end
-
+    -- You can override this on children classes.
     function VSWEP:Reload()
         self.ammo = self.MaxAmmo
 
@@ -141,42 +108,55 @@ if SERVER then
         end
     end
 
-    local CurTime = CurTime
+    -- You can override this on children classes.
+    function VSWEP:ShootEffects()
+        if self.SingleShotSound ~= "" then
+            self.Vehicle:EmitSound( self.SingleShotSound )
+        end
+    end
 
-    function VSWEP:Fire()
-        self.ammo = self.ammo - 1
-        self.nextFire = CurTime() + self.FireDelay
+    function VSWEP:SetNextPrimaryFire( time )
+        self.nextFire = time
+    end
 
-        -- Check if the vehicle is going to handle the weapon fire logic first.
-        local vehicle = self.Vehicle
-        local allowDefaultBehaviour = vehicle:OnWeaponFire( self, self.SlotIndex )
+    function VSWEP:TakePrimaryAmmo( amount )
+        self.ammo = math.max( 0, self.ammo - amount )
+        self.Vehicle:MarkWeaponDataAsDirty()
+    end
 
-        -- If not, let this weapon class handle it.
+    function VSWEP:IncrementProjectileIndex()
+        self.projectileOffsetIndex = self.projectileOffsetIndex + 1
+
+        if self.projectileOffsetIndex > #self.ProjectileOffsets then
+            self.projectileOffsetIndex = 1
+        end
+    end
+
+    function VSWEP:PrimaryAttackInternal()
+        -- Check if the vehicle is going to override the weapon fire event first.
+        local allowDefaultBehaviour = self.Vehicle:OnWeaponFire( self, self.SlotIndex )
+
+        -- If the vehicle did not block the event,
+        -- then run `VSWEP:PrimaryAttack`.
         if allowDefaultBehaviour then
-            self.projectileOffsetIndex = self.projectileOffsetIndex + 1
-
-            if self.projectileOffsetIndex > #self.ProjectileOffsets then
-                self.projectileOffsetIndex = 1
-            end
-
-            self:OnFire()
-
-            if self.SingleShotSound ~= "" then
-                vehicle:EmitSound( self.SingleShotSound )
-            end
+            self:PrimaryAttack()
+        else
+            -- If the vehicle does block the event,
+            -- do this to keep backwards compatibility.
+            self:TakePrimaryAmmo( 1 )
+            self:SetNextPrimaryFire( CurTime() + self.FireDelay )
+            self:IncrementProjectileIndex()
         end
 
+        -- If we ran out of ammo, set the nextReload timer.
         if self.ammo < 1 and self.MaxAmmo > 0 then
             self.nextReload = CurTime() + self.ReloadDelay
         end
-
-        -- Let the driver's client know about the ammo change
-        vehicle:MarkWeaponDataAsDirty()
     end
 
     local CanUseWeaponry = Glide.CanUseWeaponry
 
-    function VSWEP:Think()
+    function VSWEP:InternalThink()
         local time = CurTime()
         local vehicle = self.Vehicle
 
@@ -201,18 +181,32 @@ if SERVER then
         end
 
         if shouldFire and time > self.nextFire then
-            self:Fire()
+            self:PrimaryAttackInternal()
         end
 
         if self.isFiring ~= shouldFire then
             self.isFiring = shouldFire
 
             if shouldFire then
-                self:OnStartFiring()
+                vehicle:OnWeaponStart( self, self.SlotIndex )
             else
-                self:OnStopFiring()
+                vehicle:OnWeaponStop( self, self.SlotIndex )
             end
         end
+
+        self:Think()
+    end
+
+    --- You can override this function to add/change
+    --- the data to be send to the driver's client.
+    ---
+    --- If you do override it, please remember to call
+    --- `self.BaseClass.OnWriteData( self )` first, if you
+    --- still plan to draw the original HUD from this base class.
+    function VSWEP:OnWriteData()
+        net.WriteUInt( self.MaxAmmo, 16 )
+        net.WriteUInt( self.ammo, 16 )
+        net.WriteFloat( self.isReloading and 1 - ( self.nextReload - CurTime() ) / self.ReloadDelay or 0 )
     end
 end
 
@@ -225,6 +219,9 @@ if CLIENT then
 
         - The local player is the driver of the vehicle that has this weapon
         - The weapon is the current active weapon
+
+        Client-side weapon instances are destroyed as soon
+        as the local player leaves the vehicle.
     ]]
 
     --- Called when this weapon is created locally,
@@ -240,6 +237,10 @@ if CLIENT then
     ---
     --- You must use `net.Read*` functions in the same order
     --- as you wrote them on `VSWEP:OnWriteData`.
+    ---
+    --- If you do override this function, please remember to call
+    --- `self.BaseClass.OnReadData( self )` first, if you
+    --- still plan to draw the original HUD from this base class.
     function VSWEP:OnReadData()
         self.maxAmmo = net.ReadUInt( 16 )
         self.ammo = net.ReadUInt( 16 )

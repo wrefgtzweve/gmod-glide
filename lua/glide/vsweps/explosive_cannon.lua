@@ -2,7 +2,12 @@ VSWEP.Base = "base"
 VSWEP.Name = "#glide.weapons.explosive_cannon"
 
 if SERVER then
-    function VSWEP:OnFire()
+    function VSWEP:PrimaryAttack()
+        self:TakePrimaryAmmo( 1 )
+        self:SetNextPrimaryFire( CurTime() + self.FireDelay )
+        self:IncrementProjectileIndex()
+        self:ShootEffects()
+
         local vehicle = self.Vehicle
 
         vehicle:FireBullet( {
