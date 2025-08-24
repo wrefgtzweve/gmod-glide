@@ -205,7 +205,7 @@ function Config:CheckVersion( data )
     if upgraded then
         Glide.Print( "glide.json: Upgraded from version %i", data.version )
     else
-        Glide.Print( "glide.json: Version %i", data.version )
+        Glide.PrintDev( "glide.json: Version %i", data.version )
     end
 
     return data
@@ -333,7 +333,7 @@ function Config:TransmitInputSettings( immediate )
         binds = self.binds
     }
 
-    Glide.Print( "Transmitting input data to the server." )
+    Glide.PrintDev( "Transmitting input data to the server." )
 
     Glide.StartCommand( Glide.CMD_INPUT_SETTINGS )
     Glide.WriteTable( data )

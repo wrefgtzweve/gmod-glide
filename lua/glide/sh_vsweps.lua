@@ -103,7 +103,7 @@ function Glide.ReloadWeaponScript( className )
         return
     end
 
-    Glide.Print( "Reloading vehicle weapon script '%s'", className )
+    Glide.PrintDev( "Reloading vehicle weapon script '%s'", className )
 
     local registry = Glide.WeaponRegistry
 
