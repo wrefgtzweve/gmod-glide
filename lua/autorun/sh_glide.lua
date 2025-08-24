@@ -358,3 +358,5 @@ end
 -- Automatically include files under
 -- `lua/glide/autoload/`, on both server and client.
 Glide.IncludeDir( "glide/autoload/", true, true )
+
+Glide.InitializeVSWEPS()
