@@ -15,6 +15,9 @@ function ENT:OnReloaded()
 end
 
 function ENT:Initialize()
+    self.isLazyThink = false
+    self.lazyThinkCD = 0
+
     self.sounds = {}
     self.waterSideSlide = 0
     self.isLocalPlayerInFirstPerson = false
@@ -131,31 +134,33 @@ function ENT:DeactivateSounds()
 end
 
 function ENT:UpdateSounds()
-    local signal = self:GetTurnSignalState()
+    if not self.isLazyThink then
+        local signal = self:GetTurnSignalState()
 
-    if signal > 0 and self.TurnSignalVolume > 0 then
-        local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
+        if signal > 0 and self.TurnSignalVolume > 0 then
+            local signalBlink = ( CurTime() % self.TurnSignalCycle ) > self.TurnSignalCycle * 0.5
 
-        if self.lastSignalBlink ~= signalBlink then
-            self.lastSignalBlink = signalBlink
+            if self.lastSignalBlink ~= signalBlink then
+                self.lastSignalBlink = signalBlink
 
-            if signalBlink and self.TurnSignalTickOnSound ~= "" then
-                self:EmitSound( self.TurnSignalTickOnSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+                if signalBlink and self.TurnSignalTickOnSound ~= "" then
+                    self:EmitSound( self.TurnSignalTickOnSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
 
-            elseif not signalBlink and self.TurnSignalTickOffSound ~= "" then
-                self:EmitSound( self.TurnSignalTickOffSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+                elseif not signalBlink and self.TurnSignalTickOffSound ~= "" then
+                    self:EmitSound( self.TurnSignalTickOffSound, 65, self.TurnSignalPitch, self.TurnSignalVolume )
+                end
             end
         end
-    end
 
-    local sounds = self.sounds
+        local sounds = self.sounds
 
-    if sounds.start and self:GetEngineState() ~= 1 then
-        sounds.start:Stop()
-        sounds.start = nil
+        if sounds.start and self:GetEngineState() ~= 1 then
+            sounds.start:Stop()
+            sounds.start = nil
 
-        if self.StartTailSound and self.StartTailSound ~= "" then
-            Glide.PlaySoundSet( self.StartTailSound, self )
+            if self.StartTailSound and self.StartTailSound ~= "" then
+                Glide.PlaySoundSet( self.StartTailSound, self )
+            end
         end
     end
 
@@ -266,9 +271,22 @@ function ENT:UpdateMisc()
     self:OnUpdateMisc()
 end
 
+local LocalPlayer = LocalPlayer
+
 function ENT:Think()
-    -- Run again next frame
     self:SetNextClientThink( CurTime() )
+
+    -- Run some things less frequently when the
+    -- local player is not inside this vehicle.
+    local t = RealTime()
+    local isLazy = LocalPlayer():GlideGetVehicle() ~= self
+
+    if isLazy and t > self.lazyThinkCD then
+        isLazy = false
+        self.lazyThinkCD = t + 0.05
+    end
+
+    self.isLazyThink = isLazy
 
     if self.rfSounds then
         self.rfSounds:Think()
