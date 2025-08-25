@@ -239,6 +239,7 @@ do
     -- Using `cvars.AddChangeCallback` was unreliable serverside,
     -- so we will check it periodically instead.
     local cvarDeveloper = GetConVar( "developer" )
+    isDeveloperActive = cvarDeveloper:GetBool()
 
     timer.Create( "Glide.CheckDeveloperConvar", 1, 0, function()
         isDeveloperActive = cvarDeveloper:GetBool()
@@ -298,7 +299,7 @@ function Glide.IncludeDir( dirPath, doInclude, doTransfer )
         path = dirPath .. fileName
 
         if doInclude then
-            Glide.Print( "Including file: %s", path )
+            Glide.PrintDev( "Including file: %s", path )
             include( path )
         end
 
