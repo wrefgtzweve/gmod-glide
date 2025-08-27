@@ -37,7 +37,6 @@ Glide.InputGroups = Glide.InputGroups or {}
 --- parameters on both SERVER and CLIENT for this to work properly!
 function Glide.SetupInputGroup( groupId )
     assert( type( groupId ) == "string", "Input groupId must be a string!" )
-    assert( type( groupId ) == "string", "Input group label must be a string!" )
 
     -- Create a empty actions table for this group
     Glide.InputGroups[groupId] = {}
