@@ -15,6 +15,8 @@ function ENT:ResetInputs( seatIndex )
             floats[action] = 0
         end
     end
+
+    self.inputThrottleModifierToggle = false
 end
 
 --- Get the action's boolean value from a specific seat.
@@ -101,6 +103,15 @@ function ENT:SetInputBool( seatIndex, action, pressed )
 
     elseif action == "detach_trailer" and self.socketCount > 0 then
         self:DisconnectAllSockets()
+
+    elseif action == "throttle_modifier" and self.inputThrottleModifierMode == 2 then
+        self.inputThrottleModifierToggle = not self.inputThrottleModifierToggle
+
+        Glide.SendNotification( self:GetAllPlayers(), {
+            text = "#glide.notify.reduced_throttle_" .. ( self.inputThrottleModifierToggle and "on" or "off" ),
+            icon = "materials/glide/icons/" .. ( self.inputThrottleModifierToggle and "play_next" or "fast_forward" ) .. ".png",
+            immediate = true
+        } )
     end
 
     if action == "toggle_engine" then
@@ -124,4 +135,17 @@ function ENT:OnInputMouseWheel( seatIndex, value )
     if seatIndex < 2 then
         self:SelectWeaponIndex( self:GetWeaponIndex() + ( value > 0 and -1 or 1 ) )
     end
+end
+
+function ENT:GetInputThrottleModifier()
+    local mode = self.inputThrottleModifierMode
+
+    if mode == 2 then
+        return self.inputThrottleModifierToggle and 0.6 or 1.0
+
+    elseif mode == 1 then
+        return self:GetInputBool( 1, "throttle_modifier" ) and 0.6 or 1.0
+    end
+
+    return self:GetInputBool( 1, "throttle_modifier" ) and 1.0 or 0.6
 end

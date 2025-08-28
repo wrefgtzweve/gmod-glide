@@ -110,6 +110,8 @@ function ENT:Initialize()
     self.inputFlyMode = 0           -- User mouse flying mode
     self.inputManualShift = false   -- User manual gear shifting setting
     self.autoTurnOffLights = false  -- User "turn off headlights" setting
+    self.inputThrottleModifierMode = 0  -- User throttle modifier setting
+    self.inputThrottleModifierToggle = false
 
     -- Setup collision variables
     self.collisionShakeCooldown = 0

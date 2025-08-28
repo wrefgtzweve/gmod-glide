@@ -65,6 +65,7 @@ function Config:Reset()
 
     -- Misc. settings
     self.manualGearShifting = false
+    self.throttleModifierMode = 0
     self.autoHeadlightOn = true
     self.autoHeadlightOff = true
     self.autoTurnOffLights = true
@@ -169,6 +170,7 @@ function Config:Save( immediate )
         useKMH = self.useKMH,
 
         manualGearShifting = self.manualGearShifting,
+        throttleModifierMode = self.throttleModifierMode,
         autoHeadlightOn = self.autoHeadlightOn,
         autoHeadlightOff = self.autoHeadlightOff,
         autoTurnOffLights = self.autoTurnOffLights,
@@ -282,6 +284,7 @@ function Config:Load()
     LoadBool( "showSkybox", true )
     LoadBool( "useKMH", false )
 
+    SetNumber( self, "throttleModifierMode", data.throttleModifierMode, 0, 2, self.throttleModifierMode )
     LoadBool( "manualGearShifting", false )
     LoadBool( "autoHeadlightOn", true )
     LoadBool( "autoHeadlightOff", true )
@@ -325,6 +328,7 @@ function Config:TransmitInputSettings( immediate )
 
         -- Keyboard settings
         manualGearShifting = self.manualGearShifting,
+        throttleModifierMode = self.throttleModifierMode,
 
         -- Misc. settings
         autoTurnOffLights = self.autoTurnOffLights,
@@ -716,6 +720,30 @@ function Config:OpenFrame()
 
     table.SortByMember( groupList, "order", true )
 
+    -- Create extra panels for some actions
+    local extraActionFunctions = {
+        ["shift_up"] = function()
+            CreateToggle( panelKeyboard, L"input.manual_shift", self.manualGearShifting, function( value )
+                self.manualGearShifting = value
+                self:Save()
+                self:TransmitInputSettings()
+            end )
+        end,
+        ["throttle_modifier"] = function()
+            local throttleModOptions = {
+                L"input.throttle_mod.hold_to_full",
+                L"input.throttle_mod.hold_to_reduce",
+                L"input.throttle_mod.tap_to_toggle"
+            }
+
+            CreateCombo( panelKeyboard, L"input.throttle_mod_mode", throttleModOptions, self.throttleModifierMode + 1, function( value )
+                self.throttleModifierMode = value - 1
+                self:Save()
+                self:TransmitInputSettings()
+            end )
+        end
+    }
+
     local binds = self.binds
     local CreateBinderButton = Config.CreateBinderButton
 
@@ -726,14 +754,6 @@ function Config:OpenFrame()
 
         CreateHeader( panelKeyboard, "#glide.input." .. groupId, 0 )
 
-        if groupId == "land_controls" then
-            CreateToggle( panelKeyboard, L"input.manual_shift", self.manualGearShifting, function( value )
-                self.manualGearShifting = value
-                self:Save()
-                self:TransmitInputSettings()
-            end )
-        end
-
         local OnChangeGroupBind = function( action, key )
             groupBinds[action] = key
             self:Save()
@@ -742,6 +762,10 @@ function Config:OpenFrame()
 
         for action, _ in SortedPairs( actions ) do
             CreateBinderButton( panelKeyboard, "#glide.input." .. action, action, groupBinds[action], OnChangeGroupBind )
+
+            if extraActionFunctions[action] then
+                extraActionFunctions[action]()
+            end
         end
     end
 
