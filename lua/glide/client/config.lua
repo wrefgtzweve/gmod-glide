@@ -419,6 +419,15 @@ Config.CreateCombo = StyledTheme.CreateFormCombo
 
 -- Utility to create a button binder row.
 do
+    local function UpdateResetButton( button, currentKey, invalidateLayout )
+        local groupId, actionId = button.inputGroupId, button.inputActionId
+        button:SetVisible( currentKey ~= Glide.InputGroups[groupId][actionId] )
+
+        if invalidateLayout then
+            button:InvalidateParent()
+        end
+    end
+
     local OnBinderChange = function( self, value )
         if self._ignoreChange then return end
 
@@ -432,6 +441,7 @@ do
         else
             self.inputLastKey = value
             self.inputCallback( self.inputActionId, value )
+            UpdateResetButton( self.inputResetButton, value, true )
         end
     end
 
@@ -448,6 +458,10 @@ do
 
             if IsValid( binder ) then
                 binder:SetValue( defaultKey or KEY_NONE )
+            end
+
+            if IsValid( self ) then
+                UpdateResetButton( self, defaultKey, true )
             end
         end, "#glide.no" )
     end
@@ -469,10 +483,13 @@ do
         StyledTheme.Apply( buttonReset )
         buttonReset:SizeToContents()
 
+        binder.inputResetButton = buttonReset
         buttonReset.inputBinder = binder
         buttonReset.inputGroupId = groupId
         buttonReset.inputActionId = actionId
         buttonReset.DoClick = OnClickReset
+
+        UpdateResetButton( buttonReset, currentKey )
 
         return binder
     end
