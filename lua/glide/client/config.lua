@@ -424,23 +424,55 @@ do
 
         if Glide.SEAT_SWITCH_BUTTONS[value] then
             self._ignoreChange = true
-            self:SetValue( self.inputDefaultKey )
+            self:SetValue( self.inputLastKey )
             self._ignoreChange = nil
 
             local msg = Glide.GetLanguageText( "input.reserved_seat_key" ):format( input.GetKeyName( value ) )
             Derma_Message( msg, "#glide.input.invalid_bind", "#glide.ok" )
         else
+            self.inputLastKey = value
             self.inputCallback( self.inputActionId, value )
         end
     end
 
-    function Config.CreateBinderButton( parent, text, actionId, defaultKey, callback )
-        local binder = StyledTheme.CreateFormBinder( parent, text, defaultKey )
+    local OnClickReset = function( self )
+        local groupId, actionId = self.inputGroupId, self.inputActionId
+        local binder = self.inputBinder
+
+        Derma_Query( "#glide.input.reset_bind_query", "#glide.input." .. actionId, "#glide.yes", function()
+            local defaultKey = Glide.InputGroups[groupId][actionId]
+
+            Config.binds[groupId][actionId] = defaultKey
+            Config:Save()
+            Config:TransmitInputSettings()
+
+            if IsValid( binder ) then
+                binder:SetValue( defaultKey or KEY_NONE )
+            end
+        end, "#glide.no" )
+    end
+
+    function Config.CreateBinderButton( parent, actionId, groupId, currentKey, callback )
+        local binder = StyledTheme.CreateFormBinder( parent, "#glide.input." .. actionId, currentKey )
 
         binder.inputActionId = actionId
-        binder.inputDefaultKey = defaultKey
+        binder.inputLastKey = currentKey
         binder.inputCallback = callback
         binder.OnChange = OnBinderChange
+
+        local buttonReset = vgui.Create( "DBinder", binder:GetParent() )
+        buttonReset:SetText( "" )
+        buttonReset:SetTooltip( "#glide.input.reset_bind" )
+        buttonReset:SetIcon( "icon16/arrow_undo.png" )
+        buttonReset:Dock( RIGHT )
+
+        StyledTheme.Apply( buttonReset )
+        buttonReset:SizeToContents()
+
+        buttonReset.inputBinder = binder
+        buttonReset.inputGroupId = groupId
+        buttonReset.inputActionId = actionId
+        buttonReset.DoClick = OnClickReset
 
         return binder
     end
@@ -770,7 +802,7 @@ function Config:OpenFrame()
         end
 
         for action, _ in SortedPairs( actions ) do
-            CreateBinderButton( panelKeyboard, "#glide.input." .. action, action, groupBinds[action], OnChangeGroupBind )
+            CreateBinderButton( panelKeyboard, action, groupId, groupBinds[action], OnChangeGroupBind )
 
             if extraActionFunctions[action] then
                 extraActionFunctions[action]()
