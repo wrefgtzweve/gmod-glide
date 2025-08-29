@@ -459,10 +459,19 @@ function Config:OpenFrame()
     frame:MakePopup()
 
     frame.OnClose = function()
+        self.lastTabIndex = frame.lastTabIndex
         self.frame = nil
     end
 
     self.frame = frame
+
+    ----- Go back to last open tab ----- 
+
+    timer.Simple( 0, function()
+        if IsValid( self.frame ) then
+            self.frame:SetActiveTabByIndex( self.lastTabIndex or 1 )
+        end
+    end )
 
     local L = Glide.GetLanguageText
     local CreateHeader = Config.CreateHeader
@@ -925,7 +934,6 @@ function Config:OpenFrame()
 
             timer.Simple( 1, function()
                 self:OpenFrame()
-                self.frame:SetActiveTabByIndex( 5 )
             end )
         end, L"no" )
     end )
@@ -940,7 +948,6 @@ function Config:OpenFrame()
 
             timer.Simple( 1, function()
                 self:OpenFrame()
-                self.frame:SetActiveTabByIndex( 5 )
             end )
         end, L"no" )
     end )
