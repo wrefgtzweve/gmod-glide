@@ -40,6 +40,13 @@ do
         ["lean_pitch"] = { "lean_back", "lean_forward" }
     }
 
+    -- Actions affected by the throttle modifier
+    local THROTTLE_MOD_ACTIONS = {
+        ["accelerate"] = true,
+        ["brake"] = true
+    }
+
+    local Abs = math.abs
     local Clamp = math.Clamp
 
     --- Get the action's float value from a specific seat.
@@ -56,7 +63,13 @@ do
         local bools = self.inputBools[seatIndex]
         if bools then
             local indexes = BOOL_TO_FLOAT[action]
-            value = value + ( bools[indexes[1]] and -1 or ( bools[indexes[2]] and 1 or 0 ) )
+            local boolState = bools[indexes[1]] and -1 or ( bools[indexes[2]] and 1 or 0 )
+
+            value = value + boolState
+
+            if THROTTLE_MOD_ACTIONS[action] and Abs( boolState ) > 0 then
+                value = value * self:GetInputThrottleModifier()
+            end
         end
 
         return Clamp( value, -1, 1 )

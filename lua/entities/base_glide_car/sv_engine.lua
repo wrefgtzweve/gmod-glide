@@ -169,7 +169,7 @@ end
 
 local Abs = math.abs
 
-function ENT:AutoGearSwitch( throttle, throttleMod )
+function ENT:AutoGearSwitch( throttle )
     -- Are we trying to go backwards?
     if self.forwardSpeed < 100 and self:GetInputFloat( 1, "brake" ) > 0.2 then
         self:SwitchGear( -1, 0 )
@@ -189,8 +189,8 @@ function ENT:AutoGearSwitch( throttle, throttleMod )
     -- Avoid hitting the redline
     maxRPM = maxRPM * 0.98
 
-    -- Switch up early when the throttle modifier is low
-    maxRPM = maxRPM * ( 0.5 + throttleMod * 0.5 )
+    -- TODO: Switch up early when the throttle is low
+    -- maxRPM = maxRPM * ( 0.5 + throttle * 0.5 )
 
     local gearRPM
 
@@ -259,7 +259,6 @@ function ENT:EngineThink( dt )
     gear = self:GetGear()
 
     local amphibiousMode = self.IsAmphibious and self:GetWaterState() > 0
-    local inputThrottleMod = self:GetInputThrottleModifier()
 
     -- These variables are used both on `ENT:EngineClutch` and `ENT:EngineThink`
     inputThrottle = self:GetInputFloat( 1, "accelerate" )
@@ -286,15 +285,13 @@ function ENT:EngineThink( dt )
         end
 
     elseif not self.inputManualShift then
-        self:AutoGearSwitch( inputThrottle, inputThrottleMod )
+        self:AutoGearSwitch( inputThrottle )
     end
 
     -- Reverse the throttle/brake inputs while in reverse gear
     if gear < 0 and not self.inputManualShift then
         inputThrottle, inputBrake = inputBrake, inputThrottle
     end
-
-    inputThrottle = inputThrottle * inputThrottleMod
 
     -- When the engine is damaged, reduce the throttle
     if self.damageThrottleCooldown and self.damageThrottleCooldown < 0.3 then

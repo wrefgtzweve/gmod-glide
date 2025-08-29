@@ -162,7 +162,7 @@ function ENT:UpdateEngine( dt, selfTbl )
     local waterState = self:GetWaterState()
     local speed = selfTbl.forwardSpeed
 
-    local inputThrottle = self:GetInputFloat( 1, "accelerate" ) * self:GetInputThrottleModifier()
+    local inputThrottle = self:GetInputFloat( 1, "accelerate" )
     local throttle = 0
 
     if Abs( speed ) > 20 or waterState > 0 then
