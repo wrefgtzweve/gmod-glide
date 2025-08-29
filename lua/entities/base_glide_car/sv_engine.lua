@@ -189,8 +189,10 @@ function ENT:AutoGearSwitch( throttle )
     -- Avoid hitting the redline
     maxRPM = maxRPM * 0.98
 
-    -- TODO: Switch up early when the throttle is low
-    -- maxRPM = maxRPM * ( 0.5 + throttle * 0.5 )
+    -- When accelerating, switch up early when the throttle is low
+    if self.forwardAcceleration > 0 then
+        maxRPM = maxRPM * ( 0.6 + throttle * 0.4 )
+    end
 
     local gearRPM
 

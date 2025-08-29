@@ -120,6 +120,7 @@ function ENT:Initialize()
     self.localVelocity = Vector()
     self.forwardSpeed = 0
     self.totalSpeed = 0
+    self.forwardAcceleration = 0
 
     -- Setup trace filter used by systems that
     -- need to ignore the vehicle's chassis and seats.
@@ -632,6 +633,7 @@ local TickInterval = engine.TickInterval
 local GetDevMode = Glide.GetDevMode
 
 function ENT:Think()
+    local dt = TickInterval()
     local selfTbl = getTable( self )
 
     -- Run again next tick
@@ -640,8 +642,12 @@ function ENT:Think()
 
     -- Update speed variables
     selfTbl.localVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
-    selfTbl.forwardSpeed = selfTbl.localVelocity[1]
     selfTbl.totalSpeed = selfTbl.localVelocity:Length()
+
+    local forwardSpeed = selfTbl.localVelocity[1]
+
+    selfTbl.forwardAcceleration = ( forwardSpeed - selfTbl.forwardSpeed ) / dt
+    selfTbl.forwardSpeed = forwardSpeed
 
     -- If we have at least one seat...
     if #selfTbl.seats > 0 then
@@ -681,8 +687,6 @@ function ENT:Think()
 
     -- Update water logic
     self:WaterThink( selfTbl )
-
-    local dt = TickInterval()
 
     -- Deal engine fire damage over time
     if self:GetIsEngineOnFire() then
