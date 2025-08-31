@@ -154,11 +154,11 @@ function ENT:GetInputThrottleModifier()
     local mode = self.inputThrottleModifierMode
 
     if mode == 2 then
-        return self.inputThrottleModifierToggle and 0.6 or 1.0
+        return self.inputThrottleModifierToggle and 0.7 or 1.0
 
     elseif mode == 1 then
-        return self:GetInputBool( 1, "throttle_modifier" ) and 0.6 or 1.0
+        return self:GetInputBool( 1, "throttle_modifier" ) and 0.7 or 1.0
     end
 
-    return self:GetInputBool( 1, "throttle_modifier" ) and 1.0 or 0.6
+    return self:GetInputBool( 1, "throttle_modifier" ) and 1.0 or 0.7
 end
