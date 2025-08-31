@@ -105,8 +105,12 @@ function ENT:GravGunPickupAllowed( _ply )
     return false
 end
 
-function ENT:GravGunPunt( _ply )
-    return false
+do
+    local gravGunPuntCvar = GetConVar( "glide_allow_gravity_gun_punt" )
+
+    function ENT:GravGunPunt( _ply )
+        return gravGunPuntCvar:GetBool()
+    end
 end
 
 -- You can safely override these on children classes

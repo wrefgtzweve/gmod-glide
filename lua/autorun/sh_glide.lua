@@ -178,7 +178,8 @@ if SERVER then
 end
 
 -- Toggles
-CreateConVar( "glide_pacifist_mode", "0", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 1, disables VSWEPs and vehicle turrets.", 0 )
+CreateConVar( "glide_pacifist_mode", "0", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 1, disables VSWEPs and vehicle turrets.", 0, 1 )
+CreateConVar( "glide_allow_gravity_gun_punt", "0", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED, "When set to 1, allows players to push vehicles with the Gravity Gun.", 0, 1 )
 
 -- Sandbox limits
 cleanup.Register( "glide_vehicles" )
