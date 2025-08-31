@@ -13,7 +13,7 @@ local KV_LIMITS = {
     redlineStrength = { 0, 0.5, 2 },
 
     wobbleFrequency = { 10, 70, 0 },
-    wobbleStrength = { 0.1, 1.0, 2 }
+    wobbleStrength = { 0.0, 1.0, 2 }
 }
 
 local function OnStreamError( path, errorName )
