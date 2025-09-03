@@ -497,7 +497,7 @@ function ENT:GetPlayerCount()
     local count = 0
 
     for _, seat in EntityPairs( self.seats ) do
-        if IsValid( seat ) and IsValid( seat:GetDriver() ) then
+        if IsValid( seat:GetDriver() ) then
             count = count + 1
         end
     end
