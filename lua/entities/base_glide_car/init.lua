@@ -149,7 +149,7 @@ end
 function ENT:OnDriverExit()
     local keepOn = IsValid( self.lastDriver ) and self.lastDriver:KeyDown( IN_WALK )
 
-    if not self.hasRagdolledAllPlayers and not keepOn then
+    if not self.hasTheDriverBeenRagdolled and not keepOn then
         self:TurnOff()
     end
 
@@ -295,15 +295,21 @@ function ENT:SetupWiremodPorts( inputs, outputs )
     outputs[#outputs + 1] = { "SirenState", "NORMAL", "0: Off\n1: Lights only\n2: Lights + sounds" }
 end
 
-function ENT:CheckWaterLevel()
-    if self:WaterLevel() > 2 then
+function ENT:CheckWaterLevel( dt )
+    if self:WaterLevel() < 3 then return end
+
+    local health = self:GetEngineHealth()
+
+    if health > 0 then
+        self:TakeEngineDamage( dt * 0.2 )
+        self:UpdateHealthOutputs()
+    else
         if self:GetEngineState() == 2 then
             self:TurnOff()
         end
 
         self:SetEngineHealth( 0 )
         self:SetFlywheelRPM( 0 )
-        self:UpdateHealthOutputs()
     end
 end
 
@@ -344,7 +350,7 @@ function ENT:OnPostThink( dt, selfTbl )
     end
 
     -- Damage the engine when underwater
-    self:CheckWaterLevel()
+    self:CheckWaterLevel( dt )
 
     local health = self:GetEngineHealth()
 
