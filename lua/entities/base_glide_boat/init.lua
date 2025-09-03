@@ -38,7 +38,7 @@ end
 function ENT:OnDriverExit()
     self:SetIsHonking( false )
 
-    if self.hasRagdolledAllPlayers then
+    if self.hasTheDriverBeenRagdolled then
         BaseClass.OnDriverExit( self )
     else
         self:TurnOff()

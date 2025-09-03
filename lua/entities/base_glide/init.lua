@@ -313,23 +313,33 @@ do
     local ragdollEnableCvar = GetConVar( "glide_ragdoll_enable" )
     local maxRagdollTimeCvar = GetConVar( "glide_ragdoll_max_time" )
 
-    --- Kicks out all passengers, then ragdoll them.
-    function ENT:RagdollPlayers( time, vel )
+    --- Kicks out the passenger from a specific seat entity, then ragdoll them.
+    function ENT:RagdollPlayerOnSeat( seat, time, vel )
+        if not IsValid( seat ) then return end
+        if not seat.GlideSeatIndex then return end
         if not ragdollEnableCvar:GetBool() then return end
+
         time = time or maxRagdollTimeCvar:GetFloat()
         vel = vel or self:GetVelocity()
 
-        local ply
+        local ply = seat:GetDriver()
 
-        for seatIndex, seat in Glide.EntityPairs( self.seats ) do
-            ply = seat:GetDriver()
+        if IsValid( ply ) and self:CanFallOnCollision( seat.GlideSeatIndex ) then
+            Glide.RagdollPlayer( ply, vel, time )
 
-            if IsValid( ply ) and self:CanFallOnCollision( seatIndex ) then
-                Glide.RagdollPlayer( ply, vel, time )
+            if seat.GlideSeatIndex == 1 then
+                self.hasTheDriverBeenRagdolled = true
             end
         end
+    end
 
-        self.hasRagdolledAllPlayers = true
+    --- Kicks out all passengers, then ragdoll them.
+    function ENT:RagdollPlayers( time, vel )
+        vel = vel or self:GetVelocity()
+
+        for _, seat in Glide.EntityPairs( self.seats ) do
+            self:RagdollPlayerOnSeat( seat, time, vel )
+        end
     end
 end
 
@@ -676,7 +686,7 @@ function ENT:Think()
                 self:OnDriverExit()
             end
 
-            selfTbl.hasRagdolledAllPlayers = nil
+            selfTbl.hasTheDriverBeenRagdolled = nil
         end
     end
 
