@@ -72,6 +72,10 @@ if SERVER then
         -- Compatibility with vehicles that use `ENT.WeaponSlots`, and
         -- access the weapon's `ammoType` (lowercase "a") on `ENT:OnWeaponFire`.
         self.ammoType = self.AmmoType
+
+        -- Compatibility with vehicles that use `ENT.WeaponSlots`, and
+        -- access the weapon's `lockOn` on `ENT:OnWeaponFire`.
+        self.lockOn = self.EnableLockOn
     end
 
     -- You can override these on children classes.
