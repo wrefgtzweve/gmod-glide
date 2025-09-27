@@ -329,6 +329,9 @@ if SERVER then
 end
 
 if CLIENT then
+    -- Make this table available before we load everything
+    Glide.Config = Glide.Config or {}
+
     -- Shared files
     Glide.IncludeDir( "glide/", true, false )
 
