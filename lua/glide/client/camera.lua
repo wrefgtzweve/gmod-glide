@@ -305,19 +305,30 @@ function Camera:Think()
     angles[2] = ExpDecayAngle( angles[2], vehicleAngles[2], decay, dt )
     angles[3] = ExpDecayAngle( angles[3], self.allowRolling and vehicleAngles[3] or 0, rollDecay, dt )
 
-    -- Recenter if using "Control movement directly" mouse setting,
-    -- or if some time has passed since last time we moved the mouse.
-    if
-        self.isUsingDirectMouse or (
-            Config.enableAutoCenter and
-            mode ~= CAMERA_TYPE.TURRET and
-            t > self.lastMouseMoveTime + Config.autoCenterDelay and
-            ( Config.mouseFlyMode ~= MOUSE_FLY_MODE.AIM or mode == CAMERA_TYPE.CAR or self.seatIndex > 1 ) and
-            ( Config.mouseSteerMode ~= MOUSE_STEER_MODE.AIM or self.seatIndex > 1 )
-        )
-    then
-        self.centerStrength = ExpDecay( self.centerStrength, 1, 2, dt )
+    -- Recenter if some time has passed since last time we moved the mouse
+    local allowAutoCenter = Config.enableAutoCenter and t > self.lastMouseMoveTime + Config.autoCenterDelay
+
+    -- Recenter if using "Control movement directly"  on land vehicles,
+    -- or using "Control movement directly" on aircraft.
+    if self.seatIndex < 2 then
+        allowAutoCenter = allowAutoCenter or self.isUsingDirectMouse
     end
+
+    -- Don't recenter if using "Steer towards aim direction" on land vehicles,
+    -- or if using "Point-to-aim" on aircraft.
+    if
+        ( mode == CAMERA_TYPE.AIRCRAFT and Config.mouseFlyMode == MOUSE_FLY_MODE.AIM ) or
+        ( mode ~= CAMERA_TYPE.AIRCRAFT and Config.mouseSteerMode == MOUSE_STEER_MODE.AIM )
+    then
+        allowAutoCenter = false
+    end
+
+    -- Don't recenter on turrets
+    if mode == CAMERA_TYPE.TURRET then
+        allowAutoCenter = false
+    end
+
+    self.centerStrength = allowAutoCenter and ExpDecay( self.centerStrength, 1, 2, dt ) or 0
 end
 
 local traceResult = {}
