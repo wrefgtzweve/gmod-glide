@@ -72,8 +72,6 @@ local RealTime = RealTime
 function ENT:OnUpdateMisc()
     BaseClass.OnUpdateMisc( self )
 
-    self:OnUpdateAnimations()
-
     local t = RealTime()
 
     if t > self.nextControlTime then

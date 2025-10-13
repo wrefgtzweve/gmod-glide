@@ -276,8 +276,6 @@ local DEFAULT_SIREN_COLOR = Color( 255, 255, 255, 255 )
 
 --- Implement this base class function.
 function ENT:OnUpdateMisc()
-    self:OnUpdateAnimations()
-
     local dt = FrameTime()
     local rpmFraction = ( self:GetEngineRPM() - self:GetMinRPM() ) / ( self:GetMaxRPM() - self:GetMinRPM() )
 
