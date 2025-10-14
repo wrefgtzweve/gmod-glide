@@ -17,8 +17,11 @@ end
 --- Implement this base class function.
 function ENT:OnActivateSounds()
     self:CreateLoopingSound( "engine", self.EngineSoundPath, self.EngineSoundLevel )
-    self:CreateLoopingSound( "exhaust", self.ExhaustSoundPath, self.ExhaustSoundLevel )
     self:CreateLoopingSound( "distant", self.DistantSoundPath, self.DistantSoundLevel )
+
+    if self.ExhaustSoundPath ~= "" then
+        self:CreateLoopingSound( "exhaust", self.ExhaustSoundPath, self.ExhaustSoundLevel )
+    end
 
     if self.ThrustSound ~= "" then
         self:CreateLoopingSound( "thrust", self.ThrustSound, self.ThrustSoundLevel )
@@ -118,8 +121,10 @@ function ENT:OnUpdateSounds()
     sounds.engine:ChangePitch( Remap( power, 1, 2, self.EngineSoundMinPitch, self.EngineSoundMaxPitch ) * power01 * pitch )
     sounds.engine:ChangeVolume( power01 * self.EngineSoundVolume * vol )
 
-    sounds.exhaust:ChangePitch( Remap( power, 1, 2, self.ExhaustSoundMinPitch, self.ExhaustSoundMaxPitch ) * power01 * pitch )
-    sounds.exhaust:ChangeVolume( power01 * self.ExhaustSoundVolume * vol )
+    if sounds.exhaust then
+        sounds.exhaust:ChangePitch( Remap( power, 1, 2, self.ExhaustSoundMinPitch, self.ExhaustSoundMaxPitch ) * power01 * pitch )
+        sounds.exhaust:ChangeVolume( power01 * self.ExhaustSoundVolume * vol )
+    end
 
     vol = vol * Clamp( self.rfSounds.lastDistance / 1000000, 0, 1 )
 
