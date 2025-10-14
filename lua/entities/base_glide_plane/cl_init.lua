@@ -17,7 +17,10 @@ end
 --- Implement this base class function.
 function ENT:OnActivateSounds()
     self:CreateLoopingSound( "engine", self.EngineSoundPath, self.EngineSoundLevel )
-    self:CreateLoopingSound( "distant", self.DistantSoundPath, self.DistantSoundLevel )
+
+    if self.DistantSoundPath ~= "" then
+        self:CreateLoopingSound( "distant", self.DistantSoundPath, self.DistantSoundLevel )
+    end
 
     if self.ExhaustSoundPath ~= "" then
         self:CreateLoopingSound( "exhaust", self.ExhaustSoundPath, self.ExhaustSoundLevel )
@@ -128,8 +131,10 @@ function ENT:OnUpdateSounds()
 
     vol = vol * Clamp( self.rfSounds.lastDistance / 1000000, 0, 1 )
 
-    sounds.distant:ChangePitch( Remap( power, 1, 2, 80, 100 ) )
-    sounds.distant:ChangeVolume( vol * power01 )
+    if sounds.distant then
+        sounds.distant:ChangePitch( Remap( power, 1, 2, 80, 100 ) )
+        sounds.distant:ChangeVolume( vol * power01 )
+    end
 
     -- Handle damaged engine sound
     local health = self:GetEngineHealth()
