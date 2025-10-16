@@ -181,7 +181,7 @@ function ENT:AutoGearSwitch( throttle )
     if currentGear < 0 and self.forwardSpeed < -100 then return end
 
     -- Don't switch when the wheels are slipping forwards
-    if Abs( self.avgForwardSlip ) > 10 then return end
+    if Abs( self.avgForwardSlip ) > 3 then return end
 
     local gear = Clamp( currentGear, 1, self.maxGear )
     local minRPM, maxRPM = self:GetMinRPM(), self:GetMaxRPM()
