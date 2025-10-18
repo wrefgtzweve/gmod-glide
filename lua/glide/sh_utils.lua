@@ -263,7 +263,7 @@ do
 end
 
 -- Max. Engine Stream layers
-Glide.MAX_STREAM_LAYERS = 10
+Glide.MAX_STREAM_LAYERS = 8
 
 -- Default Engine Stream parameters
 local DEFAULT_STREAM_PARAMS = {
