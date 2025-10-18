@@ -38,7 +38,8 @@ function Glide.CreateEngineStream( parent )
 
         inputs = {
             throttle = 0,
-            rpmFraction = 0
+            rpmFraction = 0,
+            redline = 0
         }
     }
 
@@ -215,6 +216,7 @@ end
 local Cos = math.cos
 local Clamp = math.Clamp
 local Remap = math.Remap
+local Approach = math.Approach
 local GetVolume = Glide.Config.GetVolume
 
 local vol, pitch, pan
@@ -277,6 +279,8 @@ function EngineStream:Think( dt, eyePos, eyeRight )
     else
         self.redlineTime = 0
     end
+
+    inputs.redline = Approach( inputs.redline, self.isRedlining and 1 or 0, dt * 5 )
 
     local channel, value
 
