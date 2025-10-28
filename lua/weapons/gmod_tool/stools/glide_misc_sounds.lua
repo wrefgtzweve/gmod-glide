@@ -71,7 +71,7 @@ function TOOL:LeftClick( trace )
 
         if size > Glide.MAX_JSON_SIZE then
             Glide.Print( "Tried to write data that was too big! (%d/%d)", size, Glide.MAX_JSON_SIZE )
-            return
+            return false
         end
 
         data = util.Compress( data )
