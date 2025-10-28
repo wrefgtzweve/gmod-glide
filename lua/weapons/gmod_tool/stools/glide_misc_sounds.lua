@@ -49,7 +49,7 @@ function TOOL:CanSendData()
         return false
     end
 
-    self.fireCooldown = t + 0.5
+    self.fireCooldown = t + 1
 
     return true
 end

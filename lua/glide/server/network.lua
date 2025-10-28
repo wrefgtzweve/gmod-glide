@@ -77,8 +77,8 @@ local cooldowns = {
     [Glide.CMD_SWITCH_SEATS] = { interval = 0.5, players = {} },
     [Glide.CMD_SET_HEADLIGHTS] = { interval = 0.5, players = {} },
     [Glide.CMD_LAST_AIM_ENTITY] = { interval = 0.01, players = {} },
-    [Glide.CMD_UPLOAD_ENGINE_STREAM_PRESET] = { interval = 0.5, players = {} },
-    [Glide.CMD_UPLOAD_MISC_SOUNDS_PRESET] = { interval = 0.5, players = {} }
+    [Glide.CMD_UPLOAD_ENGINE_STREAM_PRESET] = { interval = 0.9, players = {} },
+    [Glide.CMD_UPLOAD_MISC_SOUNDS_PRESET] = { interval = 0.9, players = {} }
 }
 
 -- Receive and validate network commands
