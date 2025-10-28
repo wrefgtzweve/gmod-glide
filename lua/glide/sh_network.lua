@@ -3,8 +3,8 @@ if SERVER then
     util.AddNetworkString( "glide.sync_weapon_data" )
 end
 
--- Size limit for JSON data
-Glide.MAX_JSON_SIZE = 4096 -- 4 kibibytes
+-- Size limit for user JSON data
+Glide.MAX_JSON_SIZE = 3072 -- 3 kibibytes
 
 -- Used on net.WriteUInt for the command ID
 Glide.CMD_SIZE = 4
